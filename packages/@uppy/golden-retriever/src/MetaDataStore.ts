@@ -4,6 +4,7 @@ import type {
   RemoteUppyFile,
   UppyFileId,
 } from '@uppy/core/utils'
+
 import throttle from 'lodash/throttle.js'
 
 // we don't want to store blobs in localStorage

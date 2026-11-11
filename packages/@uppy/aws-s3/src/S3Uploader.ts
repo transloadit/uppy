@@ -1,7 +1,10 @@
-import { EventManager, type Uppy } from '@uppy/core'
+import type { Uppy } from '@uppy/core'
 import type { Body, LocalUppyFile, Meta } from '@uppy/core/utils'
-import { toError } from '@uppy/core/utils'
+
 import type S3Client from './s3-client/S3Client.js'
+
+import { EventManager } from '@uppy/core'
+import { toError } from '@uppy/core/utils'
 
 // ============================================================================
 // Constants

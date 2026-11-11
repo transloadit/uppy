@@ -5,6 +5,7 @@ import type {
   PartialTreeFolderNode,
   PartialTreeId,
 } from '../../../index.js'
+
 import shallowClone from './shallowClone.js'
 
 /*

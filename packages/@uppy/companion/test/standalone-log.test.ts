@@ -1,4 +1,5 @@
 import { describe, expect, test } from 'vitest'
+
 import { accessLogUrl } from '../dist/standalone/index.js'
 
 // The morgan url token used to read req.query and req.path, which in

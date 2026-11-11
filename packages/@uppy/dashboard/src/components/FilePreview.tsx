@@ -1,5 +1,6 @@
 import type { Body, Meta, UppyFile } from '@uppy/core'
 import type { ComponentChildren } from 'preact'
+
 import getFileTypeIcon from '../utils/getFileTypeIcon.js'
 
 interface FilePreviewProps<M extends Meta, B extends Body> {

@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest'
+
 import generateFileID from '../../lib/utils/generateFileID.js'
 
 describe('generateFileID', () => {

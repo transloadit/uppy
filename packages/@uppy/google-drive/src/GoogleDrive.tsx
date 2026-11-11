@@ -4,19 +4,21 @@ import type {
   Meta,
   UnknownProviderPlugin,
   UnknownProviderPluginState,
+  Uppy,
   UppyFile,
 } from '@uppy/core'
-import { UIPlugin, type Uppy } from '@uppy/core'
+import type { CompanionPluginOptions } from '@uppy/core/companion-client'
+import type { ProviderViews } from '@uppy/core/provider-views'
+import type { LocaleStrings } from '@uppy/core/utils'
+import type { ComponentChild, h } from '@uppy/core/utils/preact'
+
+import { UIPlugin } from '@uppy/core'
 import {
-  type CompanionPluginOptions,
   defaultStorage,
   getAllowedHosts,
   Provider,
 } from '@uppy/core/companion-client'
-import type { ProviderViews } from '@uppy/core/provider-views'
-import type { LocaleStrings } from '@uppy/core/utils'
-// biome-ignore lint/style/useImportType: h is not a type
-import { type ComponentChild, h } from '@uppy/core/utils/preact'
+
 import packageJson from '../package.json' with { type: 'json' }
 import DriveProviderViews from './DriveProviderViews.js'
 import locale from './locale.js'

@@ -27,6 +27,7 @@
  */
 
 import type { ComponentChild, h } from 'preact'
+
 import { useCallback, useEffect, useRef, useState } from 'preact/hooks'
 
 const STYLE_INNER = {

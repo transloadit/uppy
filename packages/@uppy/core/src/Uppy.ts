@@ -1,26 +1,14 @@
 /* global AggregateError */
 
-import throttle from 'lodash/throttle.js'
-import ee from 'namespace-emitter'
-import { nanoid } from 'nanoid/non-secure'
 import type { h } from 'preact'
 import type { Promisable } from 'type-fest'
-import packageJson from '../package.json' with { type: 'json' }
+
 import type BasePlugin from './BasePlugin.js'
 import type Provider from './companion-client/Provider.js'
 import type SearchProvider from './companion-client/SearchProvider.js'
-import getFileName from './getFileName.js'
-import locale from './locale.js'
-import { debugLogger, justErrorsLogger } from './loggers.js'
 import type ProviderView from './provider-views/ProviderView/ProviderView.js'
 import type { Restrictions, ValidateableFile } from './Restricter.js'
-import {
-  defaultOptions as defaultRestrictionOptions,
-  Restricter,
-  RestrictionError,
-} from './Restricter.js'
-import DefaultStore, { type Store } from './store/index.js'
-import supportsUploadProgress from './supportsUploadProgress.js'
+import type { Store } from './store/index.js'
 import type {
   Body,
   CompanionFile,
@@ -36,6 +24,22 @@ import type {
   UppyFile,
   UppyFileId,
 } from './utils/index.js'
+
+import throttle from 'lodash/throttle.js'
+import ee from 'namespace-emitter'
+import { nanoid } from 'nanoid/non-secure'
+
+import packageJson from '../package.json' with { type: 'json' }
+import getFileName from './getFileName.js'
+import locale from './locale.js'
+import { debugLogger, justErrorsLogger } from './loggers.js'
+import {
+  defaultOptions as defaultRestrictionOptions,
+  Restricter,
+  RestrictionError,
+} from './Restricter.js'
+import DefaultStore from './store/index.js'
+import supportsUploadProgress from './supportsUploadProgress.js'
 import {
   getErrorMessage,
   getFileNameAndExtension,

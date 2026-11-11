@@ -1,8 +1,11 @@
-import pRetry, { AbortError } from 'p-retry'
 import type { Promisable } from 'type-fest'
-import packageJson from '../../package.json' with { type: 'json' }
+
 import type Uppy from '../index.js'
 import type { Body, Meta, RemoteUppyFile, UppyFile } from '../utils/index.js'
+
+import pRetry, { AbortError } from 'p-retry'
+
+import packageJson from '../../package.json' with { type: 'json' }
 import {
   ErrorWithCause,
   fetchWithNetworkError,

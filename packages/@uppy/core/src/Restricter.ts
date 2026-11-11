@@ -1,7 +1,8 @@
-import { prettierBytes } from '@transloadit/prettier-bytes'
-import match from 'mime-match'
 import type { NonNullableUppyOptions, State } from './Uppy.js'
 import type { Body, I18n, Meta, UppyFile } from './utils/index.js'
+
+import { prettierBytes } from '@transloadit/prettier-bytes'
+import match from 'mime-match'
 
 export type Restrictions = {
   maxFileSize: number | null

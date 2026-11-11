@@ -1,8 +1,8 @@
-import Link from '@docusaurus/Link'
 import type { ReactNode } from 'react'
 
-import useLiveCount, { compact } from '../../hooks/useLiveCount'
+import Link from '@docusaurus/Link'
 
+import useLiveCount, { compact } from '../../hooks/useLiveCount'
 import styles from './styles.module.css'
 
 export const REPO = 'transloadit/uppy'

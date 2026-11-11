@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest'
+
 import isNetworkError from '../../lib/utils/isNetworkError.js'
 
 describe('isNetworkError', () => {

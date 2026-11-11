@@ -1,4 +1,5 @@
 import type { Body, Meta, Uppy, UppyEventMap } from '@uppy/core'
+
 import { useEffect, useState } from 'react'
 
 type EventResults<

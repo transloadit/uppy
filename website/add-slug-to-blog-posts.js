@@ -2,6 +2,7 @@
 
 import { readFile, writeFile } from 'node:fs/promises'
 import { basename } from 'node:path'
+
 import globby from 'globby'
 
 const paths = await globby('./blog/*.md')

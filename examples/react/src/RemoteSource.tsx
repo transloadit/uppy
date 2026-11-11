@@ -1,6 +1,7 @@
 import type { PartialTreeFile, PartialTreeFolderNode } from '@uppy/core'
-import { useRemoteSource } from '@uppy/react'
 import type { AvailablePluginsKeys } from '@uppy/remote-sources'
+
+import { useRemoteSource } from '@uppy/react'
 import { useEffect, useRef } from 'react'
 
 const dtf = new Intl.DateTimeFormat('en-US', {

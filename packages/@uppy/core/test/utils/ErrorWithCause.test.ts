@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest'
+
 import ErrorWithCause from '../../lib/utils/ErrorWithCause.js'
 import NetworkError from '../../lib/utils/NetworkError.js'
 

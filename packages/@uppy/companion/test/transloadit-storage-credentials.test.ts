@@ -1,14 +1,18 @@
+import type { TransloaditStorageProviderOptions } from '../src/schemas/companion.js'
+import type { CompanionLike } from '../src/server/provider/Provider.js'
+import type { GrantClaims } from './fixtures/s3.js'
+
 import { createHmac } from 'node:crypto'
 import { createServer } from 'node:http'
+
 import { expect, onTestFinished, test, vi } from 'vitest'
+
 import { defaultOptions } from '../src/config/companion.js'
-import type { TransloaditStorageProviderOptions } from '../src/schemas/companion.js'
 import logger from '../src/server/logger.js'
 import { userError } from '../src/server/provider/errorCodes.js'
-import type { CompanionLike } from '../src/server/provider/Provider.js'
 import { parseTransloaditStorageProviderOptions } from '../src/server/provider/s3/config.js'
 import TransloaditStorageProvider from '../src/server/provider/s3/transloadit-storage.js'
-import { claims, type GrantClaims, mint } from './fixtures/s3.js'
+import { claims, mint } from './fixtures/s3.js'
 
 const secret = 'local-test-server-key-not-a-browser-capability'
 const workspace = 'a'.repeat(32)

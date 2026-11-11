@@ -1,22 +1,21 @@
-import {
-  type Body,
-  type Meta,
-  type UploadResult,
-  type Uppy,
-  UserFacingApiError,
-} from '@uppy/core'
+import type { Body, Meta, UploadResult, Uppy } from '@uppy/core'
 import type {
   ProviderAction,
   ProviderToolbarAction,
 } from '@uppy/core/provider-views'
 import type { LocaleStrings } from '@uppy/core/utils'
-import S3, { type S3Options, StorageIcon } from '@uppy/s3'
+import type { S3Options } from '@uppy/s3'
+
+import type { StoreUploadsOptions } from './storeAssemblyOptions.js'
+
+import { UserFacingApiError } from '@uppy/core'
+import S3, { StorageIcon } from '@uppy/s3'
+
 import packageJson from '../package.json' with { type: 'json' }
 import locale from './locale.js'
 import {
   createStoreAssemblyOptions,
   openFolderKey,
-  type StoreUploadsOptions,
 } from './storeAssemblyOptions.js'
 
 /**

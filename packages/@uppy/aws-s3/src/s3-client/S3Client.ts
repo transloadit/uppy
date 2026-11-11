@@ -1,5 +1,7 @@
-import { fetcher } from '@uppy/core/utils'
 import type * as IT from './types.js'
+
+import { fetcher } from '@uppy/core/utils'
+
 import * as U from './utils.js'
 
 abstract class S3Client {

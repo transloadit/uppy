@@ -1,25 +1,29 @@
 import type { Readable } from 'node:stream'
-import {
-  CopyObjectCommand,
-  DeleteObjectCommand,
-  GetObjectCommand,
-  HeadObjectCommand,
-  type HeadObjectCommandOutput,
-  ListObjectsV2Command,
-  NoSuchKey,
-  NotFound,
-  PutObjectCommand,
-  type S3Client,
-  S3ServiceException,
-} from '@aws-sdk/client-s3'
-import { lookup as mimeLookup } from 'mime-types'
-import { z } from 'zod'
+
+import type { HeadObjectCommandOutput, S3Client } from '@aws-sdk/client-s3'
+
 import type {
   CompanionInitOptions,
   S3ClientOptions,
   S3ConnectionOptions,
   S3ObjectWriteOptions,
 } from '../../../schemas/companion.js'
+import type { ParsedS3ProviderOptions } from './config.js'
+
+import {
+  CopyObjectCommand,
+  DeleteObjectCommand,
+  GetObjectCommand,
+  HeadObjectCommand,
+  ListObjectsV2Command,
+  NoSuchKey,
+  NotFound,
+  PutObjectCommand,
+  S3ServiceException,
+} from '@aws-sdk/client-s3'
+import { lookup as mimeLookup } from 'mime-types'
+import { z } from 'zod'
+
 import { isRecord } from '../../helpers/type-guards.js'
 import { s3WriteParams } from '../../helpers/utils.js'
 import logger from '../../logger.js'
@@ -41,11 +45,7 @@ import Provider, {
   type ProviderMoveItemResponse,
   type ProviderSimpleAuthOptions,
 } from '../Provider.js'
-import {
-  type ParsedS3ProviderOptions,
-  parseS3ProviderOptions,
-  S3ConfigError,
-} from './config.js'
+import { parseS3ProviderOptions, S3ConfigError } from './config.js'
 import {
   ensureTrailingSlash,
   GrantExpiredError,

@@ -5,10 +5,12 @@ import type {
   UIPluginOptions,
   Uppy,
 } from '@uppy/core'
-import { UIPlugin } from '@uppy/core'
 import type { LocaleStrings } from '@uppy/core/utils'
-import { getFileTypeExtension, isRestrictionError } from '@uppy/core/utils'
 import type { ComponentChild } from '@uppy/core/utils/preact'
+
+import { UIPlugin } from '@uppy/core'
+import { getFileTypeExtension, isRestrictionError } from '@uppy/core/utils'
+
 import packageJson from '../package.json' with { type: 'json' }
 import locale from './locale.js'
 import RecorderScreen from './RecorderScreen.js'

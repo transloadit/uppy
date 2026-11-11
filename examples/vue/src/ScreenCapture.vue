@@ -16,6 +16,7 @@
 <script setup lang="ts">
 import { useScreenCapture } from '@uppy/vue'
 import { onMounted } from 'vue'
+
 import MediaCapture from './MediaCapture.vue'
 
 const props = defineProps<{

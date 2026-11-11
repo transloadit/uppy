@@ -1,4 +1,5 @@
 import { inspect, styleText } from 'node:util'
+
 import escapeStringRegexp from 'escape-string-regexp'
 
 type Colors = Parameters<typeof styleText>[0]

@@ -1,6 +1,7 @@
 import CompressorPlugin from '@uppy/compressor'
 import Core, { Uppy } from '@uppy/core'
 import { describe, expect, it } from 'vitest'
+
 import sampleImage from '../fixtures/image.jpg'
 
 async function getSampleImage(name: string): Promise<File> {

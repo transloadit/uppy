@@ -5,10 +5,12 @@ import type {
   UIPluginOptions,
   Uppy,
 } from '@uppy/core'
-import { UIPlugin } from '@uppy/core'
 import type { LocaleStrings } from '@uppy/core/utils'
-import { getDroppedFiles, isDragDropSupported, toArray } from '@uppy/core/utils'
 import type { ComponentChild, h } from '@uppy/core/utils/preact'
+
+import { UIPlugin } from '@uppy/core'
+import { getDroppedFiles, isDragDropSupported, toArray } from '@uppy/core/utils'
+
 import packageJson from '../package.json' with { type: 'json' }
 import locale from './locale.js'
 

@@ -1,14 +1,18 @@
-import { useSyncExternalStore } from 'preact/compat'
-import { useEffect, useMemo, useRef } from 'preact/hooks'
-import {
-  type CompanionPluginOptions,
-  createGooglePickerController,
-  createGooglePickerStoreAdapter,
-  type GooglePickerOptions,
-  type GooglePickerState,
+import type {
+  CompanionPluginOptions,
+  GooglePickerOptions,
+  GooglePickerState,
 } from '../../companion-client/index.js'
 import type { AsyncStore, Uppy } from '../../index.js'
 import type { I18n } from '../../utils/index.js'
+
+import { useSyncExternalStore } from 'preact/compat'
+import { useEffect, useMemo, useRef } from 'preact/hooks'
+
+import {
+  createGooglePickerController,
+  createGooglePickerStoreAdapter,
+} from '../../companion-client/index.js'
 import AuthView from '../ProviderView/AuthView.js'
 import { GoogleDriveIcon, GooglePhotosIcon } from './icons.js'
 

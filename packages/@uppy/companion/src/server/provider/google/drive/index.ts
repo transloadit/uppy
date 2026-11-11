@@ -1,5 +1,14 @@
 import type { Readable } from 'node:stream'
+
+import type { GoogleUserSession } from '../index.js'
+import type {
+  DriveAbout,
+  DriveListResponse,
+  DriveSharedDrivesResponse,
+} from './adapter.js'
+
 import got from 'got'
+
 import { MAX_AGE_REFRESH_TOKEN } from '../../../helpers/jwt.js'
 import { isRecord } from '../../../helpers/type-guards.js'
 import { pathSegment, prepareStream } from '../../../helpers/utils.js'
@@ -16,12 +25,9 @@ import Provider, {
   type ProviderRefreshTokenResponse,
 } from '../../Provider.js'
 import { withGoogleErrorHandling } from '../../providerErrors.js'
-import { type GoogleUserSession, logout, refreshToken } from '../index.js'
+import { logout, refreshToken } from '../index.js'
 import {
   adaptData,
-  type DriveAbout,
-  type DriveListResponse,
-  type DriveSharedDrivesResponse,
   getGsuiteExportType,
   isGsuiteFile,
   isShortcut,

@@ -1,12 +1,15 @@
 import type { Body, Meta } from '@uppy/core'
+
+import type { StoredState } from './MetaDataStore.js'
+
 import throttle from 'lodash/throttle.js'
+
 import {
   connect,
   DB_NAME,
   METADATA_STORE_NAME,
   waitForRequest,
 } from './IndexedDBStore.js'
-import type { StoredState } from './MetaDataStore.js'
 
 type MetaData<M extends Meta, B extends Body> = StoredState<M, B>['metadata']
 

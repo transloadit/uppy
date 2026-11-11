@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest'
+
 import getFileTypeExtension from '../../lib/utils/getFileTypeExtension.js'
 
 describe('getFileTypeExtension', () => {

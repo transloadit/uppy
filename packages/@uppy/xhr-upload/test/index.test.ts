@@ -1,6 +1,9 @@
 import '@uppy-dev/msw-setup'
+
+import type { UppyEventMap } from '@uppy/core'
+
 import { network } from 'virtual:msw'
-import Core, { type UppyEventMap } from '@uppy/core'
+import Core from '@uppy/core'
 import XHRUpload from '@uppy/xhr-upload'
 import { HttpResponse, http } from 'msw'
 import { describe, expect, it, vi } from 'vitest'

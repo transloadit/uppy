@@ -1,6 +1,8 @@
 import { Resolver } from 'node:dns/promises'
+
 import nock from 'nock'
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest'
+
 import {
   FORBIDDEN_IP_ADDRESS,
   getProtectedGot,

@@ -1,10 +1,12 @@
-import got from 'got'
 import type {
   ProviderLogoutOptions,
   ProviderLogoutResponse,
   ProviderRefreshTokenOptions,
   ProviderRefreshTokenResponse,
 } from '../Provider.js'
+
+import got from 'got'
+
 import { withGoogleErrorHandling } from '../providerErrors.js'
 
 /**

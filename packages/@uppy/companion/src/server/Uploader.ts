@@ -1,25 +1,27 @@
+import type { EventEmitter, Readable as NodeReadableStream } from 'node:stream'
+
+import type { PutObjectCommandInput, S3Client } from '@aws-sdk/client-s3'
+import type { Request } from 'express'
+import type { OptionsOfTextResponseBody, Response } from 'got'
+import type { Redis } from 'ioredis'
+
+import type { CompanionRuntimeOptions } from '../types/companion-options.js'
+
 import { randomUUID } from 'node:crypto'
 import { once } from 'node:events'
 import { createReadStream, createWriteStream, ReadStream } from 'node:fs'
 import { stat, unlink } from 'node:fs/promises'
 import { join } from 'node:path'
-import {
-  type EventEmitter,
-  type Readable as NodeReadableStream,
-  Transform,
-} from 'node:stream'
+import { Transform } from 'node:stream'
 import { pipeline } from 'node:stream/promises'
-import type { PutObjectCommandInput, S3Client } from '@aws-sdk/client-s3'
+
 import { Upload } from '@aws-sdk/lib-storage'
-import type { Request } from 'express'
 import { FormData } from 'formdata-node'
-import type { OptionsOfTextResponseBody, Response } from 'got'
 import got from 'got'
-import type { Redis } from 'ioredis'
 import throttle from 'lodash/throttle.js'
 import tus from 'tus-js-client'
 import validator from 'validator'
-import type { CompanionRuntimeOptions } from '../types/companion-options.js'
+
 import emitter from './emitter/index.js'
 import headerSanitize from './header-blacklist.js'
 import { isRecord, toError } from './helpers/type-guards.js'

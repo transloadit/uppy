@@ -7,14 +7,17 @@ import type {
   Uppy,
 } from '@uppy/core'
 import type { I18n } from '@uppy/core/utils'
-import { useRef } from '@uppy/core/utils/preact/hooks'
-import classNames from 'classnames'
 import type {
   ComponentChildren,
   MouseEventHandler,
   TargetedDragEvent,
 } from 'preact'
+
 import type { DashboardState } from '../Dashboard.js'
+
+import { useRef } from '@uppy/core/utils/preact/hooks'
+import classNames from 'classnames'
+
 import ignoreEvent from '../utils/ignoreEvent.js'
 
 interface PickerPanelContentProps<M extends Meta, B extends Body> {

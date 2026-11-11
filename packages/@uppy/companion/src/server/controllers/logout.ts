@@ -1,4 +1,5 @@
 import type { NextFunction, Request, Response } from 'express'
+
 import * as tokenService from '../helpers/jwt.js'
 import { respondWithError } from '../provider/error.js'
 

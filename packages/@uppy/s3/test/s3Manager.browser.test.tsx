@@ -7,6 +7,7 @@ import {
 } from '@uppy-dev/s3-mock-companion'
 import { http } from 'msw'
 import { afterEach, expect, it, vi } from 'vitest'
+
 import S3 from '../lib/S3.js'
 
 const COMPANION = 'http://localhost:3020'

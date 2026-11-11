@@ -6,7 +6,9 @@ import type {
   UppyEventMap,
 } from '@uppy/core'
 import type { ProviderViews } from '@uppy/core/provider-views'
+
 import { dequal } from 'dequal/lite'
+
 import { Subscribers } from './utils.js'
 
 export type RemoteSourceKeys =

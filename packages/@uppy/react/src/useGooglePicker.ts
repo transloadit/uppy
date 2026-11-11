@@ -1,11 +1,12 @@
+import type { GooglePickerOptions } from '@uppy/components'
+
 import {
   createGooglePickerController,
   createGooglePickerPluginAdapter,
-  type GooglePickerOptions,
 } from '@uppy/components'
-
 import { useEffect, useMemo } from 'react'
 import { useSyncExternalStore } from 'use-sync-external-store/shim'
+
 import { useUppyContext } from './headless/UppyContextProvider.js'
 
 export function useGooglePicker({

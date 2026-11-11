@@ -1,5 +1,8 @@
-import { createWebcamController, type WebcamSnapshot } from '@uppy/components'
+import type { WebcamSnapshot } from '@uppy/components'
 import type { ShallowRef } from 'vue'
+
+import { createWebcamController } from '@uppy/components'
+
 import { injectUppyContext } from './headless/context-provider.js'
 import { useExternalStore } from './useSyncExternalStore.js'
 

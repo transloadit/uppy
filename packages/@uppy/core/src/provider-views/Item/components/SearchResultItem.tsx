@@ -1,7 +1,9 @@
-import classNames from 'classnames'
 import type { PartialTreeFile, PartialTreeFolderNode } from '../../../index.js'
 import type { I18n } from '../../../utils/index.js'
 import type ProviderView from '../../ProviderView/ProviderView.js'
+
+import classNames from 'classnames'
+
 import ItemIcon from './ItemIcon.js'
 
 interface SearchResultItemProps {

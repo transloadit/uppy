@@ -1,5 +1,23 @@
+import '@uppy/core/css/style.css'
+import '@uppy/core/provider-views/css/style.css'
+import '@uppy/dashboard/css/style.css'
+import '@uppy-dev/msw-setup'
+
+import type {
+  MockS3Companion,
+  MockS3CompanionOptions,
+} from '@uppy-dev/s3-mock-companion'
+
+import type { S3Options } from '../lib/S3.js'
+
+import { network } from 'virtual:msw'
 import Uppy from '@uppy/core'
 import Dashboard from '@uppy/dashboard'
+import {
+  createMockS3Companion,
+  mockGrant,
+  toMswHandlers,
+} from '@uppy-dev/s3-mock-companion'
 import { HttpResponse, http } from 'msw'
 import {
   afterEach,
@@ -11,19 +29,8 @@ import {
   vi,
 } from 'vitest'
 import { page, userEvent } from 'vitest/browser'
-import '@uppy/core/css/style.css'
-import '@uppy/core/provider-views/css/style.css'
-import '@uppy/dashboard/css/style.css'
-import '@uppy-dev/msw-setup'
-import { network } from 'virtual:msw'
-import {
-  createMockS3Companion,
-  type MockS3Companion,
-  type MockS3CompanionOptions,
-  mockGrant,
-  toMswHandlers,
-} from '@uppy-dev/s3-mock-companion'
-import S3, { type S3Options } from '../lib/S3.js'
+
+import S3 from '../lib/S3.js'
 
 const COMPANION = 'http://localhost:3020'
 const TOKEN = 'test-auth-token'

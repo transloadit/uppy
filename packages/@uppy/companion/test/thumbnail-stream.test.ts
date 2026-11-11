@@ -1,8 +1,11 @@
-import http from 'node:http'
 import type { AddressInfo } from 'node:net'
+
+import http from 'node:http'
 import { PassThrough } from 'node:stream'
+
 import express from 'express'
 import { afterEach, describe, expect, test } from 'vitest'
+
 import thumbnail from '../dist/server/controllers/thumbnail.js'
 
 let stream: PassThrough

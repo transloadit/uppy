@@ -4,6 +4,7 @@
 // complicated ones: http://jsperf.com/json-escape-unicode/4
 
 import got from 'got'
+
 import { MAX_AGE_REFRESH_TOKEN } from '../../helpers/jwt.js'
 import { isRecord } from '../../helpers/type-guards.js'
 import { prepareStream } from '../../helpers/utils.js'

@@ -1,7 +1,11 @@
 import type { Readable } from 'node:stream'
-import fetch, { type RequestInfo, type RequestInit } from 'node-fetch'
+
+import type { RequestInfo, RequestInit } from 'node-fetch'
 import type { WebDAVClientOptions } from 'webdav'
+
+import fetch from 'node-fetch'
 import { AuthType, createClient, getPatcher } from 'webdav'
+
 import { getProtectedHttpAgent, validateURL } from '../../helpers/request.js'
 import { isRecord } from '../../helpers/type-guards.js'
 import logger from '../../logger.js'

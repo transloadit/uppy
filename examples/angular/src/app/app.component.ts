@@ -1,5 +1,7 @@
+import type { OnInit } from '@angular/core'
+
 import { CommonModule } from '@angular/common'
-import { Component, type OnInit } from '@angular/core'
+import { Component } from '@angular/core'
 import { DashboardComponent, DashboardModalComponent } from '@uppy/angular'
 import { Uppy } from '@uppy/core'
 import Tus from '@uppy/tus'

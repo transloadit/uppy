@@ -1,5 +1,10 @@
 /** biome-ignore-all lint/correctness/useUniqueElementIds: it's fine */
-import Uppy, { type UppyFile } from '@uppy/core'
+
+import type { UppyFile } from '@uppy/core'
+
+import type { CustomDropzonePlugin } from './CustomDropzone'
+
+import Uppy from '@uppy/core'
 import GoogleDrivePicker from '@uppy/google-drive-picker'
 import UppyImageEditor from '@uppy/image-editor'
 import {
@@ -14,7 +19,7 @@ import UppyScreenCapture from '@uppy/screen-capture'
 import Tus from '@uppy/tus'
 import UppyWebcam from '@uppy/webcam'
 import { useRef, useState } from 'react'
-import type { CustomDropzonePlugin } from './CustomDropzone'
+
 import { CustomDropzone } from './CustomDropzone'
 import { ImageEditor } from './ImageEditor'
 import { RemoteSource } from './RemoteSource'

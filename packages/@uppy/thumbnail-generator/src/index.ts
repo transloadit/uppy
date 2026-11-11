@@ -1,6 +1,7 @@
 import type { DefinePluginOpts, UIPluginOptions, Uppy } from '@uppy/core'
-import { UIPlugin } from '@uppy/core'
 import type { Body, LocalUppyFile, Meta, UppyFile } from '@uppy/core/utils'
+
+import { UIPlugin } from '@uppy/core'
 import {
   dataURItoBlob,
   isObjectURL,
@@ -8,6 +9,7 @@ import {
 } from '@uppy/core/utils'
 // @ts-expect-error untyped
 import { rotation } from 'exifr/dist/mini.esm.mjs'
+
 import packageJson from '../package.json' with { type: 'json' }
 import locale from './locale.js'
 

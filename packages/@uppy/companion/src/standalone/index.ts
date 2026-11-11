@@ -1,16 +1,20 @@
+import type { Express, NextFunction, Request, Response } from 'express'
+import type { SessionOptions } from 'express-session'
+
+import type { CompanionInitOptions } from '../schemas/index.js'
+import type { EmitterLike } from '../server/emitter/index.js'
+
 import { randomUUID } from 'node:crypto'
 import qs from 'node:querystring'
 import { URL } from 'node:url'
+
 import RedisStore from 'connect-redis'
-import type { Express, NextFunction, Request, Response } from 'express'
 import express from 'express'
-import type { SessionOptions } from 'express-session'
 import session from 'express-session'
 import helmet from 'helmet'
 import morgan from 'morgan'
+
 import * as companion from '../companion.js'
-import type { CompanionInitOptions } from '../schemas/index.js'
-import type { EmitterLike } from '../server/emitter/index.js'
 import { isRecord, toError } from '../server/helpers/type-guards.js'
 import logger from '../server/logger.js'
 import * as redis from '../server/redis.js'

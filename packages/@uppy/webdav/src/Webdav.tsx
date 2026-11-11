@@ -7,17 +7,15 @@ import type {
   Uppy,
   UppyFile,
 } from '@uppy/core'
-import { UIPlugin } from '@uppy/core'
-import {
-  type CompanionPluginOptions,
-  defaultStorage,
-  Provider,
-} from '@uppy/core/companion-client'
-import { ProviderViews, SearchView } from '@uppy/core/provider-views'
+import type { CompanionPluginOptions } from '@uppy/core/companion-client'
 import type { I18n, LocaleStrings } from '@uppy/core/utils'
-// biome-ignore lint/style/useImportType: h is not a type
-import { type ComponentChild, h } from '@uppy/core/utils/preact'
+import type { ComponentChild, h } from '@uppy/core/utils/preact'
+
+import { UIPlugin } from '@uppy/core'
+import { defaultStorage, Provider } from '@uppy/core/companion-client'
+import { ProviderViews, SearchView } from '@uppy/core/provider-views'
 import { useCallback, useState } from '@uppy/core/utils/preact/hooks'
+
 import packageJson from '../package.json' with { type: 'json' }
 import locale from './locale.js'
 

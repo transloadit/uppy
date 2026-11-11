@@ -1,5 +1,6 @@
-import { clsx } from 'clsx'
 import type { UppyContext } from './types.js'
+
+import { clsx } from 'clsx'
 
 export type UploadButtonProps = {
   ctx: UppyContext

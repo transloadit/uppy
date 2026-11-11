@@ -1,11 +1,9 @@
 import type { I18n, Translator } from '@uppy/core/utils'
-import {
-  Component,
-  type ComponentChild,
-  Fragment,
-  type h,
-} from '@uppy/core/utils/preact'
+import type { ComponentChild, h } from '@uppy/core/utils/preact'
+
 import type { DashboardState, TargetWithRender } from '../Dashboard.js'
+
+import { Component, Fragment } from '@uppy/core/utils/preact'
 
 export interface AddFilesProps {
   i18n: I18n

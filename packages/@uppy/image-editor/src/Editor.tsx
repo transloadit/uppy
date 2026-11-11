@@ -1,8 +1,10 @@
 import type { Body, Meta } from '@uppy/core'
 import type { I18n, LocalUppyFile } from '@uppy/core/utils'
-import { Component } from '@uppy/core/utils/preact'
+
 import type ImageEditor from './ImageEditor.js'
 import type { AspectRatio } from './ImageEditor.js'
+
+import { Component } from '@uppy/core/utils/preact'
 
 type Props<M extends Meta, B extends Body> = {
   currentImage: LocalUppyFile<M, B>

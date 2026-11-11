@@ -24,6 +24,7 @@ import Tus from '@uppy/tus'
 import Webcam from '@uppy/webcam'
 import Webdav from '@uppy/webdav'
 import XHRUpload from '@uppy/xhr-upload'
+
 import generateSignatureIfSecret from './generateSignatureIfSecret.js'
 
 // DEV CONFIG: create a .env file in the project root directory to customize those values.

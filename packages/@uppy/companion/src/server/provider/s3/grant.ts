@@ -8,9 +8,13 @@
  * with a shared secret (HS256) or with an asymmetric key, in which case
  * Companion is configured with the public key only.
  */
-import jwt, { type Algorithm } from 'jsonwebtoken'
-import { z } from 'zod'
+
+import type { Algorithm } from 'jsonwebtoken'
+
 import type { S3ProviderOptions } from '../../../schemas/companion.js'
+
+import jwt from 'jsonwebtoken'
+import { z } from 'zod'
 
 /** A verified grant, reduced to what the provider acts on. */
 export type StorageGrant = {

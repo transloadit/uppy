@@ -1,9 +1,12 @@
 import type { Body, Meta, Uppy } from '@uppy/core'
+
+import type { StoreAssemblyParameters } from '../lib/storeAssemblyOptions.js'
+
 import { describe, expect, it, vi } from 'vitest'
+
 import {
   buildStoreAssemblyParams,
   createStoreAssemblyOptions,
-  type StoreAssemblyParameters,
 } from '../lib/storeAssemblyOptions.js'
 
 /** Transloadit's Assembly placeholder, not a JavaScript template. */

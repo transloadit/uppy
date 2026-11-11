@@ -1,8 +1,12 @@
-import { EventEmitter } from 'node:events'
-import safeStringify from 'fast-safe-stringify'
 import type { Redis } from 'ioredis'
-import * as logger from '../logger.js'
+
 import type { EmitterLike } from './index.js'
+
+import { EventEmitter } from 'node:events'
+
+import safeStringify from 'fast-safe-stringify'
+
+import * as logger from '../logger.js'
 
 function replacer(key: string, value: unknown): unknown {
   // Remove the circular structure and internal ones

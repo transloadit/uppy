@@ -6,14 +6,18 @@ import type {
   Uppy,
   UppyFile,
 } from '@uppy/core'
+import type { ComponentChild } from '@uppy/core/utils/preact'
+
+import type { StatusBarOptions } from './StatusBarOptions.js'
+import type { StatusBarUIProps } from './StatusBarUI.js'
+
 import { UIPlugin } from '@uppy/core'
 import { emaFilter, getTextDirection } from '@uppy/core/utils'
-import type { ComponentChild } from '@uppy/core/utils/preact'
+
 import packageJson from '../package.json' with { type: 'json' }
 import locale from './locale.js'
-import type { StatusBarOptions } from './StatusBarOptions.js'
 import statusBarStates from './StatusBarStates.js'
-import StatusBarUI, { type StatusBarUIProps } from './StatusBarUI.js'
+import StatusBarUI from './StatusBarUI.js'
 
 declare module '@uppy/core' {
   export interface PluginTypeRegistry<M extends Meta, B extends Body> {

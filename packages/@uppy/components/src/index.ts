@@ -1,5 +1,13 @@
 // Headless components
 
+// Types and utils
+export type {
+  NonNullableUppyContext,
+  UploadStatus,
+  UppyContext,
+  UppyState,
+} from './types.js'
+
 export {
   createGooglePickerController,
   type GooglePickerOptions,
@@ -57,13 +65,6 @@ export {
   type ProviderIconProps,
 } from './ProviderIcon.js'
 export { default as Thumbnail, type ThumbnailProps } from './Thumbnail.js'
-// Types and utils
-export type {
-  NonNullableUppyContext,
-  UploadStatus,
-  UppyContext,
-  UppyState,
-} from './types.js'
 export {
   default as UploadButton,
   type UploadButtonProps,

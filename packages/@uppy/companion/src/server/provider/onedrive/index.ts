@@ -1,4 +1,5 @@
 import got from 'got'
+
 import { isRecord } from '../../helpers/type-guards.js'
 import { pathSegment, prepareStream } from '../../helpers/utils.js'
 import logger from '../../logger.js'

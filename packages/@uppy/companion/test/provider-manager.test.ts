@@ -1,4 +1,5 @@
 import { beforeEach, describe, expect, test } from 'vitest'
+
 import createGrantConfig from '../dist/config/grant.js'
 import * as providerManager from '../dist/server/provider/index.js'
 import Provider, {

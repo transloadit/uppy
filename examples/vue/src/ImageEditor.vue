@@ -108,6 +108,7 @@
 
 <script setup lang="ts">
 import type { UppyFile } from '@uppy/core'
+
 import { useImageEditor } from '@uppy/vue'
 
 const props = defineProps<{

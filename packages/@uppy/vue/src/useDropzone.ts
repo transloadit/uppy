@@ -1,4 +1,7 @@
-import { createDropzone, type DropzoneOptions } from '@uppy/components'
+import type { DropzoneOptions } from '@uppy/components'
+
+import { createDropzone } from '@uppy/components'
+
 import { injectUppyContext } from './headless/context-provider.js'
 
 export type VueDropzoneReturn = {

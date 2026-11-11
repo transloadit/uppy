@@ -1,6 +1,9 @@
 import '@uppy-dev/msw-setup'
+
+import type { UppyEventMap } from '@uppy/core'
+
 import { network } from 'virtual:msw'
-import Uppy, { type UppyEventMap } from '@uppy/core'
+import Uppy from '@uppy/core'
 import Dashboard from '@uppy/dashboard'
 import { HttpResponse, http } from 'msw'
 import { beforeEach, describe, expect, it } from 'vitest'

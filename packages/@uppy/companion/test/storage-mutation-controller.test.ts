@@ -1,4 +1,5 @@
 import { expect, test, vi } from 'vitest'
+
 import { mutate } from '../src/server/controllers/index.js'
 
 test.each([

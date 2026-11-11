@@ -1,6 +1,9 @@
-import { Fragment, type h } from 'preact'
+import type { h } from 'preact'
+
 import type { Body, Meta, PartialTreeFolder } from '../index.js'
 import type ProviderView from './ProviderView/index.js'
+
+import { Fragment } from 'preact'
 
 type BreadcrumbsProps<M extends Meta, B extends Body> = {
   openFolder: ProviderView<M, B>['openFolder']

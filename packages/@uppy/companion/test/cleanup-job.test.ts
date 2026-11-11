@@ -1,3 +1,5 @@
+import type { Request } from 'express'
+
 import {
   existsSync,
   mkdtempSync,
@@ -9,8 +11,9 @@ import {
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import { PassThrough, Readable } from 'node:stream'
-import type { Request } from 'express'
+
 import { expect, test, vi } from 'vitest'
+
 import { defaultOptions } from '../dist/config/companion.js'
 import Emitter from '../dist/server/emitter/index.js'
 import { startCleanUpJob } from '../dist/server/jobs.js'

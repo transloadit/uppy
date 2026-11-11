@@ -1,9 +1,4 @@
-import {
-  BasePlugin,
-  type DefinePluginOpts,
-  type PluginOpts,
-  type Uppy,
-} from '@uppy/core'
+import type { DefinePluginOpts, PluginOpts, Uppy } from '@uppy/core'
 import type { RequestClient } from '@uppy/core/companion-client'
 import type {
   Body,
@@ -12,18 +7,23 @@ import type {
   RemoteUppyFile,
   UppyFile,
 } from '@uppy/core/utils'
+
+import type { UploadResult } from './S3Uploader.js'
+import type S3Client from './s3-client/S3Client.js'
+import type * as IT from './s3-client/types.js'
+
+import { BasePlugin } from '@uppy/core'
 import {
   filterFilesToEmitUploadStarted,
   filterFilesToUpload,
   getAllowedMetaFields,
   TaskQueue,
 } from '@uppy/core/utils'
+
 import packageJson from '../package.json' with { type: 'json' }
-import S3Uploader, { type UploadResult } from './S3Uploader.js'
+import S3Uploader from './S3Uploader.js'
 import S3Companion from './s3-client/CompanionS3.js'
-import type S3Client from './s3-client/S3Client.js'
 import S3mini from './s3-client/S3mini.js'
-import type * as IT from './s3-client/types.js'
 
 // ============================================================================
 // Types

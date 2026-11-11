@@ -1,10 +1,13 @@
-import classNames from 'classnames'
 import type { h } from 'preact'
+
 import type { Body, Meta, PartialTreeFolder } from '../../index.js'
 import type { I18n } from '../../utils/index.js'
-import Breadcrumbs from '../Breadcrumbs.js'
 import type ProviderView from './ProviderView.js'
 import type { ProviderToolbarAction } from './ProviderView.js'
+
+import classNames from 'classnames'
+
+import Breadcrumbs from '../Breadcrumbs.js'
 import User from './User.js'
 
 type HeaderProps<M extends Meta, B extends Body> = {

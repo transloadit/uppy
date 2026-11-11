@@ -1,8 +1,13 @@
-import { createServer, type ServerResponse } from 'node:http'
+import type { ServerResponse } from 'node:http'
 import type { AddressInfo } from 'node:net'
-import { Readable } from 'node:stream'
+
 import type { Request } from 'express'
+
+import { createServer } from 'node:http'
+import { Readable } from 'node:stream'
+
 import { afterEach, expect, onTestFinished, test, vi } from 'vitest'
+
 import { defaultOptions } from '../dist/config/companion.js'
 import Uploader, {
   PAUSED_TIMEOUT_MS,

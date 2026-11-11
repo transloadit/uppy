@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest'
+
 import dataURItoBlob from '../../lib/utils/dataURItoBlob.js'
 import sampleImageDataURI from './sampleImageDataURI.js'
 

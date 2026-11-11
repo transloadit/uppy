@@ -1,8 +1,8 @@
-import {
-  createScreenCaptureController,
-  type ScreenCaptureSnapshot,
-} from '@uppy/components'
+import type { ScreenCaptureSnapshot } from '@uppy/components'
 import type { ShallowRef } from 'vue'
+
+import { createScreenCaptureController } from '@uppy/components'
+
 import { injectUppyContext } from './headless/context-provider.js'
 import { useExternalStore } from './useSyncExternalStore.js'
 

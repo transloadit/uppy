@@ -1,5 +1,8 @@
-import Core, { type UppyEventMap } from '@uppy/core'
-import Tus, { type TusBody } from '@uppy/tus'
+import type { UppyEventMap } from '@uppy/core'
+import type { TusBody } from '@uppy/tus'
+
+import Core from '@uppy/core'
+import Tus from '@uppy/tus'
 import { describe, expect, expectTypeOf, it, vi } from 'vitest'
 
 // Shared fake XHR object — must be declared via vi.hoisted so it's available
