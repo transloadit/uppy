@@ -8,12 +8,11 @@ import type {
   Uppy,
 } from '../index.js'
 import type { CompanionPluginOptions } from './index.js'
-import type RequestClient from './RequestClient.js'
 import type { RequestOptions } from './RequestClient.js'
 
 import { getErrorMessage, getSocketHost } from '../utils/index.js'
 import { isAuthError } from './AuthError.js'
-import { authErrorStatusCode } from './RequestClient.js'
+import RequestClient, { authErrorStatusCode } from './RequestClient.js'
 
 export interface Opts extends PluginOpts, CompanionPluginOptions {
   pluginId: string
