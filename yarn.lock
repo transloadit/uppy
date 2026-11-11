@@ -24451,6 +24451,7 @@ __metadata:
     "@uidotdev/usehooks": "npm:^2.4.1"
     "@uppy/react": "workspace:*"
     clsx: "npm:^2.1.1"
+    dedent: "npm:^1.7.2"
     prism-react-renderer: "npm:^2.1.0"
     react: "npm:^19.2.0"
     react-dom: "npm:^19.2.0"

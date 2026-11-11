@@ -1,15 +1,13 @@
 import Admonition from '@theme/Admonition'
 import CodeBlock from '@theme/CodeBlock'
+import dedent from 'dedent'
 import type { ReactNode } from 'react'
-import React from 'react'
-
-// import packageJson from '../../package.json';
 import packageJson from 'uppy/package.json'
 
 const { version: uppyVersion } = packageJson
 
 interface UppyCdnExampleProps {
-  children: ReactNode
+  children: string
   uppyCssName?: string
   uppyJsName?: string
 }
@@ -19,16 +17,6 @@ export default function UppyCdnExample({
   uppyCssName = 'uppy.min.css',
   uppyJsName = 'uppy.min.mjs',
 }: UppyCdnExampleProps): ReactNode {
-  const lines: string[] = []
-
-  React.Children.forEach(children, (child) => {
-    for (const line of String(child).trim().split('\n')) {
-      lines.push(line.trim())
-    }
-  })
-
-  const linesProcessed = lines.map((line) => `  ${line}`).join('\n')
-
   const uppyJsUrl = `https://releases.transloadit.com/uppy/v${uppyVersion}/${uppyJsName}`
   const html = `\
 <!-- 1. Add CSS to \`<head>\` -->
@@ -38,7 +26,7 @@ export default function UppyCdnExample({
 <div id="uppy"></div>
 
 <script type="module">
-${linesProcessed.replace(/{{UPPY_JS_URL}}/g, uppyJsUrl)}
+${dedent(children).replace(/{{UPPY_JS_URL}}/g, uppyJsUrl)}
 </script>
 `
 
