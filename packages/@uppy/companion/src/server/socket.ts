@@ -2,7 +2,7 @@ import type { Server as HttpServer } from 'node:http'
 import type { Server as HttpsServer } from 'node:https'
 import { type WebSocket, WebSocketServer } from 'ws'
 import type { CompanionInitOptions } from '../schemas/companion.js'
-import { takeAuthCallback } from './auth-callback.js'
+import { authCallbackRetentionMs, takeAuthCallback } from './auth-callback.js'
 import emitter from './emitter/index.js'
 import { isRecord } from './helpers/type-guards.js'
 import { getURLBuilder, jsonStringify } from './helpers/utils.js'
@@ -139,10 +139,18 @@ async function handleAuthCallbackSocketConnection({
     ws.close()
   }
 
-  function onResubscribed() {
+  function onResubscribed(downtimeMs: unknown) {
     // A publication may have been lost while the subscriber reconnected; the
-    // retained result is still in storage.
-    replay().catch(onError)
+    // retained result is still in storage, unless the outage outlasted its
+    // retention. Then nothing will ever arrive: settle instead of waiting.
+    replay()
+      .then(() => {
+        const outlasted =
+          typeof downtimeMs === 'number' &&
+          downtimeMs >= authCallbackRetentionMs
+        if (!sent && !closed && outlasted) onError()
+      })
+      .catch(onError)
   }
 
   ws.on('close', () => {

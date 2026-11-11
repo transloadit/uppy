@@ -41,15 +41,23 @@ export default function redisEmitter(
     // Pub/sub drops publications while disconnected. ioredis resubscribes
     // before the deferred 'ready' event, so a PING sent here is answered only
     // after the resubscription; retained results can then be replayed safely.
+    // Listeners get how long the subscriber was gone, to tell whether a
+    // result published meanwhile can still be retained.
     let connected = false
+    let disconnectedAt: number | undefined
+    subscriber.on('close', () => {
+      disconnectedAt ??= Date.now()
+    })
     subscriber.on('ready', () => {
+      const downtimeMs = Date.now() - (disconnectedAt ?? Date.now())
+      disconnectedAt = undefined
       if (!connected) {
         connected = true
         return
       }
       subscriber
         .ping()
-        .then(() => errorEmitter.emit('redis:resubscribed'))
+        .then(() => errorEmitter.emit('redis:resubscribed', downtimeMs))
         .catch(() => {})
     })
     await publisher.connect()
