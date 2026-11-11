@@ -7,48 +7,61 @@ import * as logger from './logger.js'
 import * as redis from './redis.js'
 
 const expirySeconds = 60
+/** How long a callback result stays retained for its socket to take. */
+export const authCallbackRetentionMs = expirySeconds * 1000
 const maxPending = 1000
 const maxPayloadBytes = 64 * 1024
+const commandTimeoutMs = 5000
 const pending = new Map<
   string,
   { data: string; timer: NodeJS.Timeout; expiresAt: number }
 >()
-let authRedis: Redis | undefined
 
-async function storageClient(): Promise<Redis | undefined> {
-  // A new login may recover an ended connection, without retrying old commands.
-  if (!authRedis || authRedis.status === 'end') {
-    const shared = redis.client()
-    if (!shared) return undefined
-    // Keep upload/session retries unchanged. Token-bearing commands must neither
-    // wait offline nor be resent after an ambiguous response.
-    authRedis = shared.duplicate({
-      lazyConnect: false,
-      commandTimeout: 5000,
-      connectTimeout: 5000,
-      socketTimeout: 5000,
-      enableOfflineQueue: false,
-      enableAutoPipelining: false,
-      maxRetriesPerRequest: 0,
-      autoResendUnfulfilledCommands: false,
-      reconnectOnError: null,
-    })
-    // Concurrent readiness waits clean themselves up on ready/error or timeout.
-    authRedis.setMaxListeners(0)
-    authRedis.on('error', () =>
-      logger.error('OAuth Redis unavailable', 'auth.callback.redis.error'),
+// One wait per client: every login waiting on its own `once()` would add a
+// listener pair to the shared client and trip its max-listeners warning when
+// logins pile up during an outage.
+const readiness = new WeakMap<Redis, Promise<unknown>>()
+
+function whenReady(client: Redis): Promise<unknown> {
+  if (client.status === 'ready') return Promise.resolve()
+  let wait = readiness.get(client)
+  if (!wait) {
+    wait = once(client, 'ready', {
+      signal: AbortSignal.timeout(commandTimeoutMs),
+    }).finally(() => readiness.delete(client))
+    readiness.set(client, wait)
+  }
+  return wait
+}
+
+/**
+ * Run a token-bearing command on the shared client, bounded in time. Waiting
+ * for readiness first keeps the command out of the offline queue, so a login
+ * fails fast during an outage instead of holding the callback request open.
+ */
+async function bounded<T>(client: Redis, run: () => Promise<T>): Promise<T> {
+  let timer: NodeJS.Timeout | undefined
+  const timedOut = new Promise<never>((_resolve, reject) => {
+    timer = setTimeout(
+      () => reject(new Error('OAuth Redis command timed out')),
+      commandTimeoutMs,
     )
+    timer.unref()
+  })
+  try {
+    return await Promise.race([whenReady(client).then(run), timedOut])
+  } finally {
+    clearTimeout(timer)
   }
-  if (authRedis.status !== 'ready') {
-    await once(authRedis, 'ready', { signal: AbortSignal.timeout(5000) })
-  }
-  return authRedis
+}
+
+function scopePrefix(options: CompanionInitOptions) {
+  return options.redisPubSubScope ? `${options.redisPubSubScope}:` : ''
 }
 
 function storageKey(token: string, options: CompanionInitOptions) {
-  const prefix = options.redisPubSubScope ? `${options.redisPubSubScope}:` : ''
   // Preserve #6751's key so mixed-version workers consume the same result.
-  return `${prefix}companion:auth-callback:${token}`
+  return `${scopePrefix(options)}companion:auth-callback:${token}`
 }
 
 export async function publishAuthCallback(
@@ -57,23 +70,16 @@ export async function publishAuthCallback(
   options: CompanionInitOptions,
 ): Promise<void> {
   const key = storageKey(token, options)
-  let storage: Redis | undefined
+  const storage = redis.client()
   const serialized = jsonStringify(data)
-  const expiresAt = Date.now() + expirySeconds * 1000
   try {
     if (Buffer.byteLength(serialized) > maxPayloadBytes)
       throw new Error('OAuth result too large')
-    storage = await storageClient()
     if (storage) {
-      // An absolute deadline prevents a delayed write from extending retention.
-      // MULTI + PEXPIREAT also supports Redis versions without SET PXAT.
-      const results = await storage
-        .multi()
-        .set(key, serialized)
-        .pexpireat(key, expiresAt)
-        .exec()
-      if (!results || results.some(([error]) => error))
-        throw new Error('OAuth retention transaction failed')
+      // A relative TTL is applied by Redis, so Companion's clock cannot skew it.
+      await bounded(storage, () =>
+        storage.set(key, serialized, 'PX', authCallbackRetentionMs),
+      )
     } else {
       clearTimeout(pending.get(key)?.timer)
       pending.delete(key)
@@ -84,13 +90,15 @@ export async function publishAuthCallback(
           pending.delete(oldest)
         }
       }
-      const timer = setTimeout(() => pending.delete(key), expirySeconds * 1000)
+      const timer = setTimeout(
+        () => pending.delete(key),
+        authCallbackRetentionMs,
+      )
       timer.unref()
+      const expiresAt = Date.now() + authCallbackRetentionMs
       pending.set(key, { data: serialized, timer, expiresAt })
     }
   } catch {
-    // A failed write may still have reached Redis. Publishing an unconfirmed result
-    // for direct delivery could let another socket consume the retained copy again.
     // Redis errors include SET arguments, so never log the error or token.
     logger.error('OAuth retention failed', 'auth.callback.retain.error')
     throw new Error('OAuth callback retention failed')
@@ -101,15 +109,23 @@ export async function publishAuthCallback(
   // the publication after another socket already consumed it.
   try {
     if (storage) {
-      const prefix = options.redisPubSubScope
-        ? `${options.redisPubSubScope}:`
-        : ''
-      // Preserve the emitter wire format without its shared publisher's offline queue.
-      await storage.publish(`${prefix}${token}`, jsonStringify([data, true]))
+      // Same wire format as the emitter, whose emit() swallows Redis errors.
+      await bounded(storage, () =>
+        storage.publish(
+          `${scopePrefix(options)}${token}`,
+          jsonStringify([data, true]),
+        ),
+      )
     } else {
       await emitter().emit(token, data, true)
     }
   } catch {
+    // Do not leave a result behind a failure page. Best effort: Redis may be gone.
+    if (storage) await bounded(storage, () => storage.del(key)).catch(() => {})
+    else {
+      clearTimeout(pending.get(key)?.timer)
+      pending.delete(key)
+    }
     // Keep command arguments out of the request error handler and response.
     logger.error('OAuth publication failed', 'auth.callback.publish.error')
     throw new Error('OAuth callback publication failed')
@@ -121,10 +137,12 @@ export async function takeAuthCallback(
   options: CompanionInitOptions,
 ): Promise<unknown> {
   const key = storageKey(token, options)
-  const storage = await storageClient()
+  const storage = redis.client()
   if (storage) {
     // MULTI makes reading and deleting atomic, including on Redis before GETDEL.
-    const results = await storage.multi().get(key).del(key).exec()
+    const results = await bounded(storage, () =>
+      storage.multi().get(key).del(key).exec(),
+    )
     const [error, data] = results?.[0] ?? []
     if (error) throw error
     return typeof data === 'string' ? JSON.parse(data) : undefined

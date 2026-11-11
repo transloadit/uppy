@@ -231,3 +231,22 @@ test.skipIf(!redisUrl)(
     expect(retry.messages).toEqual([{ token: 'fixture-auth-result' }])
   },
 )
+
+test.skipIf(!redisUrl)(
+  'delivers a callback completed while the subscriber reconnects',
+  async () => {
+    const admin = new Redis(z.string().parse(redisUrl))
+    clients.push(admin)
+    const subscriber = await worker(redisUrl)
+    const publisher = await worker(redisUrl)
+    const token = randomUUID()
+    const connection = connect(subscriber.origin, token)
+    await connection.opened
+    await subscriber.command('barrier', token)
+    // Drop every subscriber connection; the publication below may be lost.
+    await admin.client('KILL', 'TYPE', 'pubsub')
+    expect(await publisher.command('publish', token)).toEqual({ ok: true })
+    await connection.message
+    expect(connection.messages).toEqual([{ token: 'fixture-auth-result' }])
+  },
+)

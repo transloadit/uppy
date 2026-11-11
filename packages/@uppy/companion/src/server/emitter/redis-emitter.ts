@@ -25,7 +25,7 @@ export default function redisEmitter(
   const getPrefixedEventName = (eventName: string) => `${prefix}${eventName}`
 
   const errorEmitter = new EventEmitter()
-  // Pending login sockets listen for disconnect and remove the listener on close.
+  // Pending login sockets listen for resubscription and remove the listener on close.
   errorEmitter.setMaxListeners(0)
   const handleError = (err: unknown) => errorEmitter.emit('error', err)
 
@@ -38,7 +38,28 @@ export default function redisEmitter(
     subscriber.on('error', (err) =>
       logger.error('subscriber redis error', err.toString()),
     )
-    subscriber.on('close', () => errorEmitter.emit('redis:disconnect'))
+    // Pub/sub drops publications while disconnected. ioredis resubscribes
+    // before the deferred 'ready' event, so a PING sent here is answered only
+    // after the resubscription; retained results can then be replayed safely.
+    // Listeners get how long the subscriber was gone, to tell whether a
+    // result published meanwhile can still be retained.
+    let connected = false
+    let disconnectedAt: number | undefined
+    subscriber.on('close', () => {
+      disconnectedAt ??= Date.now()
+    })
+    subscriber.on('ready', () => {
+      const downtimeMs = Date.now() - (disconnectedAt ?? Date.now())
+      disconnectedAt = undefined
+      if (!connected) {
+        connected = true
+        return
+      }
+      subscriber
+        .ping()
+        .then(() => errorEmitter.emit('redis:resubscribed', downtimeMs))
+        .catch(() => {})
+    })
     await publisher.connect()
     await subscriber.connect()
     return { subscriber, publisher }
@@ -79,7 +100,7 @@ export default function redisEmitter(
   type Handler = (...args: unknown[]) => unknown
 
   async function removeListener(eventName: string, handler: Handler) {
-    if (eventName === 'error' || eventName === 'redis:disconnect') {
+    if (eventName === 'error' || eventName === 'redis:resubscribed') {
       errorEmitter.removeListener(eventName, handler)
       return
     }
@@ -116,7 +137,7 @@ export default function redisEmitter(
     handler: Handler,
     _once = false,
   ) {
-    if (eventName === 'error' || eventName === 'redis:disconnect') {
+    if (eventName === 'error' || eventName === 'redis:resubscribed') {
       if (_once) errorEmitter.once(eventName, handler)
       else errorEmitter.addListener(eventName, handler)
       return
@@ -210,7 +231,7 @@ export default function redisEmitter(
    * @param eventName name of the event
    */
   async function removeAllListeners(eventName: string) {
-    if (eventName === 'error' || eventName === 'redis:disconnect') {
+    if (eventName === 'error' || eventName === 'redis:resubscribed') {
       errorEmitter.removeAllListeners(eventName)
       return
     }
