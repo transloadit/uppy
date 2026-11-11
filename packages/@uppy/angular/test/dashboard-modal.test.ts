@@ -72,3 +72,14 @@ it('keeps the modal closed when `open` is initially false', () => {
   expect(isHidden(host.uppy)).toBe(false)
   fixture.destroy()
 })
+
+it('keeps the modal open when the `uppy` instance is swapped', () => {
+  const { fixture, update } = render({ open: true })
+  const next = new Uppy()
+  update({ uppy: next })
+  expect(isHidden(next)).toBe(false)
+
+  update({ open: false })
+  expect(isHidden(next)).toBe(true)
+  fixture.destroy()
+})

@@ -30,8 +30,6 @@ export class DashboardModalComponent<M extends Meta, B extends Body>
 	@Input() props: DashboardOptions<M, B> = {};
 	@Input() open: boolean = false;
 
-	private mounted = false;
-
 	/** Inserted by Angular inject() migration for backwards compatibility */
 	constructor(...args: unknown[]);
 
@@ -48,7 +46,6 @@ export class DashboardModalComponent<M extends Meta, B extends Body>
 			},
 			Dashboard,
 		);
-		this.mounted = true;
 		// Angular runs `ngOnChanges` before `ngOnInit`, so the initial value of
 		// `open` — which only ever shows up in that first `SimpleChanges` — has to
 		// be applied here, once the plugin actually exists.
@@ -62,11 +59,16 @@ export class DashboardModalComponent<M extends Meta, B extends Body>
 		// to talk to yet. Every input still carries `previousValue: undefined` at
 		// that point, so nothing is lost by skipping it: `ngOnInit` mounts the
 		// plugin with the current `props` and applies the current `open` value.
-		if (!this.mounted) return;
+		const previousPlugin = this.plugin;
+		if (previousPlugin === undefined) return;
 
 		this.handleChanges(changes, Dashboard);
-		// Handle dashboard-modal specific changes
-		if (changes["open"] && this.open !== changes["open"].previousValue) {
+		if (this.plugin !== previousPlugin) {
+			// A new `uppy` got a freshly installed plugin, which starts out closed.
+			if (this.open) {
+				this.plugin!.openModal();
+			}
+		} else if (changes["open"] && this.open !== changes["open"].previousValue) {
 			if (this.open && !changes["open"].previousValue) {
 				this.plugin!.openModal();
 			}
