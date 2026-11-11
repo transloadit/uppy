@@ -16,11 +16,11 @@ const root = fileURLToPath(new URL('../../../../', import.meta.url))
 const leadingLocaleName = 'en_US'
 // Node strips types when importing `.ts`, so the modes that compare language
 // packs read `src/` and stay independent of `yarn build`. (`unused` still needs
-// `lib/`, but of the *plugin* packages, to scan their compiled code for i18n calls.)
+// `lib/`, but of the *plugin* packages, to look for each key in their compiled code.)
 const localePackGlob = `${root}/packages/@uppy/locales/src/*.ts`
 const mode = process.argv[2]
 const verbose = process.argv.includes('--verbose')
-// Packages whose code uses another package's locale keys.
+// Locale keys of the package on the left that code in the listed packages uses.
 const pluginLocaleDependencies = {
   'status-bar': ['core'],
 }
@@ -43,7 +43,11 @@ function getAllFilesPerPlugin(pluginNames) {
   const filesPerPlugin = {}
 
   function getFiles(name) {
-    return globSync(`${root}/packages/@uppy/${name}/lib/**/*.js`)
+    const files = globSync(`${root}/packages/@uppy/${name}/lib/**/*.js`)
+    if (files.length === 0) {
+      throw new Error(`@uppy/${name} has no lib/: run \`yarn build\` first`)
+    }
+    return files
       .filter((filePath) => !filePath.includes('locale.js'))
       .map((filePath) => fs.readFileSync(filePath, 'utf-8'))
   }
@@ -90,7 +94,11 @@ async function unused(filesPerPlugin) {
     }
   }
 
-  if (problems.length) throw new Error(problems.join('\n'))
+  if (problems.length) {
+    throw new Error(
+      `\n${problems.join('\n')}\n\n${problems.length} problem(s): remove unused keys from the package's locale.ts, or list them in knownUnusedKeys`,
+    )
+  }
 }
 
 // Locales are community-contributed and always lag behind `en_US`, so
