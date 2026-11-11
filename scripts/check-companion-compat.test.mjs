@@ -307,7 +307,15 @@ function makeRepo(base, head = {}) {
       )
     }
     run('add', '--all')
-    run('commit', '--quiet', '--allow-empty', '-m', 'commit')
+    run(
+      '-c',
+      'commit.gpgsign=false',
+      'commit',
+      '--quiet',
+      '--allow-empty',
+      '-m',
+      'commit',
+    )
   }
   run('init', '--quiet')
   write(base)

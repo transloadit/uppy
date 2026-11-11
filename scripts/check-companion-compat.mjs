@@ -39,6 +39,7 @@ import { mkdtempSync, readdirSync, readFileSync, rmSync } from 'node:fs'
 import os from 'node:os'
 import path from 'node:path'
 import { setTimeout as sleep } from 'node:timers/promises'
+import { pathToFileURL } from 'node:url'
 
 // Hosted Companion: the global address is Transloadit.COMPANION_URL in
 // packages/@uppy/transloadit/src/index.ts, the others are the regional API2
@@ -338,7 +339,14 @@ export async function main({
   if (argv.includes('--ci') && env.GITHUB_EVENT_NAME === 'pull_request') {
     // The PR checkout is a merge commit, so HEAD^1 is the base branch.
     // Without a readable base every package reads as new and every file as
-    // changed, so this errs towards strict.
+    // changed, so this errs towards strict, but the guard below can't run.
+    try {
+      git(root, 'rev-parse', '--verify', '--quiet', 'HEAD^1')
+    } catch {
+      log(
+        '::warning::Cannot read the PR base (HEAD^1; is fetch-depth at least 2?). Hosted problems fail, but the minCompanionVersion guard is skipped.',
+      )
+    }
     const baseMinimums = minimumsOf(paths, (file) =>
       git(root, 'show', `HEAD^1:${file}`),
     )
@@ -375,7 +383,11 @@ export async function main({
   const result = evaluate({
     min,
     repoCompanion,
-    hosted: await fetchHosted(endpoints, { delayMs: retryDelayMs }),
+    // Retrying only pays off when a problem would fail the job.
+    hosted: await fetchHosted(endpoints, {
+      delayMs: retryDelayMs,
+      ...(!strict && { retries: 0 }),
+    }),
     strict,
   })
 
@@ -386,7 +398,8 @@ export async function main({
   return result.ok && errors.length === 0 ? 0 : 1
 }
 
-if (import.meta.main) {
+// Not import.meta.main: that needs Node 22.18, and engines allows 22.0.
+if (import.meta.url === pathToFileURL(process.argv[1] ?? '').href) {
   try {
     process.exitCode = await main()
   } catch (err) {
