@@ -12,5 +12,7 @@ The components no longer create a default eagerly. The wrapper creates an instan
 only when nothing was passed in, and destroys that one (and only that one) on teardown; instances
 passed in from the outside remain the caller's responsibility. A `[uppy]` binding that is
 `undefined` at first, or goes back to `undefined`/`null` later, now falls back to that internal
-instance instead of throwing. Note that reading `component.uppy`
-before `ngOnInit` now returns `undefined` instead of a throwaway instance.
+instance instead of throwing.
+
+Note that reading `component.uppy` before `ngOnInit` now returns `undefined` instead of a
+throwaway instance.
