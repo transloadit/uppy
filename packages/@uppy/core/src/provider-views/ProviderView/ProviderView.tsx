@@ -1042,13 +1042,15 @@ export default class ProviderView<M extends Meta, B extends Body> {
       // 1. Enrich our partialTree by fetching all 'checked' but not-yet-fetched folders
       const enrichedTree: PartialTree = await PartialTreeUtils.afterFill(
         partialTree,
-        (path: PartialTreeId) => this.provider.list(path, { signal }),
+        (path: PartialTreeId, fillSignal) =>
+          this.provider.list(path, { signal: fillSignal }),
         this.validateSingleFile,
         (n) => {
           this.setLoading(
             this.plugin.uppy.i18n('addedNumFiles', { numFiles: n }),
           )
         },
+        signal,
       )
 
       // 2. Now that we know how many files there are - recheck aggregateRestrictions!
