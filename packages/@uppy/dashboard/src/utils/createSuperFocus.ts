@@ -1,6 +1,8 @@
-import { FOCUSABLE_ELEMENTS } from '@uppy/core/utils'
 import type { DebouncedFunc } from 'lodash'
+
+import { FOCUSABLE_ELEMENTS } from '@uppy/core/utils'
 import debounce from 'lodash/debounce.js'
+
 import getActiveOverlayEl from './getActiveOverlayEl.js'
 
 /*

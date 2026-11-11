@@ -1,4 +1,7 @@
-import Uppy, { BasePlugin, type PluginOpts } from '@uppy/core'
+import type Uppy from '@uppy/core'
+import type { PluginOpts } from '@uppy/core'
+
+import { BasePlugin } from '@uppy/core'
 import Dashboard from '@uppy/dashboard'
 import {
   createMockS3Companion,
@@ -12,7 +15,9 @@ import '@uppy/core/css/style.css'
 import '@uppy/core/provider-views/css/style.css'
 import '@uppy/dashboard/css/style.css'
 import '@uppy-dev/msw-setup'
+
 import { network } from 'virtual:msw'
+
 import TransloaditStorage, {
   type TransloaditStorageOptions,
 } from '../lib/TransloaditStorage.js'

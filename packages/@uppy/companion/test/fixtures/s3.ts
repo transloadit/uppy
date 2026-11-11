@@ -1,4 +1,6 @@
-import jwt, { type Algorithm } from 'jsonwebtoken'
+import type { Algorithm } from 'jsonwebtoken'
+
+import jwt from 'jsonwebtoken'
 
 /** The HS256 secret the tests' storage grants are signed with. */
 export const GRANT_SECRET = 'grant-secret-one'

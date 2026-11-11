@@ -1,6 +1,7 @@
-import MDXComponents from '@theme-original/MDXComponents'
 import type React from 'react'
 import type { ReactNode } from 'react'
+
+import MDXComponents from '@theme-original/MDXComponents'
 
 /**
  * GitHub-flavoured task lists (`- [x] done`) render as bare disabled

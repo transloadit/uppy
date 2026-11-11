@@ -1,6 +1,7 @@
 import { h } from 'preact'
 import { useLayoutEffect } from 'preact/hooks'
 import { describe, expect, it, vi } from 'vitest'
+
 import Core from '../lib/index.js'
 import UIPlugin from '../lib/UIPlugin.js'
 

@@ -1,8 +1,11 @@
-import { prettierBytes } from '@transloadit/prettier-bytes'
 import type { UppyFile } from '@uppy/core'
 import type { I18n } from '@uppy/core/utils'
-import { truncateString } from '@uppy/core/utils'
+
 import type { DashboardState } from '../../../Dashboard.js'
+
+import { prettierBytes } from '@transloadit/prettier-bytes'
+import { truncateString } from '@uppy/core/utils'
+
 import MetaErrorMessage from '../MetaErrorMessage.js'
 
 const renderFileName = (props: {

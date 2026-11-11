@@ -1,8 +1,11 @@
 import type { Body, Meta, State, Uppy, UppyFile } from '@uppy/core'
 import type { I18n } from '@uppy/core/utils'
+
+import type { DashboardState } from '../Dashboard.js'
+
 import { VirtualList } from '@uppy/core/utils'
 import { useMemo } from '@uppy/core/utils/preact/hooks'
-import type { DashboardState } from '../Dashboard.js'
+
 import FileItem from './FileItem/index.js'
 
 type FileListProps<M extends Meta, B extends Body> = {

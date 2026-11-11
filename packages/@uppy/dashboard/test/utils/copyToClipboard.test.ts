@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest'
+
 import copyToClipboard from '../../lib/utils/copyToClipboard.js'
 
 describe('copyToClipboard', () => {

@@ -1,7 +1,10 @@
-import http from 'node:http'
 import type { AddressInfo } from 'node:net'
+
+import http from 'node:http'
 import { createGzip } from 'node:zlib'
+
 import { afterAll, beforeAll, beforeEach, describe, expect, test } from 'vitest'
+
 import { downloadURL } from '../dist/server/download.js'
 import {
   getProtectedGot,

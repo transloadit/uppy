@@ -1,5 +1,8 @@
+import type { Session } from 'express-session'
+
 import express from 'express'
-import session, { type Session } from 'express-session'
+import session from 'express-session'
+
 import { expects as zoomExpects } from './fixtures/zoom.js'
 
 const { localZoomKey, localZoomSecret, localZoomVerificationToken } =

@@ -4,6 +4,7 @@ import type {
   PartialTreeFile,
   PartialTreeFolderNode,
 } from '@uppy/core'
+
 import { ProviderViews } from '@uppy/core/provider-views'
 
 export default class DriveProviderViews<

@@ -1,10 +1,11 @@
+import type { MetaFunction } from 'react-router'
+
 import Uppy from '@uppy/core'
 import Dashboard from '@uppy/react/dashboard'
 import Transloadit from '@uppy/transloadit'
 import Tus from '@uppy/tus'
 import Xhr from '@uppy/xhr-upload'
 import { useState } from 'react'
-import type { MetaFunction } from 'react-router'
 
 export const meta: MetaFunction = () => [
   { title: 'React Router + Uppy Upload Examples' },

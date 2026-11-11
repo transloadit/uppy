@@ -1,4 +1,5 @@
 import { FOCUSABLE_ELEMENTS, toArray } from '@uppy/core/utils'
+
 import getActiveOverlayEl from './getActiveOverlayEl.js'
 
 function focusOnFirstNode(event: Event, nodes: HTMLElement[]) {

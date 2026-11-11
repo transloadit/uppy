@@ -1,9 +1,11 @@
 import type { h } from 'preact'
-import { useCallback } from 'preact/hooks'
+
 import type { Body, Meta } from '../../index.js'
 import type { I18n } from '../../utils/index.js'
 import type ProviderViews from './ProviderView.js'
 import type { Opts } from './ProviderView.js'
+
+import { useCallback } from 'preact/hooks'
 
 type AuthViewProps<M extends Meta, B extends Body> = {
   loading: boolean | string

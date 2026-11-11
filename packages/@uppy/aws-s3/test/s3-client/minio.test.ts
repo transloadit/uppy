@@ -1,5 +1,6 @@
 import { AssumeRoleCommand, STSClient } from '@aws-sdk/client-sts'
 import { beforeAll, describe, expect, it } from 'vitest'
+
 import { S3mini } from '../../lib/s3-client/S3mini.js'
 import { createSigV4Signer } from '../../lib/s3-client/signer.js'
 import { randomBytes } from '../test-utils/browser-crypto.js'

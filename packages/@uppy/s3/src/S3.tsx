@@ -1,8 +1,4 @@
-import {
-  decodeStorageGrant,
-  normalizeStorageGrantPrefix,
-  type StorageGrantClaims,
-} from '@transloadit/utils'
+import type { StorageGrantClaims } from '@transloadit/utils'
 import type {
   AsyncStore,
   Body,
@@ -13,24 +9,29 @@ import type {
   Uppy,
   UppyFile,
 } from '@uppy/core'
+import type { CompanionPluginOptions } from '@uppy/core/companion-client'
+import type {
+  ProviderAction,
+  ProviderBulkAction,
+  ProviderToolbarAction,
+} from '@uppy/core/provider-views'
+import type { LocaleStrings } from '@uppy/core/utils'
+import type { ComponentChild, h } from '@uppy/core/utils/preact'
+// Load Dashboard's event augmentation without adding a runtime dependency.
+import type {} from '@uppy/dashboard'
+
+import {
+  decodeStorageGrant,
+  normalizeStorageGrantPrefix,
+} from '@transloadit/utils'
 import { UIPlugin, UserFacingApiError } from '@uppy/core'
 import {
-  type CompanionPluginOptions,
   defaultStorage,
   isAuthError,
   Provider,
 } from '@uppy/core/companion-client'
-import {
-  type ProviderAction,
-  type ProviderBulkAction,
-  type ProviderToolbarAction,
-  ProviderViews,
-} from '@uppy/core/provider-views'
-import type { LocaleStrings } from '@uppy/core/utils'
-// biome-ignore lint/style/useImportType: h is not a type
-import { type ComponentChild, h } from '@uppy/core/utils/preact'
-// Load Dashboard's event augmentation without adding a runtime dependency.
-import type {} from '@uppy/dashboard'
+import { ProviderViews } from '@uppy/core/provider-views'
+
 import packageJson from '../package.json' with { type: 'json' }
 import { asFolderKey, splitKey } from './keys.js'
 import locale from './locale.js'

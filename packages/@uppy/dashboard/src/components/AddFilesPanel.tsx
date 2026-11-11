@@ -1,6 +1,9 @@
-import classNames from 'classnames'
 import type { ComponentChildren } from 'preact'
+
 import type { AddFilesProps } from './AddFiles.js'
+
+import classNames from 'classnames'
+
 import AddFiles from './AddFiles.js'
 
 interface AddFilesPanelProps extends AddFilesProps {

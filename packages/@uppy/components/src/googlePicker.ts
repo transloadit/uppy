@@ -1,10 +1,9 @@
 import type Uppy from '@uppy/core'
-import {
-  createGooglePickerStoreAdapter,
-  type GooglePickerType,
-} from '@uppy/core/companion-client'
+import type { GooglePickerType } from '@uppy/core/companion-client'
 import type GoogleDrivePicker from '@uppy/google-drive-picker'
 import type GooglePhotosPicker from '@uppy/google-photos-picker'
+
+import { createGooglePickerStoreAdapter } from '@uppy/core/companion-client'
 
 export function createGooglePickerPluginAdapter(
   uppy: Uppy<any, any>,

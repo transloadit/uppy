@@ -1,6 +1,8 @@
+import type { Request, Response } from 'express'
+
 import qs from 'node:querystring'
 import { URL } from 'node:url'
-import type { Request, Response } from 'express'
+
 import * as oAuthState from '../helpers/oauth-state.js'
 import { hasHostMatch } from '../helpers/utils.js'
 

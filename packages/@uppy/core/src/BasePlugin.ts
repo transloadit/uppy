@@ -14,6 +14,7 @@ import type {
   Meta,
   OptionalPluralizeLocale,
 } from './utils/index.js'
+
 import { Translator } from './utils/index.js'
 
 export type PluginOpts = {

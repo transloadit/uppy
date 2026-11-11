@@ -1,5 +1,8 @@
+import type { AddressInfo } from 'node:net'
+
 import http from 'node:http'
-import net, { type AddressInfo } from 'node:net'
+import net from 'node:net'
+
 import {
   AbortMultipartUploadCommand,
   CompleteMultipartUploadCommand,
@@ -10,6 +13,7 @@ import {
 import express from 'express'
 import request from 'supertest'
 import { describe, expect, onTestFinished, test, vi } from 'vitest'
+
 import s3 from '../src/server/controllers/s3.js'
 
 type Cmd = { constructor: { name: string }; input: Record<string, unknown> }

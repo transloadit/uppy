@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest'
+
 import getSpeed from '../../lib/utils/getSpeed.js'
 
 describe('getSpeed', () => {

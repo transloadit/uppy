@@ -1,5 +1,7 @@
 <script lang="ts">
-import Uppy, { type UppyFile } from '@uppy/core'
+import type { UppyFile } from '@uppy/core'
+
+import Uppy from '@uppy/core'
 import UppyImageEditor from '@uppy/image-editor'
 import UppyRemoteSources from '@uppy/remote-sources'
 import UppyScreenCapture from '@uppy/screen-capture'

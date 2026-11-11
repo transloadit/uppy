@@ -1,11 +1,12 @@
+import type React from 'react'
+import type { ReactNode } from 'react'
+
 import BrowserOnly from '@docusaurus/BrowserOnly'
 import Head from '@docusaurus/Head'
 import Link from '@docusaurus/Link'
 import Heading from '@theme/Heading'
 import Layout from '@theme/Layout'
 import Dashboard from '@uppy/react/dashboard'
-import type React from 'react'
-import type { ReactNode } from 'react'
 import { Fragment, useState } from 'react'
 import {
   Audio,
@@ -23,6 +24,7 @@ import {
   Webcam,
   Zoom,
 } from 'uppy'
+
 import IconBlocks from '../../static/img/blocks.svg'
 import IconBolt from '../../static/img/bolt.svg'
 import IconFolder from '../../static/img/folder.svg'

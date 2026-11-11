@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest'
+
 import isObjectURL from '../../lib/utils/isObjectURL.js'
 
 describe('isObjectURL', () => {

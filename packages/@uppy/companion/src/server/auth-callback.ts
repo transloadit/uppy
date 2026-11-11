@@ -1,4 +1,5 @@
 import type { CompanionInitOptions } from '../schemas/companion.js'
+
 import emitter from './emitter/index.js'
 import { jsonStringify } from './helpers/utils.js'
 import * as logger from './logger.js'

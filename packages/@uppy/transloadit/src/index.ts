@@ -12,14 +12,13 @@ import type {
   Uppy,
   UppyFile,
 } from '@uppy/core'
+import type { RemoteUppyFile } from '@uppy/core/utils'
+import type { TusDetailedError, TusOpts } from '@uppy/tus'
+
 import { BasePlugin } from '@uppy/core'
-import {
-  ErrorWithCause,
-  RateLimitedQueue,
-  type RemoteUppyFile,
-  toError,
-} from '@uppy/core/utils'
-import Tus, { type TusDetailedError, type TusOpts } from '@uppy/tus'
+import { ErrorWithCause, RateLimitedQueue, toError } from '@uppy/core/utils'
+import Tus from '@uppy/tus'
+
 import packageJson from '../package.json' with { type: 'json' }
 import Assembly from './Assembly.js'
 import AssemblyWatcher from './AssemblyWatcher.js'
@@ -1132,6 +1131,7 @@ export default class Transloadit<
 
 // Re-export type from @transloadit/types so callers can import it from the plugin package.
 export type { AssemblyInstructionsInput } from '@transloadit/types'
+
 // Low-level classes for advanced usage (e.g., creating assemblies without file uploads)
 export { default as Assembly } from './Assembly.js'
 export { AssemblyError, default as Client } from './Client.js'

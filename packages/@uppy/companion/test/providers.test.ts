@@ -1,5 +1,7 @@
-import http from 'node:http'
 import type { AddressInfo } from 'node:net'
+
+import http from 'node:http'
+
 import nock from 'nock'
 import request from 'supertest'
 import {
@@ -11,6 +13,7 @@ import {
   test,
   vi,
 } from 'vitest'
+
 import * as tokenService from '../dist/server/helpers/jwt.js'
 import { isRecord } from '../dist/server/helpers/type-guards.js'
 import * as providerModule from '../dist/server/provider/index.js'

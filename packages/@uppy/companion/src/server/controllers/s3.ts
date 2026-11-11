@@ -1,5 +1,11 @@
 import type { Socket } from 'node:net'
+
 import type { Part, S3Client } from '@aws-sdk/client-s3'
+import type { PresignedPostOptions } from '@aws-sdk/s3-presigned-post'
+import type { NextFunction, Request, Response, Router } from 'express'
+
+import type { CompanionRuntimeOptions } from '../../types/companion-options.js'
+
 import {
   AbortMultipartUploadCommand,
   CompleteMultipartUploadCommand,
@@ -8,14 +14,10 @@ import {
   UploadPartCommand,
 } from '@aws-sdk/client-s3'
 import { GetFederationTokenCommand, STSClient } from '@aws-sdk/client-sts'
-import {
-  createPresignedPost,
-  type PresignedPostOptions,
-} from '@aws-sdk/s3-presigned-post'
+import { createPresignedPost } from '@aws-sdk/s3-presigned-post'
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner'
-import type { NextFunction, Request, Response, Router } from 'express'
 import express from 'express'
-import type { CompanionRuntimeOptions } from '../../types/companion-options.js'
+
 import { isRecord } from '../helpers/type-guards.js'
 import {
   getBucket,

@@ -1,6 +1,11 @@
-import { prettierBytes } from '@transloadit/prettier-bytes'
 import type { Body, Meta } from '@uppy/core'
+
+import type { State } from '../lib/Uppy.js'
+import type { Locale } from '../lib/utils/index.js'
+
+import { prettierBytes } from '@transloadit/prettier-bytes'
 import { afterEach, describe, expect, it, vi } from 'vitest'
+
 import sampleImage from '../../compressor/fixtures/image.jpg'
 import BasePlugin, {
   type DefinePluginOpts,
@@ -10,8 +15,6 @@ import Core from '../lib/index.js'
 import { debugLogger } from '../lib/loggers.js'
 import { RestrictionError } from '../lib/Restricter.js'
 import UIPlugin from '../lib/UIPlugin.js'
-import type { State } from '../lib/Uppy.js'
-import type { Locale } from '../lib/utils/index.js'
 import AcquirerPlugin1 from './mocks/acquirerPlugin1.js'
 import AcquirerPlugin2 from './mocks/acquirerPlugin2.js'
 // @ts-expect-error untyped

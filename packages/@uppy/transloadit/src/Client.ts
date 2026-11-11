@@ -5,12 +5,15 @@ import type {
   UppyFile,
   WrapPromiseFunctionType,
 } from '@uppy/core/utils'
-import { fetchWithNetworkError } from '@uppy/core/utils'
-import {
-  type AssemblyResponse,
-  getAssemblyUrlSsl,
-  type OptionsWithRestructuredFields,
+
+import type {
+  AssemblyResponse,
+  OptionsWithRestructuredFields,
 } from './index.js'
+
+import { fetchWithNetworkError } from '@uppy/core/utils'
+
+import { getAssemblyUrlSsl } from './index.js'
 
 const ASSEMBLIES_ENDPOINT = '/assemblies'
 

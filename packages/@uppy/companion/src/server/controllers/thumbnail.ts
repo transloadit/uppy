@@ -1,5 +1,7 @@
-import { pipeline } from 'node:stream/promises'
 import type { NextFunction, Request, Response } from 'express'
+
+import { pipeline } from 'node:stream/promises'
+
 import { respondWithError } from '../provider/error.js'
 
 async function thumbnail(

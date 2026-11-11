@@ -3,6 +3,7 @@
  */
 
 import type { Request, Response } from 'express'
+
 import emitter from '../emitter/index.js'
 import {
   authCallbackErrorHtml,

@@ -2,7 +2,9 @@ import type Uppy from '@uppy/core'
 import type { Body, Meta, UppyFile } from '@uppy/core'
 import type { I18n } from '@uppy/core/utils'
 import type { MouseEventHandler } from 'preact'
+
 import type { DashboardState } from '../../../Dashboard.js'
+
 import copyToClipboard from '../../../utils/copyToClipboard.js'
 
 function EditButton<M extends Meta, B extends Body>({

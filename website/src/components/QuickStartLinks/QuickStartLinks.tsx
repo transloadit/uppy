@@ -1,13 +1,14 @@
+import type React from 'react'
+
 import Link from '@docusaurus/Link'
 import Heading from '@theme/Heading'
-import type React from 'react'
+
 import IconAngular from '../../../static/img/angular.svg'
 import IconNextjs from '../../../static/img/nextjs.svg'
 import IconReact from '../../../static/img/react.svg'
 import IconReactRouter from '../../../static/img/react-router.svg'
 import IconSvelte from '../../../static/img/svelte.svg'
 import IconVue from '../../../static/img/vue.svg'
-
 import styles from './styles.module.css'
 
 type Props = {

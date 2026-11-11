@@ -47,7 +47,9 @@
 </template>
 
 <script setup lang="ts">
-import Uppy, { type UppyFile } from '@uppy/core'
+import type { UppyFile } from '@uppy/core'
+
+import Uppy from '@uppy/core'
 import UppyImageEditor from '@uppy/image-editor'
 import UppyRemoteSources from '@uppy/remote-sources'
 import UppyScreenCapture from '@uppy/screen-capture'
@@ -61,6 +63,7 @@ import {
 } from '@uppy/vue'
 import UppyWebcam from '@uppy/webcam'
 import { computed, ref } from 'vue'
+
 import CustomDropzone from './Dropzone.vue'
 import ImageEditor from './ImageEditor.vue'
 import RemoteSource from './RemoteSource.vue'

@@ -1,14 +1,21 @@
-import type { Body, Meta, MinimalRequiredUppyFile, Uppy } from '@uppy/core'
-import { UIPlugin, type UIPluginOptions } from '@uppy/core'
+import type {
+  Body,
+  Meta,
+  MinimalRequiredUppyFile,
+  UIPluginOptions,
+  Uppy,
+} from '@uppy/core'
+import type { h } from '@uppy/core/utils/preact'
+import type {
+  AssemblyResult,
+  OptionsWithRestructuredFields,
+} from '@uppy/transloadit'
+
+import { UIPlugin } from '@uppy/core'
 import { FilterInput, SearchView } from '@uppy/core/provider-views'
 import { RateLimitedQueue } from '@uppy/core/utils'
-import type { h } from '@uppy/core/utils/preact'
-import {
-  Assembly,
-  type AssemblyResult,
-  Client,
-  type OptionsWithRestructuredFields,
-} from '@uppy/transloadit'
+import { Assembly, Client } from '@uppy/transloadit'
+
 import locale from './locale.js'
 
 export interface ImageGeneratorOptions extends UIPluginOptions {

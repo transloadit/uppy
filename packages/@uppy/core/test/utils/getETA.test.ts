@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest'
+
 import getETA from '../../lib/utils/getETA.js'
 
 describe('getETA', () => {

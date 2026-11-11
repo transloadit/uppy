@@ -1,4 +1,3 @@
-import { describe, expect, it, vi } from 'vitest'
 import type {
   PartialTree,
   PartialTreeFile,
@@ -6,6 +5,10 @@ import type {
   PartialTreeFolderRoot,
   PartialTreeId,
 } from '../../../../lib/index.js'
+import type { CompanionFile } from '../../../../lib/utils/index.js'
+
+import { describe, expect, it, vi } from 'vitest'
+
 import getClickedRange from '../../../../lib/provider-views/utils/getClickedRange.js'
 import afterFill, {
   type ApiList,
@@ -16,7 +19,6 @@ import afterToggleCheckbox from '../../../../lib/provider-views/utils/PartialTre
 import getBreadcrumbs from '../../../../lib/provider-views/utils/PartialTreeUtils/getBreadcrumbs.js'
 import getCheckedFilesWithPaths from '../../../../lib/provider-views/utils/PartialTreeUtils/getCheckedFilesWithPaths.js'
 import getNumberOfSelectedFiles from '../../../../lib/provider-views/utils/PartialTreeUtils/getNumberOfSelectedFiles.js'
-import type { CompanionFile } from '../../../../lib/utils/index.js'
 
 const _root = (id: string, options: any = {}): PartialTreeFolderRoot => ({
   type: 'root',

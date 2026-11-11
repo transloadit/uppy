@@ -1,12 +1,16 @@
+import type { LookupFunction } from 'node:net'
+import type { Duplex } from 'node:stream'
+
+import type { Response } from 'got'
+
 import dns from 'node:dns'
 import { Resolver } from 'node:dns/promises'
 import http from 'node:http'
 import https from 'node:https'
-import type { LookupFunction } from 'node:net'
 import path from 'node:path'
-import type { Duplex } from 'node:stream'
+
 import contentDisposition from 'content-disposition'
-import got, { type Response } from 'got'
+import got from 'got'
 import ipaddr from 'ipaddr.js'
 import validator from 'validator'
 

@@ -1,4 +1,5 @@
 import type { Body, Meta, Uppy } from '../index.js'
+
 import RequestClient, {
   type Opts as RequestClientOpts,
 } from './RequestClient.js'

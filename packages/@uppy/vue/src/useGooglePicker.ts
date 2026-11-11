@@ -1,9 +1,12 @@
+import type { GooglePickerOptions } from '@uppy/components'
+import type { ShallowRef } from 'vue'
+
 import {
   createGooglePickerController,
   createGooglePickerPluginAdapter,
-  type GooglePickerOptions,
 } from '@uppy/components'
-import { computed, onMounted, onUnmounted, type ShallowRef } from 'vue'
+import { computed, onMounted, onUnmounted } from 'vue'
+
 import { injectUppyContext } from './headless/context-provider.js'
 import { useExternalStore } from './useSyncExternalStore.js'
 

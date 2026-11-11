@@ -1,7 +1,9 @@
 import { createServer } from 'node:http'
+
 import express from 'express'
 import request from 'supertest'
 import { afterAll, beforeAll, describe, expect, test, vi } from 'vitest'
+
 import { defaultOptions } from '../dist/config/companion.js'
 import * as tokenService from '../dist/server/helpers/jwt.js'
 import * as oAuthState from '../dist/server/helpers/oauth-state.js'

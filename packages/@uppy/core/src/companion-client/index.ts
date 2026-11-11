@@ -2,11 +2,8 @@
  * Manages communications with Companion
  */
 
-export { isAuthError } from './AuthError.js'
 export type { CompanionPluginOptions } from './CompanionPluginOptions.js'
-export { defaultStorage } from './defaultStorage.js'
 export type { CompanionErrorCode } from './errorCodes.js'
-export { default as getAllowedHosts } from './getAllowedHosts.js'
 export type {
   GooglePickerOptions,
   GooglePickerState,
@@ -21,6 +18,10 @@ export type {
   UnspecifiedMediaItem,
   VideoMediaItem,
 } from './googlePicker.js'
+
+export { isAuthError } from './AuthError.js'
+export { defaultStorage } from './defaultStorage.js'
+export { default as getAllowedHosts } from './getAllowedHosts.js'
 export {
   createGooglePickerController,
   createGooglePickerStoreAdapter,

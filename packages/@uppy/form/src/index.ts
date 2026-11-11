@@ -6,9 +6,9 @@ import type {
   Uppy,
   UppyEventMap,
 } from '@uppy/core'
+
 import { BasePlugin } from '@uppy/core'
 import { findDOMElement, toArray } from '@uppy/core/utils'
-
 import importedGetFormData from 'get-form-data'
 
 import packageJson from '../package.json' with { type: 'json' }

@@ -1,5 +1,6 @@
 import type { S3Client } from '@aws-sdk/client-s3'
 import type { Promisable } from 'type-fest'
+
 import type { CredentialsFetchResponse } from '../schemas/companion.js'
 import type Provider from '../server/provider/Provider.js'
 import type { CompanionRuntimeOptions } from './companion-options.js'

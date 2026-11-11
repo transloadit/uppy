@@ -1,6 +1,8 @@
 import type { UnknownPlugin, Uppy } from '@uppy/core'
+import type { Ref } from 'vue'
+
 import { shallowEqualObjects } from 'shallow-equal'
-import { onBeforeUnmount, onMounted, type Ref, watch } from 'vue'
+import { onBeforeUnmount, onMounted, watch } from 'vue'
 
 export default function useUppy<P extends UnknownPlugin<any, any>>(
   installPlugin: () => void,

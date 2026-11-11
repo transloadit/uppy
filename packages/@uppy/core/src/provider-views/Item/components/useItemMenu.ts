@@ -1,5 +1,6 @@
-import { useCallback, useState } from 'preact/hooks'
 import type { PartialTreeFile, PartialTreeFolderNode } from '../../../index.js'
+
+import { useCallback, useState } from 'preact/hooks'
 
 /**
  * The single open item-actions menu of a Browser: which item it belongs to

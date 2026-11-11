@@ -134,6 +134,7 @@
 <script setup lang="ts">
 import type { PartialTreeFolderNode } from '@uppy/core'
 import type { AvailablePluginsKeys } from '@uppy/remote-sources'
+
 import { useRemoteSource } from '@uppy/vue'
 
 const props = defineProps<{

@@ -1,5 +1,6 @@
-import UIPlugin from '../../lib/UIPlugin.js'
 import type Uppy from '../../lib/Uppy.js'
+
+import UIPlugin from '../../lib/UIPlugin.js'
 
 export default class InvalidPluginWithoutType extends UIPlugin<any, any, any> {
   public override id: string

@@ -1,10 +1,10 @@
 export type { UppyContext } from './headless/context-provider.js'
+
 export {
   UppyContextProvider,
   UppyContextSymbol,
 } from './headless/context-provider.js'
 export * from './headless/generated/index.js'
-
 export * from './useDropzone.js'
 export * from './useFileInput.js'
 export * from './useGooglePicker.js'

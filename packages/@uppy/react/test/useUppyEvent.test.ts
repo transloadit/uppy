@@ -1,6 +1,7 @@
+import type { Meta, UppyFile } from '@uppy/core/utils'
+
 import { act, renderHook } from '@testing-library/react'
 import Uppy from '@uppy/core'
-import type { Meta, UppyFile } from '@uppy/core/utils'
 import { useUppyEvent } from '@uppy/react'
 import { describe, expect, expectTypeOf, it, vi } from 'vitest'
 

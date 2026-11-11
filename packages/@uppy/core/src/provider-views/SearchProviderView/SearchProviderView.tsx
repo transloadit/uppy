@@ -1,6 +1,5 @@
-import classNames from 'classnames'
 import type { h } from 'preact'
-import packageJson from '../../../package.json' with { type: 'json' }
+
 import type {
   Body,
   DefinePluginOpts,
@@ -14,6 +13,10 @@ import type {
   ValidateableFile,
 } from '../../index.js'
 import type { CompanionFile } from '../../utils/index.js'
+
+import classNames from 'classnames'
+
+import packageJson from '../../../package.json' with { type: 'json' }
 import { remoteFileObjToLocal } from '../../utils/index.js'
 import Browser from '../Browser.js'
 import FilterInput from '../FilterInput.js'

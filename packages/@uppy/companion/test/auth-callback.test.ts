@@ -1,18 +1,23 @@
+import type { Server } from 'node:http'
+
+import type { EmitterLike } from '../dist/server/emitter/index.js'
+
 import { EventEmitter, once } from 'node:events'
-import { createServer, type Server } from 'node:http'
+import { createServer } from 'node:http'
+
 import express from 'express'
 import session from 'express-session'
 import { Pipeline, Redis } from 'ioredis'
 import request from 'supertest'
 import { afterEach, describe, expect, test, vi } from 'vitest'
 import { WebSocket } from 'ws'
+
 import { defaultOptions } from '../dist/config/companion.js'
 import {
   publishAuthCallback,
   takeAuthCallback,
 } from '../dist/server/auth-callback.js'
 import sendToken from '../dist/server/controllers/send-token.js'
-import type { EmitterLike } from '../dist/server/emitter/index.js'
 import redisEmitter from '../dist/server/emitter/redis-emitter.js'
 import { generateEncryptedAuthToken } from '../dist/server/helpers/jwt.js'
 import { encodeState } from '../dist/server/helpers/oauth-state.js'

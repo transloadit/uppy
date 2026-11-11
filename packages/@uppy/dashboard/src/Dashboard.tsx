@@ -9,14 +9,16 @@ import type {
   Uppy,
   UppyFile,
 } from '@uppy/core'
+import type { LocaleStrings } from '@uppy/core/utils'
+import type { ComponentChild, VNode } from '@uppy/core/utils/preact'
+import type { TargetedEvent } from 'preact'
+
 import { UIPlugin } from '@uppy/core'
 import { defaultPickerIcon } from '@uppy/core/provider-views'
-import type { LocaleStrings } from '@uppy/core/utils'
 import { findAllDOMElements, getDroppedFiles, toArray } from '@uppy/core/utils'
-import type { ComponentChild, VNode } from '@uppy/core/utils/preact'
 import ThumbnailGenerator from '@uppy/thumbnail-generator'
 import { nanoid } from 'nanoid/non-secure'
-import type { TargetedEvent } from 'preact'
+
 import packageJson from '../package.json' with { type: 'json' }
 import DashboardUI from './components/Dashboard.js'
 import locale from './locale.js'

@@ -1,4 +1,3 @@
-import { useEffect, useRef, useState } from 'preact/hooks'
 import type {
   Body,
   Meta,
@@ -6,13 +5,16 @@ import type {
   PartialTreeFolderNode,
 } from '../index.js'
 import type { I18n } from '../utils/index.js'
+import type ProviderView from './ProviderView/ProviderView.js'
+import type { ProviderAction } from './ProviderView/ProviderView.js'
+
+import { useEffect, useRef, useState } from 'preact/hooks'
+
 import { VirtualList } from '../utils/index.js'
 import { getApplicableActions } from './Item/components/ItemActionsMenu.js'
 import ItemActionsPopover from './Item/components/ItemActionsPopover.js'
 import useItemMenu from './Item/components/useItemMenu.js'
 import Item from './Item/index.js'
-import type ProviderView from './ProviderView/ProviderView.js'
-import type { ProviderAction } from './ProviderView/ProviderView.js'
 
 type BrowserProps<M extends Meta, B extends Body> = {
   displayedPartialTree: (PartialTreeFile | PartialTreeFolderNode)[]

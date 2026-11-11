@@ -1,4 +1,5 @@
 import { afterEach, describe, expect, test } from 'vitest'
+
 import { defaultOptions } from '../dist/config/companion.js'
 import s3Client from '../dist/server/s3-client.js'
 

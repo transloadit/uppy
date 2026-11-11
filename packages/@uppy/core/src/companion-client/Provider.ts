@@ -1,4 +1,5 @@
 import type { Promisable } from 'type-fest'
+
 import type {
   Body,
   Meta,
@@ -6,13 +7,13 @@ import type {
   UnknownProviderPlugin,
   Uppy,
 } from '../index.js'
+import type { CompanionPluginOptions } from './index.js'
+import type RequestClient from './RequestClient.js'
+import type { RequestOptions } from './RequestClient.js'
+
 import { getErrorMessage, getSocketHost } from '../utils/index.js'
 import { isAuthError } from './AuthError.js'
-import type { CompanionPluginOptions } from './index.js'
-import RequestClient, {
-  authErrorStatusCode,
-  type RequestOptions,
-} from './RequestClient.js'
+import { authErrorStatusCode } from './RequestClient.js'
 
 export interface Opts extends PluginOpts, CompanionPluginOptions {
   pluginId: string

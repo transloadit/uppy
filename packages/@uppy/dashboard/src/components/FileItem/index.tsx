@@ -1,11 +1,14 @@
 import type Uppy from '@uppy/core'
 import type { Body, Meta, State, UppyFile } from '@uppy/core'
 import type { I18n } from '@uppy/core/utils'
-// biome-ignore lint/style/useImportType: h is not a type
-import { Component, type ComponentChild, h } from '@uppy/core/utils/preact'
+import type { ComponentChild, h } from '@uppy/core/utils/preact'
+
+import type { DashboardState } from '../../Dashboard.js'
+
+import { Component } from '@uppy/core/utils/preact'
 import classNames from 'classnames'
 import { shallowEqualObjects } from 'shallow-equal'
-import type { DashboardState } from '../../Dashboard.js'
+
 import Buttons from './Buttons/index.js'
 import FileInfo from './FileInfo/index.js'
 import FilePreviewAndLink from './FilePreviewAndLink/index.js'

@@ -1,9 +1,10 @@
-import {
-  createImageEditorController,
-  type ImageEditorSnapshot,
-} from '@uppy/components'
+import type { ImageEditorSnapshot } from '@uppy/components'
 import type { UppyFile } from '@uppy/core'
-import { onMounted, onUnmounted, type ShallowRef } from 'vue'
+import type { ShallowRef } from 'vue'
+
+import { createImageEditorController } from '@uppy/components'
+import { onMounted, onUnmounted } from 'vue'
+
 import { injectUppyContext } from './headless/context-provider.js'
 import { useExternalStore } from './useSyncExternalStore.js'
 

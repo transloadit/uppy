@@ -1,6 +1,8 @@
 import type { UppyFile } from '@uppy/core'
-import { useEffect, useMemo } from '@uppy/core/utils/preact/hooks'
+
 import type { UppyContext } from './types.js'
+
+import { useEffect, useMemo } from '@uppy/core/utils/preact/hooks'
 
 export type ThumbnailProps = {
   // `any`: UppyFile is invariant in its generics, so a concrete type would

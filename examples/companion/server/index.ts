@@ -1,8 +1,10 @@
-import { styleText } from 'node:util'
 import type { CompanionInitOptions } from '@uppy/companion'
+import type { Request, Response } from 'express'
+
+import { styleText } from 'node:util'
+
 import companion from '@uppy/companion'
 import bodyParser from 'body-parser'
-import type { Request, Response } from 'express'
 import express from 'express'
 import session from 'express-session'
 

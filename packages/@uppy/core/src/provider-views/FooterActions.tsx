@@ -1,8 +1,10 @@
-import classNames from 'classnames'
-import { useMemo } from 'preact/hooks'
 import type { Body, Meta, PartialTree } from '../index.js'
 import type { I18n } from '../utils/index.js'
 import type ProviderView from './ProviderView/ProviderView.js'
+
+import classNames from 'classnames'
+import { useMemo } from 'preact/hooks'
+
 import getNumberOfSelectedFiles from './utils/PartialTreeUtils/getNumberOfSelectedFiles.js'
 
 export default function FooterActions<M extends Meta, B extends Body>({

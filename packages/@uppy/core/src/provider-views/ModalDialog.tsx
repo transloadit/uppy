@@ -1,4 +1,5 @@
 import type { ComponentChildren, h } from 'preact'
+
 import { useEffect, useRef } from 'preact/hooks'
 
 type ModalDialogProps = Omit<

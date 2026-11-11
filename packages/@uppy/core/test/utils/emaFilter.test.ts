@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest'
+
 import emaFilter from '../../lib/utils/emaFilter.js'
 
 describe('emaFilter', () => {

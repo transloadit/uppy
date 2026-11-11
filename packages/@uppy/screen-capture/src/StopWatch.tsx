@@ -1,4 +1,5 @@
 import type { I18n } from '@uppy/core/utils'
+
 import { Component } from '@uppy/core/utils/preact'
 
 function fmtMSS(s: number): string {

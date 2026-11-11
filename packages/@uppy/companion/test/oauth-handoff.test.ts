@@ -1,6 +1,8 @@
 import type { NextFunction, Request, Response } from 'express'
+
 import request from 'supertest'
 import { describe, expect, test, vi } from 'vitest'
+
 import * as tokenService from '../dist/server/helpers/jwt.js'
 
 vi.mock('express-prom-bundle')

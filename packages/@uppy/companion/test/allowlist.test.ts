@@ -1,6 +1,8 @@
-import { describe, expect, test, vi } from 'vitest'
-import { validateConfig } from '../src/config/companion.js'
 import type { CompanionInitOptions } from '../src/schemas/companion.js'
+
+import { describe, expect, test, vi } from 'vitest'
+
+import { validateConfig } from '../src/config/companion.js'
 import { hasHostMatch, hasUploadUrlMatch } from '../src/server/helpers/utils.js'
 import logger from '../src/server/logger.js'
 import { parseAllowlist } from '../src/standalone/helper.js'

@@ -1,8 +1,11 @@
-import Core, { type UIPlugin } from '@uppy/core'
+import type { UIPlugin } from '@uppy/core'
+
+import Core from '@uppy/core'
 import GoogleDrivePlugin from '@uppy/google-drive'
 import Url from '@uppy/url'
 import WebcamPlugin from '@uppy/webcam'
 import { describe, expect, it } from 'vitest'
+
 import DashboardPlugin from '../lib/index.js'
 
 describe('Dashboard', () => {

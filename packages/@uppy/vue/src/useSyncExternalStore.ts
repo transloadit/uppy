@@ -1,4 +1,5 @@
 import type { ShallowRef } from 'vue'
+
 import { onUnmounted, shallowRef } from 'vue'
 
 export function useExternalStore<T>(

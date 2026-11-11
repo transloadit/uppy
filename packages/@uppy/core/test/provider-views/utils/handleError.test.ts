@@ -1,4 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
+
 import AuthError from '../../../lib/companion-client/AuthError.js'
 import Core from '../../../lib/index.js'
 import handleError from '../../../lib/provider-views/utils/handleError.js'
