@@ -16,7 +16,7 @@ describe('isPreviewSupported', () => {
     expect(isPreviewSupported(ext)).toEqual(true)
   })
 
-  it('should return false fot unsupported file types', () => {
+  it('should return false for unsupported file types', () => {
     expect(isPreviewSupported('foo')).toEqual(false)
   })
 })

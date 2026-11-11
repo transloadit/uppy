@@ -205,7 +205,7 @@ export function addProviderOptions(
     if (isOAuthProvider(oauthProvider) && grantConfig[oauthProvider]) {
       const grantProviderConfig = grantConfig[oauthProvider]
       const providerOption = providerOptions[providerName]
-      if (!providerOption) return
+      if (!providerOption) continue
       // explicitly add providerOptions so users don't override other providerOptions.
       grantProviderConfig['key'] = providerOption.key
       grantProviderConfig['secret'] = providerOption.secret

@@ -25,10 +25,6 @@ const percolateDown = (
   id: PartialTreeId,
   shouldMarkAsChecked: boolean,
 ) => {
-  if (!Array.isArray(tree)) {
-    return
-  }
-
   for (const item of tree) {
     if (item.type === 'root') {
       continue
