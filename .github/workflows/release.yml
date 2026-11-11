@@ -37,8 +37,6 @@ jobs:
       - name: Install Corepack
         run: npm install --global corepack@0.36.0
 
-      # Allow yarn to make changes during release
-      - run: corepack yarn config set enableHardenedMode false
       - run: corepack yarn --mode=update-lockfile
 
       - name: Install dependencies
