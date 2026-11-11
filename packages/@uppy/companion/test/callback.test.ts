@@ -1,15 +1,10 @@
 import request from 'supertest'
-import { beforeEach, describe, expect, test, vi } from 'vitest'
+import { afterEach, describe, expect, test, vi } from 'vitest'
 import * as tokenService from '../dist/server/helpers/jwt.js'
 
 const secret = 'secret'
 
-beforeEach(() => {
-  vi.mock('express-prom-bundle')
-
-  vi.resetModules()
-  vi.clearAllMocks()
-})
+vi.mock('express-prom-bundle')
 
 describe('test authentication callback', () => {
   test('authentication callback redirects to send-token url', async () => {
@@ -53,7 +48,7 @@ describe('test authentication callback', () => {
     const callbackToken = 'auth-callback-token'
 
     const oauthState = await import('../dist/server/helpers/oauth-state.js')
-    vi.spyOn(oauthState, 'getFromState').mockImplementation((state, key) => {
+    vi.spyOn(oauthState, 'getFromState').mockImplementation((_state, key) => {
       if (key === 'authCallbackToken') return callbackToken
 
       return 'http://localhost:3020'
@@ -65,11 +60,12 @@ describe('test authentication callback', () => {
     }
     const token = tokenService.generateEncryptedAuthToken(authData, secret)
 
-    const onEmitted = vi.fn()
+    const emitted = Promise.withResolvers<unknown>()
 
     const { getServerWithEmitter } = await import('./mockserver.js')
     const { server, emitter } = await getServerWithEmitter()
-    emitter.on(callbackToken, onEmitted)
+    // Older socket workers forward only the first argument of a publication.
+    await emitter.on(callbackToken, (data) => emitted.resolve(data))
 
     await request(server)
       .get(`/dropbox/send-token?uppyAuthToken=${encodeURIComponent(token)}`)
@@ -78,14 +74,12 @@ describe('test authentication callback', () => {
         expect(res.text).toMatch('Authentication successful')
       })
 
-    expect(onEmitted).toHaveBeenLastCalledWith({
-      token,
-    })
+    expect(await emitted.promise).toEqual({ token })
   })
 
   test('the token gets sent via legacy html mechanism', async () => {
     const oauthState = await import('../dist/server/helpers/oauth-state.js')
-    vi.spyOn(oauthState, 'getFromState').mockImplementation((state, key) => {
+    vi.spyOn(oauthState, 'getFromState').mockImplementation((_state, key) => {
       if (key === 'authCallbackToken') return undefined
 
       return 'http://localhost:3020'
@@ -108,5 +102,58 @@ describe('test authentication callback', () => {
           `var origin = "http:\\u002F\\u002Flocalhost:3020";`,
         )
       })
+  })
+})
+
+describe('legacy html mechanism target origin', () => {
+  afterEach(() => {
+    delete process.env['COMPANION_CLIENT_ORIGINS_REGEX']
+  })
+
+  test('the token is posted only to a state origin that is an origin', async () => {
+    // the spies above are not restored
+    vi.restoreAllMocks()
+    const token = tokenService.generateEncryptedAuthToken(
+      { dropbox: { accessToken: 'token value' } },
+      secret,
+    )
+    const { getServer } = await import('./mockserver.js')
+    const server = await getServer({
+      COMPANION_CLIENT_ORIGINS: undefined,
+      COMPANION_CLIENT_ORIGINS_REGEX: '^http://.*localhost:3020/?$',
+    })
+    const sendToken = async (origin: string) => {
+      const connect = await request(server)
+        .get('/dropbox/connect')
+        .query({ state: btoa(JSON.stringify({ origin })) })
+        .expect(302)
+      const state = new URL(connect.header['location'] ?? '').searchParams.get(
+        'state',
+      )
+      return request(server)
+        .get('/dropbox/send-token')
+        .query({ uppyAuthToken: token, state })
+    }
+
+    const res = await sendToken('http://localhost:3020')
+    expect(res.status).toBe(200)
+    expect(res.text).toMatch(
+      `var origin = "http:\\u002F\\u002Flocalhost:3020";`,
+    )
+    // a trailing slash is still just the origin
+    const slash = await sendToken('http://localhost:3020/')
+    expect(slash.status).toBe(200)
+    expect(slash.text).toMatch(
+      `var origin = "http:\\u002F\\u002Flocalhost:3020";`,
+    )
+    // these match the RegExp, but postMessage() would deliver them to http://example.com
+    for (const origin of [
+      'http://example.com/.localhost:3020',
+      'http://example.com#.localhost:3020',
+      'http://example.com\\.localhost:3020',
+      'http://example.com?.localhost:3020',
+    ]) {
+      expect((await sendToken(origin)).status).toBe(404)
+    }
   })
 })

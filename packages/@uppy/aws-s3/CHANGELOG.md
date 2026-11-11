@@ -1,5 +1,38 @@
 # @uppy/aws-s3
 
+## 6.3.1
+
+### Patch Changes
+
+- f58058d: Allow various asynchronous interfaces and callbacks to be synchronous. Some methods that never awaited anything are no longer `async`; for example `Webcam#getVideo()` now returns its value directly.
+
+## 6.3.0
+
+### Minor Changes
+
+- ec0c114: **Behaviour change for single-request uploads through Companion:** the `location` in the upload response now has the object key URL-escaped, with `/` kept (for example, a space becomes `%20`), because Companion and `signRequest` POST uploads now share one code path. If you store or compare `location`, or work out the key from it, decode it first.
+
+  `signRequest` may return `fields` to upload with an S3 POST policy. This works for single-request (non-multipart) uploads only. The signer also now receives `contentType` on the PutObject request.
+
+### Patch Changes
+
+- b47ca2d: Don’t throw when destroying an Uppy instance where `AwsS3` is misconfigured.
+
+## 6.2.2
+
+### Patch Changes
+
+- 3f1aca3: Stricter TypeScript: caught errors are typed as `unknown`, and `noImplicitOverride` and `noImplicitReturns` are enabled for all packages.
+  - `@uppy/core/utils`: add `toError`, `getErrorMessage`, `isAbortError` and `isRestrictionError` helpers. `@uppy/core/companion-client`: export `isAuthError`.
+  - `@uppy/webcam`: `icon` is now public, like on other acquirer plugins. `start()` now returns a promise that settles once the camera is ready, instead of `undefined`.
+  - `@uppy/url`: `handleRootDrop` and `handleRootPaste` are now public, as Dashboard and DropTarget call them. The failed-fetch notification's `details` is now the error message instead of the Error object.
+
+## 6.2.1
+
+### Patch Changes
+
+- e89c8de: `shouldUseMultipart: true` (or a function returning `true`) is now honored for files of 5 MiB or smaller, as it was in v5. S3 only requires 5 MiB for parts other than the last, so a small file is a valid one-part multipart upload. Empty files are still sent with a single PUT.
+
 ## 6.2.0
 
 ### Minor Changes
@@ -32,7 +65,6 @@
 
   The plugin is now built on a standalone S3 client and configuration is reduced to three
   mutually exclusive signing modes:
-
   - `getCredentials` — client-side SigV4 signing using temporary AWS credentials
   - `signRequest` — bring your own signer (client side or server side)
   - `companionEndpoint` — Companion signing (as before)
@@ -121,7 +153,6 @@
 - c5b51f6: ### Export maps for all packages
 
   All packages now have export maps. This is a breaking change in two cases:
-
   1. The css imports have changed from `@uppy[package]/dist/styles.min.css` to `@uppy[package]/css/styles.min.css`
   2. You were importing something that wasn't exported from the root, for instance `@uppy/core/lib/foo.js`. You can now only import things we explicitly exported.
 

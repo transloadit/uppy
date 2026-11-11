@@ -8,7 +8,11 @@ import type {
 
 import { UIPlugin } from '@uppy/core'
 import type { LocaleStrings } from '@uppy/core/utils'
-import { getFileTypeExtension } from '@uppy/core/utils'
+import {
+  getErrorMessage,
+  getFileTypeExtension,
+  isRestrictionError,
+} from '@uppy/core/utils'
 import packageJson from '../package.json' with { type: 'json' }
 import locale from './locale.js'
 import PermissionsScreen from './PermissionsScreen.js'
@@ -117,14 +121,14 @@ export default class Audio<M extends Meta, B extends Body> extends UIPlugin<
     })
   }
 
-  #start = (options?: { deviceId?: string }): Promise<never> | undefined => {
+  #start = (options?: { deviceId?: string }): Promise<void> => {
     if (!this.#supportsUserMedia) {
       return Promise.reject(new Error('Microphone access not supported'))
     }
 
     this.#audioActive = true
 
-    this.#hasAudioCheck().then((hasAudio) => {
+    return this.#hasAudioCheck().then((hasAudio) => {
       this.setPluginState({
         hasAudio,
       })
@@ -159,7 +163,7 @@ export default class Audio<M extends Meta, B extends Body> extends UIPlugin<
             audioReady: false,
             cameraError: err,
           })
-          this.uppy.info(err.message, 'error')
+          this.uppy.info(getErrorMessage(err), 'error')
         })
     })
   }
@@ -245,7 +249,7 @@ export default class Audio<M extends Meta, B extends Body> extends UIPlugin<
           })
         } catch (err) {
           // Logging the error, exept restrictions, which is handled in Core
-          if (!err.isRestriction) {
+          if (!isRestrictionError(err)) {
             this.uppy.log(err)
           }
         }
@@ -275,7 +279,7 @@ export default class Audio<M extends Meta, B extends Body> extends UIPlugin<
       }
     } catch (err) {
       // Logging the error, exept restrictions, which is handled in Core
-      if (!err.isRestriction) {
+      if (!isRestrictionError(err)) {
         this.uppy.log(err, 'warning')
       }
     }
@@ -353,7 +357,7 @@ export default class Audio<M extends Meta, B extends Body> extends UIPlugin<
     })
   }
 
-  render() {
+  override render() {
     if (!this.#audioActive) {
       this.#start()
     }
@@ -388,7 +392,7 @@ export default class Audio<M extends Meta, B extends Body> extends UIPlugin<
     )
   }
 
-  install(): void {
+  override install(): void {
     this.setPluginState({
       audioReady: false,
       recordingLengthSeconds: 0,
@@ -425,7 +429,7 @@ export default class Audio<M extends Meta, B extends Body> extends UIPlugin<
     }
   }
 
-  uninstall(): void {
+  override uninstall(): void {
     if (this.#stream) {
       this.#stop()
     }

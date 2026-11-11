@@ -1,6 +1,7 @@
 import querystring from 'node:querystring'
 import mime from 'mime-types'
 import type { BuildUrl } from '../../../types/express.js'
+import type { ProviderListResponse } from '../Provider.js'
 
 type DropboxItem = {
   '.tag'?: string
@@ -70,21 +71,7 @@ const adaptData = (
   res: DropboxListResponse,
   email: string | undefined,
   buildURL: BuildUrl,
-): {
-  username: string | undefined
-  items: Array<{
-    isFolder: boolean
-    icon: string | undefined
-    name: string
-    mimeType: string | null
-    id: string
-    thumbnail: string
-    requestPath: string
-    modifiedDate: string | undefined
-    size: number | undefined
-  }>
-  nextPagePath: string | null
-} => {
+): ProviderListResponse => {
   const items = getItemSubList(res).map((item) => ({
     isFolder: isFolder(item),
     icon: getItemIcon(item),

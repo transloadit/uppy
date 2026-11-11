@@ -2,7 +2,7 @@ import UIPlugin from '../../lib/UIPlugin.js'
 import type Uppy from '../../lib/Uppy.js'
 
 export default class InvalidPluginWithoutName extends UIPlugin<any, any, any> {
-  public type: string
+  public override type: string
 
   public name: string
 

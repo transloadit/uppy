@@ -25,6 +25,12 @@ jobs:
     steps:
       - name: Checkout sources
         uses: actions/checkout@v7
+      - name: Install Node.js
+        uses: actions/setup-node@v7
+        with:
+          node-version: '26.12.1'
+      - name: Install Corepack
+        run: npm install --global corepack@0.36.0
       - name: Get yarn cache directory path
         id: yarn-cache-dir-path
         run:
@@ -36,16 +42,9 @@ jobs:
           key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
           restore-keys: |
             ${{ runner.os }}-yarn-
-      - name: Install Node.js
-        uses: actions/setup-node@v7
-        with:
-          node-version: lts/*
       - name: Install dependencies
         run:
           corepack yarn install --immutable
-        env:
-          # https://docs.cypress.io/guides/references/advanced-installation#Skipping-installation
-          CYPRESS_INSTALL_BINARY: 0
       - name: Build
         run: corepack yarn run build
       - name: Make Uppy bundle use local version
@@ -91,6 +90,12 @@ jobs:
       matrix:
         bundler-version: [latest]
     steps:
+      - name: Install Node.js
+        uses: actions/setup-node@v7
+        with:
+          node-version: '26.12.1'
+      - name: Install Corepack
+        run: npm install --global corepack@0.36.0
       - name: Download uppy tarball
         uses: actions/download-artifact@v7
         with:
@@ -132,6 +137,12 @@ jobs:
       matrix:
         bundler-version: [latest]
     steps:
+      - name: Install Node.js
+        uses: actions/setup-node@v7
+        with:
+          node-version: '26.12.1'
+      - name: Install Corepack
+        run: npm install --global corepack@0.36.0
       - name: Download uppy tarball
         uses: actions/download-artifact@v7
         with:
@@ -175,6 +186,12 @@ jobs:
       matrix:
         bundler-version: [latest]
     steps:
+      - name: Install Node.js
+        uses: actions/setup-node@v7
+        with:
+          node-version: '26.12.1'
+      - name: Install Corepack
+        run: npm install --global corepack@0.36.0
       - name: Download uppy tarball
         uses: actions/download-artifact@v7
         with:
@@ -206,6 +223,12 @@ jobs:
       matrix:
         bundler-version: [latest]
     steps:
+      - name: Install Node.js
+        uses: actions/setup-node@v7
+        with:
+          node-version: '26.12.1'
+      - name: Install Corepack
+        run: npm install --global corepack@0.36.0
       - name: Download uppy tarball
         uses: actions/download-artifact@v7
         with:
@@ -232,6 +255,12 @@ jobs:
       matrix:
         bundler-version: [latest]
     steps:
+      - name: Install Node.js
+        uses: actions/setup-node@v7
+        with:
+          node-version: '26.12.1'
+      - name: Install Corepack
+        run: npm install --global corepack@0.36.0
       - name: Download uppy tarball
         uses: actions/download-artifact@v7
         with:

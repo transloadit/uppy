@@ -1,6 +1,10 @@
 import crypto from 'node:crypto'
+import type { ObjectCannedACL, ServerSideEncryption } from '@aws-sdk/client-s3'
 import type { Request } from 'express'
-import type { GetBucketFn } from '../../schemas/companion.js'
+import type {
+  GetBucketFn,
+  S3ObjectWriteOptions,
+} from '../../schemas/companion.js'
 
 const authTagLength = 16
 const nonceLength = 16
@@ -339,6 +343,26 @@ export const getBucket = ({
   return bucket
 }
 
+/**
+ * The object attributes Companion asks S3 for when it writes, in the shape the
+ * AWS commands take. Unset options are left out rather than sent as undefined.
+ */
+export function s3WriteParams({
+  acl,
+  awsSse,
+  awsSseKmsKeyId,
+}: S3ObjectWriteOptions): {
+  ACL?: ObjectCannedACL
+  ServerSideEncryption?: ServerSideEncryption
+  SSEKMSKeyId?: string
+} {
+  return {
+    ...(acl != null && { ACL: acl }),
+    ...(awsSse != null && { ServerSideEncryption: awsSse }),
+    ...(awsSseKmsKeyId != null && { SSEKMSKeyId: awsSseKmsKeyId }),
+  }
+}
+
 export const truncateFilename = (
   filename: string,
   maxFilenameLength?: number,
@@ -352,4 +376,21 @@ export const truncateFilename = (
     return filename
   }
   return filename.slice(maxFilenameLength * -1)
+}
+
+// Uppy and Companion both mint these with randomUUID(). Anything else must not
+// reach the emitter: EventEmitter has reserved names and the Redis emitter
+// subscribes with glob patterns.
+export const SOCKET_TOKEN_RE =
+  /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
+
+/**
+ * An id as one URL path segment. Encoding leaves `.` and `..` as they are,
+ * and URL resolution would turn them into steps up the provider's API path.
+ */
+export function pathSegment(id: string): string {
+  if (id === '.' || id === '..') {
+    throw Object.assign(new Error('Invalid id'), { name: 'ValidationError' })
+  }
+  return encodeURIComponent(id)
 }

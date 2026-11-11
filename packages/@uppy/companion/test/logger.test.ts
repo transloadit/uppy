@@ -3,7 +3,7 @@ import { beforeAll, describe, expect, test } from 'vitest'
 // We don't care about colors in our tests, so force `util.styleText` to disable colors.
 process.env['FORCE_COLOR'] = 'false'
 
-import logger from '../dist/server/logger.js'
+import logger, { MAX_LOG_MESSAGE_LENGTH } from '../dist/server/logger.js'
 
 const maskables = ['ToBeMasked1', 'toBeMasked2', 'toBeMasked(And)?Escaped']
 
@@ -120,5 +120,36 @@ describe('Test Logger secret mask', () => {
     expect(
       !maskables.some((maskable) => loggedMessage.includes(maskable)),
     ).toBeTruthy()
+  })
+})
+
+describe('log message bounds and error formatting', () => {
+  test('caps a log line at MAX_LOG_MESSAGE_LENGTH', () => {
+    const msg = captureConsoleLog(() => {
+      logger.error(new Error('x'.repeat(50_000)))
+    })
+    expect(msg.length).toBeLessThan(MAX_LOG_MESSAGE_LENGTH + 40)
+    expect(msg).toMatch(/\[truncated \d+ chars\]$/)
+  })
+
+  test('does not print an error request options', () => {
+    const err = Object.assign(new Error('boom'), {
+      options: { headers: { authorization: 'Bearer SUPERSECRET' } },
+      code: 'ERR_X',
+    })
+    const msg = captureConsoleLog(() => {
+      logger.error(err, '', '')
+    })
+    expect(msg).not.toContain('SUPERSECRET')
+    expect(msg).toContain('ERR_X')
+    expect(msg).toContain('Error: boom')
+  })
+
+  test('keeps the cause chain', () => {
+    const msg = captureConsoleLog(() => {
+      logger.error(new Error('outer', { cause: new Error('inner') }))
+    })
+    expect(msg).toContain('[cause]')
+    expect(msg).toContain('Error: inner')
   })
 })

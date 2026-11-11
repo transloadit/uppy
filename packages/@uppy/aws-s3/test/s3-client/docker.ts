@@ -42,28 +42,27 @@ export async function execDockerCommand(
       console.warn(`Warning from docker exec: ${stderr}`)
     }
     return stdout.trim()
-  } catch (error) {
+  } catch (err) {
     // Handle timeout specifically
-    if (error.killed && error.signal === 'SIGTERM') {
+    if (
+      err instanceof Error &&
+      'killed' in err &&
+      err.killed &&
+      'signal' in err &&
+      err.signal === 'SIGTERM'
+    ) {
       throw new Error(
         `Command timed out after ${timeoutMs}ms: ${dockerCommand}`,
       )
     }
 
-    console.error(`Docker exec error details:`, {
-      command: dockerCommand,
-      message: error.message,
-      stderr: error.stderr,
-      stdout: error.stdout,
-      code: error.code,
-      killed: error.killed,
-      signal: error.signal,
-    })
-    throw error
+    // `err` includes stdout, stderr, code and signal
+    console.error(`Docker exec error for command: ${dockerCommand}`, err)
+    throw err
   }
 }
 
-async function run(cmd: string, args: string[], env?: Record<string, string>) {
+function run(cmd: string, args: string[], env?: Record<string, string>) {
   // console.log('running command:', cmd, args.join(' '))
   return new Promise<void>((res, rej) => {
     const p = spawn(cmd, args, {

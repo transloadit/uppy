@@ -64,8 +64,6 @@ await execa('yarn', ['workspace', '@uppy/companion', 'build'], {
 const startCompanion = ({ name, port }: { name: string; port: number }) =>
   execaNode('packages/@uppy/companion/dist/standalone/start-server.js', {
     nodeOptions: [
-      '-r',
-      'dotenv/config',
       // Watch mode support is limited to Windows and macOS at the time of writing.
       ...(isWindows || isOSX
         ? ['--watch-path', 'packages/@uppy/companion/dist', '--watch']

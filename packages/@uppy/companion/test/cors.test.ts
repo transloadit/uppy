@@ -28,8 +28,8 @@ async function run({
 }
 
 describe('cors', () => {
-  test('should properly merge with existing headers', () => {
-    return run({
+  test('should properly merge with existing headers', async () => {
+    const headers = await run({
       corsOptions: {
         sendSelfEndpoint: 'localhost:3020',
         corsOrigins: /^https:\/\/localhost:.*$/,
@@ -39,81 +39,79 @@ describe('cors', () => {
         'Access-Control-Allow-Headers': 'test-allow-header',
         'Access-Control-Expose-Headers': 'test',
       },
-    }).then((headers) => {
-      expect(headers['access-control-allow-origin']).toBe(
-        'https://localhost:1234',
-      )
-      expect(headers['vary']).toBe('Origin')
-      expect(headers['access-control-allow-credentials']).toBe('true')
-      expect(headers['access-control-allow-methods']).toBe(
-        'PATCH,OPTIONS,POST,GET,DELETE',
-      )
-      expect(headers['access-control-allow-headers']).toBe(
-        'test-allow-header,uppy-auth-token,uppy-credentials-params,authorization,origin,content-type,accept',
-      )
-      expect(headers['access-control-expose-headers']).toBe('test,i-am')
-      expect(headers['content-length']).toBe('0')
     })
-  })
 
-  test('should also work when nothing added', () => {
-    return run({}).then((headers) => {
-      expect(headers['access-control-allow-origin']).toBe(
-        'https://localhost:1234',
-      )
-      expect(headers['vary']).toBe('Origin')
-      expect(headers['access-control-allow-credentials']).toBe('true')
-      expect(headers['access-control-allow-methods']).toBe(
-        'GET,POST,OPTIONS,DELETE',
-      )
-      expect(headers['access-control-allow-headers']).toBe(
-        'uppy-auth-token,uppy-credentials-params,authorization,origin,content-type,accept',
-      )
-      expect(headers['content-length']).toBe('0')
-    })
-  })
-
-  test('should support disabling cors', () => {
-    return run({ corsOptions: { corsOrigins: false } }).then((headers) => {
-      expect(headers['access-control-allow-origin']).toBeUndefined()
-    })
-  })
-
-  test('should support incorrect url', () => {
-    return run({ corsOptions: { corsOrigins: /^incorrect$/ } }).then(
-      (headers) => {
-        expect(headers['access-control-allow-origin']).toBeUndefined()
-        expect(headers['vary']).toBe('Origin')
-        expect(headers['access-control-allow-credentials']).toBe('true')
-        expect(headers['access-control-allow-methods']).toBe(
-          'GET,POST,OPTIONS,DELETE',
-        )
-        expect(headers['access-control-allow-headers']).toBe(
-          'uppy-auth-token,uppy-credentials-params,authorization,origin,content-type,accept',
-        )
-        expect(headers['content-length']).toBe('0')
-      },
+    expect(headers['access-control-allow-origin']).toBe(
+      'https://localhost:1234',
     )
+    expect(headers['vary']).toBe('Origin')
+    expect(headers['access-control-allow-credentials']).toBe('true')
+    expect(headers['access-control-allow-methods']).toBe(
+      'PATCH,OPTIONS,POST,GET,DELETE',
+    )
+    expect(headers['access-control-allow-headers']).toBe(
+      'test-allow-header,uppy-auth-token,uppy-credentials-params,authorization,origin,content-type,accept',
+    )
+    expect(headers['access-control-expose-headers']).toBe('test,i-am')
+    expect(headers['content-length']).toBe('0')
   })
 
-  test('should support array origin', () => {
-    return run({
+  test('should also work when nothing added', async () => {
+    const headers = await run({})
+
+    expect(headers['access-control-allow-origin']).toBe(
+      'https://localhost:1234',
+    )
+    expect(headers['vary']).toBe('Origin')
+    expect(headers['access-control-allow-credentials']).toBe('true')
+    expect(headers['access-control-allow-methods']).toBe(
+      'GET,POST,OPTIONS,DELETE',
+    )
+    expect(headers['access-control-allow-headers']).toBe(
+      'uppy-auth-token,uppy-credentials-params,authorization,origin,content-type,accept',
+    )
+    expect(headers['content-length']).toBe('0')
+  })
+
+  test('should support disabling cors', async () => {
+    const headers = await run({ corsOptions: { corsOrigins: false } })
+
+    expect(headers['access-control-allow-origin']).toBeUndefined()
+  })
+
+  test('should support incorrect url', async () => {
+    const headers = await run({ corsOptions: { corsOrigins: /^incorrect$/ } })
+
+    expect(headers['access-control-allow-origin']).toBeUndefined()
+    expect(headers['vary']).toBe('Origin')
+    expect(headers['access-control-allow-credentials']).toBe('true')
+    expect(headers['access-control-allow-methods']).toBe(
+      'GET,POST,OPTIONS,DELETE',
+    )
+    expect(headers['access-control-allow-headers']).toBe(
+      'uppy-auth-token,uppy-credentials-params,authorization,origin,content-type,accept',
+    )
+    expect(headers['content-length']).toBe('0')
+  })
+
+  test('should support array origin', async () => {
+    const headers = await run({
       corsOptions: {
         corsOrigins: ['http://google.com', 'https://localhost:1234'],
       },
-    }).then((headers) => {
-      expect(headers['access-control-allow-origin']).toBe(
-        'https://localhost:1234',
-      )
-      expect(headers['vary']).toBe('Origin')
-      expect(headers['access-control-allow-credentials']).toBe('true')
-      expect(headers['access-control-allow-methods']).toBe(
-        'GET,POST,OPTIONS,DELETE',
-      )
-      expect(headers['access-control-allow-headers']).toBe(
-        'uppy-auth-token,uppy-credentials-params,authorization,origin,content-type,accept',
-      )
-      expect(headers['content-length']).toBe('0')
     })
+
+    expect(headers['access-control-allow-origin']).toBe(
+      'https://localhost:1234',
+    )
+    expect(headers['vary']).toBe('Origin')
+    expect(headers['access-control-allow-credentials']).toBe('true')
+    expect(headers['access-control-allow-methods']).toBe(
+      'GET,POST,OPTIONS,DELETE',
+    )
+    expect(headers['access-control-allow-headers']).toBe(
+      'uppy-auth-token,uppy-credentials-params,authorization,origin,content-type,accept',
+    )
+    expect(headers['content-length']).toBe('0')
   })
 })

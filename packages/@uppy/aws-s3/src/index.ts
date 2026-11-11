@@ -92,7 +92,8 @@ export type AwsS3Options<M extends Meta, B extends Body> = PluginOpts & {
     | {
         /**
          * Custom function to sign requests.
-         * Called with request details, should return signed headers.
+         * Called with one request, returns the presigned URL for it (see
+         * `PresignedResponse` for the optional `key`, `headers` and `fields`).
          * Alternative to using Companion endpoint.
          */
         signRequest: IT.SignRequestFn
@@ -128,7 +129,7 @@ export default class AwsS3<M extends Meta, B extends Body> extends BasePlugin<
   static VERSION = packageJson.version
 
   #s3Client!: S3Client
-  #queue!: TaskQueue
+  #queue = new TaskQueue({ concurrency: this.opts.limit })
   #uploaders: Record<string, S3Uploader<M, B> | null> = {}
 
   constructor(uppy: Uppy<M, B>, opts: AwsS3Options<M, B>) {
@@ -137,15 +138,14 @@ export default class AwsS3<M extends Meta, B extends Body> extends BasePlugin<
     this.id = this.opts.id || 'AwsS3'
   }
 
-  install(): void {
+  override install(): void {
     this.#setResumableUploadsCapability(true)
     this.#initS3Client()
-    this.#queue = new TaskQueue({ concurrency: this.opts.limit })
     this.uppy.addUploader(this.#upload)
     this.uppy.on('cancel-all', this.#handleCancelAll)
   }
 
-  uninstall(): void {
+  override uninstall(): void {
     this.#setResumableUploadsCapability(false)
     this.uppy.removeUploader(this.#upload)
     this.uppy.off('cancel-all', this.#handleCancelAll)
@@ -246,7 +246,7 @@ export default class AwsS3<M extends Meta, B extends Body> extends BasePlugin<
         if (!currentFile) {
           return
         }
-        return this.#uploadLocalFile(currentFile as LocalUppyFile<M, B>) // assume it's still a local file since remote files aren't queued
+        await this.#uploadLocalFile(currentFile as LocalUppyFile<M, B>) // assume it's still a local file since remote files aren't queued
       })
     })
 
@@ -403,11 +403,12 @@ export interface AwsBody extends Body {
   /**
    * The key the object was stored under.
    *
-   * For a single-part upload this is the `key` the signer returned, falling
-   * back to the one `generateObjectKey` proposed. For a multipart upload it is
-   * the key S3 reports on complete. So a signer that relocates the object
-   * without returning a `key` is reported accurately only for multipart
-   * uploads; return `key` from `signRequest` to make both paths agree.
+   * For a single-part upload this is `fields.key` of a presigned POST, else
+   * the `key` the signer returned, falling back to the one `generateObjectKey`
+   * proposed. For a multipart upload it is the key S3 reports on complete. So
+   * a `PUT` signer that relocates the object without returning a `key` is
+   * reported accurately only for multipart uploads; return `key` from
+   * `signRequest` to make both paths agree.
    */
   key: string
 }

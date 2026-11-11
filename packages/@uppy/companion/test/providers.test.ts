@@ -1,3 +1,5 @@
+import http from 'node:http'
+import type { AddressInfo } from 'node:net'
 import nock from 'nock'
 import request from 'supertest'
 import {
@@ -20,7 +22,6 @@ import {
   nockZoomRevoke,
   expects as zoomExpects,
 } from './fixtures/zoom.js'
-import mockOauthState from './mockoauthstate.js'
 import { getServer } from './mockserver.js'
 
 const { localZoomKey, localZoomSecret } = zoomExpects
@@ -28,13 +29,10 @@ const { localZoomKey, localZoomSecret } = zoomExpects
 vi.mock('express-prom-bundle')
 vi.mock('tus-js-client')
 
-mockOauthState()
-
-vi.mock('../../dist/server/helpers/request.js', () => {
-  return {
-    getURLMeta: () => Promise.resolve({ size: 758051 }),
-  }
-})
+vi.mock('../dist/server/helpers/oauth-state.js', async () => ({
+  ...(await vi.importActual('../dist/server/helpers/oauth-state.js')),
+  encodeState: () => 'some-cool-nice-encrytpion',
+}))
 
 const getServerWithEnv = async () =>
   getServer({ COMPANION_CLIENT_SOCKET_CONNECT_TIMEOUT: '0' })
@@ -105,21 +103,20 @@ describe('list provider files', () => {
     const providerFixture = fixtureProviders[providerName]?.expects ?? {}
     const listPath =
       'listPath' in providerFixture ? providerFixture.listPath : ''
-    return request(await getServerWithEnv())
+    const res = await request(await getServerWithEnv())
       .get(`/${providerName}/list/${listPath}`)
       .set('uppy-auth-token', token)
       .expect(200)
-      .then((res) => {
-        expect(res.header['i-am']).toBe('http://localhost:3020')
 
-        return {
-          username: res.body.username,
-          items: Array.isArray(res.body.items)
-            ? res.body.items.filter(isRecord)
-            : [],
-          providerFixture,
-        }
-      })
+    expect(res.header['i-am']).toBe('http://localhost:3020')
+
+    return {
+      username: res.body.username,
+      items: Array.isArray(res.body.items)
+        ? res.body.items.filter(isRecord)
+        : [],
+      providerFixture,
+    }
   }
 
   function expect1({
@@ -218,6 +215,64 @@ describe('list provider files', () => {
 
     const { username, items, providerFixture } = await runTest('box')
     expect1({ username, items, providerFixture })
+  })
+
+  test('box: a crafted id cannot change the Box API path', async () => {
+    nock('https://api.box.com').get('/2.0/users/me').reply(200, {
+      login: defaults.USERNAME,
+    })
+    // The id is percent-decoded by Express; if interpolated raw it would make
+    // the listing hit Box's download endpoint. It must stay a single path
+    // segment.
+    const scope = nock('https://api.box.com')
+      .get('/2.0/folders/..%2Ffiles%2F123%2Fcontent%23/items')
+      .query(true)
+      .reply(200, { entries: [] })
+    await request(await getServerWithEnv())
+      .get(`/box/list/${encodeURIComponent('../files/123/content#')}`)
+      .set('uppy-auth-token', token)
+      .expect(200)
+    expect(scope.isDone()).toBe(true)
+  })
+
+  // sent as raw paths: an HTTP client like supertest would resolve the dots
+  // itself, a hand-written request does not
+  test.each([
+    '..',
+    '.',
+    '%2E%2E',
+  ])('box: the id %j is refused, not resolved as a path step', async (id) => {
+    nock('https://api.box.com').get('/2.0/users/me').reply(200, {
+      login: defaults.USERNAME,
+    })
+    // as /2.0/folders/../items, this would list /2.0/items
+    const scope = nock('https://api.box.com').get(/.*/).reply(200, {})
+    const server = http.createServer(await getServerWithEnv())
+    await new Promise<void>((resolve) => server.listen(0, '127.0.0.1', resolve))
+    try {
+      const status = await new Promise<number | undefined>(
+        (resolve, reject) => {
+          http
+            .get(
+              {
+                host: '127.0.0.1',
+                port: (server.address() as AddressInfo).port,
+                path: `/box/list/${id}`,
+                headers: { 'uppy-auth-token': token },
+              },
+              (res) => {
+                res.resume()
+                resolve(res.statusCode)
+              },
+            )
+            .on('error', reject)
+        },
+      )
+      expect(status).toBe(400)
+      expect(scope.isDone()).toBe(false)
+    } finally {
+      server.close()
+    }
   })
 
   test('drive', async () => {

@@ -2,13 +2,14 @@
   "extends": "@uppy-dev/tsconfig/build",
   "references": [
     {
+      "path": "../../../private/msw-setup/tsconfig.build.json"
+    },
+    {
       "path": "../core/tsconfig.build.json"
     }
   ],
   "compilerOptions": {
     "exactOptionalPropertyTypes": false,
-    "noImplicitOverride": false,
-    "noUncheckedIndexedAccess": false,
-    "useUnknownInCatchVariables": false
+    "noUncheckedIndexedAccess": false
   }
 }

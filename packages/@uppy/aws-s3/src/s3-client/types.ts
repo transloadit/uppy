@@ -1,3 +1,5 @@
+import type { Promisable } from 'type-fest'
+
 export interface PresignableRequestBase {
   key: string
   expiresIn?: number
@@ -5,6 +7,11 @@ export interface PresignableRequestBase {
 
 export interface PutObjectRequest extends PresignableRequestBase {
   method: 'PUT'
+  /**
+   * MIME type of the object. Sent as a header on a presigned PUT. For a POST
+   * policy, include it as the `Content-Type` field and policy condition.
+   */
+  contentType?: string
 }
 export interface DeleteObjectRequest extends PresignableRequestBase {
   method: 'DELETE'
@@ -46,14 +53,16 @@ export type PresignedResponse = {
   /**
    * Overrides the requested key when the backend derives its own (e.g. adds a
    * prefix). Only honored on `putObject` and `createMultipartUpload`; later
-   * requests already carry the right key.
+   * requests already carry the right key. When `fields` is present,
+   * `fields.key` is what S3 stores and wins over this.
    *
-   * Return it whenever the server stores the object under a different key,
-   * even if you don't read the key back. Without it the two upload paths
-   * disagree about what `upload-success` reports: a single-part `PUT` has no
-   * key to fall back on and reports the requested one, while a multipart
-   * upload reports the key S3 echoes in `CompleteMultipartUploadResult`. The
-   * same signer then yields a different key depending on the file's size.
+   * Without `fields`, return it whenever the server stores the object under a
+   * different key, even if you don't read the key back. Without it the two
+   * upload paths disagree about what `upload-success` reports: a single-part
+   * `PUT` has no key to fall back on and reports the requested one, while a
+   * multipart upload reports the key S3 echoes in
+   * `CompleteMultipartUploadResult`. The same signer then yields a different
+   * key depending on the file's size.
    */
   key?: string
   /**
@@ -64,12 +73,25 @@ export type PresignedResponse = {
    * `Content-Length`, or `Date` in this object; JavaScript cannot set them.
    */
   headers?: Record<string, string>
+  /**
+   * Form fields of an S3 POST policy (`policy`, `x-amz-signature`, `key`, …).
+   * When present the object is uploaded with a `multipart/form-data` POST to
+   * `url` instead of a PUT. Only valid for the `{ method: 'PUT', key }`
+   * (PutObject) request; multipart parts have no POST form. `fields.key` must
+   * be the concrete object key (build it from `request.key`); the
+   * `${filename}` placeholder is rejected. A `file` field and
+   * `success_action_redirect` are rejected too. No `Content-Type` is sent
+   * unless you add it as a field, so use `request.contentType`; a
+   * `Content-Type` in `headers` is dropped on this path, other headers are
+   * still sent.
+   */
+  fields?: Record<string, string>
 }
 
 /** Function that generates a pre-signed URL for a request */
 export type SignRequestFn = (
   request: PresignableRequest,
-) => Promise<PresignedResponse>
+) => Promisable<PresignedResponse>
 
 /**
  * Temporary security credentials from STS or similar service.
@@ -95,7 +117,7 @@ export interface CredentialsResponse {
 /** Function that retrieves temporary credentials */
 export type GetCredentialsFn = (options?: {
   signal?: AbortSignal
-}) => CredentialsResponse | Promise<CredentialsResponse>
+}) => Promisable<CredentialsResponse>
 
 /** Base configuration shared by both signing approaches */
 type S3ConfigBase = {
@@ -181,15 +203,10 @@ export interface AbortMultipartUploadParams {
   signal?: AbortSignal
 }
 
-/** Parameters for {@link S3Client.deleteObject}. */
+/** Parameters for {@link S3mini.deleteObject}. */
 export interface DeleteObjectParams {
   key: string
   signal?: AbortSignal
-}
-
-export interface ErrorWithCode {
-  code?: string
-  cause?: { code?: string }
 }
 
 export type HttpMethod = 'POST' | 'GET' | 'HEAD' | 'PUT' | 'DELETE'
@@ -199,12 +216,6 @@ export interface XmlMap {
   [key: string]: XmlValue | XmlValue[] // one or many children
   [key: number]: XmlValue | XmlValue[] // allow numeric keys
 }
-
-/**
- * Binary data types supported in browser environments.
- * Use ArrayBuffer, Uint8Array, or Blob - Buffer is not available in browsers.
- */
-export type BinaryData = ArrayBuffer | Uint8Array | Blob
 
 /** Progress callback for upload operations */
 export type OnProgressFn = (bytesUploaded: number, bytesTotal: number) => void

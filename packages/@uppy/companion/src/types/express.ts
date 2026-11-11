@@ -1,4 +1,5 @@
 import type { S3Client } from '@aws-sdk/client-s3'
+import type { Promisable } from 'type-fest'
 import type { CredentialsFetchResponse } from '../schemas/companion.js'
 import type Provider from '../server/provider/Provider.js'
 import type { CompanionRuntimeOptions } from './companion-options.js'
@@ -17,6 +18,11 @@ export interface ProviderGrantConfig {
 export interface ProviderUserSession {
   accessToken?: string
   refreshToken?: string | undefined
+  /**
+   * When the provider's session expires, in unix seconds. A session that
+   * expires earlier than `authStateExpiry` caps the session token to it.
+   */
+  exp?: number
   [key: string]: unknown
 }
 
@@ -31,7 +37,9 @@ export type CompanionContext = {
   buildURL?: BuildUrl
   s3Client?: S3Client
   s3ClientCreatePresignedPost?: S3Client
-  getProviderCredentials?: () => Promise<CredentialsFetchResponse | null>
+  /** The S3 provider's clients, one per bucket it has served, for the app's lifetime. */
+  s3ProviderClients: Map<string, S3Client>
+  getProviderCredentials?: () => Promisable<CredentialsFetchResponse | null>
 }
 
 export interface GrantDynamic {
@@ -67,7 +75,10 @@ declare module 'express-session' {
       response?: {
         access_token?: string
         refresh_token?: string
+        error?: unknown
       }
+      /** The uppyAuthToken callback minted for this session, until send-token delivers it. */
+      pendingAuthToken?: string
     }
   }
 }
