@@ -51,7 +51,7 @@ async function main(): Promise<void> {
         const held = Promise.withResolvers<void>()
         release = held.resolve
         emitter.on = async (token, handler) => {
-          if (token === 'redis:disconnect') return subscribe(token, handler)
+          if (token === 'redis:resubscribed') return subscribe(token, handler)
           await sendMessage('subscribing')
           await held.promise
           return subscribe(token, handler)

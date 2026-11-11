@@ -2,7 +2,7 @@ import { EventEmitter, once } from 'node:events'
 import { createServer, type Server } from 'node:http'
 import express from 'express'
 import session from 'express-session'
-import { Pipeline, Redis } from 'ioredis'
+import { Redis } from 'ioredis'
 import request from 'supertest'
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest'
 import { WebSocket } from 'ws'
@@ -26,7 +26,7 @@ let sendToken: typeof import('../dist/server/controllers/send-token.js').default
 let setupSockets: typeof import('../dist/server/socket.js').default
 
 beforeEach(async () => {
-  // Each simulated process gets a fresh dedicated OAuth Redis connection.
+  // Each simulated process gets fresh module state.
   vi.resetModules()
   ;({ publishAuthCallback, takeAuthCallback } = await import(
     '../dist/server/auth-callback.js'
@@ -215,20 +215,12 @@ describe.each(['memory', 'redis'] as const)('%s auth callback', (mode) => {
   })
 
   if (mode === 'redis')
-    run('retains results on Redis without SET PXAT support', async () => {
+    run('retains results regardless of clock skew with Redis', async () => {
       const flow = await start()
-      const sendCommand = Redis.prototype.sendCommand
-      vi.spyOn(Redis.prototype, 'sendCommand').mockImplementation(function (
-        this: Redis,
-        command,
-        ...args
-      ) {
-        if (command.name === 'set' && command.args.includes('PXAT')) {
-          return Promise.reject(new Error('ERR syntax error'))
-        }
-        return sendCommand.call(this, command, ...args)
-      })
+      const now = Date.now()
+      vi.spyOn(Date, 'now').mockReturnValue(now - 70_000)
       await flow.callback()
+      vi.mocked(Date.now).mockRestore()
       expect(await takeAuthCallback(flow.callbackToken, options)).toEqual({
         token,
       })
@@ -236,26 +228,17 @@ describe.each(['memory', 'redis'] as const)('%s auth callback', (mode) => {
 
   if (mode === 'redis')
     run(
-      'recovers after the dedicated OAuth connection ends',
+      'fails fast instead of queueing while Redis is unavailable',
       async () => {
         const flow = await start()
-        await flow.callback()
-        expect(await takeAuthCallback(flow.callbackToken, options)).toEqual({
-          token,
-        })
-        const authClient = clients.find(
-          (client) => client.options.enableOfflineQueue === false,
-        )
-        expect(authClient).toBeDefined()
-        const ended = once(authClient!, 'end', {
-          signal: AbortSignal.timeout(1000),
-        })
-        authClient!.disconnect()
+        const ended = once(storage!, 'end')
+        storage!.disconnect()
         await ended
-        await flow.callback()
-        expect(await takeAuthCallback(flow.callbackToken, options)).toEqual({
-          token,
-        })
+        const set = vi.spyOn(storage!, 'set')
+        const started = Date.now()
+        await flow.callback(500)
+        expect(Date.now() - started).toBeLessThan(7000)
+        expect(set).not.toHaveBeenCalled()
       },
       10_000,
     )
@@ -264,7 +247,7 @@ describe.each(['memory', 'redis'] as const)('%s auth callback', (mode) => {
     run('responds with a generic error when retention fails', async () => {
       const flow = await start()
       const log = vi.spyOn(console, 'log').mockImplementation(() => {})
-      vi.spyOn(Pipeline.prototype, 'exec').mockRejectedValueOnce(
+      vi.spyOn(Redis.prototype, 'set').mockRejectedValueOnce(
         Object.assign(new Error('Retained writes unavailable'), {
           command: {
             name: 'set',

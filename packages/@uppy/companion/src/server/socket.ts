@@ -139,16 +139,20 @@ async function handleAuthCallbackSocketConnection({
     ws.close()
   }
 
+  function onResubscribed() {
+    // A publication may have been lost while the subscriber reconnected; the
+    // retained result is still in storage.
+    replay().catch(onError)
+  }
+
   ws.on('close', () => {
     closed = true
     events.removeListener(token, onMessage)
-    events.removeListener('redis:disconnect', onError)
+    events.removeListener('redis:resubscribed', onResubscribed)
   })
 
   try {
-    // Pub/sub cannot replay notifications lost during a disconnect. Settle the
-    // pending attempt instead of waiting forever for a publication already lost.
-    if (redis.client()) await events.on('redis:disconnect', onError)
+    if (redis.client()) await events.on('redis:resubscribed', onResubscribed)
     // HTTP 101 precedes Redis subscription readiness. Subscribe first, then
     // consume storage, covering callbacks both before and during subscription.
     // Bound this login's wait without changing shared upload retry behavior.
