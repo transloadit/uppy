@@ -2571,6 +2571,35 @@ describe('src/Core', () => {
     })
   })
 
+  describe('initial online status check', () => {
+    afterEach(() => {
+      vi.useRealTimers()
+    })
+
+    function setup() {
+      vi.useFakeTimers()
+      const statusEventMock = vi.fn()
+      const core = new Core()
+      core.on('is-offline', statusEventMock)
+      core.on('is-online', statusEventMock)
+      return { core, statusEventMock }
+    }
+
+    it('should check the online status 3s after creation', () => {
+      const { core, statusEventMock } = setup()
+      vi.advanceTimersByTime(3000)
+      expect(statusEventMock).toHaveBeenCalledOnce()
+      core.destroy()
+    })
+
+    it('should not check the online status after destroy', () => {
+      const { core, statusEventMock } = setup()
+      core.destroy()
+      vi.advanceTimersByTime(3000)
+      expect(statusEventMock).not.toHaveBeenCalled()
+    })
+  })
+
   describe('info', () => {
     it('should set a string based message to be displayed infinitely', () => {
       const infoVisibleEvent = vi.fn()
