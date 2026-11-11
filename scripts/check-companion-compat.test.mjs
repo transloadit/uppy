@@ -11,8 +11,15 @@ const url = 'https://api2.transloadit.com/companion/'
 const url2 = 'https://api2-eu-west-1.transloadit.com/companion/'
 
 describe('parseVersion / compareVersions', () => {
-  it('parses exact x.y.z', () => {
-    assert.deepEqual(parseVersion('7.2.1'), [7, 2, 1])
+  it('parses x.y.z with optional prerelease and build', () => {
+    assert.deepEqual(parseVersion('7.2.1'), {
+      release: [7, 2, 1],
+      prerelease: [],
+    })
+    assert.deepEqual(parseVersion('8.0.0-beta.1+abc'), {
+      release: [8, 0, 0],
+      prerelease: ['beta', '1'],
+    })
   })
 
   it('compares numerically, not lexically', () => {
@@ -21,8 +28,27 @@ describe('parseVersion / compareVersions', () => {
     assert.equal(compareVersions('7.0.0', '7.0.0'), 0)
   })
 
-  it('rejects anything that is not exact x.y.z', () => {
-    for (const bad of ['7.0', 'latest', '7.0.0-beta.1', '', undefined]) {
+  it('follows semver precedence for prereleases', () => {
+    const ascending = [
+      '7.0.0-alpha',
+      '7.0.0-alpha.1',
+      '7.0.0-alpha.beta',
+      '7.0.0-beta',
+      '7.0.0-beta.2',
+      '7.0.0-beta.11',
+      '7.0.0-rc.1',
+      '7.0.0',
+      '7.3.0-beta.1',
+    ]
+    for (let i = 0; i < ascending.length - 1; i++) {
+      assert.equal(compareVersions(ascending[i], ascending[i + 1]), -1)
+      assert.equal(compareVersions(ascending[i + 1], ascending[i]), 1)
+    }
+    assert.equal(compareVersions('7.0.0+abc', '7.0.0'), 0)
+  })
+
+  it('rejects anything that is not a semver version', () => {
+    for (const bad of ['7.0', 'latest', '^7.0.0', '7.0.0-', '', undefined]) {
       assert.throws(() => parseVersion(bad))
     }
   })
@@ -42,10 +68,10 @@ describe('parseHostedVersion', () => {
     )
   })
 
-  it('returns undefined for a prerelease', () => {
+  it('keeps a prerelease', () => {
     assert.equal(
-      parseHostedVersion('Welcome to Companion v8.0.0-beta.1\n'),
-      undefined,
+      parseHostedVersion('Welcome to Companion v7.3.0-beta.1+abc\n'),
+      '7.3.0-beta.1',
     )
   })
 
@@ -143,6 +169,23 @@ describe('evaluate', () => {
     assert.equal(result.ok, true)
     assert.equal(result.warnings.length, 1)
     assert.ok(result.warnings[0].includes(url))
+  })
+
+  it('accepts a hosted prerelease above the minimum', () => {
+    const result = evaluate({
+      ...base,
+      hosted: [{ url, version: '7.3.0-beta.1' }],
+    })
+    assert.equal(result.ok, true)
+  })
+
+  it('fails when the minimum is a release and the repo has only its prerelease', () => {
+    const result = evaluate({
+      ...base,
+      min: '8.0.0',
+      repoCompanion: '8.0.0-beta.1',
+    })
+    assert.equal(result.ok, false)
   })
 
   describe('the #6248 incident (client 6.0.0 needed Companion 7, hosted ran 6.1.1)', () => {

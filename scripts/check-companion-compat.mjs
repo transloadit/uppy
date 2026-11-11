@@ -42,27 +42,56 @@ const CORE_PACKAGE_JSON = 'packages/@uppy/core/package.json'
 const COMPANION_PACKAGE_JSON = 'packages/@uppy/companion/package.json'
 const repoRoot = new URL('../', import.meta.url)
 
+// x.y.z with an optional -prerelease and +build suffix (semver 2.0.0).
+const VERSION =
+  /(\d+)\.(\d+)\.(\d+)(?:-([0-9A-Za-z-]+(?:\.[0-9A-Za-z-]+)*))?(?:\+[0-9A-Za-z-]+(?:\.[0-9A-Za-z-]+)*)?/
+    .source
+
 export function parseVersion(version) {
-  const match = /^(\d+)\.(\d+)\.(\d+)$/.exec(version)
-  if (!match) throw new Error(`Not an exact x.y.z version: ${version}`)
-  return match.slice(1).map(Number)
+  const match = new RegExp(`^${VERSION}$`).exec(version)
+  if (!match) throw new Error(`Not a semver version: ${version}`)
+  return {
+    release: match.slice(1, 4).map(Number),
+    prerelease: match[4]?.split('.') ?? [],
+  }
 }
 
+function compareIdentifiers(a, b) {
+  const aNumeric = /^\d+$/.test(a)
+  const bNumeric = /^\d+$/.test(b)
+  if (aNumeric && bNumeric) return Math.sign(Number(a) - Number(b))
+  // Numeric identifiers sort before alphanumeric ones.
+  if (aNumeric !== bNumeric) return aNumeric ? -1 : 1
+  return a === b ? 0 : a > b ? 1 : -1
+}
+
+// Semver precedence: build metadata is ignored, and a prerelease of x.y.z
+// sorts below x.y.z itself.
 export function compareVersions(a, b) {
   const pa = parseVersion(a)
   const pb = parseVersion(b)
   for (let i = 0; i < 3; i++) {
-    if (pa[i] !== pb[i]) return pa[i] > pb[i] ? 1 : -1
+    if (pa.release[i] !== pb.release[i])
+      return pa.release[i] > pb.release[i] ? 1 : -1
   }
-  return 0
+  const [preA, preB] = [pa.prerelease, pb.prerelease]
+  if (preA.length === 0 || preB.length === 0) {
+    return Math.sign(preB.length - preA.length)
+  }
+  for (let i = 0; i < Math.min(preA.length, preB.length); i++) {
+    const result = compareIdentifiers(preA[i], preB[i])
+    if (result !== 0) return result
+  }
+  return Math.sign(preA.length - preB.length)
 }
 
+// Returns the version without its +build suffix.
 export function parseHostedVersion(body) {
-  const match =
-    /^Welcome to Companion v(\d+\.\d+\.\d+)(?:\+[0-9A-Za-z.-]+)?\r?$/m.exec(
-      body,
-    )
-  return match?.[1]
+  const match = new RegExp(
+    `^Welcome to Companion v(${VERSION})\\r?$`,
+    'm',
+  ).exec(body)
+  return match?.[1].replace(/\+.*/, '')
 }
 
 export function evaluate({
@@ -195,4 +224,13 @@ async function main() {
   if (!result.ok) process.exitCode = 1
 }
 
-if (import.meta.main) await main()
+if (import.meta.main) {
+  try {
+    await main()
+  } catch (err) {
+    console.log(
+      `::error::check-companion-compat failed: ${err instanceof Error ? err.message : err}`,
+    )
+    process.exitCode = 1
+  }
+}
