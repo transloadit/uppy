@@ -332,7 +332,7 @@ const repoFiles = {
   },
 }
 
-async function runMain({ root, argv = [], env = {}, endpoints }) {
+async function runMain({ root, argv = [], env = {}, endpoints, publishPlan }) {
   const lines = []
   const code = await main({
     argv,
@@ -340,6 +340,7 @@ async function runMain({ root, argv = [], env = {}, endpoints }) {
     env,
     endpoints,
     retryDelayMs: 0,
+    publishPlan,
     log: (line) => lines.push(line),
   })
   return {
@@ -457,6 +458,40 @@ describe('main', () => {
     })
     assert.equal(result.code, 0)
     assert.equal(result.warnings.length, 2)
+  })
+
+  describe('--release', () => {
+    const release = (toPublish, endpoint) =>
+      runMain({
+        root: makeRepo({ ...repoFiles, ...withMinimum('@uppy/s3', '7.1.0') }),
+        argv: ['--release'],
+        endpoints: [endpoint],
+        publishPlan: () => toPublish,
+      })
+
+    for (const toPublish of [[], ['@uppy/companion', '@uppy/locales']]) {
+      it(`skips the check when publishing [${toPublish}]`, async () => {
+        const result = await release(toPublish, `${origin}/down?skip`)
+        assert.equal(result.code, 0)
+        assert.match(result.lines.at(-1), /skipping the check/)
+        assert.equal(hits.get('/down?skip'), undefined)
+      })
+    }
+
+    for (const name of ['@uppy/core', '@uppy/s3', 'uppy']) {
+      it(`fails when publishing ${name} and hosted is unreachable`, async () => {
+        const result = await release(
+          [name, '@uppy/locales'],
+          `${origin}/down?release-${name}`,
+        )
+        assert.equal(result.code, 1)
+      })
+    }
+
+    it('passes when publishing @uppy/core and hosted is new enough', async () => {
+      const result = await release(['@uppy/core'], `${origin}/v/7.2.1`)
+      assert.equal(result.code, 0)
+    })
   })
 
   it('fails without --ci, even in a PR', async () => {

@@ -13,8 +13,10 @@
 // It finds a problem when the minimum is newer than the Companion in this
 // repo, or when a hosted Companion endpoint runs an older version or can't
 // be read. Where it runs, and what a problem does there:
-//   - before `changeset publish` and before a manual CDN upload of the
-//     `uppy` bundle (no flag): fails. This is the enforcement.
+//   - before `changeset publish` (--release): fails, but only when the
+//     publish plan holds a package that declares a minimum or bundles one
+//     (BUNDLES), so a hosted outage doesn't block unrelated releases.
+//   - before a manual CDN upload of the `uppy` bundle (no flag): fails.
 //   - in CI on a PR (--ci): fails when the PR changes a minimum or touches
 //     client code that talks to Companion (CLIENT_PATHS), otherwise warns.
 //   - in CI on a push (--ci): warns.
@@ -30,11 +32,12 @@
 //   3. The client change merges and raises minCompanionVersion.
 //
 // While hosted runs below the minimum (for example after a rollback),
-// releases are blocked, a Companion fix included, and so are PRs that touch
-// the client. The escape is a PR that lowers minCompanionVersion.
+// releases of the client are blocked, and so are PRs that touch it. The escape is a PR that lowers minCompanionVersion.
 
 import { execFileSync } from 'node:child_process'
-import { readdirSync, readFileSync } from 'node:fs'
+import { mkdtempSync, readdirSync, readFileSync, rmSync } from 'node:fs'
+import os from 'node:os'
+import path from 'node:path'
 import { setTimeout as sleep } from 'node:timers/promises'
 
 // Hosted Companion: the global address is Transloadit.COMPANION_URL in
@@ -63,6 +66,8 @@ export const CLIENT_PATHS = [
 // fork PRs can set it too.
 export const OPT_OUT_MARKER = 'companion-compat: none'
 const OPT_OUT = new RegExp(`^\\s*${OPT_OUT_MARKER}\\s*$`, 'im')
+// Published packages that bundle the packages declaring a minimum.
+const BUNDLES = ['uppy']
 const REPO_ROOT = new URL('../', import.meta.url)
 
 // x.y.z with an optional -prerelease and +build suffix (semver 2.0.0).
@@ -206,12 +211,12 @@ function packageJsonPaths(root) {
   ]
 }
 
-// The minimum each published package declares, read with `read(path)`, which
+// The minimum each published package declares, read with `read(file)`, which
 // returns the file's contents or undefined.
 export function minimumsOf(paths, read) {
   const minimums = new Map()
-  for (const path of paths) {
-    const contents = read(path)
+  for (const file of paths) {
+    const contents = read(file)
     if (contents === undefined) continue
     const { name, private: isPrivate, uppy } = JSON.parse(contents)
     if (!isPrivate && uppy?.minCompanionVersion) {
@@ -264,6 +269,26 @@ async function pullRequestBody(env) {
   return pr?.body ?? ''
 }
 
+// The names of the packages `changeset publish` would publish now. It asks
+// the registry with the same logic, which also covers pre mode and packages
+// left unpublished by an earlier failed release.
+function packagesToPublish(root) {
+  const dir = mkdtempSync(path.join(os.tmpdir(), 'companion-compat-plan-'))
+  try {
+    const output = path.join(dir, 'plan.json')
+    execFileSync('yarn', ['changeset', 'publish-plan', '--output', output], {
+      cwd: root,
+      stdio: ['ignore', 'inherit', 'inherit'],
+    })
+    return JSON.parse(readFileSync(output, 'utf8'))
+      .plan.flat()
+      .filter((release) => release.kind === 'publish')
+      .map((release) => release.name)
+  } finally {
+    rmSync(dir, { recursive: true, force: true })
+  }
+}
+
 // Runs the check and returns the exit code. Everything it reads from outside
 // can be injected, for tests.
 export async function main({
@@ -272,12 +297,13 @@ export async function main({
   env = process.env,
   endpoints = env.COMPANION_COMPAT_ENDPOINTS?.split(',') ?? ENDPOINTS,
   retryDelayMs,
+  publishPlan = packagesToPublish,
   log = console.log,
 } = {}) {
   const paths = packageJsonPaths(root)
-  const minimums = minimumsOf(paths, (path) => {
+  const minimums = minimumsOf(paths, (file) => {
     try {
-      return readFileSync(new URL(path, root), 'utf8')
+      return readFileSync(new URL(file, root), 'utf8')
     } catch {
       return undefined
     }
@@ -287,15 +313,29 @@ export async function main({
     readFileSync(new URL(COMPANION_PACKAGE_JSON, root), 'utf8'),
   ).version
 
+  if (argv.includes('--release')) {
+    const toPublish = publishPlan(root)
+    const concerned = toPublish.filter(
+      (name) => minimums.has(name) || BUNDLES.includes(name),
+    )
+    if (concerned.length === 0) {
+      log(
+        `Nothing to publish talks to Companion (${toPublish.join(', ') || 'nothing to publish'}); skipping the check.`,
+      )
+      return 0
+    }
+    log(`About to publish ${concerned.join(', ')}.`)
+  }
+
   let strict = true
   const errors = []
   if (argv.includes('--ci') && env.GITHUB_EVENT_NAME === 'pull_request') {
     // The PR checkout is a merge commit, so HEAD^1 is the base branch.
     // Without a readable base every package reads as new and every file as
     // changed, so this errs towards strict.
-    const baseMinimums = minimumsOf(paths, (path) => {
+    const baseMinimums = minimumsOf(paths, (file) => {
       try {
-        return git(root, 'show', `HEAD^1:${path}`)
+        return git(root, 'show', `HEAD^1:${file}`)
       } catch {
         return undefined
       }
