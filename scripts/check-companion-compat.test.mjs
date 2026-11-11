@@ -1,10 +1,17 @@
 import assert from 'node:assert/strict'
+import { execFileSync } from 'node:child_process'
+import { mkdirSync, mkdtempSync, rmSync, writeFileSync } from 'node:fs'
 import http from 'node:http'
+import os from 'node:os'
+import path from 'node:path'
 import { after, before, describe, it } from 'node:test'
+import { pathToFileURL } from 'node:url'
 import {
   compareVersions,
   evaluate,
+  fetchHosted,
   fetchVersion,
+  main,
   parseHostedVersion,
   parseVersion,
 } from './check-companion-compat.mjs'
@@ -91,31 +98,44 @@ describe('parseHostedVersion', () => {
   })
 })
 
-describe('fetchVersion', () => {
-  let server
-  let origin
-  before(async () => {
-    server = http.createServer((req, res) => {
-      if (req.url === '/ok') res.end('Welcome to Companion v7.2.1\n===\n')
-      else if (req.url === '/html') res.end('<html>hi</html>')
-      else {
-        res.statusCode = 502
-        res.end()
-      }
-    })
-    await new Promise((resolve) => server.listen(0, '127.0.0.1', resolve))
-    origin = `http://127.0.0.1:${server.address().port}`
+// A stand-in for hosted Companion:
+//   /v/<version>             welcome line for <version>
+//   /flaky/<n>/<version>     HTTP 502 for the first <n> requests, then /v/
+//   /html                    a page without the welcome line
+//   anything else            HTTP 502
+let stub
+let origin
+const hits = new Map()
+before(async () => {
+  stub = http.createServer((req, res) => {
+    hits.set(req.url, (hits.get(req.url) ?? 0) + 1)
+    // A ?query only keeps the hit counts of different tests apart.
+    let [, kind, ...rest] = req.url.replace(/\?.*/, '').split('/')
+    if (kind === 'flaky' && hits.get(req.url) > Number(rest[0])) {
+      kind = 'v'
+      rest = rest.slice(1)
+    }
+    if (kind === 'v') res.end(`Welcome to Companion v${rest[0]}\n===\n`)
+    else if (kind === 'html') res.end('<html>hi</html>')
+    else {
+      res.statusCode = 502
+      res.end()
+    }
   })
-  after(() => server.close())
+  await new Promise((resolve) => stub.listen(0, '127.0.0.1', resolve))
+  origin = `http://127.0.0.1:${stub.address().port}`
+})
+after(() => stub.close())
 
+describe('fetchVersion', () => {
   it('reads the version', async () => {
-    assert.deepEqual(await fetchVersion(`${origin}/ok`), {
+    assert.deepEqual(await fetchVersion(`${origin}/v/7.2.1`), {
       version: '7.2.1',
     })
   })
 
   it('reports the HTTP status', async () => {
-    assert.deepEqual(await fetchVersion(`${origin}/fail`), {
+    assert.deepEqual(await fetchVersion(`${origin}/down`), {
       error: 'HTTP 502 Bad Gateway',
     })
     assert.deepEqual(await fetchVersion(`${origin}/html`), {
@@ -130,6 +150,27 @@ describe('fetchVersion', () => {
     await new Promise((resolve) => closed.close(resolve))
     const { error } = await fetchVersion(`http://127.0.0.1:${port}/`)
     assert.match(error, /ECONNREFUSED/)
+  })
+})
+
+describe('fetchHosted', () => {
+  it('retries only the endpoints it could not read', async () => {
+    const steady = `${origin}/v/7.2.1?steady`
+    const flaky = `${origin}/flaky/2/7.2.2`
+    const hosted = await fetchHosted([steady, flaky], { delayMs: 0 })
+    assert.deepEqual(hosted, [
+      { url: steady, version: '7.2.1' },
+      { url: flaky, version: '7.2.2' },
+    ])
+    assert.equal(hits.get('/v/7.2.1?steady'), 1)
+    assert.equal(hits.get('/flaky/2/7.2.2'), 3)
+  })
+
+  it('gives up after the last retry', async () => {
+    const down = `${origin}/down?gives-up`
+    const hosted = await fetchHosted([down], { retries: 2, delayMs: 0 })
+    assert.deepEqual(hosted, [{ url: down, error: 'HTTP 502 Bad Gateway' }])
+    assert.equal(hits.get('/down?gives-up'), 3)
   })
 })
 
@@ -248,5 +289,132 @@ describe('evaluate', () => {
       })
       assert.equal(result.ok, false)
     })
+  })
+})
+
+// A throwaway git repository with a `base` commit and a `head` commit on top,
+// like the merge commit a PR checkout gets. Both map paths to file contents
+// (objects are written as JSON); `head` only lists what it changes.
+function makeRepo(base, head = {}) {
+  const dir = mkdtempSync(path.join(os.tmpdir(), 'companion-compat-'))
+  const run = (...args) =>
+    execFileSync(
+      'git',
+      ['-c', 'user.name=t', '-c', 'user.email=t@t', ...args],
+      {
+        cwd: dir,
+        stdio: 'ignore',
+      },
+    )
+  const write = (files) => {
+    for (const [file, content] of Object.entries(files)) {
+      mkdirSync(path.dirname(path.join(dir, file)), { recursive: true })
+      writeFileSync(
+        path.join(dir, file),
+        typeof content === 'string' ? content : JSON.stringify(content),
+      )
+    }
+    run('add', '--all')
+    run('commit', '--quiet', '--allow-empty', '-m', 'commit')
+  }
+  run('init', '--quiet')
+  write(base)
+  write(head)
+  after(() => rmSync(dir, { recursive: true, force: true }))
+  return pathToFileURL(`${dir}/`)
+}
+
+const corePackage = (min) => ({
+  'packages/@uppy/core/package.json': {
+    name: '@uppy/core',
+    uppy: { minCompanionVersion: min },
+  },
+})
+const repoFiles = {
+  ...corePackage('7.0.0'),
+  'packages/@uppy/companion/package.json': {
+    name: '@uppy/companion',
+    version: '7.2.2',
+  },
+}
+
+async function runMain({ root, env = {}, endpoints }) {
+  const lines = []
+  const code = await main({
+    root,
+    env,
+    endpoints,
+    retryDelayMs: 0,
+    log: (line) => lines.push(line),
+  })
+  return {
+    code,
+    lines,
+    warnings: lines.filter((line) => line.startsWith('::warning::')),
+  }
+}
+
+describe('main', () => {
+  const pr = { GITHUB_EVENT_NAME: 'pull_request' }
+
+  it('passes when every endpoint is new enough', async () => {
+    const root = makeRepo(repoFiles)
+    const result = await runMain({ root, endpoints: [`${origin}/v/7.2.1`] })
+    assert.equal(result.code, 0)
+  })
+
+  it('fails outside a PR when an endpoint is too old', async () => {
+    const root = makeRepo(repoFiles)
+    const result = await runMain({
+      root,
+      endpoints: [`${origin}/v/7.2.1`, `${origin}/v/6.9.0`],
+    })
+    assert.equal(result.code, 1)
+  })
+
+  it('reads the endpoints from COMPANION_COMPAT_ENDPOINTS', async () => {
+    const root = makeRepo(repoFiles)
+    const result = await runMain({
+      root,
+      env: { COMPANION_COMPAT_ENDPOINTS: `${origin}/v/6.9.0` },
+    })
+    assert.equal(result.code, 1)
+    assert.ok(result.lines.some((line) => line.includes('6.9.0')))
+  })
+
+  it('only warns about an unreachable endpoint on a PR that keeps the minimum', async () => {
+    const root = makeRepo(repoFiles, { 'README.md': 'docs' })
+    const result = await runMain({
+      root,
+      env: pr,
+      endpoints: [`${origin}/down?pr-keeps`],
+    })
+    assert.equal(result.code, 0)
+    assert.equal(result.warnings.length, 1)
+    assert.match(result.warnings[0], /HTTP 502/)
+  })
+
+  it('fails on an unreachable endpoint on a PR that raises the minimum', async () => {
+    const root = makeRepo(repoFiles, corePackage('7.1.0'))
+    const result = await runMain({
+      root,
+      env: pr,
+      endpoints: [`${origin}/v/7.2.1`, `${origin}/down?pr-raises`],
+    })
+    assert.equal(result.code, 1)
+  })
+
+  it('warns when a PR changes the Companion client and Companion together', async () => {
+    const root = makeRepo(repoFiles, {
+      'packages/@uppy/core/src/companion-client/index.ts': 'x',
+      'packages/@uppy/companion/src/index.ts': 'x',
+    })
+    const result = await runMain({
+      root,
+      env: pr,
+      endpoints: [`${origin}/v/7.2.1`],
+    })
+    assert.equal(result.code, 0)
+    assert.ok(result.warnings.some((w) => w.includes('Companion together')))
   })
 })

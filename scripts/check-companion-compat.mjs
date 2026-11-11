@@ -32,7 +32,13 @@ import { execFileSync } from 'node:child_process'
 import { readFileSync } from 'node:fs'
 import { setTimeout as sleep } from 'node:timers/promises'
 
-const ENDPOINTS = [
+// Hosted Companion: the global address is Transloadit.COMPANION_URL in
+// packages/@uppy/transloadit/src/index.ts, the others are the regional API2
+// hosts its TL_COMPANION pattern accepts and that Assemblies may hand out as
+// `companion_url`. Transloadit's region list isn't in this repo, so keep this
+// one in sync by hand when regions are added or removed.
+// COMPANION_COMPAT_ENDPOINTS (comma-separated) overrides it, for testing.
+export const ENDPOINTS = [
   'https://api2.transloadit.com/companion/',
   'https://api2-us-east-1.transloadit.com/companion/',
   'https://api2-eu-west-1.transloadit.com/companion/',
@@ -40,7 +46,7 @@ const ENDPOINTS = [
 ]
 const CORE_PACKAGE_JSON = 'packages/@uppy/core/package.json'
 const COMPANION_PACKAGE_JSON = 'packages/@uppy/companion/package.json'
-const repoRoot = new URL('../', import.meta.url)
+const REPO_ROOT = new URL('../', import.meta.url)
 
 // x.y.z with an optional -prerelease and +build suffix (semver 2.0.0).
 const VERSION =
@@ -152,21 +158,26 @@ export async function fetchVersion(url) {
   }
 }
 
-async function fetchHosted() {
+// Retries endpoints whose version couldn't be read, to ride out a deploy.
+export async function fetchHosted(
+  endpoints,
+  { retries = 3, delayMs = 20_000 } = {},
+) {
   const results = new Map()
-  for (let round = 0; round <= 3; round++) {
-    const pending = ENDPOINTS.filter((url) => !results.get(url)?.version)
+  for (let round = 0; round <= retries; round++) {
+    const pending = endpoints.filter((url) => !results.get(url)?.version)
     if (pending.length === 0) break
-    if (round > 0) await sleep(20_000)
+    if (round > 0) await sleep(delayMs)
     await Promise.all(
       pending.map(async (url) => results.set(url, await fetchVersion(url))),
     )
   }
-  return ENDPOINTS.map((url) => ({ url, ...results.get(url) }))
+  return endpoints.map((url) => ({ url, ...results.get(url) }))
 }
 
-function git(...args) {
+function git(root, ...args) {
   return execFileSync('git', args, {
+    cwd: root,
     encoding: 'utf8',
     stdio: ['ignore', 'pipe', 'ignore'],
   })
@@ -176,14 +187,22 @@ function minCompanionVersionOf(packageJson) {
   return JSON.parse(packageJson).uppy?.minCompanionVersion
 }
 
-async function main() {
+// Runs the check and returns the exit code. Everything it reads from outside
+// can be injected, for tests.
+export async function main({
+  root = REPO_ROOT,
+  env = process.env,
+  endpoints = env.COMPANION_COMPAT_ENDPOINTS?.split(',') ?? ENDPOINTS,
+  retryDelayMs,
+  log = console.log,
+} = {}) {
   const min = minCompanionVersionOf(
-    readFileSync(new URL(CORE_PACKAGE_JSON, repoRoot), 'utf8'),
+    readFileSync(new URL(CORE_PACKAGE_JSON, root), 'utf8'),
   )
   const repoCompanion = JSON.parse(
-    readFileSync(new URL(COMPANION_PACKAGE_JSON, repoRoot), 'utf8'),
+    readFileSync(new URL(COMPANION_PACKAGE_JSON, root), 'utf8'),
   ).version
-  const isPullRequest = process.env.GITHUB_EVENT_NAME === 'pull_request'
+  const isPullRequest = env.GITHUB_EVENT_NAME === 'pull_request'
 
   let fieldChanged = true
   const warnings = []
@@ -191,14 +210,17 @@ async function main() {
     // The PR checkout is a merge commit, so HEAD^1 is the base branch.
     try {
       fieldChanged =
-        minCompanionVersionOf(git('show', `HEAD^1:${CORE_PACKAGE_JSON}`)) !==
-        min
+        minCompanionVersionOf(
+          git(root, 'show', `HEAD^1:${CORE_PACKAGE_JSON}`),
+        ) !== min
     } catch {
       fieldChanged = true
     }
 
     try {
-      const changed = git('diff', '--name-only', 'HEAD^1', 'HEAD').split('\n')
+      const changed = git(root, 'diff', '--name-only', 'HEAD^1', 'HEAD').split(
+        '\n',
+      )
       const touches = (prefix) =>
         changed.some((file) => file.startsWith(prefix))
       if (
@@ -216,21 +238,21 @@ async function main() {
   const result = evaluate({
     min,
     repoCompanion,
-    hosted: await fetchHosted(),
+    hosted: await fetchHosted(endpoints, { delayMs: retryDelayMs }),
     fieldChanged,
     isPullRequest,
   })
 
-  for (const line of result.lines) console.log(line)
+  for (const line of result.lines) log(line)
   for (const warning of [...warnings, ...result.warnings]) {
-    console.log(`::warning::${warning}`)
+    log(`::warning::${warning}`)
   }
-  if (!result.ok) process.exitCode = 1
+  return result.ok ? 0 : 1
 }
 
 if (import.meta.main) {
   try {
-    await main()
+    process.exitCode = await main()
   } catch (err) {
     console.log(
       `::error::check-companion-compat failed: ${err instanceof Error ? err.message : err}`,
