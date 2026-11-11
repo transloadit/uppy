@@ -459,11 +459,11 @@ describe('AwsS3', () => {
       // the only way to make both paths agree.
       const { signRequest, registerHandlers } = createMultipartMocks()
       registerHandlers()
-      signRequest.mockImplementation(async (req: any) => ({
+      signRequest.mockImplementation((req: any) => ({
         url: `${bucketUrl}/dir-${req.key}?method=${req.method}`,
       }))
 
-      const core = new Core().use(AwsS3, {
+      using core = new Core().use(AwsS3, {
         s3Endpoint: bucketUrl,
         region: 'us-east-1',
         signRequest,
