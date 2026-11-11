@@ -45,6 +45,11 @@ jobs:
       - name: Build before publishing
         if: ${{ !inputs.version }}
         run: corepack yarn run build
+      # The `uppy` bundle contains the Companion client. With a version given,
+      # this still checks the minimum declared on the checked-out branch.
+      - name: Check hosted Companion is new enough
+        if: ${{ inputs.package == 'uppy' }}
+        run: node scripts/check-companion-compat.mjs
       - name: Upload "${{ inputs.package }}" to CDN
         if: ${{ !inputs.force }}
         run: corepack yarn workspace uppy node upload-to-cdn.js "$PACKAGE" "$VERSION"

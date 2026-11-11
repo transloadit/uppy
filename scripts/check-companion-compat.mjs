@@ -3,13 +3,15 @@
 // Checks that hosted Companion is new enough for the Companion client we are
 // about to release.
 //
-// `uppy.minCompanionVersion` in packages/@uppy/core/package.json is the
-// minimum Companion version that core's Companion client
-// (src/companion-client) needs. It says nothing about other packages that
-// talk to Companion: @uppy/s3 and @uppy/transloadit-storage use endpoints
-// that arrived in Companion 7.1.0 and are not covered here.
+// `uppy.minCompanionVersion` in a published package's package.json is the
+// minimum Companion version that package's client code needs: @uppy/core
+// for its Companion client (src/companion-client), @uppy/s3 and
+// @uppy/transloadit-storage for the /s3/* and /transloadit-storage/*
+// endpoints that arrived in Companion 7.1.0. The check uses the highest
+// minimum of all packages under packages/@uppy/ and packages/uppy.
 //
-// This runs before `changeset publish` and in CI on every PR. It fails when
+// This runs before `changeset publish`, before a manual CDN upload of the
+// `uppy` bundle, and in CI on every PR. It fails when
 // the minimum is newer than the Companion in this repo, or when any hosted
 // Companion endpoint runs an older version. On a PR that doesn't change the
 // minimum, an unreachable endpoint is only a warning.
@@ -24,12 +26,9 @@
 // While hosted runs below the minimum (for example after a rollback), every
 // PR's check is red and releases are blocked, a Companion fix included. The
 // escape is a PR that lowers minCompanionVersion.
-//
-// Not covered: the manual CDN workflow, which uploads from main without
-// running this check.
 
 import { execFileSync } from 'node:child_process'
-import { readFileSync } from 'node:fs'
+import { readdirSync, readFileSync } from 'node:fs'
 import { setTimeout as sleep } from 'node:timers/promises'
 
 // Hosted Companion: the global address is Transloadit.COMPANION_URL in
@@ -44,7 +43,6 @@ export const ENDPOINTS = [
   'https://api2-eu-west-1.transloadit.com/companion/',
   'https://api2-ap-southeast-1.transloadit.com/companion/',
 ]
-const CORE_PACKAGE_JSON = 'packages/@uppy/core/package.json'
 const COMPANION_PACKAGE_JSON = 'packages/@uppy/companion/package.json'
 const REPO_ROOT = new URL('../', import.meta.url)
 
@@ -183,8 +181,45 @@ function git(root, ...args) {
   })
 }
 
-function minCompanionVersionOf(packageJson) {
-  return JSON.parse(packageJson).uppy?.minCompanionVersion
+function packageJsonPaths(root) {
+  return [
+    ...readdirSync(new URL('packages/@uppy/', root)).map(
+      (dir) => `packages/@uppy/${dir}/package.json`,
+    ),
+    'packages/uppy/package.json',
+  ]
+}
+
+// The minimum each published package declares, read with `read(path)`, which
+// returns the file's contents or undefined.
+export function minimumsOf(paths, read) {
+  const minimums = new Map()
+  for (const path of paths) {
+    const contents = read(path)
+    if (contents === undefined) continue
+    const { name, private: isPrivate, uppy } = JSON.parse(contents)
+    if (!isPrivate && uppy?.minCompanionVersion) {
+      minimums.set(name, uppy.minCompanionVersion)
+    }
+  }
+  return minimums
+}
+
+export function highestMinimum(minimums) {
+  let highest
+  for (const [name, min] of minimums) {
+    if (!highest || compareVersions(min, highest.min) > 0) {
+      highest = { name, min }
+    }
+  }
+  if (!highest) {
+    throw new Error('No published package declares uppy.minCompanionVersion')
+  }
+  return highest
+}
+
+function sameMinimums(a, b) {
+  return a.size === b.size && [...a].every(([name, min]) => b.get(name) === min)
 }
 
 // Runs the check and returns the exit code. Everything it reads from outside
@@ -196,9 +231,15 @@ export async function main({
   retryDelayMs,
   log = console.log,
 } = {}) {
-  const min = minCompanionVersionOf(
-    readFileSync(new URL(CORE_PACKAGE_JSON, root), 'utf8'),
-  )
+  const paths = packageJsonPaths(root)
+  const minimums = minimumsOf(paths, (path) => {
+    try {
+      return readFileSync(new URL(path, root), 'utf8')
+    } catch {
+      return undefined
+    }
+  })
+  const { name: minFrom, min } = highestMinimum(minimums)
   const repoCompanion = JSON.parse(
     readFileSync(new URL(COMPANION_PACKAGE_JSON, root), 'utf8'),
   ).version
@@ -208,14 +249,16 @@ export async function main({
   const warnings = []
   if (isPullRequest) {
     // The PR checkout is a merge commit, so HEAD^1 is the base branch.
-    try {
-      fieldChanged =
-        minCompanionVersionOf(
-          git(root, 'show', `HEAD^1:${CORE_PACKAGE_JSON}`),
-        ) !== min
-    } catch {
-      fieldChanged = true
-    }
+    // Without a readable base every package reads as new, so this errs
+    // towards "changed".
+    const baseMinimums = minimumsOf(paths, (path) => {
+      try {
+        return git(root, 'show', `HEAD^1:${path}`)
+      } catch {
+        return undefined
+      }
+    })
+    fieldChanged = !sameMinimums(baseMinimums, minimums)
 
     try {
       const changed = git(root, 'diff', '--name-only', 'HEAD^1', 'HEAD').split(
@@ -243,6 +286,7 @@ export async function main({
     isPullRequest,
   })
 
+  log(`minCompanionVersion ${min} (from ${minFrom})`)
   for (const line of result.lines) log(line)
   for (const warning of [...warnings, ...result.warnings]) {
     log(`::warning::${warning}`)

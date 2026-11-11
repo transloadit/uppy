@@ -324,12 +324,14 @@ function makeRepo(base, head = {}) {
   return pathToFileURL(`${dir}/`)
 }
 
-const corePackage = (min) => ({
-  'packages/@uppy/core/package.json': {
-    name: '@uppy/core',
+const withMinimum = (name, min, extra = {}) => ({
+  [`packages/${name}/package.json`]: {
+    name,
+    ...extra,
     uppy: { minCompanionVersion: min },
   },
 })
+const corePackage = (min) => withMinimum('@uppy/core', min)
 const repoFiles = {
   ...corePackage('7.0.0'),
   'packages/@uppy/companion/package.json': {
@@ -361,6 +363,33 @@ describe('main', () => {
     const root = makeRepo(repoFiles)
     const result = await runMain({ root, endpoints: [`${origin}/v/7.2.1`] })
     assert.equal(result.code, 0)
+  })
+
+  it('uses the highest minimum of the published packages', async () => {
+    const root = makeRepo({
+      ...repoFiles,
+      ...withMinimum('@uppy/s3', '7.1.0'),
+      ...withMinimum('@uppy/private', '9.0.0', { private: true }),
+      ...withMinimum('uppy', '6.0.0'),
+    })
+    const result = await runMain({ root, endpoints: [`${origin}/v/7.0.5`] })
+    assert.equal(result.code, 1)
+    assert.ok(
+      result.lines.includes('minCompanionVersion 7.1.0 (from @uppy/s3)'),
+    )
+  })
+
+  it('treats a changed minimum in any package as a changed minimum', async () => {
+    const root = makeRepo(
+      { ...repoFiles, ...withMinimum('@uppy/s3', '7.1.0') },
+      withMinimum('@uppy/s3', '7.0.0'),
+    )
+    const result = await runMain({
+      root,
+      env: pr,
+      endpoints: [`${origin}/down?s3-changed`],
+    })
+    assert.equal(result.code, 1)
   })
 
   it('fails outside a PR when an endpoint is too old', async () => {
