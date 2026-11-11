@@ -8,6 +8,7 @@ import {
   beforeEach,
   describe,
   expect,
+  onTestFinished,
   test,
   vi,
 } from 'vitest'
@@ -111,6 +112,7 @@ test('does not follow a redirecting credentials endpoint', async () => {
     JSON.stringify({ params: 'ZOOM-CREDENTIALS-PARAMS' }),
   ).toString('base64')
   const logError = vi.spyOn(logger, 'error').mockImplementation(() => {})
+  onTestFinished(() => logError.mockRestore())
   const res = await request(await getZoomServer())
     .get('/zoom/logout/')
     .set('uppy-auth-token', token)
@@ -126,7 +128,6 @@ test('does not follow a redirecting credentials endpoint', async () => {
     }),
     'credentials.fetch.fail',
   )
-  logError.mockRestore()
   expect(elsewhere.pendingMocks()).toEqual([
     'POST http://localhost:2111/elsewhere',
   ])
