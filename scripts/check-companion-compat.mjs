@@ -112,9 +112,9 @@ export function evaluate({
     )
   }
 
-  for (const { url, version } of hosted) {
+  for (const { url, version, error } of hosted) {
     if (version === undefined) {
-      const message = `Could not read the Companion version from ${url}.`
+      const message = `Could not read the Companion version from ${url}: ${error}.`
       if (isPullRequest && !fieldChanged) {
         lines.push(`?    ${url} unknown`)
         warnings.push(
@@ -138,27 +138,31 @@ export function evaluate({
   return { ok, lines, warnings }
 }
 
-async function fetchVersion(url) {
+// Resolves to { version } or, when the version can't be read, { error }.
+export async function fetchVersion(url) {
   try {
     const res = await fetch(url, { signal: AbortSignal.timeout(10_000) })
-    if (!res.ok) return undefined
-    return parseHostedVersion(await res.text())
-  } catch {
-    return undefined
+    if (!res.ok) return { error: `HTTP ${res.status} ${res.statusText}` }
+    const version = parseHostedVersion(await res.text())
+    return version
+      ? { version }
+      : { error: `HTTP ${res.status} without a welcome line` }
+  } catch (err) {
+    return { error: err.cause?.message ?? err.message }
   }
 }
 
 async function fetchHosted() {
-  const versions = new Map()
+  const results = new Map()
   for (let round = 0; round <= 3; round++) {
-    const pending = ENDPOINTS.filter((url) => versions.get(url) === undefined)
+    const pending = ENDPOINTS.filter((url) => !results.get(url)?.version)
     if (pending.length === 0) break
     if (round > 0) await sleep(20_000)
     await Promise.all(
-      pending.map(async (url) => versions.set(url, await fetchVersion(url))),
+      pending.map(async (url) => results.set(url, await fetchVersion(url))),
     )
   }
-  return ENDPOINTS.map((url) => ({ url, version: versions.get(url) }))
+  return ENDPOINTS.map((url) => ({ url, ...results.get(url) }))
 }
 
 function git(...args) {

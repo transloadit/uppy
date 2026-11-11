@@ -1,8 +1,10 @@
 import assert from 'node:assert/strict'
-import { describe, it } from 'node:test'
+import http from 'node:http'
+import { after, before, describe, it } from 'node:test'
 import {
   compareVersions,
   evaluate,
+  fetchVersion,
   parseHostedVersion,
   parseVersion,
 } from './check-companion-compat.mjs'
@@ -89,6 +91,48 @@ describe('parseHostedVersion', () => {
   })
 })
 
+describe('fetchVersion', () => {
+  let server
+  let origin
+  before(async () => {
+    server = http.createServer((req, res) => {
+      if (req.url === '/ok') res.end('Welcome to Companion v7.2.1\n===\n')
+      else if (req.url === '/html') res.end('<html>hi</html>')
+      else {
+        res.statusCode = 502
+        res.end()
+      }
+    })
+    await new Promise((resolve) => server.listen(0, '127.0.0.1', resolve))
+    origin = `http://127.0.0.1:${server.address().port}`
+  })
+  after(() => server.close())
+
+  it('reads the version', async () => {
+    assert.deepEqual(await fetchVersion(`${origin}/ok`), {
+      version: '7.2.1',
+    })
+  })
+
+  it('reports the HTTP status', async () => {
+    assert.deepEqual(await fetchVersion(`${origin}/fail`), {
+      error: 'HTTP 502 Bad Gateway',
+    })
+    assert.deepEqual(await fetchVersion(`${origin}/html`), {
+      error: 'HTTP 200 without a welcome line',
+    })
+  })
+
+  it('reports a connection error', async () => {
+    const closed = http.createServer()
+    await new Promise((resolve) => closed.listen(0, '127.0.0.1', resolve))
+    const { port } = closed.address()
+    await new Promise((resolve) => closed.close(resolve))
+    const { error } = await fetchVersion(`http://127.0.0.1:${port}/`)
+    assert.match(error, /ECONNREFUSED/)
+  })
+})
+
 describe('evaluate', () => {
   const base = {
     min: '7.0.0',
@@ -138,12 +182,13 @@ describe('evaluate', () => {
     )
   })
 
-  it('fails on release when an endpoint is unreachable', () => {
+  it('fails on release when an endpoint is unreachable, saying why', () => {
     const result = evaluate({
       ...base,
-      hosted: [{ url, version: undefined }],
+      hosted: [{ url, error: 'HTTP 502 Bad Gateway' }],
     })
     assert.equal(result.ok, false)
+    assert.ok(result.lines.some((line) => line.includes('HTTP 502')))
   })
 
   it('fails on a PR that changes the field when an endpoint is unreachable', () => {
