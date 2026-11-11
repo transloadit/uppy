@@ -1,5 +1,5 @@
 {
-  "$schema": "https://unpkg.com/@changesets/config@3.1.1/schema.json",
+  "$schema": "../node_modules/@changesets/config/schema.json",
   "changelog": "@changesets/cli/changelog",
   "commit": false,
   "fixed": [],
@@ -9,26 +9,5 @@
   "updateInternalDependencies": "patch",
   "___experimentalUnsafeOptions_WILL_CHANGE_IN_PATCH": {
     "onlyUpdatePeerDependentsWhenOutOfRange": true
-  },
-  "ignore": [
-    "@uppy-dev/dev",
-    "example-angular",
-    "example-aws-companion",
-    "example-aws-nodejs",
-    "example-aws-php",
-    "example-cdn",
-    "example-companion",
-    "example-companion-custom-provider",
-    "example-companion-digitalocean-spaces",
-    "example-react",
-    "example-sveltekit",
-    "example-transloadit",
-    "example-vue",
-    "example-xhr-bundle",
-    "example-xhr-node",
-    "example-xhr-php",
-    "example-xhr-python",
-    "example-reactrouter",
-    "example-nextjs"
-  ]
+  }
 }

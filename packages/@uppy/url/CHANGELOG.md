@@ -1,5 +1,21 @@
 # @uppy/url
 
+## 6.0.2
+
+### Patch Changes
+
+- 715eb80: Move the source map of the minified CSS into a separate file. The `.min.css` files, and `image-editor.css` in `@uppy/components`, `@uppy/react`, `@uppy/vue` and `@uppy/svelte`, embedded it inline and were larger than the unminified CSS. They now link to an external `.css.map` instead, at about half the gzipped size.
+
+## 6.0.1
+
+### Patch Changes
+
+- 3f1aca3: Stricter TypeScript: caught errors are typed as `unknown`, and `noImplicitOverride` and `noImplicitReturns` are enabled for all packages.
+  
+  - `@uppy/core/utils`: add `toError`, `getErrorMessage`, `isAbortError` and `isRestrictionError` helpers. `@uppy/core/companion-client`: export `isAuthError`.
+  - `@uppy/webcam`: `icon` is now public, like on other acquirer plugins. `start()` now returns a promise that settles once the camera is ready, instead of `undefined`.
+  - `@uppy/url`: `handleRootDrop` and `handleRootPaste` are now public, as Dashboard and DropTarget call them. The failed-fetch notification's `details` is now the error message instead of the Error object.
+
 ## 6.0.0
 
 ### Minor Changes

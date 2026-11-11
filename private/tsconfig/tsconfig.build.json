@@ -1,0 +1,11 @@
+{
+  "extends": "./tsconfig.base.json",
+  "include": ["${configDir}/src"],
+  "compilerOptions": {
+    "declaration": true,
+    "declarationMap": true,
+    "module": "nodenext",
+    "outDir": "${configDir}/lib",
+    "rootDir": "${configDir}/src"
+  }
+}

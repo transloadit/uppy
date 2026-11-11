@@ -210,7 +210,7 @@ export default class SearchProviderView<M extends Meta, B extends Body> {
     }
   }
 
-  async donePicking(): Promise<void> {
+  donePicking(): void {
     const { partialTree } = this.plugin.getPluginState()
 
     // 1. Add files
@@ -271,7 +271,7 @@ export default class SearchProviderView<M extends Meta, B extends Body> {
     return this.plugin.uppy.validateAggregateRestrictions(uppyFiles)
   }
 
-  render(state: unknown, viewOptions: RenderOpts<M, B> = {}): h.JSX.Element {
+  render(_state: unknown, viewOptions: RenderOpts<M, B> = {}): h.JSX.Element {
     const { isInputMode, searchString, loading, partialTree } =
       this.plugin.getPluginState()
     const { i18n } = this.plugin.uppy

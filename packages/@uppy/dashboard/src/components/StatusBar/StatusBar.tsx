@@ -74,7 +74,7 @@ export default class StatusBar<
 
   #previousETA!: number | null
 
-  componentDidMount(): void {
+  override componentDidMount(): void {
     // Initialize ETA calculation variables
     this.#lastUpdateTime = performance.now()
     this.#previousUploadedBytes = this.props.uppy
@@ -85,7 +85,7 @@ export default class StatusBar<
     this.props.uppy.on('upload', this.#onUploadStart)
   }
 
-  componentWillUnmount(): void {
+  override componentWillUnmount(): void {
     this.props.uppy.off('upload', this.#onUploadStart)
   }
 

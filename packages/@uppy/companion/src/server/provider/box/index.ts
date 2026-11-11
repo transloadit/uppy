@@ -1,10 +1,18 @@
-import type { Readable } from 'node:stream'
 import got from 'got'
-import type { ProviderOptions } from '../../../schemas/companion.js'
-import type { BuildUrl } from '../../../types/express.js'
 import { isRecord } from '../../helpers/type-guards.js'
-import { prepareStream } from '../../helpers/utils.js'
-import Provider, { type ProviderListResponse, type Query } from '../Provider.js'
+import { pathSegment, prepareStream } from '../../helpers/utils.js'
+import Provider, {
+  type ProviderDownloadOptions,
+  type ProviderDownloadResponse,
+  type ProviderListOptions,
+  type ProviderListResponse,
+  type ProviderLogoutOptions,
+  type ProviderLogoutResponse,
+  type ProviderSizeOptions,
+  type ProviderThumbnailOptions,
+  type ProviderThumbnailResponse,
+  type Query,
+} from '../Provider.js'
 import { withProviderErrorHandling } from '../providerErrors.js'
 import adaptData from './adapter.js'
 
@@ -12,12 +20,6 @@ const BOX_FILES_FIELDS = 'id,modified_at,name,permissions,size,type'
 const BOX_THUMBNAIL_SIZE = 256
 
 type BoxUserSession = { accessToken: string }
-type CompanionLike = {
-  buildURL?: BuildUrl
-  options: {
-    providerOptions: Record<string, Pick<ProviderOptions, 'key' | 'secret'>>
-  }
-}
 
 const getClient = ({ token }: { token: string }) =>
   got.extend({
@@ -27,7 +29,7 @@ const getClient = ({ token }: { token: string }) =>
     },
   })
 
-async function getUserInfo({
+function getUserInfo({
   token,
 }: {
   token: string
@@ -37,7 +39,7 @@ async function getUserInfo({
     .json<{ login?: string }>()
 }
 
-async function list({
+function list({
   directory,
   query,
   token,
@@ -50,7 +52,7 @@ async function list({
   const cursor =
     typeof query?.['cursor'] === 'string' ? query?.['cursor'] : undefined
   return getClient({ token })
-    .get(`folders/${directory || rootFolderID}/items`, {
+    .get(`folders/${pathSegment(directory || rootFolderID)}/items`, {
       searchParams: {
         fields: BOX_FILES_FIELDS,
         offset: cursor,
@@ -84,17 +86,12 @@ export default class Box extends Provider<BoxUserSession> {
    * @param options.providerUserSession
    * @param options.companion
    */
-  override async list({
+  override list({
     directory,
     providerUserSession: { accessToken: token },
     query,
     companion,
-  }: {
-    directory?: string | undefined
-    providerUserSession: BoxUserSession
-    query?: Query
-    companion: CompanionLike
-  }): Promise<ProviderListResponse> {
+  }: ProviderListOptions<BoxUserSession>): Promise<ProviderListResponse> {
     return this.#withErrorHandling('provider.box.list.error', async () => {
       const [userInfo, files] = await Promise.all([
         getUserInfo({ token }),
@@ -105,30 +102,27 @@ export default class Box extends Provider<BoxUserSession> {
     })
   }
 
-  override async download({
+  override download({
     id,
     providerUserSession: { accessToken: token },
-  }: {
-    id: string
-    providerUserSession: BoxUserSession
-  }): Promise<{ stream: Readable; size: number | undefined }> {
+  }: ProviderDownloadOptions<BoxUserSession>): Promise<ProviderDownloadResponse> {
     return this.#withErrorHandling('provider.box.download.error', async () => {
-      const stream = getClient({ token }).stream.get(`files/${id}/content`, {
-        responseType: 'json',
-      })
+      const stream = getClient({ token }).stream.get(
+        `files/${pathSegment(id)}/content`,
+        {
+          responseType: 'json',
+        },
+      )
 
       const { size } = await prepareStream(stream)
       return { stream, size }
     })
   }
 
-  override async thumbnail({
+  override thumbnail({
     id,
     providerUserSession: { accessToken: token },
-  }: {
-    id: string
-    providerUserSession: BoxUserSession
-  }): Promise<{ stream: Readable; contentType: string }> {
+  }: ProviderThumbnailOptions<BoxUserSession>): Promise<ProviderThumbnailResponse> {
     return this.#withErrorHandling('provider.box.thumbnail.error', async () => {
       const extension = 'jpg' // you can set this to png to more easily reproduce http 202 retry-after
 
@@ -142,7 +136,7 @@ export default class Box extends Provider<BoxUserSession> {
       //
       // This can be reproduced more easily by changing extension to png and trying on a newly uploaded image
       const stream = getClient({ token }).stream.get(
-        `files/${id}/thumbnail.${extension}`,
+        `files/${pathSegment(id)}/thumbnail.${extension}`,
         {
           searchParams: {
             max_height: BOX_THUMBNAIL_SIZE,
@@ -157,16 +151,13 @@ export default class Box extends Provider<BoxUserSession> {
     })
   }
 
-  override async size({
+  override size({
     id,
     providerUserSession: { accessToken: token },
-  }: {
-    id: string
-    providerUserSession: BoxUserSession
-  }): Promise<number> {
+  }: ProviderSizeOptions<BoxUserSession>): Promise<number> {
     return this.#withErrorHandling('provider.box.size.error', async () => {
       const file = await getClient({ token })
-        .get(`files/${id}`, { responseType: 'json' })
+        .get(`files/${pathSegment(id)}`, { responseType: 'json' })
         .json<Record<string, unknown>>()
       const sizeValue = file['size']
       const sizeStr =
@@ -179,13 +170,10 @@ export default class Box extends Provider<BoxUserSession> {
     })
   }
 
-  override async logout({
+  override logout({
     companion,
     providerUserSession: { accessToken: token },
-  }: {
-    companion: CompanionLike
-    providerUserSession: BoxUserSession
-  }): Promise<{ revoked: true }> {
+  }: ProviderLogoutOptions<BoxUserSession>): Promise<ProviderLogoutResponse> {
     return this.#withErrorHandling('provider.box.logout.error', async () => {
       const { key, secret } = companion.options.providerOptions['box']!
       await getClient({ token }).post('oauth2/revoke', {
@@ -202,7 +190,7 @@ export default class Box extends Provider<BoxUserSession> {
     })
   }
 
-  async #withErrorHandling<T>(tag: string, fn: () => Promise<T>): Promise<T> {
+  #withErrorHandling<T>(tag: string, fn: () => Promise<T>): Promise<T> {
     return withProviderErrorHandling({
       fn,
       tag,

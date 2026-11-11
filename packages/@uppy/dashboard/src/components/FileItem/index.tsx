@@ -40,27 +40,27 @@ type Props<M extends Meta, B extends Body> = {
 export default class FileItem<M extends Meta, B extends Body> extends Component<
   Props<M, B>
 > {
-  componentDidMount(): void {
+  override componentDidMount(): void {
     const { file } = this.props
     if (!file.preview) {
       this.props.handleRequestThumbnail(file)
     }
   }
 
-  shouldComponentUpdate(nextProps: Props<M, B>): boolean {
+  override shouldComponentUpdate(nextProps: Props<M, B>): boolean {
     return !shallowEqualObjects(this.props, nextProps)
   }
 
   // VirtualList mounts FileItems again and they emit `thumbnail:request`
   // Otherwise thumbnails are broken or missing after Golden Retriever restores files
-  componentDidUpdate(): void {
+  override componentDidUpdate(): void {
     const { file } = this.props
     if (!file.preview) {
       this.props.handleRequestThumbnail(file)
     }
   }
 
-  componentWillUnmount(): void {
+  override componentWillUnmount(): void {
     const { file } = this.props
     if (!file.preview) {
       this.props.handleCancelThumbnail(file)

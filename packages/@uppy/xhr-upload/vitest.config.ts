@@ -1,9 +1,10 @@
 import { playwright } from '@vitest/browser-playwright'
+import { msw } from 'msw/vite'
 import { defineConfig } from 'vitest/config'
 
 export default defineConfig({
+  plugins: [msw()],
   test: {
-    include: ['src/**/*.test.{ts,tsx}'],
     browser: {
       enabled: true,
       headless: true,

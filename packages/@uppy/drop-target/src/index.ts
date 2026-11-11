@@ -104,13 +104,14 @@ export default class DropTarget<
       }
     }
 
+    // Browsers empty `event.dataTransfer` once this handler yields
+    this.opts.onDrop?.(event)
+
     const files = await getDroppedFiles(event.dataTransfer, { logDropError })
     if (files.length > 0) {
       this.uppy.log('[DropTarget] Files were dropped')
       this.addFiles(files)
     }
-
-    this.opts.onDrop?.(event)
   }
 
   handleDragOver = (event: DragEvent): void => {
@@ -174,12 +175,12 @@ export default class DropTarget<
     }
   }
 
-  install(): void {
+  override install(): void {
     this.setPluginState({ isDraggingOver: false })
     this.addListeners()
   }
 
-  uninstall(): void {
+  override uninstall(): void {
     this.removeListeners()
   }
 }
