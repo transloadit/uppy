@@ -1,10 +1,7 @@
 import type { Uppy, UppyEventMap } from '../index.js'
 import type { Meta } from '../utils/index.js'
-import {
-  type CompanionPluginOptions,
-  type RequestClientOptions,
-  tokenStorage,
-} from './index.js'
+import { defaultStorage } from './defaultStorage.js'
+import type { CompanionPluginOptions, RequestClientOptions } from './index.js'
 
 export type GooglePickerType = 'drive' | 'photos'
 
@@ -293,6 +290,11 @@ async function handleDocObjectRecursively({
   return items
 }
 
+// Google's Picker calls back with a "loaded" action once its iframe is ready. If it fails to load
+// (e.g. third-party cookies blocked), it shows an error page without a close button that blocks the
+// whole page, and never calls back. So if we don't hear from it in time, we close it ourselves.
+const DRIVE_PICKER_LOAD_TIMEOUT_MS = 15_000
+
 async function showDrivePicker({
   token,
   apiKey,
@@ -301,6 +303,7 @@ async function showDrivePicker({
   signal,
   onLoadingChange,
   onError,
+  onPickerFailed,
 }: {
   token: string
   apiKey: string
@@ -309,6 +312,7 @@ async function showDrivePicker({
   signal: AbortSignal | undefined
   onLoadingChange: (loading: boolean) => void
   onError: (err: unknown) => void
+  onPickerFailed: () => void
 }): Promise<void> {
   // google drive picker will crash hard if given an invalid token, so we need to check it first
   // https://github.com/transloadit/uppy/pull/5443#pullrequestreview-2452439265
@@ -353,11 +357,27 @@ async function showDrivePicker({
     // NOTE: photos is broken and results in an error being returned from Google
     // I think it's the old Picasa photos
     // .addView(google.picker.ViewId.PHOTOS)
-    .setCallback(onPicked)
+    .setCallback((res) => {
+      clearTimeout(loadTimeout)
+      if (res.action === google.picker.Action.ERROR) {
+        failPicker()
+        return
+      }
+      onPicked(res)
+    })
     .build()
 
+  const failPicker = () => {
+    picker.dispose()
+    onPickerFailed()
+  }
+  const loadTimeout = setTimeout(failPicker, DRIVE_PICKER_LOAD_TIMEOUT_MS)
+
   picker.setVisible(true)
-  signal?.addEventListener('abort', () => picker.dispose())
+  signal?.addEventListener('abort', () => {
+    clearTimeout(loadTimeout)
+    picker.dispose()
+  })
 }
 
 async function showPhotosPicker({
@@ -665,7 +685,7 @@ export interface GooglePickerOptions
 export function createGooglePickerController({
   uppy,
   store,
-  storage: persistentStore = tokenStorage,
+  storage: persistentStore = defaultStorage,
   pickerType,
   companionUrl,
   requestClientId = pickerType === 'drive'
@@ -683,10 +703,7 @@ export function createGooglePickerController({
   let initPromise: Promise<void> | undefined
   let pickingSession: PickingSession | undefined
 
-  const handleFilesPicked = async (
-    files: PickedItem[],
-    accessToken: string,
-  ) => {
+  const handleFilesPicked = (files: PickedItem[], accessToken: string) => {
     uppy.addFiles(
       files.map((file) =>
         mapPickerFile({ requestClientId, accessToken, companionUrl }, file),
@@ -754,6 +771,13 @@ export function createGooglePickerController({
           onError: (err: unknown) => {
             uppy.log(err)
             uppy.info(uppy.i18n('failedToAddFiles'), 'error')
+          },
+          onPickerFailed: () => {
+            uppy.log(
+              'Google Drive Picker failed to load. Possible causes: third-party cookies blocked, API key restrictions not matching this origin, Google Picker API not enabled, or apiKey/clientId/appId from different Google Cloud projects.',
+              'error',
+            )
+            uppy.info(uppy.i18n('googleDrivePickerFailed'), 'error', 15_000)
           },
         })
       } else {

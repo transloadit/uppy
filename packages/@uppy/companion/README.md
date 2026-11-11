@@ -74,6 +74,20 @@ const server = app.listen(PORT)
 companion.socket(server, options)
 ```
 
+### Native Transloadit Storage credentials
+
+The `transloadit-storage` provider accepts either its existing server-side `workspaces` credential
+map or a `credentialsSecret`, never both. Dynamic mode uses the configured `apiEndpoint` to resolve
+credentials for the immutable Workspace ID in a verified browser grant. It requires a matching
+API2 File Library credential resolver, a server-only shared secret of at least 32 characters, and an
+`https:` `apiEndpoint` (plain `http:` is accepted only for `localhost`).
+Do not send this secret or Workspace Auth Secrets to the browser. Browser grants remain the only
+client-supplied authorization, with their existing expiry, prefix and scope checks.
+
+Dynamic credentials are refreshed by the cached S3 client’s credential provider. Enrolling another
+Workspace therefore needs no Companion restart; API2 owns admission and checks it on each request.
+Resolver errors fail closed, without falling back to a static map or global S3 credentials.
+
 ### Run as standalone server
 
 Please make sure that the required env variables are set before runnning/using

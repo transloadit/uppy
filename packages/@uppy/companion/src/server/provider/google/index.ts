@@ -16,7 +16,7 @@ export interface GoogleUserSession {
   accessToken: string
 }
 
-export async function refreshToken(
+export function refreshToken(
   options: ProviderRefreshTokenOptions,
 ): Promise<ProviderRefreshTokenResponse> {
   return withGoogleErrorHandling(
@@ -26,7 +26,7 @@ export async function refreshToken(
   )
 }
 
-export async function logout({
+export function logout({
   providerUserSession: { accessToken: token },
 }: ProviderLogoutOptions<GoogleUserSession>): Promise<ProviderLogoutResponse> {
   return withGoogleErrorHandling(

@@ -1,7 +1,7 @@
 {
   "name": "@uppy/image-generator",
   "description": "AI-powered image generation for Uppy",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "license": "MIT",
   "sideEffects": false,
   "type": "module",
@@ -46,8 +46,8 @@
     "@uppy-dev/tsconfig": "workspace:^",
     "@uppy/core": "workspace:^",
     "cssnano": "^8.0.1",
-    "postcss": "^8.5.23",
-    "postcss-cli": "^11.0.1",
+    "postcss": "^8.5.32",
+    "postcss-cli": "^12.0.0",
     "sass": "^1.89.2"
   },
   "peerDependencies": {

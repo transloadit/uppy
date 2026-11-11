@@ -1,7 +1,7 @@
 import crypto from 'node:crypto'
 import got from 'got'
 import { isRecord } from '../../helpers/type-guards.js'
-import { HttpError, prepareStream } from '../../helpers/utils.js'
+import { HttpError, pathSegment, prepareStream } from '../../helpers/utils.js'
 import Provider, {
   type ProviderDownloadOptions,
   type ProviderDownloadResponse,
@@ -87,7 +87,7 @@ async function getMediaUrl({
     requests: [
       {
         method: 'GET',
-        relative_url: `${id}?${new URLSearchParams({ fields: 'images' }).toString()}`,
+        relative_url: `${pathSegment(id)}?${new URLSearchParams({ fields: 'images' }).toString()}`,
       },
     ],
   })
@@ -122,7 +122,7 @@ export default class Facebook extends Provider<FacebookUserSession> {
     return 'facebook'
   }
 
-  override async list({
+  override list({
     directory,
     providerUserSession: { accessToken: token },
     query,
@@ -141,7 +141,7 @@ export default class Facebook extends Provider<FacebookUserSession> {
 
       let path = 'me/albums'
       if (directory) {
-        path = `${directory}/photos`
+        path = `${pathSegment(directory)}/photos`
         qs['fields'] = 'icon,images,name,width,height,created_time'
       }
 
@@ -177,7 +177,7 @@ export default class Facebook extends Provider<FacebookUserSession> {
     })
   }
 
-  override async download({
+  override download({
     companion,
     id,
     providerUserSession: { accessToken: token },
@@ -198,7 +198,7 @@ export default class Facebook extends Provider<FacebookUserSession> {
     )
   }
 
-  override async logout({
+  override logout({
     companion,
     providerUserSession: { accessToken: token },
   }: ProviderLogoutOptions<FacebookUserSession>): Promise<ProviderLogoutResponse> {
@@ -221,7 +221,7 @@ export default class Facebook extends Provider<FacebookUserSession> {
     )
   }
 
-  async #withErrorHandling<T>(tag: string, fn: () => Promise<T>): Promise<T> {
+  #withErrorHandling<T>(tag: string, fn: () => Promise<T>): Promise<T> {
     return withProviderErrorHandling({
       fn,
       tag,

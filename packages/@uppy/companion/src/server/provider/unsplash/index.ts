@@ -1,6 +1,6 @@
 import got from 'got'
 import { isRecord } from '../../helpers/type-guards.js'
-import { prepareStream } from '../../helpers/utils.js'
+import { pathSegment, prepareStream } from '../../helpers/utils.js'
 import { ProviderApiError } from '../error.js'
 import Provider, {
   type ProviderDownloadOptions,
@@ -25,7 +25,7 @@ const getClient = ({ token }: { token: string }): UnsplashClient =>
 
 const getPhotoMeta = async (client: UnsplashClient, id: string) =>
   client
-    .get(`photos/${id}`, { responseType: 'json' })
+    .get(`photos/${pathSegment(id)}`, { responseType: 'json' })
     .json<{ links: { download_location?: string } }>()
 
 interface UnsplashUserSession {
@@ -36,7 +36,7 @@ interface UnsplashUserSession {
  * Adapter for API https://api.unsplash.com
  */
 export default class Unsplash extends Provider<UnsplashUserSession> {
-  override async list({
+  override list({
     providerUserSession: { accessToken: token },
     query,
   }: ProviderListOptions<UnsplashUserSession>): Promise<ProviderListResponse> {
@@ -58,7 +58,7 @@ export default class Unsplash extends Provider<UnsplashUserSession> {
     })
   }
 
-  override async download({
+  override download({
     id,
     providerUserSession: { accessToken: token },
   }: ProviderDownloadOptions<UnsplashUserSession>): Promise<ProviderDownloadResponse> {
@@ -101,7 +101,7 @@ export default class Unsplash extends Provider<UnsplashUserSession> {
     )
   }
 
-  async #withErrorHandling<T>(tag: string, fn: () => Promise<T>): Promise<T> {
+  #withErrorHandling<T>(tag: string, fn: () => Promise<T>): Promise<T> {
     return withProviderErrorHandling({
       fn,
       tag,

@@ -5,7 +5,8 @@ import type Provider from '../provider/Provider.js'
 /**
  * Wraps a controller that needs the request's provider: answers 400 when there
  * is none, and turns errors into responses with `respondWithError` (or passes
- * them on to Express).
+ * them on to Express). An error after the response has started (a streamed
+ * body that broke off) has nothing left to answer, so it is dropped.
  */
 export default function withProvider(
   handler: (req: Request, res: Response, provider: Provider) => Promise<void>,
@@ -23,6 +24,7 @@ export default function withProvider(
     try {
       await handler(req, res, provider)
     } catch (err) {
+      if (res.headersSent) return
       if (respondWithError(err, res)) return
       next(err)
     }

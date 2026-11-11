@@ -1,5 +1,5 @@
 import got from 'got'
-import { parseSize, prepareStream } from '../../helpers/utils.js'
+import { parseSize, pathSegment, prepareStream } from '../../helpers/utils.js'
 import Provider, {
   type ProviderDownloadOptions,
   type ProviderDownloadResponse,
@@ -32,7 +32,7 @@ const getClient = ({ token }: { token: string }) =>
     },
   })
 
-async function getUserInfo({
+function getUserInfo({
   token,
 }: {
   token: string
@@ -42,7 +42,7 @@ async function getUserInfo({
     .json<{ login?: string }>()
 }
 
-async function list({
+function list({
   directory,
   query,
   token,
@@ -55,7 +55,7 @@ async function list({
   const cursor =
     typeof query?.['cursor'] === 'string' ? query?.['cursor'] : undefined
   return getClient({ token })
-    .get(`folders/${directory || rootFolderID}/items`, {
+    .get(`folders/${pathSegment(directory || rootFolderID)}/items`, {
       searchParams: {
         fields: BOX_FILES_FIELDS,
         offset: cursor,
@@ -89,7 +89,7 @@ export default class Box extends Provider<BoxUserSession> {
    * @param options.providerUserSession
    * @param options.companion
    */
-  override async list({
+  override list({
     directory,
     providerUserSession: { accessToken: token },
     query,
@@ -105,21 +105,24 @@ export default class Box extends Provider<BoxUserSession> {
     })
   }
 
-  override async download({
+  override download({
     id,
     providerUserSession: { accessToken: token },
   }: ProviderDownloadOptions<BoxUserSession>): Promise<ProviderDownloadResponse> {
     return this.#withErrorHandling('provider.box.download.error', async () => {
-      const stream = getClient({ token }).stream.get(`files/${id}/content`, {
-        responseType: 'json',
-      })
+      const stream = getClient({ token }).stream.get(
+        `files/${pathSegment(id)}/content`,
+        {
+          responseType: 'json',
+        },
+      )
 
       const { size } = await prepareStream(stream)
       return { stream, size }
     })
   }
 
-  override async thumbnail({
+  override thumbnail({
     id,
     providerUserSession: { accessToken: token },
   }: ProviderThumbnailOptions<BoxUserSession>): Promise<ProviderThumbnailResponse> {
@@ -136,7 +139,7 @@ export default class Box extends Provider<BoxUserSession> {
       //
       // This can be reproduced more easily by changing extension to png and trying on a newly uploaded image
       const stream = getClient({ token }).stream.get(
-        `files/${id}/thumbnail.${extension}`,
+        `files/${pathSegment(id)}/thumbnail.${extension}`,
         {
           searchParams: {
             max_height: BOX_THUMBNAIL_SIZE,
@@ -151,19 +154,19 @@ export default class Box extends Provider<BoxUserSession> {
     })
   }
 
-  override async size({
+  override size({
     id,
     providerUserSession: { accessToken: token },
   }: ProviderSizeOptions<BoxUserSession>): Promise<number | undefined> {
     return this.#withErrorHandling('provider.box.size.error', async () => {
       const file = await getClient({ token })
-        .get(`files/${id}`, { responseType: 'json' })
+        .get(`files/${pathSegment(id)}`, { responseType: 'json' })
         .json<Record<string, unknown>>()
       return parseSize(file['size'])
     })
   }
 
-  override async logout({
+  override logout({
     companion,
     providerUserSession: { accessToken: token },
   }: ProviderLogoutOptions<BoxUserSession>): Promise<ProviderLogoutResponse> {
@@ -183,7 +186,7 @@ export default class Box extends Provider<BoxUserSession> {
     })
   }
 
-  async #withErrorHandling<T>(tag: string, fn: () => Promise<T>): Promise<T> {
+  #withErrorHandling<T>(tag: string, fn: () => Promise<T>): Promise<T> {
     return withProviderErrorHandling({
       fn,
       tag,

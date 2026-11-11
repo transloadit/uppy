@@ -95,7 +95,7 @@ export async function withProviderErrorHandling<T>({
   }
 }
 
-export async function withGoogleErrorHandling<T>(
+export function withGoogleErrorHandling<T>(
   providerName: string,
   tag: string,
   fn: () => Promise<T>,

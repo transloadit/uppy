@@ -1,3 +1,4 @@
+import { pipeline } from 'node:stream/promises'
 import withProvider from './with-provider.js'
 
 export default withProvider(async (req, res, provider) => {
@@ -11,5 +12,7 @@ export default withProvider(async (req, res, provider) => {
     providerUserSession: req.companion.providerUserSession,
   })
   if (contentType != null) res.set('Content-Type', contentType)
-  stream.pipe(res)
+  // pipeline (unlike pipe) destroys the provider stream when the client
+  // disconnects, so its socket returns to the agent instead of leaking.
+  await pipeline(stream, res)
 })
