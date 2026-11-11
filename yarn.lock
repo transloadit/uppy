@@ -8862,6 +8862,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@uppy/locales@workspace:packages/@uppy/locales"
   dependencies:
+    "@types/node": "npm:^22.20.1"
     "@uppy-dev/tsconfig": "workspace:^"
     "@uppy/core": "workspace:^"
     glob: "npm:^13.0.6"

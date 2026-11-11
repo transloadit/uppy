@@ -122,9 +122,8 @@ function warnings({ leadingLocale, followerLocales }: LocaleWithLeading) {
       let value = leadingStrings[key]
 
       if (typeof value === 'object') {
-        // @ts-expect-error
         // For values with plural forms, just take the first one right now
-        value = value[Object.keys(value)[0]]
+        value = Object.values(value)[0]
       }
 
       details.push(
@@ -192,9 +191,9 @@ function findMalformedPlaceholder(
   return match
 }
 
-function getPlaceholders(string: string): Set<string | undefined> {
+function getPlaceholders(string: string): Set<string> {
   return new Set(
-    Array.from(string.matchAll(placeholderPattern), ([, name]) => name),
+    Array.from(string.matchAll(placeholderPattern), ([, name]) => name!),
   )
 }
 
@@ -240,7 +239,7 @@ function placeholders({ leadingLocale, followerLocales }: LocaleWithLeading) {
         for (const placeholder of expected) {
           if (found.has(placeholder)) continue
 
-          const malformed = findMalformedPlaceholder(string, placeholder!)
+          const malformed = findMalformedPlaceholder(string, placeholder)
           if (malformed) {
             errors.push(
               [
