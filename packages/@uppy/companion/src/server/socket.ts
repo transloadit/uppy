@@ -102,8 +102,10 @@ async function handleAuthCallbackSocketConnection({
   options: CompanionInitOptions
 }) {
   const events = emitter()
+  const openedAt = Date.now()
   let closed = false
   let sent = false
+  let replaysInFlight = 0
   function send(data: unknown) {
     if (closed || sent) return
     sent = true
@@ -119,7 +121,13 @@ async function handleAuthCallbackSocketConnection({
 
   async function replay() {
     if (closed || sent) return
-    const data = await takeAuthCallback(token, options)
+    replaysInFlight++
+    let data: unknown
+    try {
+      data = await takeAuthCallback(token, options)
+    } finally {
+      replaysInFlight--
+    }
     // Consumption is final if the socket closes during this read. Clients
     // already reject closed login sockets instead of reconnecting them.
     // A miss may mean eviction or prior consumption; do not replay live data.
@@ -141,14 +149,26 @@ async function handleAuthCallbackSocketConnection({
 
   function onResubscribed(downtimeMs: unknown) {
     // A publication may have been lost while the subscriber reconnected; the
-    // retained result is still in storage, unless the outage outlasted its
-    // retention. Then nothing will ever arrive: settle instead of waiting.
+    // retained result is still in storage, unless this socket waited through
+    // more of the outage than the retention lasts. A result published then
+    // may be gone, and we can't tell that from a login still in progress, so
+    // settle those rather than risk waiting forever. Logins opened during the
+    // outage, or shorter outages, keep waiting.
     replay()
       .then(() => {
-        const outlasted =
-          typeof downtimeMs === 'number' &&
-          downtimeMs >= authCallbackRetentionMs
-        if (!sent && !closed && outlasted) onError()
+        const waited = Math.min(
+          typeof downtimeMs === 'number' ? downtimeMs : 0,
+          Date.now() - openedAt,
+        )
+        // Another replay (from a message) may still deliver the result.
+        if (sent || closed || replaysInFlight > 0) return
+        if (waited < authCallbackRetentionMs) return
+        logger.info(
+          'Auth callback may have expired during a Redis outage',
+          'socket.auth.redis.expired',
+        )
+        closed = true
+        ws.close()
       })
       .catch(onError)
   }

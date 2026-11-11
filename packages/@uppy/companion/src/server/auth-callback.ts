@@ -46,6 +46,7 @@ async function bounded<T>(client: Redis, run: () => Promise<T>): Promise<T> {
       () => reject(new Error('OAuth Redis command timed out')),
       commandTimeoutMs,
     )
+    timer.unref()
   })
   try {
     return await Promise.race([whenReady(client).then(run), timedOut])
