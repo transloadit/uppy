@@ -216,13 +216,17 @@ function packageJsonPaths(root) {
   ]
 }
 
-// The minimum each published package declares, read with `read(file)`, which
-// returns the file's contents or undefined.
+// The minimum each published package declares, read with `read(file)`; a
+// file it can't read is skipped.
 export function minimumsOf(paths, read) {
   const minimums = new Map()
   for (const file of paths) {
-    const contents = read(file)
-    if (contents === undefined) continue
+    let contents
+    try {
+      contents = read(file)
+    } catch {
+      continue
+    }
     const { name, private: isPrivate, uppy } = JSON.parse(contents)
     if (!isPrivate && uppy?.minCompanionVersion) {
       minimums.set(name, uppy.minCompanionVersion)
@@ -306,13 +310,9 @@ export async function main({
   log = console.log,
 } = {}) {
   const paths = packageJsonPaths(root)
-  const minimums = minimumsOf(paths, (file) => {
-    try {
-      return readFileSync(new URL(file, root), 'utf8')
-    } catch {
-      return undefined
-    }
-  })
+  const minimums = minimumsOf(paths, (file) =>
+    readFileSync(new URL(file, root), 'utf8'),
+  )
   const { name: minFrom, min } = highestMinimum(minimums)
   const repoCompanion = JSON.parse(
     readFileSync(new URL(COMPANION_PACKAGE_JSON, root), 'utf8'),
@@ -324,9 +324,10 @@ export async function main({
       (name) => minimums.has(name) || BUNDLES.includes(name),
     )
     if (concerned.length === 0) {
-      log(
-        `Nothing to publish talks to Companion (${toPublish.join(', ') || 'nothing to publish'}); skipping the check.`,
-      )
+      const what = toPublish.length
+        ? `None of ${toPublish.join(', ')} talks to Companion`
+        : 'Nothing to publish'
+      log(`${what}; skipping the check.`)
       return 0
     }
     log(`About to publish ${concerned.join(', ')}.`)
@@ -338,13 +339,9 @@ export async function main({
     // The PR checkout is a merge commit, so HEAD^1 is the base branch.
     // Without a readable base every package reads as new and every file as
     // changed, so this errs towards strict.
-    const baseMinimums = minimumsOf(paths, (file) => {
-      try {
-        return git(root, 'show', `HEAD^1:${file}`)
-      } catch {
-        return undefined
-      }
-    })
+    const baseMinimums = minimumsOf(paths, (file) =>
+      git(root, 'show', `HEAD^1:${file}`),
+    )
     const fieldChanged = !sameMinimums(baseMinimums, minimums)
     let touches = () => true
     try {
