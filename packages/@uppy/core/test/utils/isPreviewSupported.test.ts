@@ -12,7 +12,7 @@ describe('isPreviewSupported', () => {
     'image/jpg',
     'image/webp',
     'image/avif',
-  ])('should return true for any filetypes that browsers can preview: %s', (ext) => {
+  ])('should return true for %s', (ext) => {
     expect(isPreviewSupported(ext)).toEqual(true)
   })
 
