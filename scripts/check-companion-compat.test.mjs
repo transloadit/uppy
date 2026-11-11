@@ -7,6 +7,7 @@ import path from 'node:path'
 import { after, before, describe, it } from 'node:test'
 import { pathToFileURL } from 'node:url'
 import {
+  CLIENT_PATHS,
   compareVersions,
   evaluate,
   fetchHosted,
@@ -182,8 +183,6 @@ describe('evaluate', () => {
       { url, version: '7.2.1' },
       { url: url2, version: '7.2.1' },
     ],
-    fieldChanged: false,
-    isPullRequest: false,
   }
 
   it('passes when everything is new enough', () => {
@@ -194,24 +193,21 @@ describe('evaluate', () => {
     assert.ok(result.lines.some((line) => line.includes(url2)))
   })
 
-  for (const isPullRequest of [true, false]) {
-    it(`fails when one endpoint is too old (isPullRequest: ${isPullRequest})`, () => {
-      const result = evaluate({
-        ...base,
-        isPullRequest,
-        hosted: [
-          { url, version: '7.2.1' },
-          { url: url2, version: '6.9.0' },
-        ],
-      })
-      assert.equal(result.ok, false)
-      assert.ok(
-        result.lines.some(
-          (line) => line.includes(url2) && line.includes('6.9.0'),
-        ),
-      )
+  it('fails when one endpoint is too old', () => {
+    const result = evaluate({
+      ...base,
+      hosted: [
+        { url, version: '7.2.1' },
+        { url: url2, version: '6.9.0' },
+      ],
     })
-  }
+    assert.equal(result.ok, false)
+    assert.ok(
+      result.lines.some(
+        (line) => line.includes(url2) && line.includes('6.9.0'),
+      ),
+    )
+  })
 
   it('fails when min is newer than the Companion in this repo', () => {
     const result = evaluate({ ...base, min: '7.3.0' })
@@ -223,7 +219,7 @@ describe('evaluate', () => {
     )
   })
 
-  it('fails on release when an endpoint is unreachable, saying why', () => {
+  it('fails when an endpoint is unreachable, saying why', () => {
     const result = evaluate({
       ...base,
       hosted: [{ url, error: 'HTTP 502 Bad Gateway' }],
@@ -232,29 +228,20 @@ describe('evaluate', () => {
     assert.ok(result.lines.some((line) => line.includes('HTTP 502')))
   })
 
-  it('fails on a PR that changes the field when an endpoint is unreachable', () => {
+  it('only warns when not strict', () => {
     const result = evaluate({
       ...base,
-      isPullRequest: true,
-      fieldChanged: true,
-      hosted: [{ url, version: undefined }],
-    })
-    assert.equal(result.ok, false)
-  })
-
-  it('only warns on a PR that does not change the field when an endpoint is unreachable', () => {
-    const result = evaluate({
-      ...base,
-      isPullRequest: true,
-      fieldChanged: false,
+      strict: false,
+      min: '7.3.0',
       hosted: [
-        { url, version: undefined },
+        { url, error: 'HTTP 502 Bad Gateway' },
         { url: url2, version: '7.2.1' },
       ],
     })
     assert.equal(result.ok, true)
-    assert.equal(result.warnings.length, 1)
-    assert.ok(result.warnings[0].includes(url))
+    assert.equal(result.warnings.length, 3)
+    assert.ok(result.warnings.some((warning) => warning.includes(url)))
+    assert.ok(result.warnings.some((warning) => warning.includes(url2)))
   })
 
   it('accepts a hosted prerelease above the minimum', () => {
@@ -340,9 +327,10 @@ const repoFiles = {
   },
 }
 
-async function runMain({ root, env = {}, endpoints }) {
+async function runMain({ root, argv = [], env = {}, endpoints }) {
   const lines = []
   const code = await main({
+    argv,
     root,
     env,
     endpoints,
@@ -357,7 +345,8 @@ async function runMain({ root, env = {}, endpoints }) {
 }
 
 describe('main', () => {
-  const pr = { GITHUB_EVENT_NAME: 'pull_request' }
+  const pr = { argv: ['--ci'], env: { GITHUB_EVENT_NAME: 'pull_request' } }
+  const push = { argv: ['--ci'], env: { GITHUB_EVENT_NAME: 'push' } }
 
   it('passes when every endpoint is new enough', async () => {
     const root = makeRepo(repoFiles)
@@ -386,7 +375,7 @@ describe('main', () => {
     )
     const result = await runMain({
       root,
-      env: pr,
+      ...pr,
       endpoints: [`${origin}/down?s3-changed`],
     })
     assert.equal(result.code, 1)
@@ -415,7 +404,7 @@ describe('main', () => {
     const root = makeRepo(repoFiles, { 'README.md': 'docs' })
     const result = await runMain({
       root,
-      env: pr,
+      ...pr,
       endpoints: [`${origin}/down?pr-keeps`],
     })
     assert.equal(result.code, 0)
@@ -427,11 +416,44 @@ describe('main', () => {
     const root = makeRepo(repoFiles, corePackage('7.1.0'))
     const result = await runMain({
       root,
-      env: pr,
+      ...pr,
       endpoints: [`${origin}/v/7.2.1`, `${origin}/down?pr-raises`],
     })
     assert.equal(result.code, 1)
   })
+
+  it('only warns on a push', async () => {
+    const root = makeRepo(repoFiles, corePackage('7.1.0'))
+    const result = await runMain({
+      root,
+      ...push,
+      endpoints: [`${origin}/v/6.9.0`, `${origin}/down?push`],
+    })
+    assert.equal(result.code, 0)
+    assert.equal(result.warnings.length, 2)
+  })
+
+  it('fails without --ci, even in a PR', async () => {
+    const root = makeRepo(repoFiles, { 'README.md': 'docs' })
+    const result = await runMain({
+      root,
+      env: pr.env,
+      endpoints: [`${origin}/down?no-ci`],
+    })
+    assert.equal(result.code, 1)
+  })
+
+  for (const dir of CLIENT_PATHS) {
+    it(`fails on a PR that touches ${dir}`, async () => {
+      const root = makeRepo(repoFiles, { [`${dir}index.ts`]: 'x' })
+      const result = await runMain({
+        root,
+        ...pr,
+        endpoints: [`${origin}/down?touches-${dir}`],
+      })
+      assert.equal(result.code, 1)
+    })
+  }
 
   it('warns when a PR changes the Companion client and Companion together', async () => {
     const root = makeRepo(repoFiles, {
@@ -440,7 +462,7 @@ describe('main', () => {
     })
     const result = await runMain({
       root,
-      env: pr,
+      ...pr,
       endpoints: [`${origin}/v/7.2.1`],
     })
     assert.equal(result.code, 0)

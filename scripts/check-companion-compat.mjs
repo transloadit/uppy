@@ -10,11 +10,14 @@
 // endpoints that arrived in Companion 7.1.0. The check uses the highest
 // minimum of all packages under packages/@uppy/ and packages/uppy.
 //
-// This runs before `changeset publish`, before a manual CDN upload of the
-// `uppy` bundle, and in CI on every PR. It fails when
-// the minimum is newer than the Companion in this repo, or when any hosted
-// Companion endpoint runs an older version. On a PR that doesn't change the
-// minimum, an unreachable endpoint is only a warning.
+// It finds a problem when the minimum is newer than the Companion in this
+// repo, or when a hosted Companion endpoint runs an older version or can't
+// be read. Where it runs, and what a problem does there:
+//   - before `changeset publish` and before a manual CDN upload of the
+//     `uppy` bundle (no flag): fails. This is the enforcement.
+//   - in CI on a PR (--ci): fails when the PR changes a minimum or touches
+//     client code that talks to Companion (CLIENT_PATHS), otherwise warns.
+//   - in CI on a push (--ci): warns.
 //
 // The release order this enforces for a client change that needs new
 // Companion behaviour (the two cannot merge together):
@@ -23,9 +26,9 @@
 //   2. Hosted Companion is upgraded.
 //   3. The client change merges and raises minCompanionVersion.
 //
-// While hosted runs below the minimum (for example after a rollback), every
-// PR's check is red and releases are blocked, a Companion fix included. The
-// escape is a PR that lowers minCompanionVersion.
+// While hosted runs below the minimum (for example after a rollback),
+// releases are blocked, a Companion fix included, and so are PRs that touch
+// the client. The escape is a PR that lowers minCompanionVersion.
 
 import { execFileSync } from 'node:child_process'
 import { readdirSync, readFileSync } from 'node:fs'
@@ -44,6 +47,14 @@ export const ENDPOINTS = [
   'https://api2-ap-southeast-1.transloadit.com/companion/',
 ]
 const COMPANION_PACKAGE_JSON = 'packages/@uppy/companion/package.json'
+// Client code that talks to Companion, in the packages that declare a
+// minimum. Keep in sync with the packages that carry the field.
+export const CLIENT_PATHS = [
+  'packages/@uppy/core/src/companion-client/',
+  'packages/@uppy/core/src/provider-views/',
+  'packages/@uppy/s3/src/',
+  'packages/@uppy/transloadit-storage/src/',
+]
 const REPO_ROOT = new URL('../', import.meta.url)
 
 // x.y.z with an optional -prerelease and +build suffix (semver 2.0.0).
@@ -98,40 +109,37 @@ export function parseHostedVersion(body) {
   return match?.[1].replace(/\+.*/, '')
 }
 
-export function evaluate({
-  min,
-  repoCompanion,
-  hosted,
-  fieldChanged,
-  isPullRequest,
-}) {
+// With `strict`, each problem fails the check; otherwise it is a warning.
+export function evaluate({ min, repoCompanion, hosted, strict = true }) {
   const lines = []
   const warnings = []
   let ok = true
+  const problem = (line, message) => {
+    if (strict) {
+      ok = false
+      lines.push(`FAIL ${line}`, message)
+    } else {
+      lines.push(`warn ${line}`)
+      warnings.push(message)
+    }
+  }
 
   if (compareVersions(min, repoCompanion) > 0) {
-    ok = false
-    lines.push(
+    problem(
+      `minCompanionVersion ${min} > repo Companion ${repoCompanion}`,
       `minCompanionVersion ${min} is newer than the Companion in this repo (${repoCompanion}). Land and release the Companion change first, deploy it to hosted Companion, then raise the minimum in a separate PR.`,
     )
   }
 
   for (const { url, version, error } of hosted) {
     if (version === undefined) {
-      const message = `Could not read the Companion version from ${url}: ${error}.`
-      if (isPullRequest && !fieldChanged) {
-        lines.push(`?    ${url} unknown`)
-        warnings.push(
-          `${message} Not failing because this PR doesn't change minCompanionVersion.`,
-        )
-      } else {
-        ok = false
-        lines.push(`FAIL ${url} unknown`, message)
-      }
+      problem(
+        `${url} unknown`,
+        `Could not read the Companion version from ${url}: ${error}.`,
+      )
     } else if (compareVersions(version, min) < 0) {
-      ok = false
-      lines.push(
-        `FAIL ${url} ${version} < ${min}`,
+      problem(
+        `${url} ${version} < ${min}`,
         `Hosted Companion at ${url} runs ${version}; this client needs >= ${min}. Deploy Companion >= ${min} to hosted first. If hosted was rolled back on purpose, lower minCompanionVersion in a PR.`,
       )
     } else {
@@ -225,6 +233,7 @@ function sameMinimums(a, b) {
 // Runs the check and returns the exit code. Everything it reads from outside
 // can be injected, for tests.
 export async function main({
+  argv = process.argv.slice(2),
   root = REPO_ROOT,
   env = process.env,
   endpoints = env.COMPANION_COMPAT_ENDPOINTS?.split(',') ?? ENDPOINTS,
@@ -243,14 +252,13 @@ export async function main({
   const repoCompanion = JSON.parse(
     readFileSync(new URL(COMPANION_PACKAGE_JSON, root), 'utf8'),
   ).version
-  const isPullRequest = env.GITHUB_EVENT_NAME === 'pull_request'
 
-  let fieldChanged = true
+  let strict = true
   const warnings = []
-  if (isPullRequest) {
+  if (argv.includes('--ci') && env.GITHUB_EVENT_NAME === 'pull_request') {
     // The PR checkout is a merge commit, so HEAD^1 is the base branch.
-    // Without a readable base every package reads as new, so this errs
-    // towards "changed".
+    // Without a readable base every package reads as new and every file as
+    // changed, so this errs towards strict.
     const baseMinimums = minimumsOf(paths, (path) => {
       try {
         return git(root, 'show', `HEAD^1:${path}`)
@@ -258,32 +266,41 @@ export async function main({
         return undefined
       }
     })
-    fieldChanged = !sameMinimums(baseMinimums, minimums)
-
+    const fieldChanged = !sameMinimums(baseMinimums, minimums)
+    let touches = () => true
     try {
       const changed = git(root, 'diff', '--name-only', 'HEAD^1', 'HEAD').split(
         '\n',
       )
-      const touches = (prefix) =>
-        changed.some((file) => file.startsWith(prefix))
-      if (
-        !fieldChanged &&
-        touches('packages/@uppy/core/src/companion-client/') &&
-        touches('packages/@uppy/companion/src/')
-      ) {
-        warnings.push(
-          'This PR changes the Companion client and Companion together. If the client now needs the new Companion behaviour, split it: release Companion first, then raise minCompanionVersion with the client change.',
-        )
-      }
+      touches = (prefix) => changed.some((file) => file.startsWith(prefix))
     } catch {}
+    const touchesClient = CLIENT_PATHS.some(touches)
+    strict = fieldChanged || touchesClient
+    if (!strict) {
+      log(
+        "Problems below are warnings: this PR changes no minCompanionVersion and doesn't touch client code that talks to Companion.",
+      )
+    }
+
+    if (
+      !fieldChanged &&
+      touches('packages/@uppy/core/src/companion-client/') &&
+      touches('packages/@uppy/companion/src/')
+    ) {
+      warnings.push(
+        'This PR changes the Companion client and Companion together. If the client now needs the new Companion behaviour, split it: release Companion first, then raise minCompanionVersion with the client change.',
+      )
+    }
+  } else if (argv.includes('--ci')) {
+    strict = false
+    log('Problems below are warnings outside PRs; the release enforces them.')
   }
 
   const result = evaluate({
     min,
     repoCompanion,
     hosted: await fetchHosted(endpoints, { delayMs: retryDelayMs }),
-    fieldChanged,
-    isPullRequest,
+    strict,
   })
 
   log(`minCompanionVersion ${min} (from ${minFrom})`)

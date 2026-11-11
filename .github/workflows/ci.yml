@@ -171,7 +171,7 @@ jobs:
       - name: Test the check
         run: node --test scripts/check-companion-compat.test.mjs
       - name: Check hosted Companion
-        run: node scripts/check-companion-compat.mjs
+        run: node scripts/check-companion-compat.mjs --ci
 
   lint_js:
     name: Lint
