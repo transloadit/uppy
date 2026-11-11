@@ -158,6 +158,8 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: read
+      # To read the current PR description for the opt-out marker.
+      pull-requests: read
     steps:
       - name: Checkout sources
         uses: actions/checkout@v7
@@ -172,6 +174,8 @@ jobs:
         run: node --test scripts/check-companion-compat.test.mjs
       - name: Check hosted Companion
         run: node scripts/check-companion-compat.mjs --ci
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
 
   lint_js:
     name: Lint

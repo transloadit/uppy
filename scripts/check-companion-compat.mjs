@@ -18,6 +18,9 @@
 //   - in CI on a PR (--ci): fails when the PR changes a minimum or touches
 //     client code that talks to Companion (CLIENT_PATHS), otherwise warns.
 //   - in CI on a push (--ci): warns.
+// In CI on a PR it also fails when the PR touches CLIENT_PATHS without
+// changing a minimum, unless its description has an OPT_OUT_MARKER line
+// saying the change needs no newer Companion.
 //
 // The release order this enforces for a client change that needs new
 // Companion behaviour (the two cannot merge together):
@@ -55,6 +58,11 @@ export const CLIENT_PATHS = [
   'packages/@uppy/s3/src/',
   'packages/@uppy/transloadit-storage/src/',
 ]
+// A line in a PR description saying that its client change needs no newer
+// Companion. A description is used rather than a label so that authors of
+// fork PRs can set it too.
+export const OPT_OUT_MARKER = 'companion-compat: none'
+const OPT_OUT = new RegExp(`^\\s*${OPT_OUT_MARKER}\\s*$`, 'im')
 const REPO_ROOT = new URL('../', import.meta.url)
 
 // x.y.z with an optional -prerelease and +build suffix (semver 2.0.0).
@@ -230,6 +238,32 @@ function sameMinimums(a, b) {
   return a.size === b.size && [...a].every(([name, min]) => b.get(name) === min)
 }
 
+// The event payload holds the description as of the push, so an edit
+// followed by a re-run would go unseen; ask the API for the current one and
+// fall back to the payload.
+async function pullRequestBody(env) {
+  let pr
+  try {
+    pr = JSON.parse(readFileSync(env.GITHUB_EVENT_PATH, 'utf8')).pull_request
+  } catch {
+    return ''
+  }
+  try {
+    const res = await fetch(
+      `${env.GITHUB_API_URL}/repos/${env.GITHUB_REPOSITORY}/pulls/${pr.number}`,
+      {
+        headers: {
+          accept: 'application/vnd.github+json',
+          authorization: `Bearer ${env.GITHUB_TOKEN}`,
+        },
+        signal: AbortSignal.timeout(10_000),
+      },
+    )
+    if (res.ok) return (await res.json()).body ?? ''
+  } catch {}
+  return pr?.body ?? ''
+}
+
 // Runs the check and returns the exit code. Everything it reads from outside
 // can be injected, for tests.
 export async function main({
@@ -254,7 +288,7 @@ export async function main({
   ).version
 
   let strict = true
-  const warnings = []
+  const errors = []
   if (argv.includes('--ci') && env.GITHUB_EVENT_NAME === 'pull_request') {
     // The PR checkout is a merge commit, so HEAD^1 is the base branch.
     // Without a readable base every package reads as new and every file as
@@ -274,8 +308,8 @@ export async function main({
       )
       touches = (prefix) => changed.some((file) => file.startsWith(prefix))
     } catch {}
-    const touchesClient = CLIENT_PATHS.some(touches)
-    strict = fieldChanged || touchesClient
+    const clientPaths = CLIENT_PATHS.filter(touches)
+    strict = fieldChanged || clientPaths.length > 0
     if (!strict) {
       log(
         "Problems below are warnings: this PR changes no minCompanionVersion and doesn't touch client code that talks to Companion.",
@@ -284,11 +318,11 @@ export async function main({
 
     if (
       !fieldChanged &&
-      touches('packages/@uppy/core/src/companion-client/') &&
-      touches('packages/@uppy/companion/src/')
+      clientPaths.length > 0 &&
+      !OPT_OUT.test(await pullRequestBody(env))
     ) {
-      warnings.push(
-        'This PR changes the Companion client and Companion together. If the client now needs the new Companion behaviour, split it: release Companion first, then raise minCompanionVersion with the client change.',
+      errors.push(
+        `This PR changes client code that talks to Companion (${clientPaths.join(', ')}) but no uppy.minCompanionVersion. If the client now needs newer Companion behaviour, release and deploy that Companion first, then raise uppy.minCompanionVersion in the package's package.json in this PR. If it doesn't, add a line "${OPT_OUT_MARKER}" to the PR description and re-run this job.`,
       )
     }
   } else if (argv.includes('--ci')) {
@@ -305,10 +339,9 @@ export async function main({
 
   log(`minCompanionVersion ${min} (from ${minFrom})`)
   for (const line of result.lines) log(line)
-  for (const warning of [...warnings, ...result.warnings]) {
-    log(`::warning::${warning}`)
-  }
-  return result.ok ? 0 : 1
+  for (const warning of result.warnings) log(`::warning::${warning}`)
+  for (const error of errors) log(`::error::${error}`)
+  return result.ok && errors.length === 0 ? 0 : 1
 }
 
 if (import.meta.main) {

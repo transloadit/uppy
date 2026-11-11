@@ -13,6 +13,7 @@ import {
   fetchHosted,
   fetchVersion,
   main,
+  OPT_OUT_MARKER,
   parseHostedVersion,
   parseVersion,
 } from './check-companion-compat.mjs'
@@ -103,6 +104,7 @@ describe('parseHostedVersion', () => {
 //   /v/<version>             welcome line for <version>
 //   /flaky/<n>/<version>     HTTP 502 for the first <n> requests, then /v/
 //   /html                    a page without the welcome line
+//   /api/<body>/repos/...    the GitHub API, a PR with description <body>
 //   anything else            HTTP 502
 let stub
 let origin
@@ -118,7 +120,10 @@ before(async () => {
     }
     if (kind === 'v') res.end(`Welcome to Companion v${rest[0]}\n===\n`)
     else if (kind === 'html') res.end('<html>hi</html>')
-    else {
+    else if (kind === 'api' && rest[0] !== 'down') {
+      res.setHeader('content-type', 'application/json')
+      res.end(JSON.stringify({ body: decodeURIComponent(rest[0]) }))
+    } else {
       res.statusCode = 502
       res.end()
     }
@@ -346,6 +351,27 @@ async function runMain({ root, argv = [], env = {}, endpoints }) {
 
 describe('main', () => {
   const pr = { argv: ['--ci'], env: { GITHUB_EVENT_NAME: 'pull_request' } }
+  // A PR event whose payload has the description `payloadBody` and whose
+  // current description, from the API, is `apiBody` (undefined: API down).
+  const prWith = ({ payloadBody, apiBody }) => {
+    const dir = mkdtempSync(path.join(os.tmpdir(), 'companion-compat-event-'))
+    after(() => rmSync(dir, { recursive: true, force: true }))
+    const eventPath = path.join(dir, 'event.json')
+    writeFileSync(
+      eventPath,
+      JSON.stringify({ pull_request: { number: 7, body: payloadBody } }),
+    )
+    return {
+      ...pr,
+      env: {
+        ...pr.env,
+        GITHUB_EVENT_PATH: eventPath,
+        GITHUB_API_URL: `${origin}/api/${apiBody === undefined ? 'down' : encodeURIComponent(apiBody)}`,
+        GITHUB_REPOSITORY: 'o/r',
+      },
+    }
+  }
+  const optOut = 'Fixes a typo.\r\n\r\ncompanion-compat: none\r\n'
   const push = { argv: ['--ci'], env: { GITHUB_EVENT_NAME: 'push' } }
 
   it('passes when every endpoint is new enough', async () => {
@@ -444,21 +470,36 @@ describe('main', () => {
   })
 
   for (const dir of CLIENT_PATHS) {
-    it(`fails on a PR that touches ${dir}`, async () => {
+    it(`is strict on a PR that touches ${dir}`, async () => {
       const root = makeRepo(repoFiles, { [`${dir}index.ts`]: 'x' })
       const result = await runMain({
         root,
-        ...pr,
+        ...prWith({ apiBody: optOut }),
         endpoints: [`${origin}/down?touches-${dir}`],
       })
       assert.equal(result.code, 1)
+      assert.ok(result.lines.some((line) => line.startsWith('FAIL')))
+    })
+
+    it(`fails on a PR that touches ${dir} but no minimum, without the marker`, async () => {
+      const root = makeRepo(repoFiles, { [`${dir}index.ts`]: 'x' })
+      const result = await runMain({
+        root,
+        ...prWith({ payloadBody: 'Fixes a typo.', apiBody: 'Fixes a typo.' }),
+        endpoints: [`${origin}/v/7.2.1`],
+      })
+      assert.equal(result.code, 1)
+      const errors = result.lines.filter((line) => line.startsWith('::error::'))
+      assert.equal(errors.length, 1)
+      assert.ok(errors[0].includes(dir))
+      assert.ok(errors[0].includes(OPT_OUT_MARKER))
     })
   }
 
-  it('warns when a PR changes the Companion client and Companion together', async () => {
+  it('accepts a client change that raises the minimum', async () => {
     const root = makeRepo(repoFiles, {
-      'packages/@uppy/core/src/companion-client/index.ts': 'x',
-      'packages/@uppy/companion/src/index.ts': 'x',
+      ...corePackage('7.1.0'),
+      'packages/@uppy/core/src/provider-views/index.ts': 'x',
     })
     const result = await runMain({
       root,
@@ -466,6 +507,42 @@ describe('main', () => {
       endpoints: [`${origin}/v/7.2.1`],
     })
     assert.equal(result.code, 0)
-    assert.ok(result.warnings.some((w) => w.includes('Companion together')))
+  })
+
+  it('accepts a client change whose current description opts out', async () => {
+    const root = makeRepo(repoFiles, {
+      'packages/@uppy/core/src/provider-views/index.ts': 'x',
+    })
+    const result = await runMain({
+      root,
+      ...prWith({ payloadBody: 'Fixes a typo.', apiBody: optOut }),
+      endpoints: [`${origin}/v/7.2.1`],
+    })
+    assert.equal(result.code, 0)
+  })
+
+  it('falls back to the event payload when the API is down', async () => {
+    const root = makeRepo(repoFiles, {
+      'packages/@uppy/core/src/provider-views/index.ts': 'x',
+    })
+    const result = await runMain({
+      root,
+      ...prWith({ payloadBody: optOut }),
+      endpoints: [`${origin}/v/7.2.1`],
+    })
+    assert.equal(result.code, 0)
+  })
+
+  it('does not take the marker from the middle of a line', async () => {
+    const root = makeRepo(repoFiles, {
+      'packages/@uppy/core/src/provider-views/index.ts': 'x',
+    })
+    const body = 'I did not add companion-compat: none here'
+    const result = await runMain({
+      root,
+      ...prWith({ payloadBody: body, apiBody: body }),
+      endpoints: [`${origin}/v/7.2.1`],
+    })
+    assert.equal(result.code, 1)
   })
 })
