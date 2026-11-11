@@ -119,7 +119,10 @@ describe('webdav transport errors', () => {
   for (const op of ['simpleAuth', 'list'] as const) {
     test(`${op}: a refused connection does not log the URL`, async () => {
       const host = await closedPortHost()
-      const { err, logged } = await run(op, `http://${host}/dav/SECRETTOKEN/`)
+      const { err, logged } = await run(
+        op,
+        `http://${host}/dav/ab'SECRETTOKEN/`,
+      )
 
       expect(logged).toContain('ECONNREFUSED')
       expect(logged).toContain(`http://${host}/[redacted]`)
@@ -134,11 +137,28 @@ describe('webdav transport errors', () => {
 
     test(`${op}: a URL with credentials does not log them`, async () => {
       const host = await closedPortHost()
-      const { err, logged } = await run(op, `http://USER:PASS@${host}/dav/`)
+      const { err, logged } = await run(
+        op,
+        `http://USER:PA'SECRET@${host}/dav/`,
+      )
 
       expect(logged).toContain('embedded credentials')
-      expect(logged).not.toMatch(/USER|PASS/)
-      expect(`${err?.message}${err?.stack}`).not.toMatch(/USER|PASS/)
+      expect(logged).not.toMatch(/USER|SECRET/)
+      expect(`${err?.message}${err?.stack}`).not.toMatch(/USER|SECRET/)
     })
   }
+
+  test('an HTTP error whose status text has a URL keeps its status', async () => {
+    const server = http.createServer((_req, res) => {
+      res.writeHead(401, 'see http://example.com/x').end()
+    })
+    await new Promise<void>((resolve) => server.listen(0, '127.0.0.1', resolve))
+    const { port } = server.address() as AddressInfo
+    try {
+      const { err } = await run('simpleAuth', `http://127.0.0.1:${port}/dav/`)
+      expect((err as unknown as ProviderApiError).isAuthError).toBe(true)
+    } finally {
+      server.close()
+    }
+  })
 })

@@ -41,18 +41,22 @@ getPatcher().patch('fetch', (url: unknown, options: unknown) =>
   }),
 )
 
-const urlInText = /[a-z][a-z\d+.-]*:\/\/[^\s'"]+/gi
+// A parsed URL can't contain whitespace, and node-fetch puts a space after it.
+// Don't stop at quotes: `'` stays unencoded in userinfo and paths.
+const urlInText = /[a-z][a-z\d+.-]*:\/\/\S+/gi
 
 /**
- * node-fetch's transport errors (connection refused, DNS, TLS, timeout) and
+ * node-fetch's transport errors (connection refused, DNS, TLS) and
  * its refusal of a URL with `user:pass@` quote the full request URL in their
  * message, and a WebDAV URL can be the credential. Keep only each URL's
  * origin, without userinfo, plus the error's name, code and stack frames.
- * Errors without a URL in their message (HTTP status errors) pass unchanged,
- * so mapProviderError() still sees their `status` and `response`.
+ * HTTP status errors pass unchanged, so mapProviderError() still sees their
+ * `status` and `response`: their message never quotes the request URL, only
+ * the server's status text.
  */
 function redactUrls(err: unknown): unknown {
-  if (!(err instanceof Error)) return err
+  if (!(err instanceof Error) || err['response' as keyof Error] != null)
+    return err
   const message = err.message.replace(urlInText, (url) => {
     try {
       return `${new URL(url).origin}/[redacted]`
