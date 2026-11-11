@@ -171,9 +171,9 @@ jobs:
         with:
           node-version: '26.12.1'
       - name: Test the check
-        run: node --test scripts/check-companion-compat.test.mjs
+        run: node --test scripts/check-companion-compat.test.ts
       - name: Check hosted Companion
-        run: node scripts/check-companion-compat.mjs --ci
+        run: node scripts/check-companion-compat.ts --ci
         env:
           GITHUB_TOKEN: ${{ github.token }}
 

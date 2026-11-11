@@ -2,6 +2,7 @@ import assert from 'node:assert/strict'
 import { execFileSync } from 'node:child_process'
 import { mkdirSync, mkdtempSync, rmSync, writeFileSync } from 'node:fs'
 import http from 'node:http'
+import type { AddressInfo } from 'node:net'
 import os from 'node:os'
 import path from 'node:path'
 import { after, before, describe, it } from 'node:test'
@@ -12,11 +13,12 @@ import {
   evaluate,
   fetchHosted,
   fetchVersion,
+  type MainOptions,
   main,
   OPT_OUT_MARKER,
   parseHostedVersion,
   parseVersion,
-} from './check-companion-compat.mjs'
+} from './check-companion-compat.ts'
 
 const url = 'https://api2.transloadit.com/companion/'
 const url2 = 'https://api2-eu-west-1.transloadit.com/companion/'
@@ -52,15 +54,15 @@ describe('parseVersion / compareVersions', () => {
       '7.3.0-beta.1',
     ]
     for (let i = 0; i < ascending.length - 1; i++) {
-      assert.equal(compareVersions(ascending[i], ascending[i + 1]), -1)
-      assert.equal(compareVersions(ascending[i + 1], ascending[i]), 1)
+      assert.equal(compareVersions(ascending[i]!, ascending[i + 1]!), -1)
+      assert.equal(compareVersions(ascending[i + 1]!, ascending[i]!), 1)
     }
     assert.equal(compareVersions('7.0.0+abc', '7.0.0'), 0)
   })
 
   it('rejects anything that is not a semver version', () => {
     for (const bad of ['7.0', 'latest', '^7.0.0', '7.0.0-', '', undefined]) {
-      assert.throws(() => parseVersion(bad))
+      assert.throws(() => parseVersion(bad as string))
     }
   })
 })
@@ -106,15 +108,23 @@ describe('parseHostedVersion', () => {
 //   /html                    a page without the welcome line
 //   /api/<body>/repos/...    the GitHub API, a PR with description <body>
 //   anything else            HTTP 502
-let stub
-let origin
-const hits = new Map()
+// A server on a free local port.
+async function listen(server: http.Server): Promise<number> {
+  await new Promise<void>((resolve) => server.listen(0, '127.0.0.1', resolve))
+  return (server.address() as AddressInfo).port
+}
+
+let stub: http.Server
+let origin: string
+const hits = new Map<string, number>()
 before(async () => {
   stub = http.createServer((req, res) => {
-    hits.set(req.url, (hits.get(req.url) ?? 0) + 1)
+    const reqUrl = req.url ?? ''
+    const count = (hits.get(reqUrl) ?? 0) + 1
+    hits.set(reqUrl, count)
     // A ?query only keeps the hit counts of different tests apart.
-    let [, kind, ...rest] = req.url.replace(/\?.*/, '').split('/')
-    if (kind === 'flaky' && hits.get(req.url) > Number(rest[0])) {
+    let [, kind, ...rest] = reqUrl.replace(/\?.*/, '').split('/')
+    if (kind === 'flaky' && count > Number(rest[0])) {
       kind = 'v'
       rest = rest.slice(1)
     }
@@ -122,14 +132,13 @@ before(async () => {
     else if (kind === 'html') res.end('<html>hi</html>')
     else if (kind === 'api' && rest[0] !== 'down') {
       res.setHeader('content-type', 'application/json')
-      res.end(JSON.stringify({ body: decodeURIComponent(rest[0]) }))
+      res.end(JSON.stringify({ body: decodeURIComponent(rest[0]!) }))
     } else {
       res.statusCode = 502
       res.end()
     }
   })
-  await new Promise((resolve) => stub.listen(0, '127.0.0.1', resolve))
-  origin = `http://127.0.0.1:${stub.address().port}`
+  origin = `http://127.0.0.1:${await listen(stub)}`
 })
 after(() => stub.close())
 
@@ -151,11 +160,10 @@ describe('fetchVersion', () => {
 
   it('reports a connection error', async () => {
     const closed = http.createServer()
-    await new Promise((resolve) => closed.listen(0, '127.0.0.1', resolve))
-    const { port } = closed.address()
+    const port = await listen(closed)
     await new Promise((resolve) => closed.close(resolve))
     const { error } = await fetchVersion(`http://127.0.0.1:${port}/`)
-    assert.match(error, /ECONNREFUSED/)
+    assert.match(error!, /ECONNREFUSED/)
   })
 })
 
@@ -287,9 +295,11 @@ describe('evaluate', () => {
 // A throwaway git repository with a `base` commit and a `head` commit on top,
 // like the merge commit a PR checkout gets. Both map paths to file contents
 // (objects are written as JSON); `head` only lists what it changes.
-function makeRepo(base, head = {}) {
+type Files = Record<string, string | object>
+
+function makeRepo(base: Files, head: Files = {}): URL {
   const dir = mkdtempSync(path.join(os.tmpdir(), 'companion-compat-'))
-  const run = (...args) =>
+  const run = (...args: string[]) =>
     execFileSync(
       'git',
       ['-c', 'user.name=t', '-c', 'user.email=t@t', ...args],
@@ -298,7 +308,7 @@ function makeRepo(base, head = {}) {
         stdio: 'ignore',
       },
     )
-  const write = (files) => {
+  const write = (files: Files) => {
     for (const [file, content] of Object.entries(files)) {
       mkdirSync(path.dirname(path.join(dir, file)), { recursive: true })
       writeFileSync(
@@ -324,15 +334,15 @@ function makeRepo(base, head = {}) {
   return pathToFileURL(`${dir}/`)
 }
 
-const withMinimum = (name, min, extra = {}) => ({
+const withMinimum = (name: string, min: string, extra = {}): Files => ({
   [`packages/${name}/package.json`]: {
     name,
     ...extra,
     uppy: { minCompanionVersion: min },
   },
 })
-const corePackage = (min) => withMinimum('@uppy/core', min)
-const repoFiles = {
+const corePackage = (min: string) => withMinimum('@uppy/core', min)
+const repoFiles: Files = {
   ...corePackage('7.0.0'),
   'packages/@uppy/companion/package.json': {
     name: '@uppy/companion',
@@ -340,8 +350,16 @@ const repoFiles = {
   },
 }
 
-async function runMain({ root, argv = [], env = {}, endpoints, publishPlan }) {
-  const lines = []
+async function runMain({
+  root,
+  argv = [],
+  env = {},
+  endpoints,
+  publishPlan,
+}: Pick<MainOptions, 'argv' | 'env' | 'endpoints' | 'publishPlan'> & {
+  root: URL
+}) {
+  const lines: string[] = []
   const code = await main({
     argv,
     root,
@@ -362,7 +380,13 @@ describe('main', () => {
   const pr = { argv: ['--ci'], env: { GITHUB_EVENT_NAME: 'pull_request' } }
   // A PR event whose payload has the description `payloadBody` and whose
   // current description, from the API, is `apiBody` (undefined: API down).
-  const prWith = ({ payloadBody, apiBody }) => {
+  const prWith = ({
+    payloadBody,
+    apiBody,
+  }: {
+    payloadBody?: string
+    apiBody?: string
+  }) => {
     const dir = mkdtempSync(path.join(os.tmpdir(), 'companion-compat-event-'))
     after(() => rmSync(dir, { recursive: true, force: true }))
     const eventPath = path.join(dir, 'event.json')
@@ -444,7 +468,7 @@ describe('main', () => {
     })
     assert.equal(result.code, 0)
     assert.equal(result.warnings.length, 1)
-    assert.match(result.warnings[0], /HTTP 502/)
+    assert.match(result.warnings[0]!, /HTTP 502/)
   })
 
   it('fails on an unreachable endpoint on a PR that raises the minimum', async () => {
@@ -469,7 +493,7 @@ describe('main', () => {
   })
 
   describe('--release', () => {
-    const release = (toPublish, endpoint) =>
+    const release = (toPublish: string[], endpoint: string) =>
       runMain({
         root: makeRepo({ ...repoFiles, ...withMinimum('@uppy/s3', '7.1.0') }),
         argv: ['--release'],
@@ -481,7 +505,7 @@ describe('main', () => {
       it(`skips the check when publishing [${toPublish}]`, async () => {
         const result = await release(toPublish, `${origin}/down?skip`)
         assert.equal(result.code, 0)
-        assert.match(result.lines.at(-1), /skipping the check/)
+        assert.match(result.lines.at(-1)!, /skipping the check/)
         assert.equal(hits.get('/down?skip'), undefined)
       })
     }
@@ -534,8 +558,8 @@ describe('main', () => {
       assert.equal(result.code, 1)
       const errors = result.lines.filter((line) => line.startsWith('::error::'))
       assert.equal(errors.length, 1)
-      assert.ok(errors[0].includes(dir))
-      assert.ok(errors[0].includes(OPT_OUT_MARKER))
+      assert.ok(errors[0]!.includes(dir))
+      assert.ok(errors[0]!.includes(OPT_OUT_MARKER))
     })
   }
 

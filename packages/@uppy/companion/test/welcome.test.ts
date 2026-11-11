@@ -5,7 +5,7 @@ import { getServer } from './mockserver.js'
 
 vi.mock('express-prom-bundle')
 
-// scripts/check-companion-compat.mjs reads hosted Companion's version from
+// scripts/check-companion-compat.ts reads hosted Companion's version from
 // this line before releasing the client, so changing its format, or the
 // plain-text content type, breaks that check. Update both together.
 test('the welcome page starts with the exact version line', async () => {

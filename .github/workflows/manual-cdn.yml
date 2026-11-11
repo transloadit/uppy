@@ -49,7 +49,7 @@ jobs:
       # this still checks the minimum declared on the checked-out branch.
       - name: Check hosted Companion is new enough
         if: ${{ inputs.package == 'uppy' }}
-        run: node scripts/check-companion-compat.mjs
+        run: node scripts/check-companion-compat.ts
       - name: Upload "${{ inputs.package }}" to CDN
         if: ${{ !inputs.force }}
         run: corepack yarn workspace uppy node upload-to-cdn.js "$PACKAGE" "$VERSION"

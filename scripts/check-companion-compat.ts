@@ -33,6 +33,9 @@
 //
 // While hosted runs below the minimum (for example after a rollback),
 // releases of the client are blocked, and so are PRs that touch it. The escape is a PR that lowers minCompanionVersion.
+//
+// Node runs this file with its built-in type stripping (Node 22.18+), so it
+// may only use erasable TypeScript syntax.
 
 import { execFileSync } from 'node:child_process'
 import { mkdtempSync, readdirSync, readFileSync, rmSync } from 'node:fs'
@@ -71,21 +74,85 @@ const OPT_OUT = new RegExp(`^\\s*${OPT_OUT_MARKER}\\s*$`, 'im')
 const BUNDLES = ['uppy']
 const REPO_ROOT = new URL('../', import.meta.url)
 
+// The parts of a package.json this reads.
+interface PackageJson {
+  name: string
+  version: string
+  private?: boolean
+  uppy?: { minCompanionVersion?: string }
+}
+
+// The file `changeset publish-plan --output` writes: releases in publish
+// order, grouped into batches.
+interface PublishPlan {
+  version: 1
+  plan: (
+    | {
+        kind: 'publish'
+        name: string
+        version: string
+        access: string
+        tag: string
+      }
+    | { kind: 'tag-only'; name: string; version: string }
+  )[][]
+}
+
+// The parts of a GitHub pull request, in an event payload or from the API,
+// that this reads.
+interface PullRequest {
+  number: number
+  body: string | null
+}
+
+export interface Version {
+  release: [major: number, minor: number, patch: number]
+  prerelease: string[]
+}
+
+// A hosted Companion's version, or why it couldn't be read.
+export type FetchResult =
+  | { version: string; error?: never }
+  | { error: string; version?: never }
+
+export interface Hosted {
+  url: string
+  version?: string
+  error?: string
+}
+
+export interface Evaluation {
+  ok: boolean
+  lines: string[]
+  warnings: string[]
+}
+
+export interface MainOptions {
+  argv?: readonly string[]
+  root?: URL
+  env?: NodeJS.ProcessEnv
+  endpoints?: readonly string[] | undefined
+  retryDelayMs?: number | undefined
+  publishPlan?: ((root: URL) => readonly string[]) | undefined
+  log?: (line: string) => void
+}
+
 // x.y.z with an optional -prerelease and +build suffix (semver 2.0.0).
 const VERSION =
   /(\d+)\.(\d+)\.(\d+)(?:-([0-9A-Za-z-]+(?:\.[0-9A-Za-z-]+)*))?(?:\+[0-9A-Za-z-]+(?:\.[0-9A-Za-z-]+)*)?/
     .source
 
-export function parseVersion(version) {
+export function parseVersion(version: string): Version {
   const match = new RegExp(`^${VERSION}$`).exec(version)
   if (!match) throw new Error(`Not a semver version: ${version}`)
+  const [, major, minor, patch, prerelease] = match
   return {
-    release: match.slice(1, 4).map(Number),
-    prerelease: match[4]?.split('.') ?? [],
+    release: [Number(major), Number(minor), Number(patch)],
+    prerelease: prerelease?.split('.') ?? [],
   }
 }
 
-function compareIdentifiers(a, b) {
+function compareIdentifiers(a: string, b: string): number {
   const aNumeric = /^\d+$/.test(a)
   const bNumeric = /^\d+$/.test(b)
   if (aNumeric && bNumeric) return Math.sign(Number(a) - Number(b))
@@ -96,10 +163,10 @@ function compareIdentifiers(a, b) {
 
 // Semver precedence: build metadata is ignored, and a prerelease of x.y.z
 // sorts below x.y.z itself.
-export function compareVersions(a, b) {
+export function compareVersions(a: string, b: string): number {
   const pa = parseVersion(a)
   const pb = parseVersion(b)
-  for (let i = 0; i < 3; i++) {
+  for (const i of [0, 1, 2] as const) {
     if (pa.release[i] !== pb.release[i])
       return pa.release[i] > pb.release[i] ? 1 : -1
   }
@@ -108,7 +175,7 @@ export function compareVersions(a, b) {
     return Math.sign(preB.length - preA.length)
   }
   for (let i = 0; i < Math.min(preA.length, preB.length); i++) {
-    const result = compareIdentifiers(preA[i], preB[i])
+    const result = compareIdentifiers(preA[i]!, preB[i]!)
     if (result !== 0) return result
   }
   return Math.sign(preA.length - preB.length)
@@ -120,20 +187,30 @@ export function compareVersions(a, b) {
 // suffix. Companion has no other public version source, and a deployment
 // with COMPANION_HIDE_WELCOME=true reads as unknown. The line's format is
 // pinned by packages/@uppy/companion/test/welcome.test.ts.
-export function parseHostedVersion(body) {
+export function parseHostedVersion(body: string): string | undefined {
   const match = new RegExp(
     `^Welcome to Companion v(${VERSION})\\r?$`,
     'm',
   ).exec(body)
-  return match?.[1].replace(/\+.*/, '')
+  return match?.[1]?.replace(/\+.*/, '')
 }
 
 // With `strict`, each problem fails the check; otherwise it is a warning.
-export function evaluate({ min, repoCompanion, hosted, strict = true }) {
-  const lines = []
-  const warnings = []
+export function evaluate({
+  min,
+  repoCompanion,
+  hosted,
+  strict = true,
+}: {
+  min: string
+  repoCompanion: string
+  hosted: readonly Hosted[]
+  strict?: boolean
+}): Evaluation {
+  const lines: string[] = []
+  const warnings: string[] = []
   let ok = true
-  const problem = (line, message) => {
+  const problem = (line: string, message: string) => {
     if (strict) {
       ok = false
       lines.push(`FAIL ${line}`, message)
@@ -169,8 +246,7 @@ export function evaluate({ min, repoCompanion, hosted, strict = true }) {
   return { ok, lines, warnings }
 }
 
-// Resolves to { version } or, when the version can't be read, { error }.
-export async function fetchVersion(url) {
+export async function fetchVersion(url: string): Promise<FetchResult> {
   try {
     const res = await fetch(url, { signal: AbortSignal.timeout(10_000) })
     if (!res.ok) return { error: `HTTP ${res.status} ${res.statusText}` }
@@ -179,16 +255,20 @@ export async function fetchVersion(url) {
       ? { version }
       : { error: `HTTP ${res.status} without a welcome line` }
   } catch (err) {
-    return { error: err.cause?.message ?? err.message }
+    const { cause, message } = err as Error & { cause?: Error }
+    return { error: cause?.message ?? message }
   }
 }
 
 // Retries endpoints whose version couldn't be read, to ride out a deploy.
 export async function fetchHosted(
-  endpoints,
-  { retries = 3, delayMs = 20_000 } = {},
-) {
-  const results = new Map()
+  endpoints: readonly string[],
+  {
+    retries = 3,
+    delayMs = 20_000,
+  }: { retries?: number; delayMs?: number | undefined } = {},
+): Promise<Hosted[]> {
+  const results = new Map<string, FetchResult>()
   for (let round = 0; round <= retries; round++) {
     const pending = endpoints.filter((url) => !results.get(url)?.version)
     if (pending.length === 0) break
@@ -200,7 +280,7 @@ export async function fetchHosted(
   return endpoints.map((url) => ({ url, ...results.get(url) }))
 }
 
-function git(root, ...args) {
+function git(root: URL, ...args: string[]): string {
   return execFileSync('git', args, {
     cwd: root,
     encoding: 'utf8',
@@ -208,7 +288,11 @@ function git(root, ...args) {
   })
 }
 
-function packageJsonPaths(root) {
+function readJson<T>(file: URL | string): T {
+  return JSON.parse(readFileSync(file, 'utf8')) as T
+}
+
+function packageJsonPaths(root: URL): string[] {
   return [
     ...readdirSync(new URL('packages/@uppy/', root)).map(
       (dir) => `packages/@uppy/${dir}/package.json`,
@@ -219,16 +303,23 @@ function packageJsonPaths(root) {
 
 // The minimum each published package declares, read with `read(file)`; a
 // file it can't read is skipped.
-export function minimumsOf(paths, read) {
-  const minimums = new Map()
+export function minimumsOf(
+  paths: readonly string[],
+  read: (file: string) => string,
+): Map<string, string> {
+  const minimums = new Map<string, string>()
   for (const file of paths) {
-    let contents
+    let contents: string
     try {
       contents = read(file)
     } catch {
       continue
     }
-    const { name, private: isPrivate, uppy } = JSON.parse(contents)
+    const {
+      name,
+      private: isPrivate,
+      uppy,
+    } = JSON.parse(contents) as PackageJson
     if (!isPrivate && uppy?.minCompanionVersion) {
       minimums.set(name, uppy.minCompanionVersion)
     }
@@ -236,8 +327,11 @@ export function minimumsOf(paths, read) {
   return minimums
 }
 
-export function highestMinimum(minimums) {
-  let highest
+export function highestMinimum(minimums: ReadonlyMap<string, string>): {
+  name: string
+  min: string
+} {
+  let highest: ReturnType<typeof highestMinimum> | undefined
   for (const [name, min] of minimums) {
     if (!highest || compareVersions(min, highest.min) > 0) {
       highest = { name, min }
@@ -249,20 +343,26 @@ export function highestMinimum(minimums) {
   return highest
 }
 
-function sameMinimums(a, b) {
+function sameMinimums(
+  a: ReadonlyMap<string, string>,
+  b: ReadonlyMap<string, string>,
+): boolean {
   return a.size === b.size && [...a].every(([name, min]) => b.get(name) === min)
 }
 
 // The event payload holds the description as of the push, so an edit
 // followed by a re-run would go unseen; ask the API for the current one and
 // fall back to the payload.
-async function pullRequestBody(env) {
-  let pr
+async function pullRequestBody(env: NodeJS.ProcessEnv): Promise<string> {
+  let pr: PullRequest | undefined
   try {
-    pr = JSON.parse(readFileSync(env.GITHUB_EVENT_PATH, 'utf8')).pull_request
+    pr = readJson<{ pull_request?: PullRequest }>(
+      env.GITHUB_EVENT_PATH ?? '',
+    ).pull_request
   } catch {
     return ''
   }
+  if (!pr) return ''
   try {
     const res = await fetch(
       `${env.GITHUB_API_URL}/repos/${env.GITHUB_REPOSITORY}/pulls/${pr.number}`,
@@ -274,15 +374,15 @@ async function pullRequestBody(env) {
         signal: AbortSignal.timeout(10_000),
       },
     )
-    if (res.ok) return (await res.json()).body ?? ''
+    if (res.ok) return ((await res.json()) as PullRequest).body ?? ''
   } catch {}
-  return pr?.body ?? ''
+  return pr.body ?? ''
 }
 
 // The names of the packages `changeset publish` would publish now. It asks
 // the registry with the same logic, which also covers pre mode and packages
 // left unpublished by an earlier failed release.
-function packagesToPublish(root) {
+function packagesToPublish(root: URL): string[] {
   const dir = mkdtempSync(path.join(os.tmpdir(), 'companion-compat-plan-'))
   try {
     const output = path.join(dir, 'plan.json')
@@ -290,7 +390,7 @@ function packagesToPublish(root) {
       cwd: root,
       stdio: ['ignore', 'inherit', 'inherit'],
     })
-    return JSON.parse(readFileSync(output, 'utf8'))
+    return readJson<PublishPlan>(output)
       .plan.flat()
       .filter((release) => release.kind === 'publish')
       .map((release) => release.name)
@@ -309,14 +409,14 @@ export async function main({
   retryDelayMs,
   publishPlan = packagesToPublish,
   log = console.log,
-} = {}) {
+}: MainOptions = {}): Promise<number> {
   const paths = packageJsonPaths(root)
   const minimums = minimumsOf(paths, (file) =>
     readFileSync(new URL(file, root), 'utf8'),
   )
   const { name: minFrom, min } = highestMinimum(minimums)
-  const repoCompanion = JSON.parse(
-    readFileSync(new URL(COMPANION_PACKAGE_JSON, root), 'utf8'),
+  const repoCompanion = readJson<PackageJson>(
+    new URL(COMPANION_PACKAGE_JSON, root),
   ).version
 
   if (argv.includes('--release')) {
@@ -335,7 +435,7 @@ export async function main({
   }
 
   let strict = true
-  const errors = []
+  const errors: string[] = []
   if (argv.includes('--ci') && env.GITHUB_EVENT_NAME === 'pull_request') {
     // The PR checkout is a merge commit, so HEAD^1 is the base branch.
     // Without a readable base every package reads as new and every file as
@@ -351,7 +451,7 @@ export async function main({
       git(root, 'show', `HEAD^1:${file}`),
     )
     const fieldChanged = !sameMinimums(baseMinimums, minimums)
-    let touches = () => true
+    let touches: (prefix: string) => boolean = () => true
     try {
       const changed = git(root, 'diff', '--name-only', 'HEAD^1', 'HEAD').split(
         '\n',
@@ -398,7 +498,9 @@ export async function main({
   return result.ok && errors.length === 0 ? 0 : 1
 }
 
-// Not import.meta.main: that needs Node 22.18, and engines allows 22.0.
+// Not import.meta.main: Node versions that can run this file but lack it
+// (22.6–22.17 with --experimental-strip-types, and 23.6–24.1) would silently
+// skip the check.
 if (import.meta.url === pathToFileURL(process.argv[1] ?? '').href) {
   try {
     process.exitCode = await main()
