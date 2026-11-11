@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'preact/hooks'
+import { useEffect, useRef, useState } from 'preact/hooks'
 import type {
   Body,
   Meta,
@@ -7,8 +7,12 @@ import type {
 } from '../index.js'
 import type { I18n } from '../utils/index.js'
 import { VirtualList } from '../utils/index.js'
+import { getApplicableActions } from './Item/components/ItemActionsMenu.js'
+import ItemActionsPopover from './Item/components/ItemActionsPopover.js'
+import useItemMenu from './Item/components/useItemMenu.js'
 import Item from './Item/index.js'
 import type ProviderView from './ProviderView/ProviderView.js'
+import type { ProviderAction } from './ProviderView/ProviderView.js'
 
 type BrowserProps<M extends Meta, B extends Body> = {
   displayedPartialTree: (PartialTreeFile | PartialTreeFolderNode)[]
@@ -22,6 +26,8 @@ type BrowserProps<M extends Meta, B extends Body> = {
   noResultsLabel: string
   virtualList: boolean
   utmSource: string
+  actions?: ProviderAction<M, B>[]
+  runAction?: ProviderView<M, B>['runAction']
 }
 
 function Browser<M extends Meta, B extends Body>(props: BrowserProps<M, B>) {
@@ -37,9 +43,15 @@ function Browser<M extends Meta, B extends Body>(props: BrowserProps<M, B>) {
     noResultsLabel,
     virtualList,
     utmSource,
+    actions = [],
+    runAction,
   } = props
 
   const [isShiftKeyPressed, setIsShiftKeyPressed] = useState(false)
+  // At most one item actions menu is open; it lives here (not in the item) so
+  // it can be rendered outside the scrolling list.
+  const menu = useItemMenu(displayedPartialTree)
+  const bodyRef = useRef<HTMLDivElement>(null)
 
   // This records whether the user is holding the SHIFT key this very moment.
   // Typically, this is implemented using `onClick((e) => e.shiftKey)` -
@@ -63,7 +75,9 @@ function Browser<M extends Meta, B extends Body>(props: BrowserProps<M, B>) {
   if (isLoading) {
     return (
       <div className="uppy-Provider-loading">
-        {typeof isLoading === 'string' ? isLoading : i18n('loading')}
+        <span role="status">
+          {typeof isLoading === 'string' ? isLoading : i18n('loading')}
+        </span>
       </div>
     )
   }
@@ -89,24 +103,46 @@ function Browser<M extends Meta, B extends Body>(props: BrowserProps<M, B>) {
       openFolder={openFolder}
       file={item}
       utmSource={utmSource}
+      actions={actions}
+      menuOpen={menu.open?.item.id === item.id}
+      toggleMenu={
+        runAction ? (anchor) => menu.toggle(item.id, anchor) : undefined
+      }
     />
   )
+
+  const popover =
+    menu.open && runAction ? (
+      // Keyed per item: switching menus must unmount the old popover, or its
+      // (queued) light-dismiss `toggle` event would close the new one.
+      <ItemActionsPopover
+        key={menu.open.item.id}
+        file={menu.open.item}
+        actions={getApplicableActions(actions, menu.open.item)}
+        anchor={menu.open.anchor}
+        containerRef={bodyRef}
+        runAction={runAction}
+        onClose={menu.close}
+        i18n={i18n}
+      />
+    ) : null
 
   // todo remove virtuallist option and always use virtual list
   if (virtualList) {
     return (
-      <div className="uppy-ProviderBrowser-body">
+      <div className="uppy-ProviderBrowser-body" ref={bodyRef}>
         <VirtualList
           className="uppy-ProviderBrowser-list"
           data={displayedPartialTree}
           renderRow={renderItem}
           rowHeight={35.5}
         />
+        {popover}
       </div>
     )
   }
   return (
-    <div className="uppy-ProviderBrowser-body">
+    <div className="uppy-ProviderBrowser-body" ref={bodyRef}>
       <ul
         className="uppy-ProviderBrowser-list"
         onScroll={handleScroll}
@@ -115,6 +151,7 @@ function Browser<M extends Meta, B extends Body>(props: BrowserProps<M, B>) {
       >
         {displayedPartialTree.map(renderItem)}
       </ul>
+      {popover}
     </div>
   )
 }

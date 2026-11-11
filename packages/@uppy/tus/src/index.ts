@@ -12,7 +12,6 @@ import {
   filterFilesToEmitUploadStarted,
   filterFilesToUpload,
   getAllowedMetaFields,
-  hasProperty,
   isNetworkError,
   type LocalUppyFile,
   NetworkError,
@@ -181,8 +180,9 @@ export default class Tus<M extends Meta, B extends Body> extends BasePlugin<
     if (this.uploaders[fileID]) {
       this.uploaders[fileID] = null
     }
-    if (this.uploaderEvents[fileID]) {
-      this.uploaderEvents[fileID]!.remove()
+    const events = this.uploaderEvents[fileID]
+    if (events) {
+      events.remove()
       this.uploaderEvents[fileID] = null
     }
   }
@@ -220,9 +220,7 @@ export default class Tus<M extends Meta, B extends Body> extends BasePlugin<
    *    up a spot in the queue.
    *
    */
-  async #uploadLocalFile(
-    file: LocalUppyFile<M, B>,
-  ): Promise<tus.Upload | string> {
+  #uploadLocalFile(file: LocalUppyFile<M, B>): Promise<tus.Upload | string> {
     this.#abortUploader(file.id)
     this.#resetUploaderReferences(file.id)
 
@@ -271,7 +269,7 @@ export default class Tus<M extends Meta, B extends Body> extends BasePlugin<
           userProvidedPromise = onBeforeRequest(req, file)
         }
 
-        if (hasProperty(queuedRequest, 'shouldBeRequeued')) {
+        if (Object.hasOwn(queuedRequest, 'shouldBeRequeued')) {
           if (!queuedRequest.shouldBeRequeued) return Promise.reject()
           // TODO: switch to `Promise.withResolvers` on the next major if available.
           let done: () => void
@@ -457,7 +455,7 @@ export default class Tus<M extends Meta, B extends Body> extends BasePlugin<
         srcProp: string,
         destProp: string,
       ) => {
-        if (hasProperty(obj, srcProp) && !hasProperty(obj, destProp)) {
+        if (Object.hasOwn(obj, srcProp) && !Object.hasOwn(obj, destProp)) {
           obj[destProp] = obj[srcProp]
         }
       }
@@ -657,7 +655,7 @@ export default class Tus<M extends Meta, B extends Body> extends BasePlugin<
     await this.#uploadFiles(filesToUpload)
   }
 
-  install(): void {
+  override install(): void {
     this.uppy.setState({
       capabilities: {
         ...this.uppy.getState().capabilities,
@@ -667,7 +665,7 @@ export default class Tus<M extends Meta, B extends Body> extends BasePlugin<
     this.uppy.addUploader(this.#handleUpload)
   }
 
-  uninstall(): void {
+  override uninstall(): void {
     this.uppy.setState({
       capabilities: {
         ...this.uppy.getState().capabilities,

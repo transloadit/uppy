@@ -9,9 +9,9 @@ import type {
 import { UIPlugin, type Uppy } from '@uppy/core'
 import {
   type CompanionPluginOptions,
+  defaultStorage,
   getAllowedHosts,
   Provider,
-  tokenStorage,
 } from '@uppy/core/companion-client'
 import { ProviderViews } from '@uppy/core/provider-views'
 import type { LocaleStrings } from '@uppy/core/utils'
@@ -46,7 +46,7 @@ export default class Box<M extends Meta, B extends Body>
     super(uppy, opts)
     this.id = this.opts.id || 'Box'
     this.type = 'acquirer'
-    this.storage = this.opts.storage || tokenStorage
+    this.storage = this.opts.storage || defaultStorage
     this.files = []
     this.icon = () => (
       <svg
@@ -86,7 +86,7 @@ export default class Box<M extends Meta, B extends Body>
     this.render = this.render.bind(this)
   }
 
-  install(): void {
+  override install(): void {
     this.view = new ProviderViews(this, {
       provider: this.provider,
       loadAllFiles: true,
@@ -99,12 +99,12 @@ export default class Box<M extends Meta, B extends Body>
     }
   }
 
-  uninstall(): void {
+  override uninstall(): void {
     this.view.tearDown()
     this.unmount()
   }
 
-  render(state: unknown): ComponentChild {
+  override render(state: unknown): ComponentChild {
     return this.view.render(state)
   }
 }

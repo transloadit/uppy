@@ -4,7 +4,7 @@ This example uses a server-side PHP endpoint to sign uploads to S3.
 
 ## Running It
 
-To run this example, make sure you've correctly installed the **repository
+To run this example, make sure you’ve correctly installed the **repository
 root**:
 
 ```bash
@@ -19,7 +19,7 @@ This example also uses the AWS PHP SDK. To install it,
 folder.
 
 ```bash
-corepack yarn workspace @uppy-example/aws-php exec "composer update"
+corepack yarn workspace example-aws-php exec "composer update"
 ```
 
 Configure AWS S3 credentials using
@@ -31,10 +31,10 @@ Configure a bucket name and region in the `s3-sign.php` file.
 Then, again in the **repository root**, start this example by doing:
 
 ```bash
-corepack yarn workspace @uppy-example/aws-php start
+corepack yarn workspace example-aws-php start
 ```
 
-The demo should now be available at http://localhost:8080.
+The demo should now be available at <http://localhost:8080>.
 
 You can use a different S3-compatible service like GCS by configuring that
 service in `~/.aws/config` and `~/.aws/credentials`, and then providing

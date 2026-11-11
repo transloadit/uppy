@@ -60,6 +60,24 @@ $focus-shadow: 0 0 0 3px rgba($blue, 0.5);
   }
 }
 
+// Like blue-border-focus, but only for keyboard focus: no ring stays behind
+// on a button after a mouse click.
+@mixin blue-border-focus-visible() {
+  @include clear-focus();
+
+  &:focus-visible {
+    box-shadow: $focus-shadow;
+  }
+}
+
+@mixin blue-border-focus-visible--dark() {
+  @include clear-focus();
+
+  &:focus-visible {
+    box-shadow: 0 0 0 2px rgba($lightblue, 0.85);
+  }
+}
+
 @mixin clear-focus() {
   &:focus {
     outline: none;

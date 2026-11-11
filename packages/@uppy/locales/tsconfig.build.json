@@ -1,13 +1,4 @@
 {
-  "extends": "../../../tsconfig.shared",
-  "compilerOptions": {
-    "outDir": "./lib",
-    "rootDir": "./src"
-  },
-  "include": ["./src/**/*.*"],
-  "references": [
-    {
-      "path": "../core/tsconfig.build.json"
-    }
-  ]
+  "extends": "@uppy-dev/tsconfig/build",
+  "references": [{ "path": "../core/tsconfig.build.json" }]
 }

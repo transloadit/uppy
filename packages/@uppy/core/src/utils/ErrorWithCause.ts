@@ -1,10 +1,7 @@
-import hasProperty from './hasProperty.js'
 import type NetworkError from './NetworkError.js'
 
 class ErrorWithCause extends Error {
   public isNetworkError: boolean
-
-  public cause: Error['cause']
 
   constructor(
     message?: ConstructorParameters<ErrorConstructor>[0],
@@ -12,7 +9,7 @@ class ErrorWithCause extends Error {
   ) {
     super(message)
     this.cause = options?.cause
-    if (this.cause && hasProperty(this.cause, 'isNetworkError')) {
+    if (this.cause && Object.hasOwn(this.cause, 'isNetworkError')) {
       this.isNetworkError = (this.cause as NetworkError).isNetworkError
     } else {
       this.isNetworkError = false
