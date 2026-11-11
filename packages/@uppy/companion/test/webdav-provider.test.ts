@@ -1,3 +1,5 @@
+import http from 'node:http'
+import type { AddressInfo } from 'node:net'
 import { describe, expect, test, vi } from 'vitest'
 import logger from '../dist/server/logger.js'
 import { ProviderApiError } from '../dist/server/provider/error.js'
@@ -86,4 +88,57 @@ describe('webdav simpleAuth errors', () => {
     expect(((await err) as ProviderApiError).isAuthError).toBe(true)
     logged.mockRestore()
   })
+})
+
+describe('webdav transport errors', () => {
+  // node-fetch quotes the request URL in transport errors (refused, DNS,
+  // TLS) and in its refusal of `user:pass@` URLs; either can be the secret.
+  const closedPortHost = async () => {
+    const server = http.createServer()
+    await new Promise<void>((resolve) => server.listen(0, '127.0.0.1', resolve))
+    const { port } = server.address() as AddressInfo
+    await new Promise((resolve) => server.close(resolve))
+    return `127.0.0.1:${port}`
+  }
+
+  // Captures what the logger actually writes, not the objects passed to it.
+  const run = async (op: 'simpleAuth' | 'list', webdavUrl: string) => {
+    const provider = new WebdavProvider({ allowLocalUrls: true })
+    const output = vi.spyOn(console, 'log').mockImplementation(() => {})
+    const err = (await (op === 'simpleAuth'
+      ? provider.simpleAuth({ requestBody: { form: { webdavUrl } } } as never)
+      : provider.list({ providerUserSession: { webdavUrl } } as never)
+    ).catch((e: unknown) => e)) as
+      | (Error & { code?: unknown; json?: unknown })
+      | undefined
+    const logged = output.mock.calls.flat().join('\n')
+    output.mockRestore()
+    return { err, logged }
+  }
+
+  for (const op of ['simpleAuth', 'list'] as const) {
+    test(`${op}: a refused connection does not log the URL`, async () => {
+      const host = await closedPortHost()
+      const { err, logged } = await run(op, `http://${host}/dav/SECRETTOKEN/`)
+
+      expect(logged).toContain('ECONNREFUSED')
+      expect(logged).toContain(`http://${host}/[redacted]`)
+      expect(logged).not.toContain('SECRETTOKEN')
+      expect(`${err?.message}${err?.stack}`).not.toContain('SECRETTOKEN')
+      if (op === 'simpleAuth') {
+        expect(err?.json).toMatchObject({ code: 'WEBDAV_CANNOT_CONNECT' })
+      } else {
+        expect(err?.code).toBe('ECONNREFUSED')
+      }
+    })
+
+    test(`${op}: a URL with credentials does not log them`, async () => {
+      const host = await closedPortHost()
+      const { err, logged } = await run(op, `http://USER:PASS@${host}/dav/`)
+
+      expect(logged).toContain('embedded credentials')
+      expect(logged).not.toMatch(/USER|PASS/)
+      expect(`${err?.message}${err?.stack}`).not.toMatch(/USER|PASS/)
+    })
+  }
 })
