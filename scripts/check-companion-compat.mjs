@@ -113,7 +113,12 @@ export function compareVersions(a, b) {
   return Math.sign(preA.length - preB.length)
 }
 
-// Returns the version without its +build suffix.
+// Reads the version from the plain-text welcome page that standalone
+// Companion serves at its root (buildHelpfulStartupMessage in
+// packages/@uppy/companion/src/standalone/helper.ts), without its +build
+// suffix. Companion has no other public version source, and a deployment
+// with COMPANION_HIDE_WELCOME=true reads as unknown. The line's format is
+// pinned by packages/@uppy/companion/test/welcome.test.ts.
 export function parseHostedVersion(body) {
   const match = new RegExp(
     `^Welcome to Companion v(${VERSION})\\r?$`,
