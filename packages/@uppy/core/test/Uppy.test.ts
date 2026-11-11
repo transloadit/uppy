@@ -2528,18 +2528,12 @@ describe('src/Core', () => {
   })
 
   describe('updateOnlineStatus', () => {
-    const RealNavigatorOnline = globalThis.window.navigator.onLine
-
     function mockNavigatorOnline(status: boolean) {
-      Object.defineProperty(globalThis.window.navigator, 'onLine', {
-        value: status,
-        writable: true,
-      })
+      vi.spyOn(window.navigator, 'onLine', 'get').mockReturnValue(status)
     }
 
     afterEach(() => {
-      // @ts-expect-error readonly but whatever
-      globalThis.window.navigator.onLine = RealNavigatorOnline
+      vi.restoreAllMocks()
     })
 
     it('should emit the correct event based on whether there is a network connection', () => {
