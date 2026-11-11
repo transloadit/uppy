@@ -34,18 +34,24 @@ export abstract class UppyAngularWrapper<
 		defaultOptions: Partial<Opts>,
 		plugin: new (uppy: any, opts?: Opts) => UIPlugin<Opts, M, B>,
 	) {
-		// Angular always runs `ngOnChanges` before `ngOnInit`, so a bound `uppy` is already
-		// set by the time we get here and we never create an instance we'd have to throw away.
-		if (!this.uppy) {
-			this.ownUppy = new Uppy<M, B>();
-			this.uppy = this.ownUppy;
-		}
-
 		this.options = {
 			...defaultOptions,
 			...this.props,
 		};
+		this.install(plugin);
+	}
 
+	// Installs the plugin on `this.uppy`, falling back to an instance of our own when no
+	// `uppy` is passed in (or the bound value is `undefined`/`null`). Angular always runs
+	// `ngOnChanges` before `ngOnInit`, so a bound `uppy` is already set by the time
+	// `onMount` gets here and we never create an instance we'd have to throw away.
+	private install(
+		plugin: new (uppy: any, opts?: Opts) => UIPlugin<Opts, M, B>,
+	): void {
+		if (!this.uppy) {
+			this.ownUppy ??= new Uppy<M, B>();
+			this.uppy = this.ownUppy;
+		}
 		this.uppy.use(plugin, this.options);
 		this.mountedUppy = this.uppy;
 		this.plugin = this.uppy.getPlugin(this.options.id) as PluginType;
@@ -57,11 +63,14 @@ export abstract class UppyAngularWrapper<
 		// `onMount` has installed the plugin.
 		if (mountedUppy === undefined) return;
 
-		if (changes["uppy"] && this.uppy !== mountedUppy) {
-			this.uninstall(mountedUppy);
-			// @ts-expect-error The options correspond to the plugin, I swear
-			this.uppy.use(plugin, this.options);
-			this.mountedUppy = this.uppy;
+		if (changes["uppy"]) {
+			// `ownUppy` only exists while we're mounted on it, so if the binding goes from one
+			// empty value to another we simply stay where we are.
+			if (!this.uppy && this.ownUppy) this.uppy = this.ownUppy;
+			if (this.uppy !== mountedUppy) {
+				this.uninstall(mountedUppy);
+				this.install(plugin);
+			}
 		}
 		this.options = { ...this.options, ...this.props };
 		this.plugin = this.uppy.getPlugin(this.options.id) as PluginType;
