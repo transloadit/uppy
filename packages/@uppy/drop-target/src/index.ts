@@ -1,6 +1,6 @@
 import type { Body, DefinePluginOpts, Meta, PluginOpts, Uppy } from '@uppy/core'
 import { BasePlugin } from '@uppy/core'
-import { getDroppedFiles, toArray } from '@uppy/core/utils'
+import { getDroppedFiles } from '@uppy/core/utils'
 import packageJson from '../package.json' with { type: 'json' }
 
 declare module '@uppy/core' {
@@ -151,7 +151,7 @@ export default class DropTarget<
     if (target instanceof Element) {
       this.nodes = [target]
     } else if (typeof target === 'string') {
-      this.nodes = toArray(document.querySelectorAll(target))
+      this.nodes = Array.from(document.querySelectorAll(target))
     }
 
     if (!this.nodes || this.nodes.length === 0) {
