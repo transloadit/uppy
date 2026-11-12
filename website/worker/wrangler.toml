@@ -1,0 +1,10 @@
+name = "uppy-io-agent-readiness"
+main = "index.js"
+compatibility_date = "2026-08-23"
+
+# uppy.io is proxied ("orange-clouded") through Cloudflare, so this Worker can
+# run in front of the GitHub Pages origin. Deploying it needs an account with
+# Workers enabled on the uppy.io zone.
+[[routes]]
+pattern = "uppy.io/*"
+zone_name = "uppy.io"

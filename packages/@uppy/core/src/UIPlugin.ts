@@ -187,8 +187,9 @@ class UIPlugin<
   }
 
   unmount(): void {
-    if (this.isTargetDOMEl) {
-      this.el?.remove()
+    if (this.isTargetDOMEl && this.el) {
+      render(null, this.el)
+      this.el.remove()
     }
     this.onUnmount()
   }

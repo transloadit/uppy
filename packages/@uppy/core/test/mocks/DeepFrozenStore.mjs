@@ -30,9 +30,9 @@ class DeepFrozenStore {
   }
 
   _publish(...args) {
-    this.callbacks.forEach((listener) => {
+    for (const listener of this.callbacks) {
       listener(...args)
-    })
+    }
   }
 }
 

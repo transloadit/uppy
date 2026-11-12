@@ -316,11 +316,11 @@ export default class Webcam<M extends Meta, B extends Body> extends UIPlugin<
           if (!options?.deviceId) {
             currentDeviceId = tracks[0].getSettings().deviceId
           } else {
-            tracks.forEach((track) => {
+            for (const track of tracks) {
               if (track.getSettings().deviceId === options.deviceId) {
                 currentDeviceId = track.getSettings().deviceId
               }
-            })
+            }
           }
 
           // Update the sources now, so we can access the names.
@@ -521,9 +521,12 @@ export default class Webcam<M extends Meta, B extends Body> extends UIPlugin<
       const audioTracks = this.stream.getAudioTracks()
       const videoTracks = this.stream.getVideoTracks()
 
-      audioTracks.concat(videoTracks).forEach((track) => {
+      for (const track of audioTracks) {
         track.stop()
-      })
+      }
+      for (const track of videoTracks) {
+        track.stop()
+      }
     }
 
     if (this.recorder) {
@@ -608,15 +611,11 @@ export default class Webcam<M extends Meta, B extends Body> extends UIPlugin<
     }
   }
 
-  async getImage(): Promise<
-    Pick<LocalUppyFileNonGhost<M, B>, 'data' | 'name'>
-  > {
+  getImage(): Promise<Pick<LocalUppyFileNonGhost<M, B>, 'data' | 'name'>> {
     const video = this.getVideoElement()
     if (!video) {
-      return Promise.reject(
-        new Error(
-          'No video element found, likely due to the Webcam tab being closed.',
-        ),
+      throw new Error(
+        'No video element found, likely due to the Webcam tab being closed.',
       )
     }
 
@@ -653,7 +652,7 @@ export default class Webcam<M extends Meta, B extends Body> extends UIPlugin<
     })
   }
 
-  getVideo(): Promise<MinimalRequiredUppyFile<M, B>> {
+  getVideo(): MinimalRequiredUppyFile<M, B> {
     // Sometimes in iOS Safari, Blobs (especially the first Blob in the recordingChunks Array)
     // have empty 'type' attributes (e.g. '') so we need to find a Blob that has a defined 'type'
     // attribute in order to determine the correct MIME type.
@@ -664,10 +663,8 @@ export default class Webcam<M extends Meta, B extends Body> extends UIPlugin<
     const fileExtension = getFileTypeExtension(mimeType)
 
     if (!fileExtension) {
-      return Promise.reject(
-        new Error(
-          `Could not retrieve recording: Unsupported media type "${mimeType}"`,
-        ),
+      throw new Error(
+        `Could not retrieve recording: Unsupported media type "${mimeType}"`,
       )
     }
 
@@ -680,7 +677,7 @@ export default class Webcam<M extends Meta, B extends Body> extends UIPlugin<
       type: mimeType,
     }
 
-    return Promise.resolve(file)
+    return file
   }
 
   focus(): void {
@@ -774,15 +771,10 @@ export default class Webcam<M extends Meta, B extends Body> extends UIPlugin<
         this.updateVideoSources()
 
         if (this.stream) {
-          let restartStream = true
-
           const { videoSources, currentDeviceId } = this.getPluginState()
-
-          videoSources.forEach((videoSource) => {
-            if (currentDeviceId === videoSource.deviceId) {
-              restartStream = false
-            }
-          })
+          const restartStream = !videoSources.some(
+            (videoSource) => currentDeviceId === videoSource.deviceId,
+          )
 
           if (restartStream) {
             this.stop()
