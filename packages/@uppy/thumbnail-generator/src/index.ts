@@ -435,12 +435,12 @@ export default class ThumbnailGenerator<
 
   onRestored = (): void => {
     const restoredFiles = this.uppy.getFiles().filter((file) => file.isRestored)
-    restoredFiles.forEach((file) => {
+    for (const file of restoredFiles) {
       // Only add blob URLs; they are likely invalid after being restored.
       if (!file.preview || isObjectURL(file.preview)) {
         this.addToQueue(file.id)
       }
-    })
+    }
   }
 
   onAllFilesRemoved = (): void => {
@@ -448,19 +448,19 @@ export default class ThumbnailGenerator<
   }
 
   waitUntilAllProcessed = (fileIDs: string[]): Promise<void> => {
-    fileIDs.forEach((fileID) => {
+    for (const fileID of fileIDs) {
       const file = this.uppy.getFile(fileID)
       this.uppy.emit('preprocess-progress', file, {
         mode: 'indeterminate',
         message: this.i18n('generatingThumbnails'),
       })
-    })
+    }
 
     const emitPreprocessCompleteForAll = () => {
-      fileIDs.forEach((fileID) => {
+      for (const fileID of fileIDs) {
         const file = this.uppy.getFile(fileID)
         this.uppy.emit('preprocess-complete', file)
-      })
+      }
     }
 
     return new Promise((resolve) => {

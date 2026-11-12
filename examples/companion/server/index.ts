@@ -1,6 +1,6 @@
 import { styleText } from 'node:util'
 import type { CompanionInitOptions } from '@uppy/companion'
-import companion from '@uppy/companion'
+import * as companion from '@uppy/companion'
 import bodyParser from 'body-parser'
 import type { Request, Response } from 'express'
 import express from 'express'
