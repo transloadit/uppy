@@ -7,7 +7,7 @@ import { readFile, writeFile } from 'node:fs/promises'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
 
-import { getLocales, sortObjectAlphabetically } from './helpers.mjs'
+import { getLocales, sortObjectAlphabetically } from './helpers.ts'
 
 const root = fileURLToPath(new URL('../../../../', import.meta.url))
 
@@ -15,10 +15,12 @@ const localesPath = path.join(root, 'packages', '@uppy', 'locales')
 const templatePath = path.join(localesPath, 'template.ts')
 const englishLocalePath = path.join(localesPath, 'src', 'en_US.ts')
 
-async function getLocalesAndCombinedLocale() {
+async function getLocalesAndCombinedLocale(): Promise<
+  Record<string, string | Record<number, string>>
+> {
   const locales = await getLocales(`${root}/packages/@uppy/*/src/locale.ts`)
 
-  const combinedLocale = {}
+  const combinedLocale: Record<string, string | Record<number, string>> = {}
   for (const [, locale] of Object.entries(locales)) {
     for (const [key, value] of Object.entries(locale.strings)) {
       combinedLocale[key] = value

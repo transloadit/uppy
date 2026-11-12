@@ -32,13 +32,11 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v7
         with:
-          node-version: '26.12.1'
+          node-version-file: .node-version
           registry-url: "https://registry.npmjs.org"
       - name: Install Corepack
         run: npm install --global corepack@0.36.0
 
-      # Allow yarn to make changes during release
-      - run: corepack yarn config set enableHardenedMode false
       - run: corepack yarn --mode=update-lockfile
 
       - name: Install dependencies
@@ -104,7 +102,7 @@ jobs:
       - uses: docker/setup-qemu-action@99012661954931238ded8c8b007157a8430204e1 # v4.4.0
       - uses: docker/setup-buildx-action@f87e5991a6d7451dcb8d9637bfbc97413f497069
       - name: Log in to DockerHub
-        uses: docker/login-action@dbcb813823bdd20940b903addbd779551569679f # v4.6.0
+        uses: docker/login-action@8aa5831fb8d48d8f76594c7ddde61ae58019f550 # v4.8.0
         with:
           username: ${{secrets.DOCKER_USERNAME}}
           password: ${{secrets.DOCKER_PASSWORD}}

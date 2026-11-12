@@ -44,7 +44,7 @@ function censorQuery(rawQuery: Record<string, unknown>): {
 } {
   const query: Record<string, string> = {}
   let censored = false
-  Object.keys(rawQuery).forEach((key) => {
+  for (const key of Object.keys(rawQuery)) {
     const value = rawQuery[key]
     if (typeof value !== 'string') {
       // A repeated sensitive key parses to an array; still hide it.
@@ -52,7 +52,7 @@ function censorQuery(rawQuery: Record<string, unknown>): {
         query[key] = '********'
         censored = true
       }
-      return
+      continue
     }
     if (sensitiveKeys.has(key)) {
       // replace logged access token
@@ -61,7 +61,7 @@ function censorQuery(rawQuery: Record<string, unknown>): {
     } else {
       query[key] = value
     }
-  })
+  }
   return { query, censored }
 }
 
