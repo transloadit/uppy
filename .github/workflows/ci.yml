@@ -95,11 +95,6 @@ jobs:
           node-version: ${{matrix.node-version}}
       - name: Install Corepack
         run: npm install --global corepack@0.36.0
-      - name: Report tool versions
-        run: |
-          node --version
-          corepack --version
-          corepack yarn --version
       - name: Get yarn cache directory path
         id: yarn-cache-dir-path
         run:
