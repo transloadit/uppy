@@ -119,7 +119,7 @@ export default class Form<M extends Meta, B extends Body> extends BasePlugin<
       ev.preventDefault()
       const elements = toArray((ev.target as HTMLFormElement).elements)
       const disabledByUppy: HTMLButtonElement[] = []
-      elements.forEach((el) => {
+      for (const el of elements) {
         const isButton =
           el.tagName === 'BUTTON' ||
           (el.tagName === 'INPUT' &&
@@ -128,20 +128,20 @@ export default class Form<M extends Meta, B extends Body> extends BasePlugin<
           ;(el as HTMLButtonElement).disabled = true
           disabledByUppy.push(el as HTMLButtonElement)
         }
-      })
+      }
       this.uppy
         .upload()
         .then(
           () => {
-            disabledByUppy.forEach((button) => {
+            for (const button of disabledByUppy) {
               button.disabled = false
-            })
+            }
           },
           (err) => {
-            disabledByUppy.forEach((button) => {
+            for (const button of disabledByUppy) {
               button.disabled = false
-            })
-            return Promise.reject(err)
+            }
+            throw err
           },
         )
         .catch((err) => {

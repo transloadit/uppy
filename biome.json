@@ -37,6 +37,9 @@
         "noExplicitAny": "off",
         "useAwait": "error"
       },
+      "complexity": {
+        "noForEach": "error"
+      },
       "correctness": {
         "useExhaustiveDependencies": "error",
         "useHookAtTopLevel": "error",

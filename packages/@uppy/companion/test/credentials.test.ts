@@ -8,11 +8,13 @@ import {
   beforeEach,
   describe,
   expect,
+  onTestFinished,
   test,
   vi,
 } from 'vitest'
 import * as tokenService from '../dist/server/helpers/jwt.js'
 import * as oAuthState from '../dist/server/helpers/oauth-state.js'
+import logger from '../dist/server/logger.js'
 import { nockZoomRevoke, expects as zoomExpects } from './fixtures/zoom.js'
 import { getServer } from './mockserver.js'
 
@@ -96,6 +98,39 @@ describe('providers requests with remote oauth keys', () => {
       .set('uppy-credentials-params', encodedParams)
       .expect(424)
   })
+})
+
+test('does not follow a redirecting credentials endpoint', async () => {
+  const elsewhere = nock('http://localhost:2111')
+    .post('/zoom-keys')
+    .reply(302, '', { location: 'http://localhost:2111/elsewhere' })
+    .post('/elsewhere')
+    .reply(200, {
+      credentials: { key: remoteZoomKey, secret: remoteZoomSecret },
+    })
+  const encodedParams = Buffer.from(
+    JSON.stringify({ params: 'ZOOM-CREDENTIALS-PARAMS' }),
+  ).toString('base64')
+  const logError = vi.spyOn(logger, 'error').mockImplementation(() => {})
+  onTestFinished(() => logError.mockRestore())
+  const res = await request(await getZoomServer())
+    .get('/zoom/logout/')
+    .set('uppy-auth-token', token)
+    .set('uppy-credentials-params', encodedParams)
+  expect(res.status).toBe(500)
+  // The redirect target is for the operator's log only, like the endpoint's
+  // other errors: the client gets the generic message.
+  expect(res.body.message).toBe('Could not fetch credentials')
+  expect(logError).toHaveBeenCalledWith(
+    expect.objectContaining({
+      message:
+        'Credentials endpoint responded with a 302 redirect to http://localhost:2111/elsewhere; configure its final URL',
+    }),
+    'credentials.fetch.fail',
+  )
+  expect(elsewhere.pendingMocks()).toEqual([
+    'POST http://localhost:2111/elsewhere',
+  ])
 })
 
 describe('remote credentials with transloadit_gateway', () => {

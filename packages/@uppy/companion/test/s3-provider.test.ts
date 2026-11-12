@@ -913,7 +913,7 @@ describe('S3 provider', () => {
       ])
       const params = requests[0]?.body.get('params') ?? ''
       expect(JSON.parse(params)).toMatchObject({
-        auth: { key: 'ws-key' },
+        auth: { key: 'ws-key', method: 'POST', path: '/dam/entries/move' },
         source: 'tenant/photo.jpg',
         destination: 'tenant/renamed.jpg',
       })
