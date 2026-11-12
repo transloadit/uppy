@@ -8565,6 +8565,7 @@ __metadata:
     clsx: "npm:^2.1.1"
     cssnano: "npm:^8.0.1"
     dequal: "npm:^2.0.3"
+    playwright: "npm:1.64.1"
     postcss: "npm:^8.5.32"
     postcss-cli: "npm:^12.0.0"
     preact: "npm:^10.29.2"
