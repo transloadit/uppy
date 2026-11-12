@@ -158,20 +158,20 @@ export default class DropTarget<
       throw new Error(`"${target}" does not match any HTML elements`)
     }
 
-    this.nodes.forEach((node) => {
+    for (const node of this.nodes) {
       node.addEventListener('dragover', this.handleDragOver, false)
       node.addEventListener('dragleave', this.handleDragLeave, false)
       node.addEventListener('drop', this.handleDrop, false)
-    })
+    }
   }
 
   removeListeners = (): void => {
     if (this.nodes) {
-      this.nodes.forEach((node) => {
+      for (const node of this.nodes) {
         node.removeEventListener('dragover', this.handleDragOver, false)
         node.removeEventListener('dragleave', this.handleDragLeave, false)
         node.removeEventListener('drop', this.handleDrop, false)
-      })
+      }
     }
   }
 

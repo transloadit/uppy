@@ -50,9 +50,9 @@ const oauthProviders: Record<string, string> = Object.fromEntries(
   ),
 )
 const authData: Record<string, { accessToken: string }> = {}
-providerNames.forEach((provider) => {
+for (const provider of providerNames) {
   authData[provider] = { accessToken: 'token value' }
-})
+}
 const token = tokenService.generateEncryptedAuthToken(authData, secret)
 
 const thisOrThat = <T>(value1: T | undefined, value2: T): T => {

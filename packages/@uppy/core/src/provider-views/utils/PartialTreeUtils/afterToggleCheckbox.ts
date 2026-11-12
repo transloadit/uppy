@@ -25,17 +25,21 @@ const percolateDown = (
   id: PartialTreeId,
   shouldMarkAsChecked: boolean,
 ) => {
-  const children = tree.filter(
-    (item) => item.type !== 'root' && item.parentId === id,
-  ) as (PartialTreeFolderNode | PartialTreeFile)[]
+  for (const item of tree) {
+    if (item.type === 'root') {
+      continue
+    }
 
-  children.forEach((item) => {
+    if (item.parentId !== id) {
+      continue
+    }
+
     item.status =
       shouldMarkAsChecked && !(item.type === 'file' && item.restrictionError)
         ? 'checked'
         : 'unchecked'
     percolateDown(tree, item.id, shouldMarkAsChecked)
-  })
+  }
 }
 
 /*
@@ -118,7 +122,7 @@ const afterToggleCheckbox = (
     (item) => item.type !== 'root' && checkedIds.includes(item.id),
   ) as (PartialTreeFile | PartialTreeFolderNode)[]
 
-  newlyCheckedItems.forEach((item) => {
+  for (const item of newlyCheckedItems) {
     // allow toggling:
     const newStatus = item.status === 'checked' ? 'unchecked' : 'checked'
     // and if it's a file, we need to respect restrictions
@@ -129,7 +133,7 @@ const afterToggleCheckbox = (
     }
 
     percolateDown(tree, item.id, item.status === 'checked')
-  })
+  }
 
   // A range from a custom UI can span folders: recompute each parent.
   for (const parentId of new Set(newlyCheckedItems.map((i) => i.parentId))) {
