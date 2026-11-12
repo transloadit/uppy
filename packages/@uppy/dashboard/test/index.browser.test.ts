@@ -204,3 +204,18 @@ test('Upload, pause, and resume functionality', async () => {
   // Verify upload completion state using Playwright selector
   await expect(page.getByText('Complete', { exact: true })).toBeVisible()
 })
+
+test('Only a single Informer is rendered', async () => {
+  render('<div id="uppy"></div>')
+  const uppy = new Uppy().use(Dashboard, {
+    target: '#uppy',
+    inline: true,
+  })
+
+  uppy.info('Hello', 'info', 60000)
+  await expect.element(page.getByText('Hello').first()).toBeVisible()
+
+  // Count the DOM nodes instead of checking visibility because a duplicate
+  // Informer is stacked exactly on top of the first one
+  expect(document.querySelectorAll('.uppy-Informer')).toHaveLength(1)
+})
