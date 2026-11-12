@@ -1,16 +1,11 @@
 import fs from 'node:fs'
+import { glob } from 'node:fs/promises'
 import path from 'node:path'
 import process from 'node:process'
 import { fileURLToPath } from 'node:url'
 import { styleText } from 'node:util'
 import type { Locale } from '@uppy/core/utils'
-import { globSync } from 'glob'
-import {
-  getLocales,
-  getPaths,
-  localeNameFromLocalePath,
-  omit,
-} from './helpers.ts'
+import { getLocales, localeNameFromLocalePath, omit } from './helpers.ts'
 
 const root = fileURLToPath(new URL('../../../../', import.meta.url))
 const leadingLocaleName = 'en_US'
@@ -28,7 +23,8 @@ function getAllFilesPerPlugin(pluginNames: string[]) {
   const filesPerPlugin: Record<string, string[]> = {}
 
   function getFiles(name: string) {
-    return globSync(`${root}/packages/@uppy/${name}/lib/**/*.js`)
+    return fs
+      .globSync(`${root}/packages/@uppy/${name}/lib/**/*.js`)
       .filter((filePath) => !filePath.includes('locale.js'))
       .map((filePath) => fs.readFileSync(filePath, 'utf-8'))
   }
@@ -290,10 +286,11 @@ function placeholders({ leadingLocale, followerLocales }: LocaleWithLeading) {
 async function test() {
   switch (mode) {
     case 'unused': {
-      const paths = await getPaths(`${root}/packages/@uppy/**/src/locale.js`)
+      const paths = glob(`${root}/packages/@uppy/**/src/locale.js`)
+
       await unused(
         getAllFilesPerPlugin(
-          paths.map((filePath) =>
+          await Array.fromAsync(paths, (filePath) =>
             path.basename(path.join(filePath, '..', '..')),
           ),
         ),
