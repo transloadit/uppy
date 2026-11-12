@@ -1,5 +1,8 @@
 import { inspect, styleText } from 'node:util'
-import escapeStringRegexp from 'escape-string-regexp'
+
+/** Escape a string for use in a RegExp, as escape-string-regexp does. */
+const escapeStringRegexp = (string: string): string =>
+  string.replace(/[|\\{}()[\]^$+*?.]/g, '\\$&').replace(/-/g, '\\x2d')
 
 type Colors = Parameters<typeof styleText>[0]
 type LogLevel = 'error' | 'info' | 'warn' | 'debug'

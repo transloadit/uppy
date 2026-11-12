@@ -6,7 +6,6 @@ import type { Express, NextFunction, Request, Response } from 'express'
 import express from 'express'
 import type { SessionOptions } from 'express-session'
 import session from 'express-session'
-import helmet from 'helmet'
 import morgan from 'morgan'
 import * as companion from '../companion.js'
 import type { CompanionInitOptions } from '../schemas/index.js'
@@ -143,11 +142,15 @@ export default function server(
     return '-'
   })
 
-  // Use helmet to secure Express headers
-  router.use(helmet.frameguard())
-  router.use(helmet.xssFilter())
-  router.use(helmet.noSniff())
-  router.use(helmet.ieNoOpen())
+  // The same security headers helmet's frameguard, xssFilter, noSniff and
+  // ieNoOpen middlewares used to set.
+  router.use((_req, res, next) => {
+    res.setHeader('X-Frame-Options', 'SAMEORIGIN')
+    res.setHeader('X-XSS-Protection', '0')
+    res.setHeader('X-Content-Type-Options', 'nosniff')
+    res.setHeader('X-Download-Options', 'noopen')
+    next()
+  })
 
   app.disable('x-powered-by')
 

@@ -394,3 +394,33 @@ export function pathSegment(id: string): string {
   }
   return encodeURIComponent(id)
 }
+
+/**
+ * Map `items` with at most `concurrency` calls of `fn` in flight, keeping the
+ * order of the results. Like p-map, it rejects with the first error and starts
+ * no new calls after it.
+ */
+export async function mapConcurrently<T, R>(
+  items: readonly T[],
+  fn: (item: T) => Promise<R>,
+  { concurrency }: { concurrency: number },
+): Promise<R[]> {
+  const results: R[] = new Array(items.length)
+  let next = 0
+  let failed = false
+  const worker = async () => {
+    while (!failed && next < items.length) {
+      const i = next++
+      try {
+        results[i] = await fn(items[i]!)
+      } catch (err) {
+        failed = true
+        throw err
+      }
+    }
+  }
+  await Promise.all(
+    Array.from({ length: Math.min(concurrency, items.length) }, worker),
+  )
+  return results
+}

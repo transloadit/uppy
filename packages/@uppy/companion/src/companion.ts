@@ -1,8 +1,6 @@
 import { randomUUID } from 'node:crypto'
-import cookieParser from 'cookie-parser'
 import type { Express, RequestHandler } from 'express'
 import express from 'express'
-import interceptor from 'express-interceptor'
 import grant from 'grant'
 import merge from 'lodash/merge.js'
 import packageJson from '../package.json' with { type: 'json' }
@@ -55,45 +53,15 @@ export function setLoggerProcessName({
   }
 }
 
-// Only grant's OAuth callback response needs the error-body rewrite below.
-// express-interceptor replaces res.write on every response it is mounted on
-// with one that returns undefined, which strips backpressure from streamed
-// responses (e.g. thumbnails), so it must run on this path alone.
+/**
+ * Whether `path` is grant's OAuth callback URL.
+ *
+ * @deprecated Companion no longer rewrites grant's responses: grant 5 only
+ * redirects or calls `next()`, so the error body this matched for is never
+ * sent. Kept until the next major because it is exported.
+ */
 export const shouldInterceptGrantError = (path: string): boolean =>
   /^\/connect\/\w+\/callback/.test(path)
-
-// intercepts grantJS' default response error when something goes
-// wrong during oauth process.
-const interceptGrantErrorResponse = interceptor((req, res) => {
-  return {
-    isInterceptable: () => {
-      // match grant.js' callback url
-      return shouldInterceptGrantError(req.path)
-    },
-    intercept: (body, send) => {
-      const unwantedBody =
-        'error=Grant%3A%20missing%20session%20or%20misconfigured%20provider'
-      if (body === unwantedBody) {
-        logger.error(
-          `grant.js responded with error: ${body}`,
-          'grant.oauth.error',
-          req.id,
-        )
-        res.set('Content-Type', 'text/plain')
-        const reqHint = req.id ? `Request ID: ${req.id}` : ''
-        send(
-          [
-            'Companion was unable to complete the OAuth process :(',
-            'Error: User session is missing or the Provider was misconfigured',
-            reqHint,
-          ].join('\n'),
-        )
-      } else {
-        send(body)
-      }
-    },
-  }
-})
 
 // make the errors available publicly for custom providers
 export const errors = {
@@ -149,13 +117,7 @@ export function app(optionsArg: CompanionInitOptions): {
 
   app.get('/health', (_req, res) => res.end())
 
-  app.use(cookieParser()) // server tokens are added to cookies
-
-  app.use((req, res, next) =>
-    shouldInterceptGrantError(req.path)
-      ? interceptGrantErrorResponse(req, res, next)
-      : next(),
-  )
+  app.use(middlewares.cookies) // server tokens are added to cookies
 
   // Grant stores an OAuth2 callback without `code` as the provider's response
   // unchecked, and compares `state` only when the session has one. Let through
