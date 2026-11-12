@@ -807,9 +807,7 @@ describe('AwsS3', () => {
       return core
     }
 
-    test('retries transient Companion failures on create, sign part and complete', async ({
-      worker,
-    }) => {
+    test('retries transient Companion failures on create, sign part and complete', async () => {
       const calls: Record<string, number> = {}
       /** Answers the first call with `status`, later ones with `body`. */
       const failFirst = (name: string, status: number, body: object) => () => {
@@ -818,7 +816,7 @@ describe('AwsS3', () => {
           ? new HttpResponse(null, { status })
           : HttpResponse.json(body)
       }
-      worker.use(
+      network.use(
         http.post(
           `${companion}/s3/multipart`,
           failFirst('create', 503, { uploadId: 'up-1', key: 'big.dat' }),
@@ -850,9 +848,9 @@ describe('AwsS3', () => {
       expect(calls).toEqual({ create: 2, sign: 3, complete: 2 })
     })
 
-    test('does not retry Companion client errors', async ({ worker }) => {
+    test('does not retry Companion client errors', async () => {
       const create = vi.fn(() => new HttpResponse(null, { status: 400 }))
-      worker.use(http.post(`${companion}/s3/multipart`, create))
+      network.use(http.post(`${companion}/s3/multipart`, create))
 
       const core = createMultipartCore()
       const onError = vi.fn()
