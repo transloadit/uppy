@@ -88,13 +88,14 @@ export default class OneDrive extends Provider<OneDriveUserSession> {
       }
 
       const client = getClient({ token })
+      const childrenPath = `${getRootPath(queryRecord)}/${path}/children`
 
       const [{ mail, userPrincipalName }, list] = await Promise.all([
         client
           .get('me', { responseType: 'json' })
           .json<{ mail?: string; userPrincipalName?: string }>(),
         client
-          .get(`${getRootPath(queryRecord)}/${path}/children`, {
+          .get(childrenPath, {
             searchParams: qs,
             responseType: 'json',
           })

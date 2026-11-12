@@ -83,11 +83,23 @@ const adaptData = (
     modifiedDate: getItemModifiedDate(item),
     size: getItemSize(item),
   }))
-  items.sort((a, b) => a.name.localeCompare(b.name, 'en-US', { numeric: true }))
+  // ICU collation can spend excessive time comparing long combining-mark
+  // sequences. Bound and normalize a separate key; retain the display name.
+  const collator = new Intl.Collator('en-US', { numeric: true })
+  const sortedItems = items
+    .map((item) => ({
+      item,
+      key: item.name
+        .slice(0, 256)
+        .normalize('NFKD')
+        .replace(/\p{M}+/gu, ''),
+    }))
+    .sort((a, b) => collator.compare(a.key, b.key))
+    .map(({ item }) => item)
 
   return {
     username: email,
-    items,
+    items: sortedItems,
     nextPagePath: getNextPagePath(res),
   }
 }

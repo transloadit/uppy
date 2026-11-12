@@ -197,47 +197,45 @@ export class Drive extends Provider<GoogleUserSession> {
 
         const client = getClient({ token })
 
-        async function fetchSharedDrives(
-          pageToken: string | null = null,
-        ): Promise<DriveSharedDrivesResponse | undefined> {
-          const shouldListSharedDrives = isRoot && !cursor
-          if (!shouldListSharedDrives) return undefined
+        const sharedDriveCursor =
+          typeof query?.['sharedDriveCursor'] === 'string'
+            ? query['sharedDriveCursor']
+            : undefined
 
-          const response = await client
+        function fetchSharedDrives(): Promise<
+          DriveSharedDrivesResponse | undefined
+        > {
+          if (!isRoot || (cursor && !sharedDriveCursor))
+            return Promise.resolve(undefined)
+          // Return one upstream page per request, just like ordinary files.
+          return client
             .get('drives', {
               searchParams: {
                 fields: SHARED_DRIVE_FIELDS,
-                pageToken,
+                pageToken: sharedDriveCursor,
                 pageSize: 100,
               },
               responseType: 'json',
             })
             .json<DriveSharedDrivesResponse>()
-
-          const nextPageToken =
-            typeof response.nextPageToken === 'string'
-              ? response.nextPageToken
-              : undefined
-          if (nextPageToken) {
-            const nextResponse = await fetchSharedDrives(nextPageToken)
-            if (!nextResponse) return response
-            return {
-              ...nextResponse,
-              drives: [
-                ...(response.drives ?? []),
-                ...(nextResponse.drives ?? []),
-              ],
-            }
-          }
-
-          return response
         }
 
         function fetchFiles() {
+          if (isRoot && sharedDriveCursor) {
+            return Promise.resolve<DriveListResponse>({
+              files: [],
+              ...(typeof query?.['fileCursor'] === 'string' && {
+                nextPageToken: query['fileCursor'],
+              }),
+            })
+          }
+          const escapedDirectory = directory
+            .replaceAll('\\', '\\\\')
+            .replaceAll("'", "\\'")
           // Shared with me items in root don't have any parents
           const q = isVirtualSharedDirRoot
             ? `sharedWithMe and trashed=false`
-            : `('${directory}' in parents) and trashed=false`
+            : `('${escapedDirectory}' in parents) and trashed=false`
 
           const searchParams = {
             fields: DRIVE_FILES_FIELDS,
@@ -275,7 +273,7 @@ export class Drive extends Provider<GoogleUserSession> {
           sharedDrives,
           directory,
           query,
-          isRoot && !cursor, // we can only show it on the first page request, or else we will have duplicates of it
+          isRoot && !cursor && !sharedDriveCursor, // we can only show it on the first page request, or else we will have duplicates of it
           about,
         )
       },
