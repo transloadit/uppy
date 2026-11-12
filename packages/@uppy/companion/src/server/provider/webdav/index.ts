@@ -1,5 +1,6 @@
 import type { Readable } from 'node:stream'
 import fetch, { type RequestInfo, type RequestInit } from 'node-fetch'
+import type { Promisable } from 'type-fest'
 import type { WebDAVClientOptions } from 'webdav'
 import { AuthType, createClient, getPatcher } from 'webdav'
 import { getProtectedHttpAgent, validateURL } from '../../helpers/request.js'
@@ -39,6 +40,48 @@ getPatcher().patch('fetch', (url: unknown, options: unknown) =>
     size: MAX_WEBDAV_RESPONSE_BYTES,
   }),
 )
+
+// A parsed URL can't contain whitespace, and node-fetch puts a space after it.
+// Don't stop at quotes: `'` stays unencoded in userinfo and paths.
+// Only http(s): WebDAV URLs are validated to those schemes, and a literal
+// prefix keeps the match linear on long messages.
+const urlInText = /https?:\/\/\S+/gi
+
+/**
+ * node-fetch's transport errors (connection refused, DNS, TLS) and
+ * its refusal of a URL with `user:pass@` quote the full request URL in their
+ * message, and a WebDAV URL can be the credential. Keep only each URL's
+ * origin, without userinfo, plus the error's name, code and stack frames.
+ * HTTP status errors pass unchanged, so mapProviderError() still sees their
+ * `status` and `response`: their message never quotes the request URL, only
+ * the server's status text.
+ */
+function redactUrls(err: unknown): unknown {
+  if (
+    !(err instanceof Error) ||
+    err['response' as keyof Error] != null ||
+    err['status' as keyof Error] != null
+  )
+    return err
+  const message = err.message.replace(urlInText, (url) => {
+    try {
+      return `${new URL(url).origin}/[redacted]`
+    } catch {
+      return '[redacted URL]'
+    }
+  })
+  if (message === err.message) return err
+  const redacted = Object.assign(new Error(message), {
+    name: err.name,
+    ...(isRecord(err) &&
+      typeof err['code'] === 'string' && { code: err['code'] }),
+  })
+  const frames = (err.stack ?? '')
+    .split('\n')
+    .filter((line) => line.startsWith('    at '))
+  redacted.stack = [`${redacted.name}: ${message}`, ...frames].join('\n')
+  return redacted
+}
 
 type WebdavUserSession = { webdavUrl?: string }
 type WebdavClient = ReturnType<typeof createClient>
@@ -138,8 +181,9 @@ export default class WebdavProvider extends Provider<WebdavUserSession> {
       return providerUserSession
     } catch (err) {
       // The raw error's `response.url` is the WebDAV URL, which for a share
-      // link is itself the credential. Log and throw the mapped error instead.
-      const mapped = this.mapProviderError(err)
+      // link is itself the credential, and transport errors quote the URL in
+      // their message. Log and throw the mapped, redacted error instead.
+      const mapped = this.mapProviderError(redactUrls(err))
       logger.error(mapped, 'provider.webdav.error')
       const code = isRecord(err) ? err['code'] : undefined
       if (
@@ -150,6 +194,24 @@ export default class WebdavProvider extends Provider<WebdavUserSession> {
       }
       throw mapped
     }
+  }
+
+  /**
+   * Redact WebDAV URLs from errors before the base class logs and maps them:
+   * the URL may carry the credential (a token in the path or query, or
+   * `user:pass@`).
+   */
+  protected override withErrorHandling<T>(
+    tag: string,
+    fn: () => Promisable<T>,
+  ): Promise<T> {
+    return super.withErrorHandling(tag, async () => {
+      try {
+        return await fn()
+      } catch (err) {
+        throw redactUrls(err)
+      }
+    })
   }
 
   getClientHelper({
