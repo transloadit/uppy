@@ -12,10 +12,11 @@ import type {
 import { UIPlugin } from '@uppy/core'
 import { defaultPickerIcon } from '@uppy/core/provider-views'
 import type { LocaleStrings } from '@uppy/core/utils'
-import { findAllDOMElements, getDroppedFiles, toArray } from '@uppy/core/utils'
-import type { ComponentChild, h, VNode } from '@uppy/core/utils/preact'
+import { findAllDOMElements, getDroppedFiles } from '@uppy/core/utils'
+import type { ComponentChild, VNode } from '@uppy/core/utils/preact'
 import ThumbnailGenerator from '@uppy/thumbnail-generator'
 import { nanoid } from 'nanoid/non-secure'
+import type { TargetedEvent } from 'preact'
 import packageJson from '../package.json' with { type: 'json' }
 import DashboardUI from './components/Dashboard.js'
 import locale from './locale.js'
@@ -78,11 +79,12 @@ type PreactRender = (
   ...children: any[]
 ) => VNode<any>
 
-interface MetaField {
+export interface MetaField {
   id: string
   name: string
   placeholder?: string
   render?: (field: FieldRenderOptions, h: PreactRender) => VNode<any>
+  type?: string
 }
 
 interface Target {
@@ -258,8 +260,6 @@ export default class Dashboard<M extends Meta, B extends Body> extends UIPlugin<
 
   private dashboardIsDisabled!: boolean
 
-  private savedScrollPosition!: number
-
   private savedActiveElement!: HTMLElement
 
   private resizeObserver!: ResizeObserver
@@ -306,7 +306,7 @@ export default class Dashboard<M extends Meta, B extends Body> extends UIPlugin<
     })
   }
 
-  addTarget = (plugin: UnknownPlugin<M, B>): HTMLElement | null => {
+  override addTarget = (plugin: UnknownPlugin<M, B>): HTMLElement | null => {
     const callerPluginId = plugin.id || plugin.constructor.name
     const callerPluginName =
       (plugin as any as { title: string }).title || callerPluginId
@@ -399,9 +399,9 @@ export default class Dashboard<M extends Meta, B extends Body> extends UIPlugin<
       activeOverlayType: 'FileEditor',
     })
 
-    editors.forEach((editor) => {
+    for (const editor of editors) {
       ;(this.uppy.getPlugin(editor.id) as any).selectFile(file)
-    })
+    }
   }
 
   closeFileEditor = (): void => {
@@ -426,17 +426,15 @@ export default class Dashboard<M extends Meta, B extends Body> extends UIPlugin<
     const { targets } = this.getPluginState()
     const editors = this.#getEditors(targets)
 
-    editors.forEach((editor) => {
+    for (const editor of editors) {
       ;(this.uppy.getPlugin(editor.id) as any).save()
-    })
+    }
 
     this.closeFileEditor()
   }
 
   openModal = (): Promise<void> => {
     const { promise, resolve } = createPromise<void>()
-    // save scroll position
-    this.savedScrollPosition = window.pageYOffset
     // save active element, so we can restore focus when modal is closed
     this.savedActiveElement = document.activeElement as HTMLElement
 
@@ -683,7 +681,7 @@ export default class Dashboard<M extends Meta, B extends Body> extends UIPlugin<
 
     const nodesToDisable =
       this.#disabledNodes ??
-      toArray(this.el!.querySelectorAll(NODES_TO_DISABLE as any)).filter(
+      Array.from(this.el!.querySelectorAll(NODES_TO_DISABLE as any)).filter(
         (node) => !node.classList.contains('uppy-Dashboard-close'),
       )
 
@@ -747,7 +745,7 @@ export default class Dashboard<M extends Meta, B extends Body> extends UIPlugin<
       trapFocus.forModal(
         event,
         this.getPluginState().activeOverlayType,
-        this.el,
+        this.el!,
       )
   }
 
@@ -765,7 +763,7 @@ export default class Dashboard<M extends Meta, B extends Body> extends UIPlugin<
     })
 
     // Add all dropped files
-    const files = toArray(event.clipboardData!.files)
+    const files = Array.from(event.clipboardData!.files)
     if (files.length > 0) {
       this.uppy.log('[Dashboard] Files pasted')
       this.addFiles(files)
@@ -773,10 +771,10 @@ export default class Dashboard<M extends Meta, B extends Body> extends UIPlugin<
   }
 
   private handleInputChange = (
-    event: h.JSX.TargetedEvent<HTMLInputElement, Event>,
+    event: TargetedEvent<HTMLInputElement, Event>,
   ) => {
     event.preventDefault()
-    const files = toArray(event.currentTarget.files || [])
+    const files = Array.from(event.currentTarget.files || [])
     if (files.length > 0) {
       this.uppy.log('[Dashboard] Files selected through input')
       this.addFiles(files)
@@ -870,14 +868,15 @@ export default class Dashboard<M extends Meta, B extends Body> extends UIPlugin<
 
     this.uppy.log('[Dashboard] Processing dropped files')
 
+    // Browsers empty `event.dataTransfer` once this handler yields
+    this.opts.onDrop(event)
+
     // Add all dropped files
     const files = await getDroppedFiles(event.dataTransfer!, { logDropError })
     if (files.length > 0) {
       this.uppy.log('[Dashboard] Files dropped')
       this.addFiles(files)
     }
-
-    this.opts.onDrop(event)
   }
 
   private handleRequestThumbnail = (file: UppyFile<M, B>) => {
@@ -902,7 +901,7 @@ export default class Dashboard<M extends Meta, B extends Body> extends UIPlugin<
       trapFocus.forInline(
         event,
         this.getPluginState().activeOverlayType,
-        this.el,
+        this.el!,
       )
   }
 
@@ -970,9 +969,9 @@ export default class Dashboard<M extends Meta, B extends Body> extends UIPlugin<
     if (this.opts.trigger && !this.opts.inline) {
       const showModalTrigger = findAllDOMElements(this.opts.trigger)
       if (showModalTrigger) {
-        showModalTrigger.forEach((trigger) => {
+        for (const trigger of showModalTrigger) {
           trigger.addEventListener('click', this.openModal)
-        })
+        }
       } else {
         this.uppy.log(
           'Dashboard modal trigger not found. Make sure `trigger` is set in Dashboard options, unless you are planning to call `dashboard.openModal()` method yourself',
@@ -1010,12 +1009,13 @@ export default class Dashboard<M extends Meta, B extends Body> extends UIPlugin<
   removeEvents = (): void => {
     const showModalTrigger = findAllDOMElements(this.opts.trigger)
     if (!this.opts.inline && showModalTrigger) {
-      showModalTrigger.forEach((trigger) => {
+      for (const trigger of showModalTrigger) {
         trigger.removeEventListener('click', this.openModal)
-      })
+      }
     }
 
     this.stopListeningToResize()
+    document.removeEventListener('keydown', this.handleKeyDownInModal)
     document.removeEventListener('paste', this.handlePasteOnBody)
     window.removeEventListener('popstate', this.handlePopState, false)
 
@@ -1076,13 +1076,13 @@ export default class Dashboard<M extends Meta, B extends Body> extends UIPlugin<
         //                     try to press space multiple times. Focus will jump to Uppy.
         (isFocusNowhere && this.ifFocusedOnUppyRecently))
     ) {
-      this.superFocus(this.el, this.getPluginState().activeOverlayType)
+      this.superFocus(this.el!, this.getPluginState().activeOverlayType)
     } else {
       this.superFocus.cancel()
     }
   }
 
-  readonly afterUpdate = (): void => {
+  override readonly afterUpdate = (): void => {
     if (this.opts.disabled && !this.dashboardIsDisabled) {
       this.disableInteractiveElements(true)
       return
@@ -1141,7 +1141,7 @@ export default class Dashboard<M extends Meta, B extends Body> extends UIPlugin<
       .map(this.#attachRenderFunctionToTarget)
   }
 
-  render = (state: State<M, B>) => {
+  override render = (state: State<M, B>) => {
     const pluginState = this.getPluginState()
     const { files, capabilities, allowNewUpload } = state
     const {
@@ -1277,7 +1277,7 @@ export default class Dashboard<M extends Meta, B extends Body> extends UIPlugin<
   #addSpecifiedPluginsFromOptions = () => {
     const { plugins } = this.opts
 
-    plugins.forEach((pluginID) => {
+    for (const pluginID of plugins) {
       const plugin = this.uppy.getPlugin(pluginID)
       if (plugin) {
         ;(plugin as any).mount(this, plugin)
@@ -1287,7 +1287,7 @@ export default class Dashboard<M extends Meta, B extends Body> extends UIPlugin<
           'warning',
         )
       }
-    })
+    }
   }
 
   #autoDiscoverPlugins = () => {
@@ -1325,7 +1325,7 @@ export default class Dashboard<M extends Meta, B extends Body> extends UIPlugin<
     }
   }
 
-  setOptions(opts: Partial<DashboardOptions<M, B>>) {
+  override setOptions(opts: Partial<DashboardOptions<M, B>>) {
     super.setOptions(opts)
     this.uppy
       .getPlugin(this.#getThumbnailGeneratorId())
@@ -1336,7 +1336,7 @@ export default class Dashboard<M extends Meta, B extends Body> extends UIPlugin<
     return `${this.id}:ThumbnailGenerator`
   }
 
-  install = (): void => {
+  override install = (): void => {
     // Set default state for Dashboard
     this.setPluginState({
       isHidden: true,
@@ -1406,17 +1406,17 @@ export default class Dashboard<M extends Meta, B extends Body> extends UIPlugin<
     this.initEvents()
   }
 
-  uninstall = (): void => {
+  override uninstall = (): void => {
     if (!this.opts.disableThumbnailGenerator) {
       const thumbnail = this.uppy.getPlugin(`${this.id}:ThumbnailGenerator`)
       if (thumbnail) this.uppy.removePlugin(thumbnail)
     }
 
     const { plugins } = this.opts
-    plugins.forEach((pluginID) => {
+    for (const pluginID of plugins) {
       const plugin = this.uppy.getPlugin(pluginID)
       if (plugin) (plugin as any).unmount()
-    })
+    }
 
     if (this.opts.theme === 'auto') {
       this.darkModeMediaQuery?.removeListener(this.handleSystemDarkModeChange)
@@ -1426,7 +1426,17 @@ export default class Dashboard<M extends Meta, B extends Body> extends UIPlugin<
       document.body.classList.remove('uppy-Dashboard-isFixed')
     }
 
+    // Like closeModal(), give focus back to where it was before the modal
+    // opened, unless that element has been removed along with the modal.
+    const elementToFocus =
+      !this.opts.inline && this.isModalOpen()
+        ? this.savedActiveElement
+        : undefined
+    this.superFocus.cancel()
+
     this.unmount()
     this.removeEvents()
+
+    if (elementToFocus?.isConnected) elementToFocus.focus()
   }
 }

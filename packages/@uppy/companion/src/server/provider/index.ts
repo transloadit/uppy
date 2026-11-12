@@ -9,6 +9,8 @@ import facebook from './facebook/index.js'
 import { Drive } from './google/drive/index.js'
 import onedrive from './onedrive/index.js'
 import { isOAuthProvider, type ProviderCtor } from './Provider.js'
+import s3 from './s3/index.js'
+import TransloaditStorageProvider from './s3/transloadit-storage.js'
 import unsplash from './unsplash/index.js'
 import webdav from './webdav/index.js'
 import zoom from './zoom/index.js'
@@ -55,46 +57,45 @@ export function getProviderMiddleware(
   ): void => {
     const ProviderClass = providers[providerName]
     if (
-      !ProviderClass ||
-      !(
-        req.companion.options.server.host &&
-        req.companion.options.server.protocol
-      )
+      ProviderClass &&
+      req.companion.options.server.host &&
+      req.companion.options.server.protocol
     ) {
+      const { allowLocalUrls, providerOptions } = req.companion.options
+      const { oauthProvider } = ProviderClass
+
+      let providerGrantConfig: GrantProviderConfig | undefined
+      if (isOAuthProvider(oauthProvider)) {
+        req.companion.getProviderCredentials = getCredentialsResolver(
+          providerName,
+          req.companion.options,
+          req,
+        )
+
+        providerGrantConfig = grantConfig[oauthProvider]
+        req.companion.providerGrantConfig = providerGrantConfig ?? {}
+      }
+
+      const secret = providerOptions[providerName]?.secret
+
+      const providerArgs = {
+        secret,
+        providerName,
+        allowLocalUrls,
+        ...(providerGrantConfig && { providerGrantConfig }),
+      }
+      req.companion.provider = new ProviderClass(providerArgs)
+      req.companion.providerName = providerName
+      req.companion.providerClass = ProviderClass
+    } else {
       logger.warn(
         'invalid provider options detected. Provider will not be loaded',
         'provider.middleware.invalid',
         req.id,
       )
-      return
     }
-
-    const { allowLocalUrls, providerOptions } = req.companion.options
-    const { oauthProvider } = ProviderClass
-
-    let providerGrantConfig: GrantProviderConfig | undefined
-    if (isOAuthProvider(oauthProvider)) {
-      req.companion.getProviderCredentials = getCredentialsResolver(
-        providerName,
-        req.companion.options,
-        req,
-      )
-
-      providerGrantConfig = grantConfig[oauthProvider]
-      req.companion.providerGrantConfig = providerGrantConfig ?? {}
-    }
-
-    const secret = providerOptions[providerName]?.secret
-
-    const providerArgs = {
-      secret,
-      providerName,
-      allowLocalUrls,
-      ...(providerGrantConfig && { providerGrantConfig }),
-    }
-    req.companion.provider = new ProviderClass(providerArgs)
-    req.companion.providerName = providerName
-    req.companion.providerClass = ProviderClass
+    // Always hand the request on: without a provider, `hasSessionAndProvider`
+    // answers 400 instead of leaving the request unanswered.
     next()
   }
 
@@ -114,6 +115,8 @@ export function getDefaultProviders() {
     zoom,
     unsplash,
     webdav,
+    s3,
+    'transloadit-storage': TransloaditStorageProvider,
   }
 }
 
@@ -132,7 +135,9 @@ export function addCustomProviders(
   providers: Record<string, ProviderCtor>,
   grantConfig: GrantConfig,
 ): void {
-  Object.entries(customProviders).forEach(([providerName, customProvider]) => {
+  for (const [providerName, customProvider] of Object.entries(
+    customProviders,
+  )) {
     providers[providerName] = customProvider.module
     const { oauthProvider } = customProvider.module
 
@@ -144,9 +149,10 @@ export function addCustomProviders(
         // requirement changes.
         callback: `/${providerName}/callback`,
         transport: 'session',
+        state: true, // CSRF check, as for the built-in providers
       }
     }
-  })
+  }
 }
 
 export function addProviderOptions(
@@ -189,14 +195,17 @@ export function addProviderOptions(
   }
 
   const { oauthDomain } = server
-  const keys = Object.keys(providerOptions).filter((key) => key !== 'server')
-  keys.forEach((providerName) => {
+  for (const providerName of Object.keys(providerOptions)) {
+    if (providerName === 'server') {
+      continue
+    }
+
     const oauthProvider = getOauthProvider?.(providerName)
 
     if (isOAuthProvider(oauthProvider) && grantConfig[oauthProvider]) {
       const grantProviderConfig = grantConfig[oauthProvider]
       const providerOption = providerOptions[providerName]
-      if (!providerOption) return
+      if (!providerOption) continue
       // explicitly add providerOptions so users don't override other providerOptions.
       grantProviderConfig['key'] = providerOption.key
       grantProviderConfig['secret'] = providerOption.secret
@@ -247,5 +256,5 @@ export function addProviderOptions(
         }
       }
     }
-  })
+  }
 }

@@ -7,12 +7,10 @@ export default async function logout(
   res: Response,
   next: NextFunction,
 ): Promise<void> {
+  // Drop the whole OAuth session: Grant skips its state check when `state` is
+  // cleared but `provider` is still set.
   const cleanSession = (): void => {
-    const grant = req.session?.grant
-    if (grant) {
-      grant['state'] = null
-      grant['dynamic'] = null
-    }
+    if (req.session) delete req.session.grant
   }
   const { companion } = req
   const { providerUserSession, provider, providerClass } = companion

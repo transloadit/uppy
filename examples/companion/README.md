@@ -5,7 +5,7 @@ uppy client.
 
 ## Test it
 
-To run this example, make sure you've correctly installed the **repository
+To run this example, make sure you’ve correctly installed the **repository
 root**:
 
 ```bash
@@ -18,5 +18,5 @@ That will also install the dependencies for this example.
 Then, again in the **repository root**, start this example by doing:
 
 ```bash
-corepack yarn workspace @uppy-example/uppy-with-companion start
+corepack yarn workspace example-companion start
 ```

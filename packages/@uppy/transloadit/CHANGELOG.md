@@ -1,5 +1,54 @@
 # @uppy/transloadit
 
+## 6.1.0
+
+### Minor Changes
+
+- 9755eb6: Keep `assemblyStatus` in plugin state accurate: advance `ok` to `ASSEMBLY_EXECUTING` when SSE reports that uploading finished, keep `progress_combined` across full status refetches while executing, expose the assembly error as `error` in plugin state (typed as `AssemblyStateError`; a network failure carries no API response fields), and close the assembly and clear its state as soon as `cancel-all` fires (even if the cancel request fails). `transloadit:assembly-cancel` is now actually emitted on cancel-all (it was declared but never fired), so `uppy.upload()` settles. `transloadit:assembly-cancelled` now fires after the assembly has been cleared, with the status as it was at the moment of cancelling. `transloadit:complete` is no longer emitted for an assembly that was cancelled or replaced while its final-status request was still in flight. If fetching the final status fails, the assembly now errors instead of leaving `uppy.upload()` pending. The assembly's `executing`, `metadata` and `finished` events now fire once per assembly, whether they come from SSE or polling, so `transloadit:complete` no longer fires twice with `waitForMetadata`, and a restored assembly re-derives them after a reload.
+
+## 6.0.2
+
+### Patch Changes
+
+- f58058d: Allow various asynchronous interfaces and callbacks to be synchronous. Some methods that never awaited anything are no longer `async`; for example `Webcam#getVideo()` now returns its value directly.
+- Updated dependencies [f58058d]
+  - @uppy/tus@6.0.1
+
+## 6.0.1
+
+### Patch Changes
+
+- 3f1aca3: Stricter TypeScript: caught errors are typed as `unknown`, and `noImplicitOverride` and `noImplicitReturns` are enabled for all packages.
+  - `@uppy/core/utils`: add `toError`, `getErrorMessage`, `isAbortError` and `isRestrictionError` helpers. `@uppy/core/companion-client`: export `isAuthError`.
+  - `@uppy/webcam`: `icon` is now public, like on other acquirer plugins. `start()` now returns a promise that settles once the camera is ready, instead of `undefined`.
+  - `@uppy/url`: `handleRootDrop` and `handleRootPaste` are now public, as Dashboard and DropTarget call them. The failed-fetch notification's `details` is now the error message instead of the Error object.
+
+## 6.0.0
+
+### Minor Changes
+
+- 12de077: Remove @uppy/instagram references from all the packages
+- 57f8daf: Add assemblyStatus and lastAssemblyStatus to transloadit's plugin state
+
+### Patch Changes
+
+- c3c7cef: Bump shared runtime dependencies (preact, nanoid, lodash, classnames, shallow-equal, pretty-bytes, p-queue, tus-js-client, @transloadit/types @transloadit/prettier-bytes v1, is-mobile, exifr, compressorjs, rxjs, tslib). Also includes type-only fixes in `@uppy/companion`'s `jwt.ts` and `request.ts` to track `@types/jsonwebtoken` v9 and `@types/node`.
+- ca916f6: emit updated AssemblyState in 'transloadit:assembly-cancelled' event
+- Updated dependencies [675697d]
+- Updated dependencies [7e8e04f]
+- Updated dependencies [c3c7cef]
+- Updated dependencies [ddffd2c]
+- Updated dependencies [2608032]
+- Updated dependencies [260804f]
+- Updated dependencies [7ac2623]
+- Updated dependencies [942db47]
+- Updated dependencies [ad4050b]
+- Updated dependencies [4a0e6c9]
+- Updated dependencies [84ad853]
+- Updated dependencies [1a1aef3]
+  - @uppy/core@6.0.0
+  - @uppy/tus@6.0.0
+
 ## 5.5.1
 
 ### Patch Changes
@@ -119,7 +168,6 @@
 - c5b51f6: ### Export maps for all packages
 
   All packages now have export maps. This is a breaking change in two cases:
-
   1. The css imports have changed from `@uppy[package]/dist/styles.min.css` to `@uppy[package]/css/styles.min.css`
   2. You were importing something that wasn't exported from the root, for instance `@uppy/core/lib/foo.js`. You can now only import things we explicitly exported.
 

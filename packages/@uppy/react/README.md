@@ -14,13 +14,11 @@ a versatile file encoding service.
 
 ## Example
 
-<!-- eslint-disable react/state-in-constructor -->
-
 ```jsx
 /** @jsx React */
 import React from 'react'
 import Uppy from '@uppy/core'
-import { DashboardModal } from '@uppy/react'
+import DashboardModal from '@uppy/react/dashboard-modal'
 
 const uppy = new Uppy()
 
@@ -56,6 +54,9 @@ global `window.Uppy` object. See the
 
 Documentation for this plugin can be found on the
 [Uppy website](https://uppy.io/docs/react).
+
+For a managed processing backend, follow the canonical
+[React + Uppy + Transloadit guide](https://uppy.io/docs/guides/uppy-transloadit/#react).
 
 ## License
 

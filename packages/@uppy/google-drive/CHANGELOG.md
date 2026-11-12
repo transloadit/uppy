@@ -1,5 +1,39 @@
 # @uppy/google-drive
 
+## 6.0.2
+
+### Patch Changes
+
+- f58058d: Only access `localStorage` when a provider plugin's default token storage is used, so the plugins can be constructed during server-side rendering again.
+
+## 6.0.1
+
+### Patch Changes
+
+- a7a7997: Google Drive passes `toggleCheckbox`'s optional `visibleOrder` on, so shift-click ranges in a custom UI follow the order it shows there too.
+
+## 6.0.0
+
+### Minor Changes
+
+- 84ad853: Import Preact from @uppy/core utilities to guarantee a single version across packages.
+
+### Patch Changes
+
+- c3c7cef: Bump shared runtime dependencies (preact, nanoid, lodash, classnames, shallow-equal, pretty-bytes, p-queue, tus-js-client, @transloadit/types @transloadit/prettier-bytes v1, is-mobile, exifr, compressorjs, rxjs, tslib). Also includes type-only fixes in `@uppy/companion`'s `jwt.ts` and `request.ts` to track `@types/jsonwebtoken` v9 and `@types/node`.
+- Updated dependencies [675697d]
+- Updated dependencies [7e8e04f]
+- Updated dependencies [c3c7cef]
+- Updated dependencies [ddffd2c]
+- Updated dependencies [2608032]
+- Updated dependencies [260804f]
+- Updated dependencies [7ac2623]
+- Updated dependencies [ad4050b]
+- Updated dependencies [4a0e6c9]
+- Updated dependencies [84ad853]
+- Updated dependencies [1a1aef3]
+  - @uppy/core@6.0.0
+
 ## 5.1.0
 
 ### Minor Changes
@@ -37,7 +71,6 @@
 - c5b51f6: ### Export maps for all packages
 
   All packages now have export maps. This is a breaking change in two cases:
-
   1. The css imports have changed from `@uppy[package]/dist/styles.min.css` to `@uppy[package]/css/styles.min.css`
   2. You were importing something that wasn't exported from the root, for instance `@uppy/core/lib/foo.js`. You can now only import things we explicitly exported.
 

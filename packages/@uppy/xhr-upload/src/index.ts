@@ -15,11 +15,13 @@ import {
   filterFilesToEmitUploadStarted,
   filterFilesToUpload,
   getAllowedMetaFields,
+  isAbortError,
   isNetworkError,
   type LocalUppyFile,
   NetworkError,
   type RemoteUppyFile,
   TaskQueue,
+  toError,
 } from '@uppy/core/utils'
 import packageJson from '../package.json' with { type: 'json' }
 import locale from './locale.js'
@@ -266,11 +268,15 @@ export default class XHRUpload<
           }
 
           return res
-        } catch (error) {
-          if (error.name === 'AbortError') {
+        } catch (e) {
+          const error = toError(e)
+          if (isAbortError(error)) {
             return undefined
           }
-          const request = error.request as XMLHttpRequest | undefined
+          const request =
+            'request' in error
+              ? (error.request as XMLHttpRequest | undefined)
+              : undefined
 
           for (const file of files) {
             this.uppy.emit(
@@ -326,18 +332,18 @@ export default class XHRUpload<
   ): void {
     const allowedMetaFields = getAllowedMetaFields(opts.allowedMetaFields, meta)
 
-    allowedMetaFields.forEach((item) => {
+    for (const item of allowedMetaFields) {
       const value = meta[item]
       if (Array.isArray(value)) {
         // In this case we don't transform `item` to add brackets, it's up to
         // the user to add the brackets so it won't be overridden.
-        value.forEach((subItem) => {
+        for (const subItem of value) {
           formData.append(item, subItem)
-        })
+        }
       } else {
         formData.append(item, value as string)
       }
-    })
+    }
   }
 
   createFormDataUpload(file: LocalUppyFile<M, B>, opts: Opts<M, B>): FormData {
@@ -365,7 +371,7 @@ export default class XHRUpload<
     const { meta } = this.uppy.getState()
     this.addMetadata(formPost, meta, opts)
 
-    files.forEach((file) => {
+    for (const file of files) {
       const options = this.getOptions(file)
 
       const dataWithUpdatedType = setTypeInBlob(file)
@@ -375,7 +381,7 @@ export default class XHRUpload<
       } else {
         formPost.append(options.fieldName, dataWithUpdatedType)
       }
-    })
+    }
 
     return formPost
   }
@@ -405,7 +411,7 @@ export default class XHRUpload<
         })
       })
     } catch (error) {
-      if (error.name === 'AbortError') {
+      if (isAbortError(error)) {
         return
       }
       throw error
@@ -445,7 +451,7 @@ export default class XHRUpload<
         })
       })
     } catch (error) {
-      if (error.name === 'AbortError') {
+      if (isAbortError(error)) {
         return
       }
       throw error
@@ -545,7 +551,7 @@ export default class XHRUpload<
     }
   }
 
-  install(): void {
+  override install(): void {
     if (this.opts.bundle) {
       const { capabilities } = this.uppy.getState()
       this.uppy.setState({
@@ -559,7 +565,7 @@ export default class XHRUpload<
     this.uppy.addUploader(this.#handleUpload)
   }
 
-  uninstall(): void {
+  override uninstall(): void {
     if (this.opts.bundle) {
       const { capabilities } = this.uppy.getState()
       this.uppy.setState({

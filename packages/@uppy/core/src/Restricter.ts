@@ -1,5 +1,4 @@
 import { prettierBytes } from '@transloadit/prettier-bytes'
-// @ts-expect-error untyped
 import match from 'mime-match'
 import type { NonNullableUppyOptions, State } from './Uppy.js'
 import type { Body, I18n, Meta, UppyFile } from './utils/index.js'
@@ -167,9 +166,9 @@ class Restricter<M extends Meta, B extends Body> {
     existingFiles: ValidateableFile<M, B>[],
     addingFiles: ValidateableFile<M, B>[],
   ): void {
-    addingFiles.forEach((addingFile) => {
+    for (const addingFile of addingFiles) {
       this.validateSingleFile(addingFile)
-    })
+    }
     this.validateAggregateRestrictions(existingFiles, addingFiles)
   }
 

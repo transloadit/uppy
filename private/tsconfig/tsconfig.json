@@ -1,0 +1,12 @@
+{
+  "extends": "./tsconfig.base.json",
+  "exclude": ["${configDir}/src", "${configDir}/lib", "${configDir}/dist"],
+  "compilerOptions": {
+    "allowImportingTsExtensions": true,
+    "module": "preserve",
+    "noEmit": true,
+    "resolveJsonModule": true,
+    "rootDir": "${configDir}",
+    "types": ["vite/client"]
+  }
+}

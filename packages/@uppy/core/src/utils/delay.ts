@@ -1,5 +1,3 @@
-import { createAbortError } from './AbortController.js'
-
 /**
  * Return a Promise that resolves after `ms` milliseconds.
  */
@@ -8,9 +6,8 @@ export default function delay(
   opts?: { signal: AbortSignal },
 ): Promise<void> {
   return new Promise((resolve, reject) => {
-    if (opts?.signal?.aborted) {
-      return reject(createAbortError())
-    }
+    const signal = opts?.signal
+    signal?.throwIfAborted()
 
     const timeout = setTimeout(() => {
       cleanup()
@@ -20,12 +17,11 @@ export default function delay(
     function onabort(): void {
       clearTimeout(timeout)
       cleanup()
-      reject(createAbortError())
+      reject(signal?.reason)
     }
-    opts?.signal?.addEventListener('abort', onabort)
+    signal?.addEventListener('abort', onabort)
     function cleanup(): void {
-      opts?.signal?.removeEventListener('abort', onabort)
+      signal?.removeEventListener('abort', onabort)
     }
-    return undefined
   })
 }

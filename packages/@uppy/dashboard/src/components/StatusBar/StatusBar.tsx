@@ -74,7 +74,7 @@ export default class StatusBar<
 
   #previousETA!: number | null
 
-  componentDidMount(): void {
+  override componentDidMount(): void {
     // Initialize ETA calculation variables
     this.#lastUpdateTime = performance.now()
     this.#previousUploadedBytes = this.props.uppy
@@ -85,7 +85,7 @@ export default class StatusBar<
     this.props.uppy.on('upload', this.#onUploadStart)
   }
 
-  componentWillUnmount(): void {
+  override componentWillUnmount(): void {
     this.props.uppy.off('upload', this.#onUploadStart)
   }
 
@@ -232,15 +232,15 @@ export default class StatusBar<
       )
     ) {
       totalSize = 0
-      startedFiles.forEach((file) => {
+      for (const file of startedFiles) {
         totalSize! += file.progress.bytesTotal || 0
         totalUploadedSize += file.progress.bytesUploaded || 0
-      })
+      }
     } else {
       // however uploaded size we will always have
-      startedFiles.forEach((file) => {
+      for (const file of startedFiles) {
         totalUploadedSize += file.progress.bytesUploaded || 0
-      })
+      }
     }
 
     const totalETA = this.#computeSmoothETA({

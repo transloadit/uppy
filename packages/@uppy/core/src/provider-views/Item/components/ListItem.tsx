@@ -21,6 +21,7 @@ type ListItemProps = {
   restrictionError: string | null
   showTitles: boolean
   i18n: any
+  actionsMenu?: h.JSX.Element | null
 }
 
 export default function ListItem({
@@ -32,6 +33,7 @@ export default function ListItem({
   toggleCheckbox,
   showTitles,
   i18n,
+  actionsMenu = null,
 }: ListItemProps): h.JSX.Element {
   return (
     <li
@@ -96,6 +98,7 @@ export default function ListItem({
           )}
         </label>
       )}
+      {actionsMenu}
     </li>
   )
 }

@@ -1,0 +1,13 @@
+# Angular's default browser support matrix.
+#
+# This example does not inherit the repository-wide .browserslistrc, which keeps
+# `iOS >=13.4` for the published Uppy bundles. esbuild cannot lower zone.js'
+# destructuring to that target, so the Angular build fails against it. The
+# example is a demo app, not a shipped library, so it tracks what Angular
+# itself supports.
+last 2 Chrome versions
+last 1 Firefox version
+last 2 Edge major versions
+last 2 Safari major versions
+last 2 iOS major versions
+Firefox ESR

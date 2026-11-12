@@ -7,7 +7,7 @@ import {
 } from '@uppy/core/utils/preact'
 import type { DashboardState, TargetWithRender } from '../Dashboard.js'
 
-interface AddFilesProps {
+export interface AddFilesProps {
   i18n: I18n
   i18nArray: Translator['translateArray']
   acquirers: TargetWithRender[]
@@ -277,10 +277,9 @@ class AddFiles extends Component<AddFilesProps> {
               })}
       </div>
     )
-  }
+  };
 
-  // biome-ignore lint/correctness/noUnusedPrivateClassMembers: accessed via Symbol in tests
-  private [Symbol.for('uppy test: disable unused locale key warning')]() {
+  [Symbol.for('uppy test: disable unused locale key warning')]() {
     // Those are actually used in `renderDropPasteBrowseTagline` method.
     this.props.i18nArray('dropPasteBoth')
     this.props.i18nArray('dropPasteFiles')

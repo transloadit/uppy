@@ -1,0 +1,12 @@
+{
+  "include": ["server"],
+  "compilerOptions": {
+    "allowImportingTsExtensions": true,
+    "composite": true,
+    "erasableSyntaxOnly": true,
+    "lib": ["esnext"],
+    "module": "nodenext",
+    "noEmit": true,
+    "types": ["node"]
+  }
+}
