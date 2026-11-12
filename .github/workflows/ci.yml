@@ -83,6 +83,8 @@ jobs:
           --health-retries 5
     strategy:
       matrix:
+        # The other jobs use the version in .node-version, which should be the
+        # newest one here.
         node-version:
           - '22.23.4'
           - '24.22.1'
@@ -152,7 +154,7 @@ jobs:
       - name: Install Node.js
         uses: actions/setup-node@v7
         with:
-          node-version: '26.12.1'
+          node-version-file: .node-version
       - name: Install Corepack
         run: npm install --global corepack@0.36.0
       - name: Get yarn cache directory path
@@ -182,7 +184,7 @@ jobs:
       - name: Install Node.js
         uses: actions/setup-node@v7
         with:
-          node-version: '26.12.1'
+          node-version-file: .node-version
       - name: Install Corepack
         run: npm install --global corepack@0.36.0
       - name: Install dependencies
@@ -200,7 +202,7 @@ jobs:
       - name: Install Node.js
         uses: actions/setup-node@v7
         with:
-          node-version: '26.12.1'
+          node-version-file: .node-version
       - name: Install Corepack
         run: npm install --global corepack@0.36.0
       - name: Install dependencies
@@ -217,7 +219,7 @@ jobs:
       - name: Install Node.js
         uses: actions/setup-node@v7
         with:
-          node-version: '26.12.1'
+          node-version-file: .node-version
       - name: Install Corepack
         run: npm install --global corepack@0.36.0
       - name: Install dependencies
