@@ -1,4 +1,5 @@
 import crypto from 'node:crypto'
+import type { Duplex } from 'node:stream'
 import type { ObjectCannedACL, ServerSideEncryption } from '@aws-sdk/client-s3'
 import type { Request } from 'express'
 import type {
@@ -237,9 +238,14 @@ export class HttpError extends Error {
 type ResponseLike = { headers: Record<string, string | string[] | undefined> }
 type StreamLike = NodeJS.ReadableStream & {
   pause: () => void
+  destroy: (error?: Error) => unknown
   on: {
     (event: 'response', handler: (response: ResponseLike) => void): StreamLike
     (event: 'error', handler: (err: unknown) => void): StreamLike
+    (
+      event: 'upgrade',
+      handler: (response: unknown, socket: Duplex) => void,
+    ): StreamLike
   }
 }
 
@@ -290,6 +296,12 @@ export const prepareStream = async (
         }
 
         reject(err)
+      })
+      .on('upgrade', (_response, socket) => {
+        socket.destroy()
+        const error = new Error('Upstream protocol upgrades are not supported')
+        stream.destroy(error)
+        reject(error)
       })
   })
 

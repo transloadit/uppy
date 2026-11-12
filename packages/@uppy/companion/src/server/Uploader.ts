@@ -368,7 +368,19 @@ export default class Uploader {
       Object.keys(uploadHeaders ?? {}).map((name) => name.toLowerCase()),
     )
     const isForwarding = (name: string) =>
-      /^(?:forwarded|x-forwarded-.*)$/i.test(name)
+      /^(?:forwarded|x-forwarded-.*|x-http-method-override|x-http-method|x-method-override)$/i.test(
+        name,
+      )
+    if (fixedNames.has('authorization')) {
+      for (const name of ['endpoint', 'uploadUrl'] as const) {
+        const value = destinations[name]
+        if (value == null) continue
+        const url = new URL(value)
+        url.username = ''
+        url.password = ''
+        destinations[name] = url.href
+      }
+    }
     const options = {
       ...optionsIn,
       ...destinations,
@@ -416,9 +428,7 @@ export default class Uploader {
         if (this.#uploadState !== states.uploading) return
         this.#uploadState = states.paused
         this.#pausedAt = Date.now()
-        if (this.tus) {
-          this.tus.abort()
-        }
+        this.#scheduleTusControl()
       })
 
       emitter().on(`resume:${this.token}`, () => {
@@ -429,16 +439,15 @@ export default class Uploader {
         )
         if (this.#uploadState !== states.paused) return
         this.#uploadState = states.uploading
-        if (this.tus) {
-          this.tus.start()
-        }
+        this.#scheduleTusControl()
       })
     }
 
     emitter().on(`cancel:${this.token}`, () => {
       logger.debug('Received from client: cancel', 'uploader', this.shortToken)
       if (this.tus) {
-        const shouldTerminate = !!this.tus.url
+        const shouldTerminate =
+          this.tus.url != null && this.tus.url === this.#createdTusUrl
         this.tus.abort(shouldTerminate).catch(() => {})
       }
       this.#canceled = true
@@ -466,6 +475,46 @@ export default class Uploader {
   #uploadState = states.idle
 
   #canceled = false
+
+  #createdTusUrl: string | undefined
+
+  #tusStarted = false
+
+  #tusStartPending = false
+
+  #tusControlQueued = false
+
+  #tusAborting = false
+
+  #scheduleTusControl(): void {
+    if (this.#tusControlQueued) return
+    this.#tusControlQueued = true
+    // ws delivers a whole read's frames synchronously. Reconcile their final
+    // state once, rather than scheduling a tus start for every resume frame.
+    queueMicrotask(() => {
+      this.#tusControlQueued = false
+      if (!this.tus || this.#tusAborting) return
+      if (this.#uploadState === states.uploading && !this.#tusStarted) {
+        this.#tusStarted = true
+        this.#tusStartPending = true
+        this.tus.start()
+      } else if (
+        this.#uploadState === states.paused &&
+        this.#tusStarted &&
+        !this.#tusStartPending
+      ) {
+        this.#tusAborting = true
+        this.tus
+          .abort()
+          .catch((err) => this.abortReadStream(toError(err)))
+          .finally(() => {
+            this.#tusStarted = false
+            this.#tusAborting = false
+            this.#scheduleTusControl()
+          })
+      }
+    })
+  }
 
   #pausedAt = 0
 
@@ -496,7 +545,7 @@ export default class Uploader {
    * PAUSED_TIMEOUT_MS instead. tus-js-client has no request timeout, so this
    * is also what ends a request the server never answers.
    */
-  #watchTusTransfer(): () => void {
+  #watchTransfer(): () => void {
     let last: string | undefined
     const timer = setInterval(() => {
       if (this.#uploadState === states.paused) {
@@ -505,7 +554,7 @@ export default class Uploader {
         this.abortReadStream(new Error('Upload was paused for too long'))
         return
       }
-      const now = `${this.#lastBytesUploaded}:${this.readStream?.readableLength}`
+      const now = `${this.downloadedBytes}:${this.#lastBytesUploaded}:${this.readStream?.readableLength}`
       if (now !== last) {
         last = now
         this.#tusActivityAt = Date.now()
@@ -631,6 +680,7 @@ export default class Uploader {
       this.#uploadState = states.uploading
 
       this.readStream = stream
+      stopWatching = this.#watchTransfer()
 
       if (!this._canStream()) {
         logger.debug(
@@ -673,9 +723,6 @@ export default class Uploader {
         this.readStream = activeStream
       }
 
-      if (this._getUploadProtocol() === PROTOCOLS.tus) {
-        stopWatching = this.#watchTusTransfer()
-      }
       const { url, extraData } = await Promise.race([
         this._uploadByProtocol(req, activeStream),
         // If we don't handle stream errors, we get unhandled error in node.
@@ -694,6 +741,8 @@ export default class Uploader {
       logger.debug('cleanup', this.shortToken)
       if (this.readStream && !this.readStream.destroyed)
         this.readStream.destroy()
+      // Ownership starts at the call boundary, including a cancel before idle.
+      if (!stream.destroyed) stream.destroy()
       await this.tryDeleteTmpPath()
     }
   }
@@ -883,7 +932,15 @@ export default class Uploader {
     // https://github.com/transloadit/api2/pull/8345#pullrequestreview-4552806932
     const keyExpirySec = 60 * 10
     const redisKey = `${Uploader.STORAGE_PREFIX}:${this.token}`
-    this.storage.set(redisKey, jsonStringify(state), 'EX', keyExpirySec)
+    this.storage
+      .set(redisKey, jsonStringify(state), 'EX', keyExpirySec)
+      .catch(() => {
+        logger.error(
+          'Unable to persist upload progress',
+          'uploader.redis.error',
+          this.shortToken,
+        )
+      })
   }
 
   onProgress(
@@ -981,6 +1038,7 @@ export default class Uploader {
           getURL: () => string
           getMethod: () => string
         }) => {
+          if (req.getMethod() !== 'DELETE') this.#tusStartPending = false
           // abort() only stops the request in flight: a start() still waiting
           // on its first request clears tus-js-client's aborted flag and goes
           // on, creating uploads after a cancel's DELETE and reading a temp
@@ -990,6 +1048,7 @@ export default class Uploader {
             this.#uploadState !== states.uploading &&
             req.getMethod() !== 'DELETE'
           ) {
+            this.#tusStarted = false
             this.tus?.abort().catch(() => {})
             throw new RefusedRequestError('Upload is not running')
           }
@@ -1003,12 +1062,40 @@ export default class Uploader {
         onAfterResponse: (req, res) => {
           this.#tusRequestPending = false
           this.#tusActivityAt = Date.now()
+          if (
+            req.getMethod() === 'HEAD' &&
+            res.getStatus() >= 200 &&
+            res.getStatus() < 300 &&
+            isFileStream &&
+            this.size != null
+          ) {
+            const offset = Number(res.getHeader('Upload-Offset'))
+            const length = Number(res.getHeader('Upload-Length'))
+            if (
+              !Number.isSafeInteger(offset) ||
+              offset < 0 ||
+              offset > this.size ||
+              (offset === this.size && length !== this.size)
+            ) {
+              const error = new RefusedRequestError(
+                'Tus resume offset exceeds the source file',
+              )
+              this.tus?.abort().catch(() => {})
+              this.#rejectUpload?.(error)
+              throw error
+            }
+          }
           const location = res.getHeader('Location')
-          if (req.getMethod() !== 'POST' || !location) return
+          if (
+            req.getMethod() !== 'POST' ||
+            res.getStatus() !== 201 ||
+            !location
+          )
+            return
           try {
-            this.#assertAllowedDestination(
-              new URL(location, this.options.endpoint).toString(),
-            )
+            const createdUrl = new URL(location, req.getURL()).toString()
+            this.#assertAllowedDestination(createdUrl)
+            this.#createdTusUrl = createdUrl
           } catch (err) {
             this.tus?.abort().catch(() => {})
             this.#rejectUpload?.(toError(err))
@@ -1069,7 +1156,7 @@ export default class Uploader {
 
       this.tus = new tus.Upload(stream, tusOptions)
 
-      if (this.#uploadState === states.uploading) this.tus.start()
+      this.#scheduleTusControl()
     })
 
     if (this.tus != null && this.size != null) {

@@ -131,6 +131,46 @@ beforeAll(async () => {
 })
 
 describe('uploader', () => {
+  test('destroys a download handed to an already canceled upload', async () => {
+    const uploader = new Uploader({
+      companionOptions,
+      protocol: 'tus',
+      endpoint: 'http://localhost/files',
+      pathPrefix,
+      metadata: {},
+    })
+    const canceled = Promise.withResolvers<void>()
+    await Emitter().on(`cancel:${uploader.token}`, () => canceled.resolve())
+    Emitter().emit(`cancel:${uploader.token}`)
+    await canceled.promise
+    const stream = new PassThrough()
+    await expect(
+      uploader.uploadStream(stream, requireMockReq()),
+    ).rejects.toThrow('idle state')
+    expect(stream.destroyed).toBe(true)
+    uploader.removeEmitterListeners()
+  })
+
+  test('rejects a resume offset beyond a downloaded file', async () => {
+    if (
+      !('__setResumeOffset' in tusClient) ||
+      typeof tusClient.__setResumeOffset !== 'function'
+    )
+      throw new Error('Missing tus test control')
+    tusClient.__setResumeOffset(50)
+    const uploader = new Uploader({
+      companionOptions: { ...companionOptions, streamingUpload: false },
+      protocol: 'tus',
+      uploadUrl: 'http://localhost/files/existing',
+      pathPrefix,
+      metadata: {},
+    })
+    await expect(
+      uploader.uploadStream(Readable.from(['small']), requireMockReq()),
+    ).rejects.toThrow('Tus resume offset')
+    expect(getTusSentRequests()).toEqual(['HEAD'])
+    uploader.removeEmitterListeners()
+  })
   test('uploader respects uploadUrls', () => {
     const opts = {
       companionOptions: {
@@ -442,7 +482,7 @@ describe('uploader', () => {
     // uploader's runs after it.
     const deliver = async (event: string, token: string) => {
       const delivered = Promise.withResolvers<void>()
-      await Emitter().on(`${event}:${token}`, () => delivered.resolve())
+      await Emitter().once(`${event}:${token}`, () => delivered.resolve())
       Emitter().emit(`${event}:${token}`)
       await delivered.promise
     }
@@ -501,6 +541,44 @@ describe('uploader', () => {
         url: 'https://tus.endpoint/files/foo-bar',
       })
       expect(getTusSentRequests()).toEqual(['POST', 'POST'])
+      uploader.removeEmitterListeners()
+    })
+
+    test('a burst of pause/resume actions starts only one pending tus loop', async () => {
+      const { uploader, upload } = await startTusUpload(true)
+      const gate = Promise.withResolvers<void>()
+      setTusStartGate(gate.promise)
+      await deliver('pause', uploader.token)
+      for (let index = 0; index < 20; index += 1) {
+        await deliver('resume', uploader.token)
+        await deliver('pause', uploader.token)
+      }
+      await deliver('resume', uploader.token)
+      setTusHang(false)
+      gate.resolve()
+      await expect(upload).resolves.toMatchObject({
+        url: 'https://tus.endpoint/files/foo-bar',
+      })
+      expect(getTusSentRequests()).toEqual(['POST', 'POST'])
+      uploader.removeEmitterListeners()
+    })
+
+    test('cancel does not delete a client-supplied existing upload', async () => {
+      setTusHang(true)
+      const uploader = new Uploader({
+        companionOptions: { ...companionOptions, streamingUpload: true },
+        protocol: 'tus',
+        uploadUrl: 'http://localhost/files/existing',
+        size: 10,
+        pathPrefix,
+        metadata: {},
+      })
+      const upload = uploader.uploadStream(new PassThrough(), requireMockReq())
+      upload.catch(() => {})
+      await vi.waitFor(() => expect(getTusSentRequests()).toEqual(['HEAD']))
+      await deliver('cancel', uploader.token)
+      await expect(upload).rejects.toThrow('Canceled')
+      expect(getTusSentRequests()).toEqual(['HEAD'])
       uploader.removeEmitterListeners()
     })
   })
@@ -772,6 +850,41 @@ describe('uploader', () => {
     })
     afterEach(() => {
       vi.useRealTimers()
+    })
+
+    test.each([
+      'multipart',
+      's3-multipart',
+    ] as const)('a stalled %s source is abandoned', async (protocol) => {
+      const uploader = new Uploader({
+        companionOptions,
+        protocol,
+        endpoint: 'http://localhost/',
+        pathPrefix,
+        metadata: {},
+      })
+      vi.spyOn(uploader, '_uploadByProtocol').mockImplementation(
+        () => new Promise(() => {}),
+      )
+      const stream = new PassThrough()
+      const upload = uploader.uploadStream(stream, requireMockReq())
+      upload.catch(() => {})
+      await vi.advanceTimersByTimeAsync(2 * STALL_TIMEOUT_MS)
+      await expect(upload).rejects.toThrow('Upload stalled')
+      expect(stream.destroyed).toBe(true)
+      uploader.removeEmitterListeners()
+    })
+
+    test('a stalled download-first phase is abandoned and its file removed', async () => {
+      const { uploader, stream, upload } = startHangingUpload({
+        streamingUpload: false,
+      })
+      stream.write('partial')
+      await vi.advanceTimersByTimeAsync(2 * STALL_TIMEOUT_MS)
+      await expect(upload).rejects.toThrow('Upload stalled')
+      expect(stream.destroyed).toBe(true)
+      expect(uploader.tmpPath && fs.existsSync(uploader.tmpPath)).toBe(false)
+      uploader.removeEmitterListeners()
     })
 
     test('a transfer whose source stops sending is abandoned', async () => {
@@ -1081,6 +1194,40 @@ describe('uploader', () => {
         ? ret.extraData['response']['headers']
         : null
     expect(responseHeaders?.['header-a']).toBeUndefined() // headers sent to destination, not received back
+  })
+
+  test('URL credentials cannot replace operator Authorization on multipart uploads', async () => {
+    nock('http://localhost')
+      .post('/')
+      .matchHeader('authorization', 'Bearer operator')
+      .reply(200, '')
+    await runMultipartTest({
+      address: 'attacker:password@localhost',
+      extraCompanionOpts: {
+        uploadHeaders: { Authorization: 'Bearer operator' },
+      },
+    })
+    expect(nock.isDone()).toBe(true)
+  })
+
+  test('client method override headers are not forwarded to upload destinations', async () => {
+    nock('http://localhost', {
+      badheaders: [
+        'x-http-method-override',
+        'x-http-method',
+        'x-method-override',
+      ],
+    })
+      .post('/')
+      .reply(200, '')
+    await runMultipartTest({
+      headers: {
+        'X-HTTP-Method-Override': 'GET',
+        'x-http-method': 'GET',
+        'X-Method-Override': 'GET',
+      },
+    })
+    expect(nock.isDone()).toBe(true)
   })
 
   test('a client header cannot override uploadHeaders by changing its case', async () => {
