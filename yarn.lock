@@ -8561,6 +8561,7 @@ __metadata:
     "@tailwindcss/cli": "npm:^4.3.3"
     "@uppy-dev/tsconfig": "workspace:^"
     "@uppy/core": "workspace:^"
+    "@vitest/browser-playwright": "npm:^5.0.5"
     clsx: "npm:^2.1.1"
     cssnano: "npm:^8.0.1"
     dequal: "npm:^2.0.3"
@@ -8570,6 +8571,7 @@ __metadata:
     pretty-bytes: "npm:^7.1.0"
     tailwindcss: "npm:^4.3.3"
     typescript: "npm:^6.0.3"
+    vitest: "npm:^5.0.5"
   peerDependencies:
     "@uppy/core": "workspace:^"
     "@uppy/google-drive-picker": "workspace:^"
