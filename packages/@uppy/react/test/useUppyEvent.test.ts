@@ -6,7 +6,7 @@ import { describe, expect, expectTypeOf, it, vi } from 'vitest'
 
 describe('useUppyEvent', () => {
   it('should return and update value with the correct type', () => {
-    const uppy = new Uppy()
+    using uppy = new Uppy()
     const callback = vi.fn()
     const { result, rerender } = renderHook(() =>
       useUppyEvent(uppy, 'file-added', callback),

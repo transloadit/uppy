@@ -7,7 +7,7 @@ import DashboardPlugin from '../lib/index.js'
 
 describe('Dashboard', () => {
   it('works without any remote provider plugins', () => {
-    const core = new Core()
+    using core = new Core()
 
     expect(() => {
       core.use(DashboardPlugin, {
@@ -15,12 +15,10 @@ describe('Dashboard', () => {
         target: 'body',
       })
     }).not.toThrow()
-
-    core.destroy()
   })
 
   it('works when targeting remote provider plugins using `target`', () => {
-    const core = new Core()
+    using core = new Core()
     expect(() => {
       core.use(DashboardPlugin, {
         inline: true,
@@ -31,12 +29,10 @@ describe('Dashboard', () => {
         companionUrl: 'https://fake.uppy.io/',
       })
     }).not.toThrow()
-
-    core.destroy()
   })
 
   it('works when passing plugins in `plugins` array', () => {
-    const core = new Core()
+    using core = new Core()
     core.use(GoogleDrivePlugin, { companionUrl: 'https://fake.uppy.io/' })
 
     expect(() => {
@@ -46,12 +42,10 @@ describe('Dashboard', () => {
         plugins: ['GoogleDrive'],
       })
     }).not.toThrow()
-
-    core.destroy()
   })
 
   it('should automatically add plugins which have no target', () => {
-    const core = new Core()
+    using core = new Core()
     core.use(Url, { companionUrl: 'https://companion.uppy.io' })
     core.use(DashboardPlugin, { inline: false })
     core.use(WebcamPlugin)
@@ -65,12 +59,10 @@ describe('Dashboard', () => {
     expect(dashboardPlugins.some((plugin) => plugin.id === 'Webcam')).toEqual(
       true,
     )
-
-    core.destroy()
   })
 
   it('should not automatically add plugins which have a non-Dashboard target', () => {
-    const core = new Core()
+    using core = new Core()
     WebcamPlugin.prototype.start = () => Promise.resolve()
     core.use(Url, { companionUrl: 'https://companion.uppy.io' })
     core.use(DashboardPlugin, { inline: false })
@@ -85,12 +77,10 @@ describe('Dashboard', () => {
     expect(dashboardPlugins.some((plugin) => plugin.id === 'Webcam')).toEqual(
       false,
     )
-
-    core.destroy()
   })
 
   it('should change options on the fly', () => {
-    const core = new Core()
+    using core = new Core()
     core.use(DashboardPlugin, {
       inline: true,
       target: 'body',
@@ -104,7 +94,7 @@ describe('Dashboard', () => {
   })
 
   it('should use updated locale from Core, when it’s set via Core’s setOptions()', () => {
-    const core = new Core()
+    using core = new Core()
     core.use(DashboardPlugin, {
       inline: true,
       target: 'body',
@@ -122,7 +112,7 @@ describe('Dashboard', () => {
   })
 
   it('should accept a callback as `metaFields` option', () => {
-    const core = new Core()
+    using core = new Core()
     expect(() => {
       core.use(DashboardPlugin, {
         metaFields: (file: any) => {
@@ -135,8 +125,6 @@ describe('Dashboard', () => {
         },
       })
     }).not.toThrow()
-
-    core.destroy()
   })
 
   describe('My Device acquirer respects fileManagerSelectionType', () => {
@@ -175,7 +163,7 @@ describe('Dashboard', () => {
     }
 
     it('triggers the folder input when set to "folders"', () => {
-      const core = mountDashboard('folders')
+      using _core = mountDashboard('folders')
       const { fileInput, folderInput } = getInputs()
 
       let fileClicked = false
@@ -191,12 +179,10 @@ describe('Dashboard', () => {
 
       expect(folderClicked).toBe(true)
       expect(fileClicked).toBe(false)
-
-      core.destroy()
     })
 
     it('triggers the file input when set to "files"', () => {
-      const core = mountDashboard('files')
+      using _core = mountDashboard('files')
       const { fileInput, folderInput } = getInputs()
 
       let fileClicked = false
@@ -212,15 +198,13 @@ describe('Dashboard', () => {
 
       expect(fileClicked).toBe(true)
       expect(folderClicked).toBe(false)
-
-      core.destroy()
     })
 
     // `both` mode intentionally falls back to the file picker because a single
     // HTML <input> cannot be webkitdirectory and not at the same time. The
     // folder picker remains reachable via the tagline "browse folders" link.
     it('falls back to the file input when set to "both"', () => {
-      const core = mountDashboard('both')
+      using _core = mountDashboard('both')
       const { fileInput, folderInput } = getInputs()
 
       let fileClicked = false
@@ -236,8 +220,6 @@ describe('Dashboard', () => {
 
       expect(fileClicked).toBe(true)
       expect(folderClicked).toBe(false)
-
-      core.destroy()
     })
   })
 })

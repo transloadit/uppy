@@ -129,7 +129,7 @@ export default class AwsS3<M extends Meta, B extends Body> extends BasePlugin<
   static VERSION = packageJson.version
 
   #s3Client!: S3Client
-  #queue!: TaskQueue
+  #queue = new TaskQueue({ concurrency: this.opts.limit })
   #uploaders: Record<string, S3Uploader<M, B> | null> = {}
 
   constructor(uppy: Uppy<M, B>, opts: AwsS3Options<M, B>) {
@@ -141,7 +141,6 @@ export default class AwsS3<M extends Meta, B extends Body> extends BasePlugin<
   override install(): void {
     this.#setResumableUploadsCapability(true)
     this.#initS3Client()
-    this.#queue = new TaskQueue({ concurrency: this.opts.limit })
     this.uppy.addUploader(this.#upload)
     this.uppy.on('cancel-all', this.#handleCancelAll)
   }
@@ -247,7 +246,7 @@ export default class AwsS3<M extends Meta, B extends Body> extends BasePlugin<
         if (!currentFile) {
           return
         }
-        return this.#uploadLocalFile(currentFile as LocalUppyFile<M, B>) // assume it's still a local file since remote files aren't queued
+        await this.#uploadLocalFile(currentFile as LocalUppyFile<M, B>) // assume it's still a local file since remote files aren't queued
       })
     })
 

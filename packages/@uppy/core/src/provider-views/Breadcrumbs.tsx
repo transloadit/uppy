@@ -8,21 +8,12 @@ type BreadcrumbsProps<M extends Meta, B extends Body> = {
   breadcrumbsIcon: h.JSX.Element
   breadcrumbs: PartialTreeFolder[]
   i18n: any
-  /** A long operation runs: navigating away would abort it. */
-  disabled?: boolean
 }
 
 export default function Breadcrumbs<M extends Meta, B extends Body>(
   props: BreadcrumbsProps<M, B>,
 ): h.JSX.Element {
-  const {
-    openFolder,
-    title,
-    breadcrumbsIcon,
-    breadcrumbs,
-    i18n,
-    disabled = false,
-  } = props
+  const { openFolder, title, breadcrumbsIcon, breadcrumbs, i18n } = props
 
   return (
     <div className="uppy-Provider-breadcrumbs">
@@ -39,7 +30,6 @@ export default function Breadcrumbs<M extends Meta, B extends Body>(
               className="uppy-u-reset uppy-c-btn"
               onClick={isCurrent ? undefined : () => openFolder(folder.id)}
               aria-current={isCurrent ? 'page' : undefined}
-              disabled={!isCurrent && disabled}
               title={label}
             >
               {label}

@@ -7,8 +7,7 @@ import type {
   AsyncStore,
   Body,
   Meta,
-  PartialTreeFile,
-  PartialTreeFolderNode,
+  PluginTarget,
   UnknownProviderPlugin,
   UnknownProviderPluginState,
   Uppy,
@@ -17,9 +16,9 @@ import type {
 import { UIPlugin, UserFacingApiError } from '@uppy/core'
 import {
   type CompanionPluginOptions,
+  defaultStorage,
   isAuthError,
   Provider,
-  tokenStorage,
 } from '@uppy/core/companion-client'
 import {
   type ProviderAction,
@@ -299,24 +298,13 @@ export type S3Options<M extends Meta = Meta, B extends Body = Body> = Omit<
    */
   getGrant?: () => Promise<string>
   /**
-   * The plugin is the whole page (a file library), not a picker inside the
-   * Dashboard: the panel header shows just the plugin title instead of
-   * "Import from …" and has no Cancel button. Default: false.
-   */
-  standalone?: boolean
-  /**
    * 'picker' (default): rows are checkboxes and the selection is added to
    * Uppy; files can be browsed, not changed. 'manager' (file-library UIs,
-   * until a dedicated file manager plugin replaces it): clicking a file opens
-   * its detail modal, files can be renamed, moved and deleted, multi-select
-   * hides behind an explicit toggle, and the selection feeds bulk actions.
+   * until a dedicated file manager plugin replaces it): headless. Render it
+   * with `useS3Manager`, where files can be renamed, moved and deleted; the
+   * Dashboard panel renders nothing in this mode.
    */
   mode?: 'picker' | 'manager'
-  /**
-   * Manager mode: resolves a preview image URL for a file's detail modal
-   * (e.g. a signed thumbnail URL your server produces for the key).
-   */
-  getPreviewUrl?: (key: string) => Promise<string>
   /** Manager mode: extra bulk actions, appended to the built-in ones. */
   bulkActions?: ProviderBulkAction<M, B>[]
 }
@@ -388,7 +376,7 @@ export default class S3<M extends Meta, B extends Body>
     this.id = this.opts.id || 'S3'
     this.type = 'acquirer'
     this.files = []
-    this.storage = this.opts.storage || tokenStorage
+    this.storage = this.opts.storage || defaultStorage
 
     this.defaultLocale = locale
     this.i18nInit()
@@ -697,7 +685,7 @@ export default class S3<M extends Meta, B extends Body>
    * Companion endpoints will change incompatibly, also in minor releases.
    */
   get acceptsFileDrops(): boolean {
-    return true
+    return this.opts.mode !== 'manager'
   }
 
   /** Both Companion and the grant must allow changes; nothing may before the first listing. */
@@ -854,31 +842,46 @@ export default class S3<M extends Meta, B extends Body>
 
   /** The view options that follow the plugin's own. */
   #viewOptions() {
-    const { mode, standalone, getPreviewUrl } = this.opts
-    return {
-      mode,
-      standalone,
-      getPreviewUrl: getPreviewUrl
-        ? (item: PartialTreeFile | PartialTreeFolderNode) =>
-            getPreviewUrl(S3.keyOf(item.id))
-        : undefined,
-    }
+    return { mode: this.opts.mode }
   }
 
   /** Applies changed options to the view and its actions right away. */
   override setOptions(newOpts: Partial<S3Options<M, B>>): void {
-    const previousMode = this.opts.mode
+    const previousMode = this.opts.mode ?? 'picker'
     super.setOptions(newOpts)
     // Not installed yet: `install` reads the options.
     if (!this.view) return
-    if (this.opts.mode !== previousMode) {
+    if ((this.opts.mode ?? 'picker') !== previousMode) {
       // A selection means something else in the other mode (picking vs a
-      // bulk action), and picker mode has no details.
+      // bulk action), and picker mode has no detail item.
       this.view.cancelSelection()
-      this.setPluginState({ selectionActive: false, detailItemId: undefined })
+      this.setPluginState({ detailItemId: undefined })
     }
     Object.assign(this.view.opts, this.#viewOptions())
+    this.#syncResetOnClose()
     this.#applyActions()
+  }
+
+  /**
+   * A picker starts over when the Dashboard panel closes. A headless manager
+   * has no panel (closing another one must not wipe it), and
+   * `keepStateOnClose` comes back to the same folder.
+   */
+  #syncResetOnClose(): void {
+    this.uppy.off('dashboard:close-panel', this.view.resetPluginState)
+    if (!this.opts.keepStateOnClose && this.opts.mode !== 'manager') {
+      this.uppy.on('dashboard:close-panel', this.view.resetPluginState)
+    }
+  }
+
+  /** Manager mode is headless (`useS3Manager`): no Dashboard tab or panel. */
+  override mount<Me extends Meta, Bo extends Body>(
+    target: PluginTarget<Me, Bo>,
+    plugin: UIPlugin<any, Me, Bo>,
+  ): HTMLElement {
+    if (this.opts.mode !== 'manager') return super.mount(target, plugin)
+    this.uppy.log(`[${this.id}] manager mode is headless: not mounted`)
+    return this.el!
   }
 
   override install() {
@@ -895,12 +898,7 @@ export default class S3<M extends Meta, B extends Body>
       ...this.#viewOptions(),
     })
     this.#applyActions()
-
-    if (this.opts.keepStateOnClose) {
-      // ProviderViews resets its state when the Dashboard panel closes; a
-      // management UI wants to come back to the same folder instead.
-      this.uppy.off('dashboard:close-panel', this.view.resetPluginState)
-    }
+    this.#syncResetOnClose()
 
     const { target } = this.opts
     if (target) {
@@ -958,7 +956,13 @@ export default class S3<M extends Meta, B extends Body>
    * be invalid after all.
    */
   #maybeAutoConnect(): void {
-    if (this.#autoConnectAttempted || this.opts.autoConnect === false) return
+    if (
+      this.#autoConnectAttempted ||
+      this.opts.autoConnect === false ||
+      // Headless: `useS3Manager` connects through `openFolderPath`.
+      this.opts.mode === 'manager'
+    )
+      return
     if (!this.#needsLogin) {
       const { authenticated, didFirstRender } = this.getPluginState()
       if (!didFirstRender || authenticated !== false) return

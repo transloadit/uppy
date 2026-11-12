@@ -88,7 +88,7 @@ export default function forEachDroppedOrPastedUrl(
     }
   }
 
-  urlItems.forEach((item) => {
+  for (const item of urlItems) {
     item.getAsString((urlString) => callback(urlString))
-  })
+  }
 }

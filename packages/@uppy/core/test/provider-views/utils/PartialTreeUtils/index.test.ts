@@ -6,7 +6,10 @@ import type {
   PartialTreeFolderRoot,
   PartialTreeId,
 } from '../../../../lib/index.js'
-import afterFill from '../../../../lib/provider-views/utils/PartialTreeUtils/afterFill.js'
+import getClickedRange from '../../../../lib/provider-views/utils/getClickedRange.js'
+import afterFill, {
+  type ApiList,
+} from '../../../../lib/provider-views/utils/PartialTreeUtils/afterFill.js'
 import afterOpenFolder from '../../../../lib/provider-views/utils/PartialTreeUtils/afterOpenFolder.js'
 import afterScrollFolder from '../../../../lib/provider-views/utils/PartialTreeUtils/afterScrollFolder.js'
 import afterToggleCheckbox from '../../../../lib/provider-views/utils/PartialTreeUtils/afterToggleCheckbox.js'
@@ -65,7 +68,6 @@ const getFile = (tree: PartialTree, id: string) =>
 
 describe('afterFill()', () => {
   it('preserves .checked files in an already .cached folder', async () => {
-    // prettier-ignore
     const tree: PartialTree = [
       _root('ourRoot'),
       _folder('1', { parentId: 'ourRoot' }),
@@ -96,7 +98,6 @@ describe('afterFill()', () => {
   })
 
   it('fetches a .checked folder', async () => {
-    // prettier-ignore
     const tree: PartialTree = [
       _root('ourRoot'),
       _folder('1', { parentId: 'ourRoot' }),
@@ -128,7 +129,6 @@ describe('afterFill()', () => {
   })
 
   it('fetches remaining pages in a folder', async () => {
-    // prettier-ignore
     const tree: PartialTree = [
       _root('ourRoot'),
       _folder('1', { parentId: 'ourRoot' }),
@@ -161,7 +161,6 @@ describe('afterFill()', () => {
   })
 
   it('fetches a folder two levels deep', async () => {
-    // prettier-ignore
     const tree: PartialTree = [
       _root('ourRoot'),
       _folder('1', { parentId: 'ourRoot' }),
@@ -206,7 +205,6 @@ describe('afterFill()', () => {
   })
 
   it('complex situation', async () => {
-    // prettier-ignore
     const tree: PartialTree = [
       _root('ourRoot'),
       _folder('1', { parentId: 'ourRoot' }),
@@ -274,11 +272,178 @@ describe('afterFill()', () => {
       '777_2_1_1',
     ])
   })
+
+  it('rejects when a subfolder listing fails, even though its sibling loads', async () => {
+    const tree: PartialTree = [
+      _root('ourRoot'),
+      _folder('2', { parentId: 'ourRoot', cached: false, status: 'checked' }),
+    ]
+    const boom = new Error('Companion responded 500')
+    const mock: ApiList = (path) => {
+      if (path === '2') {
+        const items = [_cFile('2_1'), _cFolder('ok'), _cFolder('bad')]
+        return Promise.resolve({ nextPagePath: null, items })
+      }
+      if (path === 'ok') {
+        return Promise.resolve({ nextPagePath: null, items: [_cFile('ok_1')] })
+      }
+      // settles last, after 'ok' has already completed
+      if (path === 'bad') {
+        return new Promise<never>((_, reject) =>
+          setTimeout(() => reject(boom), 20),
+        )
+      }
+      return Promise.reject(new Error(`unexpected path ${path}`))
+    }
+
+    await expect(
+      afterFill(
+        tree,
+        mock,
+        () => null,
+        () => {},
+      ),
+    ).rejects.toBe(boom)
+  })
+
+  it('rejects even when the listing rejects without a reason', async () => {
+    const tree: PartialTree = [
+      _root('ourRoot'),
+      _folder('2', { parentId: 'ourRoot', cached: false, status: 'checked' }),
+    ]
+    const mock: ApiList = () => Promise.reject()
+
+    await expect(
+      afterFill(
+        tree,
+        mock,
+        () => null,
+        () => {},
+      ),
+    ).rejects.toBeUndefined()
+  })
+
+  it('rejects with the first failure and does no work after it', async () => {
+    // eight checked folders; the queue runs six at a time
+    const ids = ['f1', 'f2', 'f3', 'f4', 'f5', 'f6', 'f7', 'f8']
+    const tree: PartialTree = [
+      _root('ourRoot'),
+      ...ids.map((id) =>
+        _folder(id, { parentId: 'ourRoot', cached: false, status: 'checked' }),
+      ),
+    ]
+    const first = new Error('first')
+    const listed: string[] = []
+    const mock: ApiList = (path) => {
+      listed.push(path as string)
+      if (path === 'f1') return Promise.reject(first)
+      if (path === 'f2') return Promise.reject(new Error('second'))
+      // leaves, so unfixed code finishes the crawl instead of recursing forever
+      if (path?.endsWith('_sub')) {
+        return Promise.resolve({ nextPagePath: null, items: [] })
+      }
+      // in-flight siblings finish later and each reveal a subfolder
+      return new Promise((resolve) =>
+        setTimeout(
+          () =>
+            resolve({ nextPagePath: null, items: [_cFolder(`${path}_sub`)] }),
+          20,
+        ),
+      )
+    }
+
+    const reportProgress = vi.fn()
+
+    await expect(
+      afterFill(tree, mock, () => null, reportProgress),
+    ).rejects.toBe(first)
+    // `afterFill` rejects before f3..f6 answer: let them, so that work they
+    // would start after the failure shows up below
+    await new Promise((resolve) => setTimeout(resolve, 50))
+    // neither the queued f7/f8 nor the subfolders revealed by f3..f6 are listed
+    expect(listed.sort()).toEqual(['f1', 'f2', 'f3', 'f4', 'f5', 'f6'])
+    // and no task completes after the failure, so the view does not re-render
+    expect(reportProgress).not.toHaveBeenCalled()
+  })
+
+  it('aborts the running requests on a failure, without waiting for them', async () => {
+    const tree: PartialTree = [
+      _root('ourRoot'),
+      _folder('slow', {
+        parentId: 'ourRoot',
+        cached: false,
+        status: 'checked',
+      }),
+      _folder('bad', { parentId: 'ourRoot', cached: false, status: 'checked' }),
+    ]
+    const boom = new Error('boom')
+    const listed: string[] = []
+    let slowSignal: AbortSignal | undefined
+    let slowSettled = false
+    const mock: ApiList = (path, signal) => {
+      listed.push(path as string)
+      if (path === 'bad') return Promise.reject(boom)
+      slowSignal = signal
+      // ignores the abort, and settles long after 'bad' has failed, pointing
+      // to a second page
+      return new Promise((resolve) =>
+        setTimeout(() => {
+          slowSettled = true
+          resolve({
+            nextPagePath: path === 'slow' ? 'slow_page2' : null,
+            items: [],
+          })
+        }, 100),
+      )
+    }
+
+    await expect(
+      afterFill(
+        tree,
+        mock,
+        () => null,
+        () => {},
+      ),
+    ).rejects.toBe(boom)
+    expect(slowSettled).toBe(false)
+    expect(slowSignal?.aborted).toBe(true)
+    // and once it settles, its second page is not requested
+    await vi.waitFor(() => expect(slowSettled).toBe(true))
+    expect(listed.sort()).toEqual(['bad', 'slow'])
+  })
+
+  it('rejects with the cancel when `signal` aborts after a failure', async () => {
+    const tree: PartialTree = [
+      _root('ourRoot'),
+      _folder('slow', {
+        parentId: 'ourRoot',
+        cached: false,
+        status: 'checked',
+      }),
+      _folder('bad', { parentId: 'ourRoot', cached: false, status: 'checked' }),
+    ]
+    const user = new AbortController()
+    const mock: ApiList = (path, signal) => {
+      if (path === 'bad') return Promise.reject(new Error('boom'))
+      // the user cancels just as the failure aborts this request
+      signal.addEventListener('abort', () => user.abort())
+      return new Promise(() => {})
+    }
+
+    await expect(
+      afterFill(
+        tree,
+        mock,
+        () => null,
+        () => {},
+        user.signal,
+      ),
+    ).rejects.toHaveProperty('name', 'AbortError')
+  })
 })
 
 describe('afterOpenFolder()', () => {
   it('open "checked" folder - all discovered files are marked as "checked"', () => {
-    // prettier-ignore
     const oldPartialTree: PartialTree = [
       _root('ourRoot'),
       _folder('1', { parentId: 'ourRoot' }),
@@ -309,7 +474,6 @@ describe('afterOpenFolder()', () => {
   })
 
   it('open "unchecked" folder - all discovered files are marked as "unchecked"', () => {
-    // prettier-ignore
     const oldPartialTree: PartialTree = [
       _root('ourRoot'),
       _folder('1', { parentId: 'ourRoot' }),
@@ -342,7 +506,6 @@ describe('afterOpenFolder()', () => {
 
 describe('afterScrollFolder()', () => {
   it('scroll "checked" folder - all discovered files are marked as "checked"', () => {
-    // prettier-ignore
     const oldPartialTree: PartialTree = [
       _root('ourRoot'),
       _folder('1', { parentId: 'ourRoot' }),
@@ -372,7 +535,6 @@ describe('afterScrollFolder()', () => {
   })
 
   it('scroll "checked" folder - all discovered files are marked as "unchecked"', () => {
-    // prettier-ignore
     const oldPartialTree: PartialTree = [
       _root('ourRoot'),
       _folder('1', { parentId: 'ourRoot' }),
@@ -403,7 +565,42 @@ describe('afterScrollFolder()', () => {
 })
 
 describe('afterToggleCheckbox()', () => {
-  // prettier-ignore
+  it('manager mode: loaded children do not check a folder with more pages', () => {
+    const tree: PartialTree = [
+      _root('ourRoot'),
+      _folder('1', { parentId: 'ourRoot', nextPagePath: 'page2' }),
+      _file('1_1', { parentId: '1' }),
+      _file('1_2', { parentId: '1' }),
+    ]
+    const picked = afterToggleCheckbox(tree, ['1_1', '1_2'])
+    expect(getFolder(picked, '1').status).toEqual('checked')
+
+    const managed = afterToggleCheckbox(tree, ['1_1', '1_2'], true)
+    expect(getFolder(managed, '1').status).toEqual('partial')
+    // so the next page does not come in checked
+    const scrolled = afterScrollFolder(
+      managed,
+      '1',
+      [_cFile('1_3')],
+      null,
+      () => null,
+    )
+    expect(getFile(scrolled, '1_3').status).toEqual('unchecked')
+  })
+
+  it('recomputes every parent of a range that spans folders', () => {
+    const tree: PartialTree = [
+      _root('ourRoot'),
+      _folder('1', { parentId: 'ourRoot' }),
+      _file('1_1', { parentId: '1' }),
+      _folder('2', { parentId: 'ourRoot' }),
+      _file('2_1', { parentId: '2' }),
+    ]
+    const toggled = afterToggleCheckbox(tree, ['1_1', '2_1'])
+    expect(getFolder(toggled, '1').status).toEqual('checked')
+    expect(getFolder(toggled, '2').status).toEqual('checked')
+  })
+
   const oldPartialTree: PartialTree = [
     _root('ourRoot'),
     _folder('1', { parentId: 'ourRoot' }),
@@ -501,7 +698,6 @@ describe('afterToggleCheckbox()', () => {
 
 describe('getNumberOfSelectedFiles()', () => {
   it('gets all leaf items', () => {
-    // prettier-ignore
     const tree: PartialTree = [
       _root('ourRoot'),
       // leaf .checked folder
@@ -519,7 +715,6 @@ describe('getNumberOfSelectedFiles()', () => {
   })
 
   it('empty folder, even after being opened, counts as leaf node', () => {
-    // prettier-ignore
     const tree: PartialTree = [
       _root('ourRoot'),
       // empty .checked .cached folder
@@ -534,7 +729,6 @@ describe('getNumberOfSelectedFiles()', () => {
 
 describe('getCheckedFilesWithPaths()', () => {
   // Note that this is a tree that doesn't require any api calls, everything is cached already
-  // prettier-ignore
   const tree: PartialTree = [
     _root('ourRoot'),
     _folder('1', { parentId: 'ourRoot' }),
@@ -593,7 +787,6 @@ describe('getCheckedFilesWithPaths()', () => {
 })
 
 describe('getBreadcrumbs()', () => {
-  // prettier-ignore
   const tree: PartialTree = [
     _root('ourRoot'),
     _folder('1', { parentId: 'ourRoot' }),
@@ -625,12 +818,24 @@ describe('getBreadcrumbs()', () => {
   })
 
   it('returns folders when currentFolderId=null', () => {
-    // prettier-ignore
     const treeWithNullRoot: PartialTree = [
       _root(null!),
       _folder('1', { parentId: null }),
     ]
     const result = getBreadcrumbs(treeWithNullRoot, null)
     expect(result.map((f) => f.id)).toEqual([null])
+  })
+})
+
+describe('getClickedRange()', () => {
+  const rows = ['c', 'a', 'b'].map((id) => _file(id, { parentId: 'root' }))
+
+  it('follows the order it is given', () => {
+    expect(getClickedRange('b', rows, true, 'c')).toEqual(['c', 'a', 'b'])
+  })
+
+  it('toggles only the clicked row when it or the anchor is not shown', () => {
+    expect(getClickedRange('x', rows, true, 'c')).toEqual(['x'])
+    expect(getClickedRange('a', rows, true, 'gone')).toEqual(['a'])
   })
 })

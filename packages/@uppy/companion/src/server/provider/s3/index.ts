@@ -165,6 +165,15 @@ export const withOwnCredentials = (
   return { ...options, awsClientOptions }
 }
 
+// Not /^\/+|\/+$/: its backtracking is quadratic in the length of a run of slashes.
+function trimSlashes(name: string): string {
+  let start = 0
+  let end = name.length
+  while (start < end && name[start] === '/') start++
+  while (end > start && name[end - 1] === '/') end--
+  return name.slice(start, end)
+}
+
 /**
  * Adapter for browsing and managing S3-compatible object storage (AWS S3,
  * Cloudflare R2, MinIO, ...). Configured under `providerOptions.s3`;
@@ -327,7 +336,7 @@ export default class S3Provider<
     }
   }
 
-  override async logout(): Promise<ProviderLogoutResponse> {
+  override logout(): ProviderLogoutResponse {
     return { revoked: true }
   }
 
@@ -369,7 +378,7 @@ export default class S3Provider<
     }
   }
 
-  override async list({
+  override list({
     companion,
     providerUserSession,
     query,
@@ -458,7 +467,7 @@ export default class S3Provider<
     })
   }
 
-  override async download({
+  override download({
     companion,
     id,
     query,
@@ -526,7 +535,7 @@ export default class S3Provider<
     )
   }
 
-  override async deleteItem({
+  override deleteItem({
     companion,
     id,
     providerUserSession,
@@ -551,13 +560,13 @@ export default class S3Provider<
    * prefix, so the client walks it and moves its files one by one); a backend
    * that `supportsMoveFolder` gets folders too, with a normalised target.
    */
-  override async moveItem({
+  override moveItem({
     companion,
     id,
     destination,
     providerUserSession,
   }: ProviderMoveItemOptions<S3UserSession>): Promise<ProviderMoveItemResponse> {
-    return this.withErrorHandling('provider.s3.move.error', async () => {
+    return this.withErrorHandling('provider.s3.move.error', () => {
       const session = this.session(companion, providerUserSession, {
         requireWrite: true,
         keys: [id, destination],
@@ -641,7 +650,7 @@ export default class S3Provider<
     return itemRef(destination)
   }
 
-  override async createFolder({
+  override createFolder({
     companion,
     parentId,
     name,
@@ -662,7 +671,7 @@ export default class S3Provider<
           requireWrite: true,
           keys: parentFolder ? [parentFolder] : [],
         })
-        const cleanName = name.trim().replace(/^\/+|\/+$/g, '')
+        const cleanName = trimSlashes(name.trim())
         if (
           cleanName.length === 0 ||
           cleanName.includes('/') ||
@@ -697,7 +706,7 @@ export default class S3Provider<
     )
   }
 
-  override async thumbnail(): Promise<never> {
+  override thumbnail(): Promise<never> {
     logger.error(
       'call to thumbnail is not implemented',
       'provider.s3.thumbnail.error',

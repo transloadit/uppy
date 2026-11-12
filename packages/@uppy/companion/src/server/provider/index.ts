@@ -135,7 +135,9 @@ export function addCustomProviders(
   providers: Record<string, ProviderCtor>,
   grantConfig: GrantConfig,
 ): void {
-  Object.entries(customProviders).forEach(([providerName, customProvider]) => {
+  for (const [providerName, customProvider] of Object.entries(
+    customProviders,
+  )) {
     providers[providerName] = customProvider.module
     const { oauthProvider } = customProvider.module
 
@@ -147,9 +149,10 @@ export function addCustomProviders(
         // requirement changes.
         callback: `/${providerName}/callback`,
         transport: 'session',
+        state: true, // CSRF check, as for the built-in providers
       }
     }
-  })
+  }
 }
 
 export function addProviderOptions(
@@ -192,14 +195,17 @@ export function addProviderOptions(
   }
 
   const { oauthDomain } = server
-  const keys = Object.keys(providerOptions).filter((key) => key !== 'server')
-  keys.forEach((providerName) => {
+  for (const providerName of Object.keys(providerOptions)) {
+    if (providerName === 'server') {
+      continue
+    }
+
     const oauthProvider = getOauthProvider?.(providerName)
 
     if (isOAuthProvider(oauthProvider) && grantConfig[oauthProvider]) {
       const grantProviderConfig = grantConfig[oauthProvider]
       const providerOption = providerOptions[providerName]
-      if (!providerOption) return
+      if (!providerOption) continue
       // explicitly add providerOptions so users don't override other providerOptions.
       grantProviderConfig['key'] = providerOption.key
       grantProviderConfig['secret'] = providerOption.secret
@@ -250,5 +256,5 @@ export function addProviderOptions(
         }
       }
     }
-  })
+  }
 }

@@ -399,9 +399,9 @@ export default class Dashboard<M extends Meta, B extends Body> extends UIPlugin<
       activeOverlayType: 'FileEditor',
     })
 
-    editors.forEach((editor) => {
+    for (const editor of editors) {
       ;(this.uppy.getPlugin(editor.id) as any).selectFile(file)
-    })
+    }
   }
 
   closeFileEditor = (): void => {
@@ -426,9 +426,9 @@ export default class Dashboard<M extends Meta, B extends Body> extends UIPlugin<
     const { targets } = this.getPluginState()
     const editors = this.#getEditors(targets)
 
-    editors.forEach((editor) => {
+    for (const editor of editors) {
       ;(this.uppy.getPlugin(editor.id) as any).save()
-    })
+    }
 
     this.closeFileEditor()
   }
@@ -868,14 +868,15 @@ export default class Dashboard<M extends Meta, B extends Body> extends UIPlugin<
 
     this.uppy.log('[Dashboard] Processing dropped files')
 
+    // Browsers empty `event.dataTransfer` once this handler yields
+    this.opts.onDrop(event)
+
     // Add all dropped files
     const files = await getDroppedFiles(event.dataTransfer!, { logDropError })
     if (files.length > 0) {
       this.uppy.log('[Dashboard] Files dropped')
       this.addFiles(files)
     }
-
-    this.opts.onDrop(event)
   }
 
   private handleRequestThumbnail = (file: UppyFile<M, B>) => {
@@ -968,9 +969,9 @@ export default class Dashboard<M extends Meta, B extends Body> extends UIPlugin<
     if (this.opts.trigger && !this.opts.inline) {
       const showModalTrigger = findAllDOMElements(this.opts.trigger)
       if (showModalTrigger) {
-        showModalTrigger.forEach((trigger) => {
+        for (const trigger of showModalTrigger) {
           trigger.addEventListener('click', this.openModal)
-        })
+        }
       } else {
         this.uppy.log(
           'Dashboard modal trigger not found. Make sure `trigger` is set in Dashboard options, unless you are planning to call `dashboard.openModal()` method yourself',
@@ -1008,12 +1009,13 @@ export default class Dashboard<M extends Meta, B extends Body> extends UIPlugin<
   removeEvents = (): void => {
     const showModalTrigger = findAllDOMElements(this.opts.trigger)
     if (!this.opts.inline && showModalTrigger) {
-      showModalTrigger.forEach((trigger) => {
+      for (const trigger of showModalTrigger) {
         trigger.removeEventListener('click', this.openModal)
-      })
+      }
     }
 
     this.stopListeningToResize()
+    document.removeEventListener('keydown', this.handleKeyDownInModal)
     document.removeEventListener('paste', this.handlePasteOnBody)
     window.removeEventListener('popstate', this.handlePopState, false)
 
@@ -1275,7 +1277,7 @@ export default class Dashboard<M extends Meta, B extends Body> extends UIPlugin<
   #addSpecifiedPluginsFromOptions = () => {
     const { plugins } = this.opts
 
-    plugins.forEach((pluginID) => {
+    for (const pluginID of plugins) {
       const plugin = this.uppy.getPlugin(pluginID)
       if (plugin) {
         ;(plugin as any).mount(this, plugin)
@@ -1285,7 +1287,7 @@ export default class Dashboard<M extends Meta, B extends Body> extends UIPlugin<
           'warning',
         )
       }
-    })
+    }
   }
 
   #autoDiscoverPlugins = () => {
@@ -1411,10 +1413,10 @@ export default class Dashboard<M extends Meta, B extends Body> extends UIPlugin<
     }
 
     const { plugins } = this.opts
-    plugins.forEach((pluginID) => {
+    for (const pluginID of plugins) {
       const plugin = this.uppy.getPlugin(pluginID)
       if (plugin) (plugin as any).unmount()
-    })
+    }
 
     if (this.opts.theme === 'auto') {
       this.darkModeMediaQuery?.removeListener(this.handleSystemDarkModeChange)
@@ -1424,7 +1426,17 @@ export default class Dashboard<M extends Meta, B extends Body> extends UIPlugin<
       document.body.classList.remove('uppy-Dashboard-isFixed')
     }
 
+    // Like closeModal(), give focus back to where it was before the modal
+    // opened, unless that element has been removed along with the modal.
+    const elementToFocus =
+      !this.opts.inline && this.isModalOpen()
+        ? this.savedActiveElement
+        : undefined
+    this.superFocus.cancel()
+
     this.unmount()
     this.removeEvents()
+
+    if (elementToFocus?.isConnected) elementToFocus.focus()
   }
 }

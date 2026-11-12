@@ -104,13 +104,14 @@ export default class DropTarget<
       }
     }
 
+    // Browsers empty `event.dataTransfer` once this handler yields
+    this.opts.onDrop?.(event)
+
     const files = await getDroppedFiles(event.dataTransfer, { logDropError })
     if (files.length > 0) {
       this.uppy.log('[DropTarget] Files were dropped')
       this.addFiles(files)
     }
-
-    this.opts.onDrop?.(event)
   }
 
   handleDragOver = (event: DragEvent): void => {
@@ -157,20 +158,20 @@ export default class DropTarget<
       throw new Error(`"${target}" does not match any HTML elements`)
     }
 
-    this.nodes.forEach((node) => {
+    for (const node of this.nodes) {
       node.addEventListener('dragover', this.handleDragOver, false)
       node.addEventListener('dragleave', this.handleDragLeave, false)
       node.addEventListener('drop', this.handleDrop, false)
-    })
+    }
   }
 
   removeListeners = (): void => {
     if (this.nodes) {
-      this.nodes.forEach((node) => {
+      for (const node of this.nodes) {
         node.removeEventListener('dragover', this.handleDragOver, false)
         node.removeEventListener('dragleave', this.handleDragLeave, false)
         node.removeEventListener('drop', this.handleDrop, false)
-      })
+      }
     }
   }
 

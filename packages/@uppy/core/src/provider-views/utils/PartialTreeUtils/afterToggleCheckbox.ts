@@ -25,17 +25,21 @@ const percolateDown = (
   id: PartialTreeId,
   shouldMarkAsChecked: boolean,
 ) => {
-  const children = tree.filter(
-    (item) => item.type !== 'root' && item.parentId === id,
-  ) as (PartialTreeFolderNode | PartialTreeFile)[]
+  for (const item of tree) {
+    if (item.type === 'root') {
+      continue
+    }
 
-  children.forEach((item) => {
+    if (item.parentId !== id) {
+      continue
+    }
+
     item.status =
       shouldMarkAsChecked && !(item.type === 'file' && item.restrictionError)
         ? 'checked'
         : 'unchecked'
     percolateDown(tree, item.id, shouldMarkAsChecked)
-  })
+  }
 }
 
 /*
@@ -50,7 +54,11 @@ const percolateDown = (
     file       |    file
     file       |    file
 */
-const percolateUp = (tree: PartialTree, id: PartialTreeId) => {
+const percolateUp = (
+  tree: PartialTree,
+  id: PartialTreeId,
+  loadedPagesOnly: boolean,
+) => {
   const folder = tree.find((item) => item.id === id) as PartialTreeFolder
   if (folder.type === 'root') return
 
@@ -85,7 +93,14 @@ const percolateUp = (tree: PartialTree, id: PartialTreeId) => {
    * Later, when the user navigates to any of "foo", "bar", "new" through the Normal View (via breadcrumbs or manually),
    * PartialTreeUtils.afterOpenFolder would then incorrectly mark and display all its children as checked.
    */
-  if (areAllChildrenChecked && folder.cached) {
+  // In manager mode a folder with unloaded pages is never "all checked" from
+  // its loaded children: its next page would come in checked, and a bulk
+  // delete would then hit files nobody saw.
+  if (
+    areAllChildrenChecked &&
+    folder.cached &&
+    !(loadedPagesOnly && folder.nextPagePath)
+  ) {
     folder.status = 'checked'
   } else if (areAllChildrenUnchecked) {
     folder.status = 'unchecked'
@@ -93,12 +108,13 @@ const percolateUp = (tree: PartialTree, id: PartialTreeId) => {
     folder.status = 'partial'
   }
 
-  percolateUp(tree, folder.parentId)
+  percolateUp(tree, folder.parentId, loadedPagesOnly)
 }
 
 const afterToggleCheckbox = (
   oldTree: PartialTree,
   checkedIds: string[],
+  loadedPagesOnly = false,
 ): PartialTree => {
   const tree: PartialTree = shallowClone(oldTree)
 
@@ -106,7 +122,7 @@ const afterToggleCheckbox = (
     (item) => item.type !== 'root' && checkedIds.includes(item.id),
   ) as (PartialTreeFile | PartialTreeFolderNode)[]
 
-  newlyCheckedItems.forEach((item) => {
+  for (const item of newlyCheckedItems) {
     // allow toggling:
     const newStatus = item.status === 'checked' ? 'unchecked' : 'checked'
     // and if it's a file, we need to respect restrictions
@@ -117,10 +133,12 @@ const afterToggleCheckbox = (
     }
 
     percolateDown(tree, item.id, item.status === 'checked')
-  })
+  }
 
-  // all checked items have the same parent so we only need to perlocate the first item
-  percolateUp(tree, newlyCheckedItems[0].parentId)
+  // A range from a custom UI can span folders: recompute each parent.
+  for (const parentId of new Set(newlyCheckedItems.map((i) => i.parentId))) {
+    percolateUp(tree, parentId, loadedPagesOnly)
+  }
   return tree
 }
 
