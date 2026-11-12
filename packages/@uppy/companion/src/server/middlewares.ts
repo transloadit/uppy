@@ -181,7 +181,15 @@ export const gentleVerifyToken: RequestHandler = (req, _res, next) => {
   next()
 }
 
-export const cookieAuthToken: RequestHandler = (req, _res, next) => {
+export const cookieAuthToken: RequestHandler = (req, res, next) => {
+  const origin = req.get('origin')
+  const { server } = req.companion.options
+  if (origin && origin !== `${server.protocol}://${server.host}`) {
+    // Ordinary cross-origin <img> loads send no Origin. A credentialed fetch
+    // must not read another tenant's cookie-authenticated thumbnail.
+    res.sendStatus(403)
+    return
+  }
   const oauthProvider = req.companion.providerClass?.oauthProvider
   if (oauthProvider == null || oauthProvider.length === 0) {
     return next()
@@ -305,7 +313,10 @@ export const getCompanionMiddleware = (
 
   const middleware = (req: Request, _res: Response, next: NextFunction) => {
     const authToken =
-      req.header('uppy-auth-token') || req.query['uppyAuthToken']
+      req.header('uppy-auth-token') ||
+      (/^\/[^/]+\/send-token\/?$/.test(req.path)
+        ? req.query['uppyAuthToken']
+        : undefined)
 
     req.companion = {
       options,

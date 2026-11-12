@@ -11,6 +11,7 @@ export type GrantProviderStaticConfig = Pick<
   | 'scope'
   | 'custom_params'
 > & {
+  dynamic?: string[]
   transport?: 'session' | 'state' | undefined // more specific types
   custom_params?: Record<string, string> | undefined // we want more specific types than grant's `any`
 }

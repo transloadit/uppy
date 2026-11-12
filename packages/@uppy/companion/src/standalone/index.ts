@@ -153,8 +153,8 @@ export default function server(
 
   const sessionOptions: SessionOptions = {
     secret: companionOptions.secret,
-    resave: true,
-    saveUninitialized: true,
+    resave: false,
+    saveUninitialized: false,
   }
 
   const redisClient = redis.client({
@@ -179,8 +179,14 @@ export default function server(
     maxAge: 10 * 60 * 1000,
   }
 
-  if (process.env['COMPANION_COOKIE_DOMAIN']) {
-    cookieOptions.domain = process.env['COMPANION_COOKIE_DOMAIN']
+  if (companionOptions.server.protocol === 'https') {
+    // Host-prefixed cookies cannot be planted by a sibling subdomain, even
+    // when the operator shares thumbnail cookies through cookieDomain.
+    sessionOptions.name = '__Host-companion.sid'
+    sessionOptions.proxy = true
+    cookieOptions.secure = true
+    cookieOptions.path = '/'
+    cookieOptions.sameSite = 'lax'
   }
 
   sessionOptions.cookie = cookieOptions

@@ -57,8 +57,6 @@ function encodeStateAndRedirect(
             ? queryValue[0]
             : undefined
 
-      // note: when using credentialsURL (dynamic oauth credentials), dynamic has ['key', 'secret', 'redirect_uri']
-      // but in that case, query string is empty, so we need to only fetch these parameters from QS if they exist.
       if (!queryValueString) return []
       return [[dynamicKey, queryValueString]]
     }),

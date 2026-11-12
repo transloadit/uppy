@@ -70,6 +70,7 @@ declare global {
 declare module 'express-session' {
   export interface Session {
     grant?: {
+      provider?: string
       state?: string | null
       dynamic?: GrantDynamic | null
       response?: {
