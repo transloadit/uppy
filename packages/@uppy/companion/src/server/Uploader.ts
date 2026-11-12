@@ -6,12 +6,14 @@ import { join } from 'node:path'
 import {
   type EventEmitter,
   type Readable as NodeReadableStream,
+  Readable,
   Transform,
 } from 'node:stream'
 import { pipeline } from 'node:stream/promises'
 import type { PutObjectCommandInput, S3Client } from '@aws-sdk/client-s3'
 import { Upload } from '@aws-sdk/lib-storage'
 import type { Request } from 'express'
+import { FormDataEncoder } from 'form-data-encoder'
 import { FormData } from 'formdata-node'
 import type { OptionsOfTextResponseBody, Response } from 'got'
 import got from 'got'
@@ -1117,8 +1119,6 @@ export default class Uploader {
     let framingError: Error | undefined
     const reqOptions: OptionsOfTextResponseBody = {
       headers: headerSanitize(this.options.headers),
-      isStream: false,
-      resolveBodyOnly: false,
       responseType: 'text',
       // The body is a one-shot stream (or FormData wrapping one). got retries
       // PUT on network errors by default; the retry fired after this promise
@@ -1155,8 +1155,9 @@ export default class Uploader {
         },
       })
 
-      // @ts-expect-error This type error will be resolved by updating to the latest `got`.
-      reqOptions.body = formData
+      const encoder = new FormDataEncoder(formData)
+      reqOptions.headers = { ...reqOptions.headers, ...encoder.headers }
+      reqOptions.body = Readable.from(encoder)
     } else {
       if (this.size != null) {
         reqOptions.headers = {

@@ -198,7 +198,7 @@ export class Drive extends Provider<GoogleUserSession> {
         const client = getClient({ token })
 
         async function fetchSharedDrives(
-          pageToken: string | null = null,
+          pageToken?: string,
         ): Promise<DriveSharedDrivesResponse | undefined> {
           const shouldListSharedDrives = isRoot && !cursor
           if (!shouldListSharedDrives) return undefined
