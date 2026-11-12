@@ -82,7 +82,10 @@ jobs:
           --health-retries 5
     strategy:
       matrix:
-        node-version: ['22.23.4', '24.22.1', '26.12.1']
+        node-version:
+          - '22.23.4'
+          - '24.22.1'
+          - '26.12.1'
     steps:
       - name: Checkout sources
         uses: actions/checkout@v7
