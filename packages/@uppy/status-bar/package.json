@@ -1,7 +1,7 @@
 {
   "name": "@uppy/status-bar",
   "description": "A progress bar for Uppy, with many bells and whistles.",
-  "version": "6.0.0",
+  "version": "6.0.1",
   "license": "MIT",
   "style": "dist/style.min.css",
   "type": "module",
@@ -56,8 +56,8 @@
   "devDependencies": {
     "@uppy-dev/tsconfig": "workspace:^",
     "cssnano": "^8.0.1",
-    "postcss": "^8.5.23",
-    "postcss-cli": "^11.0.1",
+    "postcss": "^8.5.32",
+    "postcss-cli": "^12.0.0",
     "sass": "^1.89.2",
     "typescript": "^6.0.3"
   }

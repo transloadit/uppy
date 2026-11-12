@@ -3,6 +3,7 @@
  * Modified to make it work with Uppy.
  */
 
+import type { Promisable } from 'type-fest'
 import * as C from './consts.js'
 import S3Client from './S3Client.js'
 import { createSigV4Signer } from './signer.js'
@@ -109,7 +110,7 @@ class S3mini extends S3Client {
   }
 
   /** Gets cached credentials or fetches new ones. */
-  private async _getCachedCredentials(): Promise<IT.CredentialsResponse> {
+  private _getCachedCredentials(): Promisable<IT.CredentialsResponse> {
     // Return Cached Credentials if available
     if (this.cachedCredentials != null) {
       return this.cachedCredentials
@@ -176,7 +177,7 @@ class S3mini extends S3Client {
   /**
    * Uploads an object to S3 using XHR for progress tracking.
    */
-  public override async putObject({
+  public override putObject({
     key,
     data,
     fileType = C.DEFAULT_STREAM_CONTENT_TYPE,

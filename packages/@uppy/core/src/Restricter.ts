@@ -166,9 +166,9 @@ class Restricter<M extends Meta, B extends Body> {
     existingFiles: ValidateableFile<M, B>[],
     addingFiles: ValidateableFile<M, B>[],
   ): void {
-    addingFiles.forEach((addingFile) => {
+    for (const addingFile of addingFiles) {
       this.validateSingleFile(addingFile)
-    })
+    }
     this.validateAggregateRestrictions(existingFiles, addingFiles)
   }
 

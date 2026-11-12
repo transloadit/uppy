@@ -1,6 +1,6 @@
 import got from 'got'
 import { isRecord } from '../../helpers/type-guards.js'
-import { prepareStream } from '../../helpers/utils.js'
+import { pathSegment, prepareStream } from '../../helpers/utils.js'
 import logger from '../../logger.js'
 import Provider, {
   type ProviderDownloadOptions,
@@ -42,7 +42,9 @@ function getQueryRecord(query: Query | undefined) {
 }
 
 const getRootPath = (query: Query): string =>
-  query['driveId'] ? `drives/${query['driveId']}` : 'me/drive'
+  query['driveId']
+    ? `drives/${pathSegment(query['driveId'] as string)}`
+    : 'me/drive'
 
 interface OneDriveUserSession {
   accessToken: string
@@ -65,14 +67,14 @@ export default class OneDrive extends Provider<OneDriveUserSession> {
    * @param options.query
    * @param options.providerUserSession
    */
-  override async list({
+  override list({
     directory,
     providerUserSession: { accessToken: token },
     query,
   }: ProviderListOptions<OneDriveUserSession>): Promise<ProviderListResponse> {
     return this.#withErrorHandling('provider.onedrive.list.error', async () => {
       const queryRecord = getQueryRecord(query)
-      const path = directory ? `items/${directory}` : 'root'
+      const path = directory ? `items/${pathSegment(directory)}` : 'root'
       // https://learn.microsoft.com/en-us/graph/query-parameters?tabs=http#top-parameter
       const pageSize = 999
       // const pageSize = 20 // to test pagination easily
@@ -103,7 +105,7 @@ export default class OneDrive extends Provider<OneDriveUserSession> {
     })
   }
 
-  override async download({
+  override download({
     id,
     providerUserSession: { accessToken: token },
     query,
@@ -113,7 +115,7 @@ export default class OneDrive extends Provider<OneDriveUserSession> {
       async () => {
         const queryRecord = getQueryRecord(query)
         const stream = getClient({ token }).stream.get(
-          `${getRootPath(queryRecord)}/items/${id}/content`,
+          `${getRootPath(queryRecord)}/items/${pathSegment(id)}/content`,
           { responseType: 'json' },
         )
         const { size } = await prepareStream(stream)
@@ -122,7 +124,7 @@ export default class OneDrive extends Provider<OneDriveUserSession> {
     )
   }
 
-  override async thumbnail(): Promise<ProviderThumbnailResponse> {
+  override thumbnail(): Promise<ProviderThumbnailResponse> {
     // not implementing this because a public thumbnail from onedrive will be used instead
     logger.error(
       'call to thumbnail is not implemented',
@@ -131,7 +133,7 @@ export default class OneDrive extends Provider<OneDriveUserSession> {
     throw new Error('call to thumbnail is not implemented')
   }
 
-  override async size({
+  override size({
     id,
     query,
     providerUserSession: { accessToken: token },
@@ -139,7 +141,7 @@ export default class OneDrive extends Provider<OneDriveUserSession> {
     return this.#withErrorHandling('provider.onedrive.size.error', async () => {
       const queryRecord = getQueryRecord(query)
       const body = await getClient({ token })
-        .get(`${getRootPath(queryRecord)}/items/${id}`, {
+        .get(`${getRootPath(queryRecord)}/items/${pathSegment(id)}`, {
           responseType: 'json',
         })
         .json<Record<string, unknown>>()
@@ -148,7 +150,7 @@ export default class OneDrive extends Provider<OneDriveUserSession> {
     })
   }
 
-  override async logout(): Promise<ProviderLogoutResponse> {
+  override logout(): ProviderLogoutResponse {
     // apparently M$ doesn't support programmatic oauth2 revoke
     return {
       revoked: false,
@@ -156,7 +158,7 @@ export default class OneDrive extends Provider<OneDriveUserSession> {
     }
   }
 
-  override async refreshToken({
+  override refreshToken({
     clientId,
     clientSecret,
     refreshToken,
@@ -188,7 +190,7 @@ export default class OneDrive extends Provider<OneDriveUserSession> {
     )
   }
 
-  async #withErrorHandling<T>(tag: string, fn: () => Promise<T>): Promise<T> {
+  #withErrorHandling<T>(tag: string, fn: () => Promise<T>): Promise<T> {
     return withProviderErrorHandling({
       fn,
       tag,

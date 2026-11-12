@@ -1,0 +1,127 @@
+---
+slug: /angular
+---
+
+import Tabs from '@theme/Tabs'
+import TabItem from '@theme/TabItem'
+
+# Angular
+
+[Angular][] components for Uppy UI plugins.
+
+## When should I use it?
+
+When you are using the Angular framework and you would like to use one of the UI
+components.
+
+## Install
+
+<Tabs>
+  <TabItem value="npm" label="NPM" default>
+
+```shell
+npm install @uppy/angular
+```
+
+  </TabItem>
+
+  <TabItem value="yarn" label="Yarn">
+
+```shell
+yarn add @uppy/angular
+```
+
+  </TabItem>
+</Tabs>
+
+`@uppy/angular` supports Angular 17, 18, 19, 20, 21 and 22.
+
+:::note
+
+You also need to install the UI plugin you want to use. For instance,
+`@uppy/dashboard`.
+
+:::
+
+To send files to Transloadit, follow the canonical
+[Angular + Uppy + Transloadit guide](/docs/guides/uppy-transloadit#angular). It
+includes the required server-side signing boundary.
+
+## Use
+
+Instead of adding a UI plugin to an Uppy instance with `.use()`, the Uppy
+instance can be passed into components as a `props` prop.
+
+The following plugins are available as Angular component wrappers:
+
+- Import `UppyAngularDashboardModule` used as `<uppy-dashboard>` renders
+  [`@uppy/dashboard`](/docs/dashboard)
+- Import `UppyAngularDashboardModalModule` used as `<uppy-dashboard-modal>`
+  renders [`@uppy/dashboard`](/docs/dashboard) as a modal
+- Import `UppyAngularStatusBarModule` used as `<uppy-status-bar>` renders
+  [`@uppy/status-bar`](/docs/status-bar)
+
+:::note
+
+`UppyAngularDragDropModule` and `UppyAngularProgressBarModule` were removed in
+Uppy 5.0. The [`@uppy/drag-drop`](/docs/drag-drop) plugin is still supported and
+can be used directly with `uppy.use(DragDrop, { target })`.
+
+:::
+
+Each component takes a `props` prop that will be passed to the UI Plugin.
+
+```typescript title="app.module.ts" showLineNumbers
+import { NgModule } from '@angular/core';
+import { UppyAngularDashboardModule } from '@uppy/angular';
+
+import { BrowserModule } from '@angular/platform-browser';
+import { AppComponent } from './app.component';
+
+@NgModule({
+  declarations: [AppComponent],
+  imports: [BrowserModule, UppyAngularDashboardModule],
+  providers: [],
+  bootstrap: [AppComponent],
+})
+class {}
+```
+
+```html title="app.component.html" showLineNumbers
+<uppy-dashboard [uppy]="uppy"> </uppy-dashboard>
+```
+
+You should initialize Uppy as a property of your component.
+
+```typescript title="app.component.ts" showLineNumbers
+import { Component } from '@angular/core'
+import { Uppy } from '@uppy/core'
+
+@Component({
+  selector: 'app-root',
+})
+export class AppComponent {
+  uppy: Uppy = new Uppy({ debug: true, autoProceed: true })
+}
+```
+
+### CSS
+
+All components have their own styling and should be added to your component
+decorator. You can find the CSS import statements in the docs of the UI plugin
+you want to use. For instance, for `@uppy/dashboard`:
+
+```typescript
+import { Component, ViewEncapsulation } from '@angular/core';
+//...
+@Component({
+  // ...
+  encapsulation: ViewEncapsulation.None,
+  styleUrls: [
+    '../node_modules/@uppy/core/css/style.css',
+    '../node_modules/@uppy/dashboard/css/style.css',
+  ],
+})
+```
+
+[angular]: https://angular.io

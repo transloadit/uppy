@@ -62,5 +62,5 @@ const get = async (req: Request, res: Response): Promise<void> => {
 export default () =>
   express
     .Router()
-    .post('/meta', express.json(), meta)
-    .post('/get', express.json(), get)
+    .post('/meta', express.json({ inflate: false }), meta)
+    .post('/get', express.json({ inflate: false }), get)

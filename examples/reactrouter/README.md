@@ -9,21 +9,19 @@ npm install
 npm run dev
 ```
 
-Visit [http://localhost:3000](http://localhost:3000) to explore three upload methods:
+Visit <http://localhost:3000> to explore three upload methods:
+
 - **TUS uploads**: Resumable, perfect for large files
 - **XHR uploads**: Standard HTTP, ideal for regular files
 - **Transloadit uploads**: With powerful file processing capabilities
 
-## What You'll Learn
+## What You’ll Learn
 
 This example demonstrates **three upload approaches** with Uppy in React Router v7:
 
 1. **TUS server setup** with Express middleware for resumable uploads
-2. **XHR uploads** using React Router's native resource routes
+2. **XHR uploads** using React Router’s native resource routes
 3. **Transloadit uploads** with signature generation and file processing
-
-
-
 
 ## Transloadit Setup
 
@@ -41,9 +39,9 @@ export TRANSLOADIT_TEMPLATE_ID="your_template_id_here"
 ```
 
 Or create a `.env` file:
+
 ```env
 TRANSLOADIT_KEY=your_key_here
 TRANSLOADIT_SECRET=your_secret_here
 TRANSLOADIT_TEMPLATE_ID=your_template_id_here
 ```
-

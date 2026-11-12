@@ -1164,7 +1164,7 @@ describe('src/Core', () => {
         store: DeepFrozenStore(),
       })
       core.addUploader((fileIDs) => {
-        fileIDs.forEach((fileID) => {
+        for (const fileID of fileIDs) {
           const file = core.getFile(fileID)
           if (file.name != null && /bar/.test(file.name)) {
             core.emit(
@@ -1173,8 +1173,7 @@ describe('src/Core', () => {
               new Error('This is bar and I do not like bar'),
             )
           }
-        })
-        return Promise.resolve()
+        }
       })
 
       core.addFile({
@@ -1338,14 +1337,13 @@ describe('src/Core', () => {
       let hasError = false
 
       core.addUploader((fileIDs) => {
-        fileIDs.forEach((fileID) => {
+        for (const fileID of fileIDs) {
           const file = core.getFile(fileID)
           if (!hasError) {
             core.emit('upload-error', file, new Error('foo'))
             hasError = true
           }
-        })
-        return Promise.resolve()
+        }
       })
       core.on('upload', onUpload)
       core.on('retry-all', onRetryAll)
