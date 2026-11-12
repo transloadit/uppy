@@ -28,6 +28,8 @@ export default {
     authAborted: 'Authentication aborted',
     googleDrivePickerFailed:
       'Google Drive could not be loaded. If this keeps happening, try allowing third-party cookies for this site.',
+    // Shown when files picked in the Google Picker could not be added.
+    failedToAddFiles: 'Failed to add files',
     companionUnauthorizeHint:
       'To unauthorize to your %{provider} account, please go to %{url}',
     failedToUpload: 'Failed to upload %{file}',
