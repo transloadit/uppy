@@ -8406,14 +8406,19 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@uppy/angular@workspace:packages/@uppy/angular"
   dependencies:
+    "@angular/common": "npm:^22.2.3"
     "@angular/compiler": "npm:^22.2.3"
     "@angular/compiler-cli": "npm:^22.2.3"
     "@angular/core": "npm:^22.2.3"
+    "@angular/platform-browser": "npm:^22.2.3"
     "@uppy-dev/tsconfig": "workspace:^"
+    "@vitest/browser-playwright": "npm:^5.0.5"
     ng-packagr: "npm:^22.2.5"
+    playwright: "npm:1.64.1"
     rxjs: "npm:~7.8.0"
     tslib: "npm:^2.8.1"
     typescript: "npm:^6.0.3"
+    vitest: "npm:^5.0.5"
   peerDependencies:
     "@angular/core": ^17.0.0 || ^18.0.0 || ^19.0.0 || ^20.0.0 || ^21.0.0 || ^22.0.0
     "@uppy/core": "workspace:^"
