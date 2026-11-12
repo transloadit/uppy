@@ -72,11 +72,11 @@ const defaultEnv = {
 } satisfies Record<string, string | number | undefined>
 
 function updateEnv(env: Record<string, string | number | undefined>): void {
-  Object.keys(env).forEach((key) => {
+  for (const key of Object.keys(env)) {
     const value = env[key]
     if (value == null) delete process.env[key]
     else process.env[key] = String(value)
-  })
+  }
 }
 
 export const setDefaultEnv = () => updateEnv(defaultEnv)

@@ -193,7 +193,7 @@ export default class WebdavProvider extends Provider<WebdavUserSession> {
         { signal: AbortSignal.timeout(this.requestTimeoutMs) },
       )
 
-      dir.forEach((item) => {
+      for (const item of dir) {
         const isFolder = item.type === 'directory'
         // The server's own path for the item. Prefixing the client-supplied
         // route id instead let one request allocate (id length × item count)
@@ -229,7 +229,7 @@ export default class WebdavProvider extends Provider<WebdavUserSession> {
           }),
         }
         data.items.push(listItem)
-      })
+      }
 
       return data
     })

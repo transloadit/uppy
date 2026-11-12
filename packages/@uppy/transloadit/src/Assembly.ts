@@ -312,12 +312,14 @@ class TransloaditAssembly extends Emitter {
     const prevUploads = prev.uploads
     const nextUploads = next.uploads
     if (nextUploads != null && prevUploads != null) {
-      Object.keys(nextUploads)
-        .filter((upload) => !Object.hasOwn(prevUploads, upload))
-        .forEach((upload) => {
-          // This is a bit confusing. Not sure why Object.keys was chosen here, because nextUploads is an Array. Object.keys returns strings for array keys ("0", "1", etc.). Typescript expects arrays to be indexed with a number, not a string nextUploads[0], even though JavaScript is fine with it, so we need to type assert here:
-          this.emit('upload', nextUploads[upload as unknown as number])
-        })
+      for (const upload of Object.keys(nextUploads)) {
+        if (Object.hasOwn(prevUploads, upload)) {
+          continue
+        }
+
+        // This is a bit confusing. Not sure why Object.keys was chosen here, because nextUploads is an Array. Object.keys returns strings for array keys ("0", "1", etc.). Typescript expects arrays to be indexed with a number, not a string nextUploads[0], even though JavaScript is fine with it, so we need to type assert here:
+        this.emit('upload', nextUploads[upload as unknown as number])
+      }
     }
 
     if (executing) {
@@ -328,16 +330,18 @@ class TransloaditAssembly extends Emitter {
     const nextResultsMap = next.results
     const prevResultsMap = prev.results
     if (nextResultsMap != null && prevResultsMap != null) {
-      Object.keys(nextResultsMap).forEach((stepName) => {
+      for (const stepName of Object.keys(nextResultsMap)) {
         const nextResults = nextResultsMap[stepName] ?? []
         const prevResults = prevResultsMap[stepName] ?? []
 
-        nextResults
-          .filter((n) => !prevResults?.some((p) => p.id === n.id))
-          .forEach((result) => {
-            this.emit('result', stepName, result)
-          })
-      })
+        for (const result of nextResults) {
+          if (prevResults?.some((p) => p.id === result.id)) {
+            continue
+          }
+
+          this.emit('result', stepName, result)
+        }
+      }
     }
 
     if (isStatus(nextStatus, ASSEMBLY_COMPLETED)) {
