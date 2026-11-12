@@ -14,6 +14,6 @@
   "type": "module",
   "scripts": {
     "start": "php -S localhost:8080 serve.php",
-    "outputBundle": "esbuild --format=esm --sourcemap=inline --bundle ./main.js"
+    "outputBundle": "esbuild --format=esm --sourcemap=inline --bundle ./main.ts"
   }
 }

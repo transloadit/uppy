@@ -1,12 +1,16 @@
 import classNames from 'classnames'
 import type { h } from 'preact'
 import type {
+  Body,
+  Meta,
   PartialTreeFile,
   PartialTreeFolderNode,
   PartialTreeId,
 } from '../../index.js'
 import type { I18n } from '../../utils/index.js'
+import type { ProviderAction } from '../ProviderView/ProviderView.js'
 import GridItem from './components/GridItem.js'
+import ItemActionsMenu from './components/ItemActionsMenu.js'
 import ListItem from './components/ListItem.js'
 
 type ItemProps = {
@@ -17,6 +21,10 @@ type ItemProps = {
   showTitles: boolean
   i18n: I18n
   utmSource: string
+  actions?: Pick<ProviderAction<Meta, Body>, 'appliesTo'>[]
+  menuOpen?: boolean
+  /** Opens or closes this item's actions menu; no menu without it. */
+  toggleMenu?: ((anchor: HTMLElement) => void) | undefined
 }
 
 export default function Item(props: ItemProps): h.JSX.Element {
@@ -28,7 +36,21 @@ export default function Item(props: ItemProps): h.JSX.Element {
     openFolder,
     file,
     utmSource,
+    actions = [],
+    menuOpen = false,
+    toggleMenu,
   } = props
+
+  const actionsMenu =
+    actions.length > 0 && toggleMenu ? (
+      <ItemActionsMenu
+        file={file}
+        actions={actions}
+        open={menuOpen}
+        onToggle={toggleMenu}
+        i18n={i18n}
+      />
+    ) : null
 
   const restrictionError = file.type === 'folder' ? null : file.restrictionError
   const isDisabled = !!restrictionError && file.status !== 'checked'
@@ -51,6 +73,7 @@ export default function Item(props: ItemProps): h.JSX.Element {
     ),
     isDisabled,
     restrictionError,
+    actionsMenu,
   }
 
   switch (viewType) {

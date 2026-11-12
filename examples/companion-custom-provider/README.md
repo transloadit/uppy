@@ -1,6 +1,6 @@
 # Uppy + Companion + Custom Provider Example
 
-This example uses @uppy/companion with a dummy custom provider. This serves as
+This example uses @uppy/companion with a custom example provider. This serves as
 an illustration on how integrating custom providers would work
 
 ## Run it
@@ -22,5 +22,5 @@ commands:
 ```sh
 corepack yarn install
 corepack yarn build
-corepack yarn workspace @uppy-example/custom-provider start
+corepack yarn workspace example-companion-custom-provider start
 ```

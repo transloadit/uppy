@@ -1,6 +1,6 @@
 import { useScreenCapture } from '@uppy/react'
 import { useEffect } from 'react'
-import MediaCapture from './MediaCapture.tsx'
+import { MediaCapture } from './MediaCapture.tsx'
 
 export interface ScreenCaptureProps {
   close: () => void
@@ -41,5 +41,3 @@ export function ScreenCapture({ close }: ScreenCaptureProps) {
     />
   )
 }
-
-export default ScreenCapture

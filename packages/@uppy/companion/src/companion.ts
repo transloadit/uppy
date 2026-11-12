@@ -1,5 +1,6 @@
 import { randomUUID } from 'node:crypto'
 import cookieParser from 'cookie-parser'
+import type { Express, RequestHandler } from 'express'
 import express from 'express'
 import interceptor from 'express-interceptor'
 import grant from 'grant'
@@ -20,6 +21,7 @@ import * as controllers from './server/controllers/index.js'
 import s3 from './server/controllers/s3.js'
 import searchController from './server/controllers/search.js'
 import url from './server/controllers/url.js'
+import type { EmitterLike } from './server/emitter/index.js'
 import createEmitter from './server/emitter/index.js'
 import { getURLBuilder } from './server/helpers/utils.js'
 import * as jobs from './server/jobs.js'
@@ -38,6 +40,9 @@ import * as redis from './server/redis.js'
 import socket from './server/socket.js'
 import type { CompanionRuntimeOptions } from './types/companion-options.js'
 
+export type { ProviderListResponse } from './server/provider/Provider.js'
+export type { CompanionInitOptions }
+
 export { socket }
 
 const grantConfig = grantConfigFn()
@@ -50,13 +55,20 @@ export function setLoggerProcessName({
   }
 }
 
+// Only grant's OAuth callback response needs the error-body rewrite below.
+// express-interceptor replaces res.write on every response it is mounted on
+// with one that returns undefined, which strips backpressure from streamed
+// responses (e.g. thumbnails), so it must run on this path alone.
+export const shouldInterceptGrantError = (path: string): boolean =>
+  /^\/connect\/\w+\/callback/.test(path)
+
 // intercepts grantJS' default response error when something goes
 // wrong during oauth process.
 const interceptGrantErrorResponse = interceptor((req, res) => {
   return {
     isInterceptable: () => {
       // match grant.js' callback url
-      return /^\/connect\/\w+\/callback/.test(req.path)
+      return shouldInterceptGrantError(req.path)
     },
     intercept: (body, send) => {
       const unwantedBody =
@@ -93,7 +105,10 @@ export const errors = {
 /**
  * Entry point into initializing the Companion app.
  */
-export function app(optionsArg: CompanionInitOptions) {
+export function app(optionsArg: CompanionInitOptions): {
+  app: Express
+  emitter: EmitterLike
+} {
   setLoggerProcessName(optionsArg)
 
   validateConfig(optionsArg)
@@ -136,14 +151,46 @@ export function app(optionsArg: CompanionInitOptions) {
 
   app.use(cookieParser()) // server tokens are added to cookies
 
-  app.use(interceptGrantErrorResponse)
+  app.use((req, res, next) =>
+    shouldInterceptGrantError(req.path)
+      ? interceptGrantErrorResponse(req, res, next)
+      : next(),
+  )
+
+  // Grant stores an OAuth2 callback without `code` as the provider's response
+  // unchecked, and compares `state` only when the session has one. Let through
+  // only real authorization codes from a flow this session started, and errors.
+  const rejectUnstartedOAuthCallback: RequestHandler<{
+    oauthProvider: string
+    override?: string
+  }> = (req, res, next) => {
+    const { oauthProvider, override } = req.params
+    // override === 'callback' is Grant's own callback URL, matched the way Grant matches it
+    if (override !== 'callback' || grantConfig[oauthProvider]?.oauth === 1) {
+      next()
+      return
+    }
+    // same input object Grant reads
+    const input: Record<string, unknown> =
+      Object.keys(req.query).length > 0 ? req.query : (req.body ?? {})
+    if (input['code'] ? !req.session?.grant?.state : !input['error']) {
+      // Also what an expired session looks like: tell the user to retry.
+      res
+        .status(400)
+        .send('This login did not start here or has expired. Please try again.')
+      return
+    }
+    next()
+  }
 
   // override provider credentials at request time
   // Making `POST` request to the `/connect/:provider{/:override}` route requires a form body parser middleware:
   // See https://github.com/simov/grant#dynamic-http
   app.use(
     '/connect/:oauthProvider{/:override}',
-    express.urlencoded({ extended: false }),
+    express.urlencoded({ extended: false, inflate: false }),
+    // before the credentials middleware, which fetches provider keys
+    rejectUnstartedOAuthCallback,
     getCredentialsOverrideMiddleware(
       providers as Record<string, typeof Provider>,
       options,
@@ -151,7 +198,7 @@ export function app(optionsArg: CompanionInitOptions) {
   )
   app.use(grant.default.express(grantConfig))
 
-  app.use((req, res, next) => {
+  app.use((_req, res, next) => {
     if (options.sendSelfEndpoint) {
       const { protocol } = options.server
       res.header('i-am', `${protocol}://${options.sendSelfEndpoint}`)
@@ -170,8 +217,8 @@ export function app(optionsArg: CompanionInitOptions) {
 
   app.post(
     '/:providerName/preauth',
-    express.json(),
-    express.urlencoded({ extended: false }),
+    express.json({ inflate: false }),
+    express.urlencoded({ extended: false, inflate: false }),
     middlewares.hasSessionAndProvider,
     middlewares.hasBody,
     middlewares.hasOAuthProvider,
@@ -204,7 +251,7 @@ export function app(optionsArg: CompanionInitOptions) {
   )
   app.post(
     '/:providerName/deauthorization/callback',
-    express.json(),
+    express.json({ inflate: false }),
     middlewares.hasSessionAndProvider,
     middlewares.hasBody,
     middlewares.hasOAuthProvider,
@@ -227,7 +274,7 @@ export function app(optionsArg: CompanionInitOptions) {
 
   app.post(
     '/:providerName/simple-auth',
-    express.json(),
+    express.json({ inflate: false }),
     middlewares.hasSessionAndProvider,
     middlewares.hasBody,
     middlewares.hasSimpleAuthProvider,
@@ -256,15 +303,25 @@ export function app(optionsArg: CompanionInitOptions) {
 
   app.post(
     '/:providerName/get/:id',
-    express.json(),
+    express.json({ inflate: false }),
     middlewares.hasSessionAndProvider,
     middlewares.verifyToken,
     controllers.get,
   )
+
+  // Mutations (delete / move / create folder) for providers that support them
+  app.post(
+    '/:providerName/mutate/:operation',
+    express.json({ inflate: false }),
+    middlewares.hasSessionAndProvider,
+    middlewares.hasMutationProvider,
+    middlewares.verifyToken,
+    controllers.mutate,
+  )
   // backwards compat:
   app.post(
     '/search/:providerName/get/:id',
-    express.json(),
+    express.json({ inflate: false }),
     middlewares.hasSessionAndProvider,
     middlewares.verifyToken,
     controllers.get,
@@ -297,7 +354,12 @@ export function app(optionsArg: CompanionInitOptions) {
       const { providerName } = req.params
       // for simplicity, we just return the normal credentials for the provider, but in a real-world scenario,
       // we would query based on parameters
-      const { key, secret } = options.providerOptions[providerName]!
+      const providerOptions = options.providerOptions[providerName]
+      if (!providerOptions) {
+        res.sendStatus(400)
+        return
+      }
+      const { key, secret } = providerOptions
 
       function getTransloaditGateway() {
         const oauthProvider = getOauthProvider(providerName)

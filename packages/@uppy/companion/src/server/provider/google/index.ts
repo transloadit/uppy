@@ -1,24 +1,30 @@
 import got from 'got'
+import type {
+  ProviderLogoutOptions,
+  ProviderLogoutResponse,
+  ProviderRefreshTokenOptions,
+  ProviderRefreshTokenResponse,
+} from '../Provider.js'
 import { withGoogleErrorHandling } from '../providerErrors.js'
 
 /**
  * Reusable google stuff
  */
 
+export interface GoogleUserSession {
+  accessToken: string
+}
+
 const getOauthClient = () =>
   got.extend({
     prefixUrl: 'https://oauth2.googleapis.com',
   })
 
-export async function refreshToken({
+export function refreshToken({
   clientId,
   clientSecret,
   refreshToken: theRefreshToken,
-}: {
-  clientId: string | undefined
-  clientSecret: string | undefined
-  refreshToken: string
-}): Promise<{ accessToken: string }> {
+}: ProviderRefreshTokenOptions): Promise<ProviderRefreshTokenResponse> {
   return withGoogleErrorHandling(
     'google',
     'provider.google.token.refresh.error',
@@ -43,11 +49,9 @@ export async function refreshToken({
   )
 }
 
-export async function logout({
+export function logout({
   providerUserSession: { accessToken: token },
-}: {
-  providerUserSession: { accessToken: string }
-}): Promise<{ revoked: true }> {
+}: ProviderLogoutOptions<GoogleUserSession>): Promise<ProviderLogoutResponse> {
   return withGoogleErrorHandling(
     'google',
     'provider.google.logout.error',

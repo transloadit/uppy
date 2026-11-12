@@ -1,0 +1,594 @@
+import '@uppy-dev/msw-setup'
+import { network } from 'virtual:msw'
+import Core from '@uppy/core'
+import { RateLimitedQueue } from '@uppy/core/utils'
+import Transloadit from '@uppy/transloadit'
+import { HttpResponse, http } from 'msw'
+import { describe, expect, it, vi } from 'vitest'
+import Assembly from '../lib/Assembly.js'
+
+// Transloadit reports client-side upload failures to this endpoint. Several
+// tests deliberately fail an upload, so mock it for every test to keep the
+// beacon from reaching the real service.
+network.resetHandlers(
+  http.post('https://transloaditstatus.com/client_error', () =>
+    HttpResponse.json({ ok: true }),
+  ),
+)
+
+describe('Transloadit', () => {
+  it('Does not leave lingering progress if getAssemblyOptions fails', async () => {
+    const error = new Error('expected failure')
+    using uppy = new Core()
+    uppy.use(Transloadit, {
+      assemblyOptions() {
+        return Promise.reject(error)
+      },
+    })
+
+    uppy.addFile({
+      source: 'test',
+      name: 'abc',
+      data: new Uint8Array(100),
+    })
+
+    await expect(uppy.upload()).rejects.toBe(error)
+
+    const fileID = Object.keys(uppy.getState().files)[0]
+
+    expect(uppy.getFile(fileID).progress.uploadStarted).toBe(null)
+  })
+
+  it('Does not leave lingering progress if creating assembly fails', async () => {
+    using uppy = new Core()
+    uppy.use(Transloadit, {
+      assemblyOptions: {
+        params: {
+          auth: { key: 'some auth key string' },
+          template_id: 'some template id string',
+        },
+      },
+    })
+
+    uppy.getPlugin('Transloadit').client.createAssembly = () =>
+      Promise.reject(new Error('VIDEO_ENCODE_VALIDATION'))
+
+    uppy.addFile({
+      source: 'test',
+      name: 'abc',
+      data: new Uint8Array(100),
+    })
+
+    await expect(uppy.upload()).rejects.toThrow(
+      'Transloadit: Could not create Assembly: VIDEO_ENCODE_VALIDATION',
+    )
+
+    const fileID = Object.keys(uppy.getState().files)[0]
+
+    expect(uppy.getFile(fileID).progress.uploadStarted).toBe(null)
+  })
+
+  it('should complete when resuming after pause', async () => {
+    const assemblyStatusBase = {
+      assembly_id: 'test-assembly-id',
+      websocket_url: 'ws://localhost:8080',
+      tus_url: 'http://localhost/resumable/files/',
+      assembly_ssl_url:
+        'https://api2.transloadit.com/assemblies/test-assembly-id',
+    }
+
+    const tusUploads = new Map()
+    let uploadIndex = 0
+    const tusBaseUrl = 'http://localhost/resumable/files/'
+
+    network.use(
+      http.options('http://localhost/resumable/files*', () => {
+        return new HttpResponse(null, {
+          status: 204,
+          headers: {
+            'Tus-Resumable': '1.0.0',
+            'Tus-Version': '1.0.0',
+            'Tus-Extension': 'creation,creation-defer-length',
+          },
+        })
+      }),
+      http.post('http://localhost/resumable/files*', ({ request }) => {
+        const uploadLengthHeader = request.headers.get('upload-length')
+        const uploadLength = uploadLengthHeader ? Number(uploadLengthHeader) : 0
+        const uploadId = `test-upload-${uploadIndex++}`
+        tusUploads.set(uploadId, {
+          length: Number.isNaN(uploadLength) ? 0 : uploadLength,
+          offset: 0,
+        })
+
+        return new HttpResponse(null, {
+          status: 201,
+          headers: {
+            Location: `${tusBaseUrl}${uploadId}`,
+            'Upload-Offset': '0',
+            'Tus-Resumable': '1.0.0',
+          },
+        })
+      }),
+      http.head('http://localhost/resumable/files/:uploadId', ({ params }) => {
+        const upload = tusUploads.get(params.uploadId)
+        if (!upload) {
+          return new HttpResponse(null, { status: 404 })
+        }
+        return new HttpResponse(null, {
+          status: 200,
+          headers: {
+            'Upload-Offset': String(upload.offset),
+            'Upload-Length': String(upload.length),
+            'Tus-Resumable': '1.0.0',
+          },
+        })
+      }),
+      http.patch(
+        'http://localhost/resumable/files/:uploadId',
+        async ({ request, params }) => {
+          const upload = tusUploads.get(params.uploadId)
+          if (!upload) {
+            return new HttpResponse(null, { status: 404 })
+          }
+          if (upload.offset === 0) {
+            await new Promise((resolve) => setTimeout(resolve, 200))
+          }
+          const body = await request.arrayBuffer()
+          const offsetHeader = request.headers.get('upload-offset')
+          const baseOffset = offsetHeader ? Number(offsetHeader) : upload.offset
+          const nextOffset = baseOffset + body.byteLength
+          upload.offset = nextOffset
+
+          return new HttpResponse(null, {
+            status: 204,
+            headers: {
+              'Upload-Offset': String(nextOffset),
+              'Tus-Resumable': '1.0.0',
+            },
+          })
+        },
+      ),
+      http.post('https://api2.transloadit.com/assemblies', () => {
+        return HttpResponse.json({
+          ...assemblyStatusBase,
+          ok: 'ASSEMBLY_EXECUTING',
+        })
+      }),
+      http.get('https://api2.transloadit.com/assemblies/*', () => {
+        return HttpResponse.json({
+          ...assemblyStatusBase,
+          ok: 'ASSEMBLY_COMPLETED',
+          results: {},
+        })
+      }),
+    )
+
+    using uppy = new Core()
+    const successSpy = vi.fn()
+    uppy.on('complete', successSpy)
+    uppy.use(Transloadit, {
+      assemblyOptions: {
+        params: {
+          auth: { key: 'test-auth-key' },
+          template_id: 'test-template-id',
+        },
+      },
+    })
+
+    // Plugin state should start empty; track every distinct `ok` that lands in
+    // it so we can verify the assembly lifecycle is reflected.
+    expect(uppy.getState().plugins.Transloadit.assemblyStatus).toBeUndefined()
+    const okHistory = []
+    const unsubscribe = uppy.store.subscribe((_prev, next) => {
+      const ok = next.plugins.Transloadit.assemblyStatus?.ok
+      if (ok && ok !== okHistory.at(-1)) okHistory.push(ok)
+    })
+
+    uppy.addFile({
+      source: 'test',
+      name: 'cat.jpg',
+      data: new File([new Uint8Array([1, 2, 3, 4, 5])], 'cat.jpg', {
+        type: 'image/jpeg',
+      }),
+    })
+    uppy.addFile({
+      source: 'test',
+      name: 'traffic.jpg',
+      data: new File([new Uint8Array([6, 7, 8, 9, 10, 11])], 'traffic.jpg', {
+        type: 'image/jpeg',
+      }),
+    })
+
+    // Initially should be true
+    expect(uppy.getState().allowNewUpload).toBe(true)
+
+    const uploadPromise = uppy.upload()
+
+    // Should be set to false during upload
+    expect(uppy.getState().allowNewUpload).toBe(false)
+
+    // Trying to add a new file during upload with Transloadit should not be possible
+    expect(() =>
+      uppy.addFile({
+        source: 'test',
+        name: 'additionalFile.jpg',
+        data: new File([new Uint8Array([0])], 'additionalFile.jpg', {
+          type: 'image/jpeg',
+        }),
+      }),
+    ).toThrowError('Cannot add more files')
+
+    await new Promise((resolve) => setTimeout(resolve, 100))
+    uppy.pauseAll()
+    uppy.resumeAll()
+
+    await uploadPromise
+    unsubscribe()
+
+    expect(successSpy).toHaveBeenCalled()
+
+    // Should be reset to true after upload completes
+    expect(uppy.getState().allowNewUpload).toBe(true)
+
+    // The createAssembly mock returned ASSEMBLY_EXECUTING and the assembly
+    // setter forwarded that status into plugin state during the upload.
+    expect(okHistory).toContain('ASSEMBLY_EXECUTING')
+    // `assemblyStatus` is the live slot — it clears when `this.assembly`
+    // becomes undefined at the end of `#afterUpload`. `lastAssembly` is
+    // intentionally not populated here because no terminal event fires in
+    // this mocked flow (the server keeps returning ASSEMBLY_EXECUTING).
+    expect(uppy.getState().plugins.Transloadit.assemblyStatus).toBeUndefined()
+  })
+
+  it('resets allowNewUpload to true on preprocessor error', async () => {
+    using uppy = new Core()
+    uppy.use(Transloadit, {
+      assemblyOptions: {
+        params: {
+          auth: { key: 'test-auth-key' },
+          template_id: 'test-template-id',
+        },
+      },
+    })
+
+    // Mock createAssembly to throw an error
+    uppy.getPlugin('Transloadit').client.createAssembly = () =>
+      Promise.reject(new Error('Assembly creation failed'))
+
+    uppy.addFile({
+      source: 'test',
+      name: 'test.jpg',
+      data: new Blob(['test file content']),
+    })
+
+    // Initially should be true
+    expect(uppy.getState().allowNewUpload).toBe(true)
+
+    try {
+      await uppy.upload()
+    } catch {
+      // Expected to fail
+    }
+
+    // Should be reset to true after error
+    expect(uppy.getState().allowNewUpload).toBe(true)
+  })
+
+  it('resets allowNewUpload to true on cancel-all', () => {
+    using uppy = new Core()
+    uppy.use(Transloadit, {
+      assemblyOptions: {
+        params: {
+          auth: { key: 'test-auth-key' },
+          template_id: 'test-template-id',
+        },
+      },
+    })
+
+    // Manually set allowNewUpload to false to simulate an upload in progress
+    uppy.setState({ allowNewUpload: false })
+    expect(uppy.getState().allowNewUpload).toBe(false)
+
+    // Simulate cancel-all
+    uppy.cancelAll()
+
+    // Should be reset to true
+    expect(uppy.getState().allowNewUpload).toBe(true)
+  })
+
+  it('resets allowNewUpload to true on error event', () => {
+    using uppy = new Core()
+    uppy.use(Transloadit, {
+      assemblyOptions: {
+        params: {
+          auth: { key: 'test-auth-key' },
+          template_id: 'test-template-id',
+        },
+      },
+    })
+
+    // Manually set allowNewUpload to false to simulate an upload in progress
+    uppy.setState({ allowNewUpload: false })
+    expect(uppy.getState().allowNewUpload).toBe(false)
+
+    // Trigger error event
+    uppy.emit('error', {
+      name: 'TestError',
+      message: 'Test error message',
+    })
+
+    // Should be reset to true
+    expect(uppy.getState().allowNewUpload).toBe(true)
+  })
+
+  it('closes the assembly and clears state as soon as cancel-all fires', async () => {
+    const uppy = new Core()
+    uppy.use(Transloadit, {
+      assemblyOptions: {
+        params: { auth: { key: 'test-auth-key' }, template_id: 'test' },
+      },
+    })
+    const plugin = uppy.getPlugin('Transloadit')
+    const cancelRequest = vi.fn(() => Promise.reject(new Error('offline')))
+    plugin.client.cancelAssembly = cancelRequest
+    const assembly = new Assembly(
+      {
+        assembly_id: 'test-assembly-id',
+        assembly_ssl_url:
+          'https://api2.transloadit.com/assemblies/test-assembly-id',
+        ok: 'ASSEMBLY_EXECUTING',
+      },
+      new RateLimitedQueue(),
+    )
+    plugin.assembly = assembly
+    plugin.setPluginState({ error: new Error('from a previous run') })
+    const cancelSpy = vi.fn()
+    uppy.on('transloadit:assembly-cancel', cancelSpy)
+    expect(uppy.getState().plugins.Transloadit.assemblyStatus?.ok).toBe(
+      'ASSEMBLY_EXECUTING',
+    )
+
+    uppy.cancelAll()
+
+    // Synchronously, before the (failing) cancel request has settled.
+    expect(assembly.closed).toBe(true)
+    expect(uppy.getState().plugins.Transloadit.error).toBeUndefined()
+    // This is what lets the AssemblyWatcher, and so `uppy.upload()`, settle.
+    expect(cancelSpy).toHaveBeenCalledTimes(1)
+    expect(cancelSpy.mock.calls[0][0].assembly_id).toBe('test-assembly-id')
+    expect(uppy.getState().plugins.Transloadit.assemblyStatus).toBeUndefined()
+    expect(uppy.getState().plugins.Transloadit.lastAssemblyStatus?.ok).toBe(
+      'ASSEMBLY_EXECUTING',
+    )
+
+    await new Promise((resolve) => setTimeout(resolve, 0))
+    expect(cancelRequest).toHaveBeenCalledTimes(1)
+    expect(uppy.getState().plugins.Transloadit.assemblyStatus).toBeUndefined()
+  })
+
+  // `assembly_finished` only says the assembly ended: the API sends it after a
+  // cancellation and after a failure too. These cover both, plus the case where
+  // the assembly is cancelled while the final-status request is in flight.
+  const finishedStatus = {
+    assembly_id: 'test-assembly-id',
+    assembly_ssl_url:
+      'https://api2.transloadit.com/assemblies/test-assembly-id',
+    websocket_url: 'ws://localhost:8080',
+    ok: 'ASSEMBLY_EXECUTING',
+    uploads: [],
+    results: {},
+  }
+
+  async function restoreConnectedAssembly(
+    getStatus,
+    { opts = { waitForEncoding: true }, saved = finishedStatus } = {},
+  ) {
+    network.use(
+      http.get('https://api2.transloadit.com/assemblies/*', () =>
+        HttpResponse.json(getStatus()),
+      ),
+    )
+    const uppy = new Core()
+    uppy.use(Transloadit, {
+      ...opts,
+      assemblyOptions: {
+        params: { auth: { key: 'test-auth-key' }, template_id: 'test' },
+      },
+    })
+    const plugin = uppy.getPlugin('Transloadit')
+    plugin.client.cancelAssembly = () => Promise.resolve()
+    uppy.emit('restored', {
+      Transloadit: { assemblyResponse: saved },
+    })
+    await plugin.restored
+    return { uppy, plugin, assembly: plugin.assembly }
+  }
+
+  const settle = () => new Promise((resolve) => setTimeout(resolve, 50))
+
+  it('does not emit complete for an assembly cancelled mid-request', async () => {
+    const status = { ...finishedStatus, ok: 'ASSEMBLY_COMPLETED' }
+    const { uppy, assembly } = await restoreConnectedAssembly(() => status)
+    const events = []
+    uppy.on('transloadit:complete', () => events.push('complete'))
+
+    uppy.cancelAll()
+    assembly.emit('finished')
+    await settle()
+
+    expect(events).toEqual([])
+  })
+
+  it('completes a restored waitForMetadata upload saved as executing', async () => {
+    // SSE advances `ok` to EXECUTING before the metadata is extracted, and
+    // that status is what gets saved. After a reload the refetch must still
+    // produce 'metadata', which is all `waitForMetadata` completes off.
+    const completed = []
+    const { uppy } = await restoreConnectedAssembly(() => finishedStatus, {
+      opts: { waitForMetadata: true },
+    })
+    uppy.on('transloadit:complete', (a) => completed.push(a.ok))
+    await settle()
+
+    expect(completed).toEqual(['ASSEMBLY_EXECUTING'])
+  })
+
+  it('reports an error when the final-status request fails', async () => {
+    // Without a terminal event the AssemblyWatcher never settles, and
+    // `uppy.upload()` hangs.
+    const { uppy, plugin, assembly } = await restoreConnectedAssembly(
+      () => finishedStatus,
+    )
+    plugin.client.getAssemblyStatus = () => Promise.reject(new Error('offline'))
+    const errors = []
+    uppy.on('transloadit:assembly-error', (_status, error) =>
+      errors.push(error.message),
+    )
+
+    assembly.emit('finished')
+    await settle()
+
+    expect(errors).toEqual(['offline'])
+    expect(uppy.getState().plugins.Transloadit.error?.message).toBe('offline')
+  })
+
+  it('still emits complete when the assembly ended by cancellation', async () => {
+    // `transloadit:complete` mirrors `assembly_finished`, which the API sends
+    // on cancellation and failure too. Narrowing it to successes only would
+    // silently strip terminal notifications from existing consumers, so the
+    // event keeps firing and hands over the status to inspect.
+    let status = { ...finishedStatus }
+    const { uppy, assembly } = await restoreConnectedAssembly(() => status)
+    const completed = []
+    uppy.on('transloadit:complete', (a) => completed.push(a.ok))
+
+    status = { ...finishedStatus, ok: 'ASSEMBLY_CANCELED' }
+    assembly.emit('finished')
+    await settle()
+
+    expect(completed).toEqual(['ASSEMBLY_CANCELED'])
+  })
+
+  it('ignores status from an assembly that was replaced', async () => {
+    const {
+      uppy,
+      plugin,
+      assembly: first,
+    } = await restoreConnectedAssembly(() => ({ ...finishedStatus }))
+
+    const second = new Assembly(
+      { ...finishedStatus, assembly_id: 'second-assembly' },
+      new RateLimitedQueue(),
+    )
+    plugin.assembly = second
+    expect(
+      uppy.getState().plugins.Transloadit.assemblyStatus?.assembly_id,
+    ).toBe('second-assembly')
+
+    // The superseded assembly fails. Its status must not reach plugin state,
+    // which is what happened while the setter only detached on clear.
+    first.status = {
+      ...finishedStatus,
+      error: 'ASSEMBLY_CRASHED',
+      message: 'boom',
+    }
+
+    const state = uppy.getState().plugins.Transloadit
+    expect(state.assemblyStatus?.assembly_id).toBe('second-assembly')
+    expect(state.lastAssemblyStatus?.error).toBeUndefined()
+  })
+
+  it('ignores the error of an assembly that is no longer current', async () => {
+    const status = {
+      assembly_id: 'test-assembly-id',
+      assembly_ssl_url:
+        'https://api2.transloadit.com/assemblies/test-assembly-id',
+      websocket_url: 'ws://localhost:8080',
+      ok: 'ASSEMBLY_EXECUTING',
+      uploads: [],
+      results: {},
+    }
+    network.use(
+      http.get('https://api2.transloadit.com/assemblies/*', () =>
+        HttpResponse.json(status),
+      ),
+    )
+
+    const uppy = new Core()
+    uppy.use(Transloadit, {
+      assemblyOptions: {
+        params: { auth: { key: 'test-auth-key' }, template_id: 'test' },
+      },
+    })
+    const plugin = uppy.getPlugin('Transloadit')
+    plugin.client.cancelAssembly = () => Promise.resolve()
+
+    // Restoring is the cheapest way to get a fully connected assembly.
+    uppy.emit('restored', { Transloadit: { assemblyResponse: status } })
+    await plugin.restored
+    const assembly = plugin.assembly
+    expect(assembly).toBeDefined()
+
+    uppy.cancelAll()
+    expect(plugin.assembly).toBeUndefined()
+
+    const errorEvents = []
+    uppy.on('transloadit:assembly-error', () => errorEvents.push('error'))
+    assembly.emit(
+      'error',
+      Object.assign(new Error('late failure'), { error: 'LATE' }),
+    )
+
+    // The stale assembly must not write over the cleared state, but the
+    // event still has to fire so AssemblyWatcher can settle.
+    expect(uppy.getState().plugins.Transloadit.error).toBeUndefined()
+    expect(errorEvents).toEqual(['error'])
+  })
+
+  it('exposes the assembly error in plugin state', async () => {
+    const status = {
+      assembly_id: 'test-assembly-id',
+      assembly_ssl_url:
+        'https://api2.transloadit.com/assemblies/test-assembly-id',
+      websocket_url: 'ws://localhost:8080',
+      ok: 'ASSEMBLY_EXECUTING',
+      uploads: [],
+      results: {},
+    }
+    network.use(
+      http.get('https://api2.transloadit.com/assemblies/*', () =>
+        HttpResponse.json({
+          ...status,
+          ok: undefined,
+          error: 'INVALID_FILE_META_DATA',
+          message: 'One of the files is broken',
+        }),
+      ),
+    )
+
+    const uppy = new Core()
+    uppy.use(Transloadit, {
+      assemblyOptions: {
+        params: { auth: { key: 'test-auth-key' }, template_id: 'test' },
+      },
+    })
+    const plugin = uppy.getPlugin('Transloadit')
+    expect(uppy.getState().plugins.Transloadit.error).toBeUndefined()
+
+    // Restoring reconnects to the assembly and refetches its status, which
+    // is the polling error path.
+    uppy.emit('restored', { Transloadit: { assemblyResponse: status } })
+    await plugin.restored
+
+    const state = uppy.getState().plugins.Transloadit
+    expect(state.error?.message).toBe('One of the files is broken')
+    expect(state.error?.error).toBe('INVALID_FILE_META_DATA')
+    // The live slot is gone; the error keeps the failure until a new
+    // assembly starts.
+    expect(state.assemblyStatus).toBeUndefined()
+
+    plugin.assembly = new Assembly(status, new RateLimitedQueue())
+    expect(uppy.getState().plugins.Transloadit.error).toBeUndefined()
+  })
+})

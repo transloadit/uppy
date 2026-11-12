@@ -18,13 +18,13 @@ class UrlUI extends Component<UrlUIProps> {
     this.form.id = nanoid()
   }
 
-  componentDidMount(): void {
+  override componentDidMount(): void {
     this.input.value = ''
     this.form.addEventListener('submit', this.#handleSubmit)
     document.body.appendChild(this.form)
   }
 
-  componentWillUnmount(): void {
+  override componentWillUnmount(): void {
     this.form.removeEventListener('submit', this.#handleSubmit)
     document.body.removeChild(this.form)
   }

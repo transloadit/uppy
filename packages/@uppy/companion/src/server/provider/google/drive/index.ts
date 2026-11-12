@@ -2,15 +2,21 @@ import type { Readable } from 'node:stream'
 import got from 'got'
 import { MAX_AGE_REFRESH_TOKEN } from '../../../helpers/jwt.js'
 import { isRecord } from '../../../helpers/type-guards.js'
-import { prepareStream } from '../../../helpers/utils.js'
+import { pathSegment, prepareStream } from '../../../helpers/utils.js'
 import logger from '../../../logger.js'
 import { ProviderAuthError } from '../../error.js'
 import Provider, {
+  type ProviderDownloadOptions,
+  type ProviderDownloadResponse,
+  type ProviderListOptions,
   type ProviderListResponse,
-  type Query,
+  type ProviderLogoutOptions,
+  type ProviderLogoutResponse,
+  type ProviderRefreshTokenOptions,
+  type ProviderRefreshTokenResponse,
 } from '../../Provider.js'
 import { withGoogleErrorHandling } from '../../providerErrors.js'
-import { logout, refreshToken } from '../index.js'
+import { type GoogleUserSession, logout, refreshToken } from '../index.js'
 import {
   adaptData,
   type DriveAbout,
@@ -25,7 +31,7 @@ import {
 // For testing refresh token:
 // first run a download with mockAccessTokenExpiredError = true
 // then when you want to test expiry, set to mockAccessTokenExpiredError to the logged access token
-// This will trigger companion/nodemon to restart, and it will respond with a simulated invalid token response
+// This will trigger companion to restart, and it will respond with a simulated invalid token response
 const mockAccessTokenExpiredError: string | true | undefined = undefined
 // const mockAccessTokenExpiredError = true
 // const mockAccessTokenExpiredError = ''
@@ -56,7 +62,7 @@ async function getStats({ id, token }: { id: string; token: string }) {
 
   const getStatsInner = async (statsOfId: string) =>
     client
-      .get(`files/${encodeURIComponent(statsOfId)}`, {
+      .get(`files/${pathSegment(statsOfId)}`, {
         searchParams: { fields: DRIVE_FILE_FIELDS, supportsAllDrives: true },
         responseType: 'json',
       })
@@ -120,30 +126,36 @@ export async function streamGoogleFile({
         responseType: 'json',
       })
     } else {
-      stream = client.stream.get(`files/${encodeURIComponent(id)}/export`, {
+      stream = client.stream.get(`files/${pathSegment(id)}/export`, {
         searchParams: { supportsAllDrives: true, mimeType: mimeType2 },
         responseType: 'json',
       })
     }
   } else {
-    stream = client.stream.get(`files/${encodeURIComponent(id)}`, {
+    stream = client.stream.get(`files/${pathSegment(id)}`, {
       searchParams: { alt: 'media', supportsAllDrives: true },
       responseType: 'json',
     })
   }
 
-  const { size } = await prepareStream(stream)
-  return { stream, size }
-}
+  const { size: contentLength } = await prepareStream(stream)
 
-interface DriveUserSession {
-  accessToken: string
+  // Google doesn't send a Content-Length for `alt=media` downloads, so fall back
+  // to the size from the file metadata. GSuite exports have no fixed size.
+  const statsSize = Number(stats.size)
+  const size =
+    contentLength ??
+    (!isGsuiteFile(mimeType) && Number.isFinite(statsSize) && statsSize > 0
+      ? statsSize
+      : undefined)
+
+  return { stream, size }
 }
 
 /**
  * Adapter for API https://developers.google.com/drive/api/v3/
  */
-export class Drive extends Provider<DriveUserSession> {
+export class Drive extends Provider<GoogleUserSession> {
   static override get oauthProvider() {
     return 'googledrive'
   }
@@ -154,28 +166,23 @@ export class Drive extends Provider<DriveUserSession> {
 
   // Define these as real methods (not prototype assignment), so we don't risk
   // instance fields shadowing the prototype in downlevel transpiles.
-  override logout(args: Parameters<typeof logout>[0]) {
+  override logout(
+    args: ProviderLogoutOptions<GoogleUserSession>,
+  ): Promise<ProviderLogoutResponse> {
     return logout(args)
   }
 
-  override refreshToken(args: {
-    redirectUri: string | undefined
-    clientId: string | undefined
-    clientSecret: string | undefined
-    refreshToken: string
-  }) {
+  override refreshToken(
+    args: ProviderRefreshTokenOptions,
+  ): Promise<ProviderRefreshTokenResponse> {
     return refreshToken(args)
   }
 
-  override async list({
+  override list({
     directory: directoryIn,
     providerUserSession: { accessToken: token },
     query,
-  }: {
-    directory?: string | undefined
-    providerUserSession: DriveUserSession
-    query?: Query | undefined
-  }): Promise<ProviderListResponse> {
+  }: ProviderListOptions<GoogleUserSession>): Promise<ProviderListResponse> {
     return withGoogleErrorHandling(
       Drive.oauthProvider,
       'provider.drive.list.error',
@@ -226,7 +233,7 @@ export class Drive extends Provider<DriveUserSession> {
           return response
         }
 
-        async function fetchFiles() {
+        function fetchFiles() {
           // Shared with me items in root don't have any parents
           const q = isVirtualSharedDirRoot
             ? `sharedWithMe and trashed=false`
@@ -249,7 +256,7 @@ export class Drive extends Provider<DriveUserSession> {
             .json<DriveListResponse>()
         }
 
-        async function fetchAbout() {
+        function fetchAbout() {
           const searchParams = { fields: 'user' }
 
           return client
@@ -275,13 +282,10 @@ export class Drive extends Provider<DriveUserSession> {
     )
   }
 
-  override async download({
+  override download({
     id,
     providerUserSession: { accessToken: token },
-  }: {
-    id: string
-    providerUserSession: DriveUserSession
-  }): Promise<{ stream: Readable; size: number | undefined }> {
+  }: ProviderDownloadOptions<GoogleUserSession>): Promise<ProviderDownloadResponse> {
     if (mockAccessTokenExpiredError != null) {
       logger.warn(`Access token: ${token}`)
 
@@ -294,9 +298,7 @@ export class Drive extends Provider<DriveUserSession> {
     return withGoogleErrorHandling(
       Drive.oauthProvider,
       'provider.drive.download.error',
-      async () => {
-        return streamGoogleFile({ token, id })
-      },
+      () => streamGoogleFile({ token, id }),
     )
   }
 }

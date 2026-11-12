@@ -1,0 +1,18 @@
+{
+  "extends": "@tsconfig/docusaurus",
+  "references": [
+    { "path": "../packages/@uppy/drag-drop/tsconfig.build.json" },
+    { "path": "../packages/@uppy/react/tsconfig.build.json" },
+    { "path": "../packages/uppy/tsconfig.build.json" }
+  ],
+  "exclude": ["build", "node_modules"],
+  "compilerOptions": {
+    "baseUrl": null,
+    "jsx": "react-jsx",
+    "resolveJsonModule": true,
+    "skipLibCheck": true,
+    "paths": {
+      "@site/*": ["./*"]
+    }
+  }
+}

@@ -10,8 +10,8 @@ import type {
 import { UIPlugin } from '@uppy/core'
 import {
   type CompanionPluginOptions,
+  defaultStorage,
   Provider,
-  tokenStorage,
 } from '@uppy/core/companion-client'
 import { ProviderViews, SearchView } from '@uppy/core/provider-views'
 import type { I18n, LocaleStrings } from '@uppy/core/utils'
@@ -25,7 +25,7 @@ class WebdavSimpleAuthProvider<M extends Meta, B extends Body> extends Provider<
   M,
   B
 > {
-  async login({
+  override login({
     authFormData,
     uppyVersions = '',
     signal,
@@ -37,12 +37,12 @@ class WebdavSimpleAuthProvider<M extends Meta, B extends Body> extends Provider<
     return this.loginSimpleAuth({ uppyVersions, authFormData, signal })
   }
 
-  async logout<ResBody>(): Promise<ResBody> {
+  override async logout<ResBody>(): Promise<ResBody> {
     await this.removeAuthToken()
     return {
       ok: true,
       revoked: true,
-    } as unknown as ResBody
+    } as ResBody
   }
 }
 
@@ -98,7 +98,7 @@ export default class Webdav<M extends Meta, B extends Body>
     this.id = this.opts.id || 'WebDav'
     this.type = 'acquirer'
     this.files = []
-    this.storage = this.opts.storage || tokenStorage
+    this.storage = this.opts.storage || defaultStorage
 
     this.defaultLocale = locale
     this.i18nInit()
@@ -132,7 +132,7 @@ export default class Webdav<M extends Meta, B extends Body>
     this.render = this.render.bind(this)
   }
 
-  install() {
+  override install() {
     this.view = new ProviderViews(this, {
       provider: this.provider,
       viewType: 'list',
@@ -150,12 +150,12 @@ export default class Webdav<M extends Meta, B extends Body>
     }
   }
 
-  uninstall() {
+  override uninstall() {
     this.view.tearDown()
     this.unmount()
   }
 
-  render(state: unknown): ComponentChild {
+  override render(state: unknown): ComponentChild {
     return this.view.render(state)
   }
 }

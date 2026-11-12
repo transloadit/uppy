@@ -1,27 +1,82 @@
+import type {
+  Body,
+  Meta,
+  State,
+  UIPlugin,
+  UIPluginOptions,
+  Uppy,
+} from '@uppy/core'
+import type { I18n } from '@uppy/core/utils'
 import { useRef } from '@uppy/core/utils/preact/hooks'
 import classNames from 'classnames'
+import type {
+  ComponentChildren,
+  MouseEventHandler,
+  TargetedDragEvent,
+} from 'preact'
+import type { DashboardState } from '../Dashboard.js'
 import ignoreEvent from '../utils/ignoreEvent.js'
 
-type $TSFixMe = any
+interface PickerPanelContentProps<M extends Meta, B extends Body> {
+  activePickerPanel: NonNullable<DashboardState<M, B>['activePickerPanel']>
+  className?: string | undefined
+  hideAllPanels: MouseEventHandler<HTMLButtonElement>
+  i18n: I18n
+  state: State<M, B>
+  uppy: Uppy<M, B>
+}
 
-function PickerPanelContent({
+function PickerPanelContent<M extends Meta, B extends Body>({
   activePickerPanel,
   className,
   hideAllPanels,
   i18n,
   state,
   uppy,
-}: $TSFixMe) {
+}: PickerPanelContentProps<M, B>): ComponentChildren {
   const ref = useRef<HTMLDivElement>(null)
+  const activePlugin = uppy.getPlugin(activePickerPanel.id) as
+    | (UIPlugin<UIPluginOptions, M, B> & {
+        // `acceptsFileDrops` is experimental, for the file-management
+        // plugins (`@uppy/s3`); it will change.
+        acceptsFileDrops?: boolean
+      })
+    | undefined
+  // A picker's panel ignores dropped files: they would not end up where it
+  // shows (a Google Drive folder, say). A plugin can opt in with
+  // `acceptsFileDrops` (a storage browser); then the Dashboard takes a drag of
+  // files as it would anywhere else. Not a drag of text or links, nor one over
+  // a text field or an open dialog.
+  const leaveToDashboard = (event: TargetedDragEvent<HTMLDivElement>) => {
+    const target = event.target as Element
+    return (
+      Boolean(activePlugin?.acceptsFileDrops) &&
+      Boolean(event.dataTransfer?.types.includes('Files')) &&
+      target.closest('input, textarea, dialog') == null
+    )
+  }
+  const ignoreDrag = (event: TargetedDragEvent<HTMLDivElement>) => {
+    if (leaveToDashboard(event)) return
+    ignoreEvent(event)
+    // Where that blocked the drop (anywhere but a text field), don't show the
+    // copy cursor that promises one.
+    if (
+      event.type === 'dragover' &&
+      event.defaultPrevented &&
+      event.dataTransfer
+    )
+      event.dataTransfer.dropEffect = 'none'
+  }
+
   return (
     <div
       className={classNames('uppy-DashboardContent-panel', className)}
       role="tabpanel"
       data-uppy-panelType="PickerPanel"
       id={`uppy-DashboardContent-panel--${activePickerPanel.id}`}
-      onDragOver={ignoreEvent}
-      onDragLeave={ignoreEvent}
-      onDrop={ignoreEvent}
+      onDragOver={ignoreDrag}
+      onDragLeave={ignoreDrag}
+      onDrop={ignoreDrag}
       onPaste={ignoreEvent}
     >
       <div className="uppy-DashboardContent-bar">
@@ -42,7 +97,10 @@ function PickerPanelContent({
       </div>
 
       <div ref={ref} className="uppy-DashboardContent-panelBody">
-        {uppy.getPlugin(activePickerPanel.id).render(state, ref.current)}
+        {/* The panel can still be rendered once while its plugin is being
+            removed (uppy.removePlugin / uppy.destroy), so tolerate a
+            missing plugin instead of throwing during teardown. */}
+        {activePlugin?.render(state, ref.current!)}
       </div>
     </div>
   )

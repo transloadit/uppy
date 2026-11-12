@@ -9,9 +9,9 @@ import type {
 import { UIPlugin, type Uppy } from '@uppy/core'
 import {
   type CompanionPluginOptions,
+  defaultStorage,
   getAllowedHosts,
   SearchProvider,
-  tokenStorage,
 } from '@uppy/core/companion-client'
 import { SearchProviderViews } from '@uppy/core/provider-views'
 import type { LocaleStrings } from '@uppy/core/utils'
@@ -47,7 +47,7 @@ export default class Unsplash<M extends Meta, B extends Body>
     super(uppy, opts)
     this.type = 'acquirer'
     this.files = []
-    this.storage = this.opts.storage || tokenStorage
+    this.storage = this.opts.storage || defaultStorage
     this.id = this.opts.id || 'Unsplash'
 
     this.defaultLocale = locale
@@ -90,7 +90,7 @@ export default class Unsplash<M extends Meta, B extends Body>
     })
   }
 
-  install(): void {
+  override install(): void {
     this.view = new SearchProviderViews(this, {
       provider: this.provider,
       viewType: 'unsplash',
@@ -104,11 +104,11 @@ export default class Unsplash<M extends Meta, B extends Body>
     }
   }
 
-  render(state: unknown): ComponentChild {
+  override render(state: unknown): ComponentChild {
     return this.view.render(state)
   }
 
-  uninstall(): void {
+  override uninstall(): void {
     this.unmount()
   }
 }

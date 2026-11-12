@@ -46,9 +46,12 @@ async function startServer() {
     )
 
     // Handle Chrome DevTools requests silently
-    app.get('/.well-known/appspecific/com.chrome.devtools.json', (req, res) => {
-      res.status(404).end()
-    })
+    app.get(
+      '/.well-known/appspecific/com.chrome.devtools.json',
+      (_req, res) => {
+        res.status(404).end()
+      },
+    )
 
     // React Router handles all other routes
     app.all('/{*splat}', reactRouterHandler)
@@ -62,7 +65,7 @@ async function startServer() {
     })
 
     // Graceful shutdown handling
-    const shutdown = async (signal: string) => {
+    const shutdown = (signal: string) => {
       console.log(`\n${signal} received. Shutting down gracefully...`)
 
       server.close(async (err) => {

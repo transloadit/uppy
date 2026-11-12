@@ -3,10 +3,10 @@
 // draging UI elements or pasting anything into any field triggers those events —
 // Url treats them as URLs that need to be imported
 
-type $TSFixMe = any
+import type { TargetedEvent } from 'preact'
 
-function ignoreEvent(ev: $TSFixMe): void {
-  const { tagName } = ev.target
+function ignoreEvent(ev: TargetedEvent<Element>): void {
+  const { tagName } = ev.target as Element
   if (tagName === 'INPUT' || tagName === 'TEXTAREA') {
     ev.stopPropagation()
     return

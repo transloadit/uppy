@@ -34,14 +34,14 @@ type FileListProps<M extends Meta, B extends Body> = {
 function chunks<T>(list: T[], size: number): T[][] {
   const chunked: T[][] = []
   let currentChunk: T[] = []
-  list.forEach((item: T) => {
+  for (const item of list) {
     if (currentChunk.length < size) {
       currentChunk.push(item)
     } else {
       chunked.push(currentChunk)
       currentChunk = [item]
     }
-  })
+  }
   if (currentChunk.length) chunked.push(currentChunk)
   return chunked
 }

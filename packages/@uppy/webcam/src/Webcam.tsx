@@ -9,7 +9,13 @@ import type {
 } from '@uppy/core'
 import { UIPlugin } from '@uppy/core'
 import type { LocaleStrings, LocalUppyFileNonGhost } from '@uppy/core/utils'
-import { canvasToBlob, getFileTypeExtension, mimeTypes } from '@uppy/core/utils'
+import {
+  canvasToBlob,
+  getErrorMessage,
+  getFileTypeExtension,
+  isRestrictionError,
+  mimeTypes,
+} from '@uppy/core/utils'
 // biome-ignore lint/style/useImportType: h is not a type
 import { type ComponentChild, h } from '@uppy/core/utils/preact'
 import { isMobile } from 'is-mobile'
@@ -131,11 +137,9 @@ export default class Webcam<M extends Meta, B extends Body> extends UIPlugin<
 
   private supportsUserMedia
 
-  private protocol: 'http' | 'https'
-
   private capturedMediaFile: MinimalRequiredUppyFile<M, B> | null
 
-  private icon: () => h.JSX.Element
+  icon: () => h.JSX.Element
 
   public webcamActive
 
@@ -153,7 +157,6 @@ export default class Webcam<M extends Meta, B extends Body> extends UIPlugin<
     super(uppy, { ...defaultOptions, ...opts })
     this.mediaDevices = getMediaDevices()
     this.supportsUserMedia = !!this.mediaDevices
-    this.protocol = location.protocol.match(/https/i) ? 'https' : 'http'
     this.id = this.opts.id || 'Webcam'
     this.type = 'acquirer'
     this.capturedMediaFile = null
@@ -228,7 +231,7 @@ export default class Webcam<M extends Meta, B extends Body> extends UIPlugin<
     return 'init'
   }
 
-  setOptions(newOpts: Partial<WebcamOptions<M, B>>): void {
+  override setOptions(newOpts: Partial<WebcamOptions<M, B>>): void {
     super.setOptions({
       ...newOpts,
       videoConstraints: {
@@ -281,7 +284,7 @@ export default class Webcam<M extends Meta, B extends Body> extends UIPlugin<
     options: {
       deviceId: string
     } | null = null,
-  ): Promise<never> | undefined {
+  ): Promise<void> {
     if (!this.supportsUserMedia) {
       return Promise.reject(new Error('Webcam access not supported'))
     }
@@ -294,8 +297,7 @@ export default class Webcam<M extends Meta, B extends Body> extends UIPlugin<
 
     const constraints = this.getConstraints(options?.deviceId)
 
-    // TODO: add a return and/or convert this to async/await
-    this.hasCameraCheck().then((hasCamera) => {
+    return this.hasCameraCheck().then((hasCamera) => {
       this.setPluginState({
         hasCamera,
       })
@@ -314,11 +316,11 @@ export default class Webcam<M extends Meta, B extends Body> extends UIPlugin<
           if (!options?.deviceId) {
             currentDeviceId = tracks[0].getSettings().deviceId
           } else {
-            tracks.forEach((track) => {
+            for (const track of tracks) {
               if (track.getSettings().deviceId === options.deviceId) {
                 currentDeviceId = track.getSettings().deviceId
               }
-            })
+            }
           }
 
           // Update the sources now, so we can access the names.
@@ -334,7 +336,7 @@ export default class Webcam<M extends Meta, B extends Body> extends UIPlugin<
             cameraReady: false,
             cameraError: err,
           })
-          this.uppy.info(err.message, 'error')
+          this.uppy.info(getErrorMessage(err), 'error')
         })
     })
   }
@@ -461,7 +463,7 @@ export default class Webcam<M extends Meta, B extends Body> extends UIPlugin<
           this.#enableMirror = false
         } catch (err) {
           // Logging the error, exept restrictions, which is handled in Core
-          if (!err.isRestriction) {
+          if (!isRestrictionError(err)) {
             this.uppy.log(err)
           }
         }
@@ -508,7 +510,7 @@ export default class Webcam<M extends Meta, B extends Body> extends UIPlugin<
       }
     } catch (err) {
       // Logging the error, exept restrictions, which is handled in Core
-      if (!err.isRestriction) {
+      if (!isRestrictionError(err)) {
         this.uppy.log(err, 'error')
       }
     }
@@ -519,9 +521,12 @@ export default class Webcam<M extends Meta, B extends Body> extends UIPlugin<
       const audioTracks = this.stream.getAudioTracks()
       const videoTracks = this.stream.getVideoTracks()
 
-      audioTracks.concat(videoTracks).forEach((track) => {
+      for (const track of audioTracks) {
         track.stop()
-      })
+      }
+      for (const track of videoTracks) {
+        track.stop()
+      }
     }
 
     if (this.recorder) {
@@ -583,7 +588,7 @@ export default class Webcam<M extends Meta, B extends Body> extends UIPlugin<
     try {
       await this.opts.onBeforeSnapshot()
     } catch (err) {
-      const message = typeof err === 'object' ? err.message : err
+      const message = getErrorMessage(err)
       this.uppy.info(message, 'error', 5000)
       throw new Error(`onBeforeSnapshot: ${message}`)
     }
@@ -600,21 +605,17 @@ export default class Webcam<M extends Meta, B extends Body> extends UIPlugin<
     } catch (error) {
       // Logging the error, except restrictions, which is handled in Core
       this.captureInProgress = false
-      if (!error.isRestriction) {
+      if (!isRestrictionError(error)) {
         this.uppy.log(error)
       }
     }
   }
 
-  async getImage(): Promise<
-    Pick<LocalUppyFileNonGhost<M, B>, 'data' | 'name'>
-  > {
+  getImage(): Promise<Pick<LocalUppyFileNonGhost<M, B>, 'data' | 'name'>> {
     const video = this.getVideoElement()
     if (!video) {
-      return Promise.reject(
-        new Error(
-          'No video element found, likely due to the Webcam tab being closed.',
-        ),
+      throw new Error(
+        'No video element found, likely due to the Webcam tab being closed.',
       )
     }
 
@@ -651,7 +652,7 @@ export default class Webcam<M extends Meta, B extends Body> extends UIPlugin<
     })
   }
 
-  getVideo(): Promise<MinimalRequiredUppyFile<M, B>> {
+  getVideo(): MinimalRequiredUppyFile<M, B> {
     // Sometimes in iOS Safari, Blobs (especially the first Blob in the recordingChunks Array)
     // have empty 'type' attributes (e.g. '') so we need to find a Blob that has a defined 'type'
     // attribute in order to determine the correct MIME type.
@@ -662,10 +663,8 @@ export default class Webcam<M extends Meta, B extends Body> extends UIPlugin<
     const fileExtension = getFileTypeExtension(mimeType)
 
     if (!fileExtension) {
-      return Promise.reject(
-        new Error(
-          `Could not retrieve recording: Unsupported media type "${mimeType}"`,
-        ),
+      throw new Error(
+        `Could not retrieve recording: Unsupported media type "${mimeType}"`,
       )
     }
 
@@ -678,7 +677,7 @@ export default class Webcam<M extends Meta, B extends Body> extends UIPlugin<
       type: mimeType,
     }
 
-    return Promise.resolve(file)
+    return file
   }
 
   focus(): void {
@@ -701,7 +700,7 @@ export default class Webcam<M extends Meta, B extends Body> extends UIPlugin<
     })
   }
 
-  render(): ComponentChild {
+  override render(): ComponentChild {
     if (!this.webcamActive) {
       this.start()
     }
@@ -741,7 +740,7 @@ export default class Webcam<M extends Meta, B extends Body> extends UIPlugin<
     )
   }
 
-  install(): void {
+  override install(): void {
     const { mobileNativeCamera, modes, videoConstraints } = this.opts
 
     const { target } = this.opts
@@ -772,15 +771,10 @@ export default class Webcam<M extends Meta, B extends Body> extends UIPlugin<
         this.updateVideoSources()
 
         if (this.stream) {
-          let restartStream = true
-
           const { videoSources, currentDeviceId } = this.getPluginState()
-
-          videoSources.forEach((videoSource) => {
-            if (currentDeviceId === videoSource.deviceId) {
-              restartStream = false
-            }
-          })
+          const restartStream = !videoSources.some(
+            (videoSource) => currentDeviceId === videoSource.deviceId,
+          )
 
           if (restartStream) {
             this.stop()
@@ -791,12 +785,12 @@ export default class Webcam<M extends Meta, B extends Body> extends UIPlugin<
     }
   }
 
-  uninstall(): void {
+  override uninstall(): void {
     this.stop()
     this.unmount()
   }
 
-  onUnmount(): void {
+  override onUnmount(): void {
     this.stop()
   }
 }

@@ -1,8 +1,14 @@
+import type { Body, Meta, UppyFile } from '@uppy/core'
+import type { ComponentChildren } from 'preact'
 import getFileTypeIcon from '../utils/getFileTypeIcon.js'
 
-type $TSFixMe = any
+interface FilePreviewProps<M extends Meta, B extends Body> {
+  file: UppyFile<M, B>
+}
 
-export default function FilePreview(props: $TSFixMe) {
+export default function FilePreview<M extends Meta, B extends Body>(
+  props: FilePreviewProps<M, B>,
+): ComponentChildren {
   const { file } = props
 
   if (file.preview) {

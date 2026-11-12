@@ -11,6 +11,7 @@ type GridItemProps = {
   showTitles: boolean
   children?: h.JSX.Element | null
   i18n: any
+  actionsMenu?: h.JSX.Element | null
 }
 
 function GridItem({
@@ -22,6 +23,7 @@ function GridItem({
   showTitles,
   children = null,
   i18n,
+  actionsMenu = null,
 }: GridItemProps): h.JSX.Element {
   return (
     <li
@@ -47,6 +49,7 @@ function GridItem({
         {showTitles && (file.data.name ?? i18n('unnamed'))}
         {children}
       </label>
+      {actionsMenu}
     </li>
   )
 }

@@ -7,10 +7,9 @@ import type {
   UppyEventMap,
 } from '@uppy/core'
 import { BasePlugin } from '@uppy/core'
-import { findDOMElement, toArray } from '@uppy/core/utils'
+import { findDOMElement } from '@uppy/core/utils'
 
-// @ts-expect-error untyped
-import getFormData from 'get-form-data'
+import importedGetFormData from 'get-form-data'
 
 import packageJson from '../package.json' with { type: 'json' }
 
@@ -19,6 +18,28 @@ declare module '@uppy/core' {
     Form: Form<M, B>
   }
 }
+
+/**
+ * Get the `default` property of an object.
+ *
+ * This is a helper function to get imports of poorly packaged dependencies.
+ *
+ * @param input
+ *   The object to return, or whose `default` property to return.
+ * @returns
+ *   The `default` property of the input, or the input itself
+ */
+function defaultInterop<T extends {}>(
+  input: T,
+): T extends { default: any } ? T['default'] : T {
+  return ('default' in input ? input.default : input) as T extends {
+    default: any
+  }
+    ? T['default']
+    : T
+}
+
+const getFormData = defaultInterop(importedGetFormData)
 
 type Result<M extends Meta, B extends Body> = Parameters<
   UppyEventMap<M, B>['complete']
@@ -96,9 +117,9 @@ export default class Form<M extends Meta, B extends Body> extends BasePlugin<
   handleFormSubmit(ev: Event): void {
     if (this.opts.triggerUploadOnSubmit) {
       ev.preventDefault()
-      const elements = toArray((ev.target as HTMLFormElement).elements)
+      const elements = Array.from((ev.target as HTMLFormElement).elements)
       const disabledByUppy: HTMLButtonElement[] = []
-      elements.forEach((el) => {
+      for (const el of elements) {
         const isButton =
           el.tagName === 'BUTTON' ||
           (el.tagName === 'INPUT' &&
@@ -107,20 +128,20 @@ export default class Form<M extends Meta, B extends Body> extends BasePlugin<
           ;(el as HTMLButtonElement).disabled = true
           disabledByUppy.push(el as HTMLButtonElement)
         }
-      })
+      }
       this.uppy
         .upload()
         .then(
           () => {
-            disabledByUppy.forEach((button) => {
+            for (const button of disabledByUppy) {
               button.disabled = false
-            })
+            }
           },
           (err) => {
-            disabledByUppy.forEach((button) => {
+            for (const button of disabledByUppy) {
               button.disabled = false
-            })
-            return Promise.reject(err)
+            }
+            throw err
           },
         )
         .catch((err) => {
@@ -168,10 +189,10 @@ export default class Form<M extends Meta, B extends Body> extends BasePlugin<
     // We want to exclude meta the the Form plugin itself has added
     // See https://github.com/transloadit/uppy/issues/1637
     delete formMeta[this.opts.resultName]
-    this.uppy.setMeta(formMeta)
+    this.uppy.setMeta(formMeta as Partial<M>)
   }
 
-  install(): void {
+  override install(): void {
     this.#form = assertHTMLFormElement(findDOMElement(this.opts.target))
 
     this.#form.addEventListener('submit', this.handleFormSubmit)
@@ -179,7 +200,7 @@ export default class Form<M extends Meta, B extends Body> extends BasePlugin<
     this.uppy.on('complete', this.handleSuccess)
   }
 
-  uninstall(): void {
+  override uninstall(): void {
     this.#form.removeEventListener('submit', this.handleFormSubmit)
     this.uppy.off('upload', this.handleUploadStart)
     this.uppy.off('complete', this.handleSuccess)

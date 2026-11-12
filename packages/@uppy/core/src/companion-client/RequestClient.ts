@@ -1,4 +1,5 @@
 import pRetry, { AbortError } from 'p-retry'
+import type { Promisable } from 'type-fest'
 import packageJson from '../../package.json' with { type: 'json' }
 import type Uppy from '../index.js'
 import type { Body, Meta, RemoteUppyFile, UppyFile } from '../utils/index.js'
@@ -6,9 +7,12 @@ import {
   ErrorWithCause,
   fetchWithNetworkError,
   getSocketHost,
+  isAbortError,
+  toError,
   UserFacingApiError,
 } from '../utils/index.js'
-import AuthError from './AuthError.js'
+import stripTrailingSlash from '../utils/stripTrailingSlash.js'
+import AuthError, { isAuthError } from './AuthError.js'
 
 export type RequestOptions = {
   method?: string
@@ -26,11 +30,6 @@ export type Opts = {
   companionCookiesRule?: 'same-origin' | 'include' | 'omit'
   companionHeaders?: CompanionHeaders
   companionKeysParams?: Record<string, string>
-}
-
-// Remove the trailing slash so we can always safely append /xyz.
-function stripSlash(url: string) {
-  return url.replace(/\/$/, '')
 }
 
 const retryCount = 10 // set to a low number, like 2 to test manual user retries
@@ -60,23 +59,34 @@ async function handleJSONResponse<ResJson>(res: Response): Promise<ResJson> {
   }
 
   if (res.ok) {
-    return res.json()
+    // A mutation with nothing to report answers 204.
+    return res.status === 204 ? (undefined as ResJson) : res.json()
   }
 
   let errMsg = `Failed request with status: ${res.status}. ${res.statusText}`
-  let errData: any
+  let errData: { message?: unknown; code?: unknown; requestId?: unknown }
   try {
     errData = await res.json()
 
-    if (errData.message) errMsg = `${errMsg} message: ${errData.message}`
+    const detail = errData.message ?? errData.code
+    if (detail) errMsg = `${errMsg} message: ${detail}`
     if (errData.requestId) errMsg = `${errMsg} request-Id: ${errData.requestId}`
   } catch (cause) {
     // if the response contains invalid JSON, let's ignore the error data
     throw new Error(errMsg, { cause })
   }
 
-  if (res.status >= 400 && res.status <= 499 && errData.message) {
-    throw new UserFacingApiError(errData.message)
+  if (res.status >= 400 && res.status <= 499) {
+    const { message, code } = errData
+    if (typeof code === 'string') {
+      throw new UserFacingApiError(
+        typeof message === 'string' ? message : code,
+        code,
+      )
+    }
+    if (typeof message === 'string' && message) {
+      throw new UserFacingApiError(message)
+    }
   }
 
   throw new HttpError({ statusCode: res.status, message: errMsg })
@@ -122,17 +132,17 @@ export default class RequestClient<M extends Meta, B extends Body> {
     this.#companionHeaders = headers
   }
 
-  private [Symbol.for('uppy test: getCompanionHeaders')](): CompanionHeaders {
+  [Symbol.for('uppy test: getCompanionHeaders')](): CompanionHeaders {
     return this.#companionHeaders
   }
 
   get hostname(): string {
     const { companion } = this.uppy.getState()
     const host = this.opts.companionUrl
-    return stripSlash(companion?.[host] ? companion[host] : host)
+    return stripTrailingSlash(companion?.[host] ? companion[host] : host)
   }
 
-  async headers(emptyBody = false): Promise<Record<string, string>> {
+  headers(emptyBody = false): Promisable<Record<string, string>> {
     const defaultHeaders = {
       Accept: 'application/json',
       ...(emptyBody
@@ -175,16 +185,20 @@ export default class RequestClient<M extends Meta, B extends Body> {
     method = 'GET',
     data,
     skipPostResponse,
+    skipSubclassHooks,
     signal,
   }: {
     path: string
     method?: string
     data?: Record<string, unknown>
     skipPostResponse?: boolean
+    /** Use RequestClient's own `headers` and `onReceiveResponse`, ignoring subclass overrides. */
+    skipSubclassHooks?: boolean
     signal?: AbortSignal
   }): Promise<ResBody> {
+    const hooks = skipSubclassHooks ? RequestClient.prototype : this
     try {
-      const headers = await this.headers(!data)
+      const headers = await hooks.headers.call(this, !data)
       const response = await fetchWithNetworkError(this.#getUrl(path), {
         method,
         signal,
@@ -192,15 +206,15 @@ export default class RequestClient<M extends Meta, B extends Body> {
         credentials: this.opts.companionCookiesRule || 'same-origin',
         body: data ? JSON.stringify(data) : null,
       })
-      if (!skipPostResponse) this.onReceiveResponse(response)
+      if (!skipPostResponse) hooks.onReceiveResponse.call(this, response)
 
       return await handleJSONResponse<ResBody>(response)
     } catch (err) {
       // pass these through
       if (
-        err.isAuthError ||
-        err.name === 'UserFacingApiError' ||
-        err.name === 'AbortError'
+        isAuthError(err) ||
+        isAbortError(err) ||
+        toError(err).name === 'UserFacingApiError'
       )
         throw err
 
@@ -210,14 +224,11 @@ export default class RequestClient<M extends Meta, B extends Body> {
     }
   }
 
-  async get<PostBody>(
-    path: string,
-    options?: RequestOptions,
-  ): Promise<PostBody> {
+  get<PostBody>(path: string, options?: RequestOptions): Promise<PostBody> {
     return this.request({ ...options, path })
   }
 
-  async post<PostBody>(
+  post<PostBody>(
     path: string,
     data: Record<string, unknown>,
     options?: RequestOptions,
@@ -225,7 +236,7 @@ export default class RequestClient<M extends Meta, B extends Body> {
     return this.request<PostBody>({ ...options, path, method: 'POST', data })
   }
 
-  async delete<T>(
+  delete<T>(
     path: string,
     data?: Record<string, unknown>,
     options?: RequestOptions,
@@ -252,7 +263,7 @@ export default class RequestClient<M extends Meta, B extends Body> {
       const queue = getQueue()
 
       return await pRetry(
-        async () => {
+        () => {
           const queueRemoteUploadAttempt = queue.wrapPromiseFunction(
             async () => {
               const currentFile = this.uppy.getFile(file.id) as
@@ -293,19 +304,22 @@ export default class RequestClient<M extends Meta, B extends Body> {
         {
           retries: retryCount,
           signal,
-          onFailedAttempt: (err) =>
-            this.uppy.log(`Retrying upload due to: ${err.message}`, 'warning'),
+          onFailedAttempt: ({ error }) =>
+            this.uppy.log(
+              `Retrying upload due to: ${error.message}`,
+              'warning',
+            ),
         },
       )
     } catch (err) {
       // this is a bit confusing, but note that an error with the `name` prop set to 'AbortError' (from AbortController)
       // is not the same as `p-retry` `AbortError`
-      if (err.name === 'AbortError') {
+      if (isAbortError(err)) {
         // The file upload was aborted, it’s not an error
         return undefined
       }
 
-      this.uppy.emit('upload-error', file, err)
+      this.uppy.emit('upload-error', file, toError(err))
       throw err
     }
   }
@@ -348,17 +362,17 @@ export default class RequestClient<M extends Meta, B extends Body> {
       return await this.#requestSocketToken({ file, postBody, signal })
     } catch (outerErr) {
       // throwing AbortError will cause p-retry to stop retrying
-      if (outerErr.isAuthError) throw new AbortError(outerErr)
+      if (isAuthError(outerErr)) throw new AbortError(outerErr)
 
-      if (outerErr.cause == null) throw outerErr
+      if (!(outerErr instanceof Error) || outerErr.cause == null) throw outerErr
       const err = outerErr.cause
 
-      const isRetryableHttpError = () =>
-        [408, 409, 429, 418, 423].includes(err.statusCode) ||
-        (err.statusCode >= 500 &&
-          err.statusCode <= 599 &&
-          ![501, 505].includes(err.statusCode))
-      if (err.name === 'HttpError' && !isRetryableHttpError()) {
+      const isRetryableHttpError = ({ statusCode }: HttpError) =>
+        [408, 409, 429, 418, 423].includes(statusCode) ||
+        (statusCode >= 500 &&
+          statusCode <= 599 &&
+          ![501, 505].includes(statusCode))
+      if (err instanceof HttpError && !isRetryableHttpError(err)) {
         throw new AbortError(err)
       }
 
@@ -519,7 +533,7 @@ export default class RequestClient<M extends Meta, B extends Body> {
                         )
                     }
                   } catch (err) {
-                    onFatalError(err)
+                    onFatalError(toError(err))
                   }
                 })
 
@@ -545,7 +559,7 @@ export default class RequestClient<M extends Meta, B extends Body> {
             })
           } catch (err) {
             if (socketAbortController.signal.aborted) return
-            onFatalError(err)
+            onFatalError(toError(err))
           }
         }
 

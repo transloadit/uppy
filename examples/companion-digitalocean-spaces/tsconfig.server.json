@@ -1,0 +1,12 @@
+{
+  "include": ["server.ts"],
+  "compilerOptions": {
+    "allowImportingTsExtensions": true,
+    "composite": true,
+    "erasableSyntaxOnly": true,
+    "lib": ["esnext"],
+    "noEmit": true,
+    "module": "nodenext",
+    "types": ["node"]
+  }
+}

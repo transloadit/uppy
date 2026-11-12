@@ -21,11 +21,11 @@ class StatusBar<M extends Meta, B extends Body> extends Component<
 
   private plugin!: UnknownPlugin<M, B>
 
-  componentDidMount(): void {
+  override componentDidMount(): void {
     this.installPlugin()
   }
 
-  componentDidUpdate(prevProps: StatusBar<M, B>['props']): void {
+  override componentDidUpdate(prevProps: StatusBar<M, B>['props']): void {
     if (prevProps.uppy !== this.props.uppy) {
       this.uninstallPlugin(prevProps)
       this.installPlugin()
@@ -35,7 +35,7 @@ class StatusBar<M extends Meta, B extends Body> extends Component<
     }
   }
 
-  componentWillUnmount(): void {
+  override componentWillUnmount(): void {
     this.uninstallPlugin()
   }
 
@@ -74,7 +74,7 @@ class StatusBar<M extends Meta, B extends Body> extends Component<
     uppy.removePlugin(this.plugin)
   }
 
-  render() {
+  override render() {
     return h('div', {
       className: 'uppy-Container',
       ref: (container: HTMLElement) => {

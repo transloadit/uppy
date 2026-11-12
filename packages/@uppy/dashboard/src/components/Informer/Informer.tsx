@@ -1,9 +1,7 @@
-import type { UIPluginOptions, Uppy } from '@uppy/core'
+import type { Uppy } from '@uppy/core'
 import { Component, type ComponentChild } from '@uppy/core/utils/preact'
 import FadeIn from './FadeIn.js'
 import TransitionGroup from './TransitionGroup.js'
-
-export type InformerOptions = UIPluginOptions
 
 /**
  * Informer

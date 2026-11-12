@@ -18,7 +18,11 @@
         "src/**/*.{js,ts,jsx,tsx}",
         "tailwind.config.js"
       ],
-      "outputs": ["dist/styles.css", "dist/image-editor.css"]
+      "outputs": [
+        "dist/styles.css",
+        "dist/image-editor.css",
+        "dist/image-editor.css.map"
+      ]
     }
   }
 }

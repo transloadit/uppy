@@ -12,7 +12,7 @@ that were received (name, size) as JSON. It uses
 
 ## Run it
 
-To run this example, make sure you've correctly installed the **repository
+To run this example, make sure you’ve correctly installed the **repository
 root**:
 
 ```sh
@@ -25,5 +25,5 @@ That will also install the dependencies for this example.
 Then, again in the **repository root**, start this example by doing:
 
 ```sh
-corepack yarn workspace @uppy-example/xhr-bundle start
+corepack yarn workspace example-xhr-bundle start
 ```

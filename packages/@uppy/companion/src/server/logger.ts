@@ -1,13 +1,36 @@
-import util from 'node:util'
+import { inspect, styleText } from 'node:util'
 import escapeStringRegexp from 'escape-string-regexp'
-import supportsColors from 'supports-color'
 
-type StyleTextFn = (
-  style: Parameters<NonNullable<typeof util.styleText>>[0],
-  text: string,
-) => string
-type Colors = Parameters<StyleTextFn>[0]
+type Colors = Parameters<typeof styleText>[0]
 type LogLevel = 'error' | 'info' | 'warn' | 'debug'
+
+/**
+ * Longest log line we will write. An error that quotes attacker-controlled
+ * data (e.g. a WebDAV XML parse error naming a multi-megabyte entity) could
+ * otherwise write unbounded output to the log.
+ */
+export const MAX_LOG_MESSAGE_LENGTH = 10_000
+
+/**
+ * Render an Error as stack (or name+message) plus a few safe own fields and
+ * its cause chain. Never util.inspect the whole object: got's errors carry the
+ * request options, which hold the Authorization header and uploadHeaders.
+ */
+function formatError(err: Error, depth = 0): string {
+  let out = err.stack ?? `${err.name}: ${err.message}`
+  const code = (err as { code?: unknown }).code
+  if (typeof code === 'string') out += ` {code: ${code}}`
+  const statusCode = (err as { statusCode?: unknown }).statusCode
+  if (typeof statusCode === 'number') out += ` {statusCode: ${statusCode}}`
+  const { cause } = err
+  if (cause != null && depth < 5) {
+    out +=
+      cause instanceof Error
+        ? `\n  [cause]: ${formatError(cause, depth + 1)}`
+        : `\n  [cause]: ${inspect(cause, { depth: 1 })}`
+  }
+  return out
+}
 
 let valuesToMask: string[] = []
 
@@ -36,11 +59,6 @@ let processName = 'companion'
 export function setProcessName(newProcessName: string): void {
   processName = newProcessName
 }
-
-const styleText: StyleTextFn =
-  typeof util.styleText === 'function' && supportsColors.stderr
-    ? (style, text) => util.styleText(style, text)
-    : (_style, text) => text
 
 /**
  * Logs a message.
@@ -77,11 +95,18 @@ function log(params: {
       return arg.message
     }
     if (typeof arg === 'string') return arg
-    return util.inspect(arg)
+    if (arg instanceof Error) return formatError(arg)
+    return inspect(arg)
   }
 
   const msgString = msgToString()
-  const masked = maskMessage(msgString)
+  const maskedFull = maskMessage(msgString)
+  const masked =
+    maskedFull.length > MAX_LOG_MESSAGE_LENGTH
+      ? `${maskedFull.slice(0, MAX_LOG_MESSAGE_LENGTH)}… [truncated ${
+          maskedFull.length - MAX_LOG_MESSAGE_LENGTH
+        } chars]`
+      : maskedFull
   console.log(
     styleText(
       color,

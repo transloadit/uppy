@@ -22,9 +22,6 @@ class TransloaditAssemblyWatcher<
 
   #resolve!: () => void
 
-  // biome-ignore lint/correctness/noUnusedPrivateClassMembers: assigned in constructor, may be needed for future error handling
-  #reject!: (reason?: string) => void
-
   #uppy
 
   constructor(uppy: Uppy<M, B>, assemblyIDs: string[]) {
@@ -34,9 +31,8 @@ class TransloaditAssemblyWatcher<
     this.#assemblyIDs = assemblyIDs
     this.#remaining = assemblyIDs.length
 
-    this.promise = new Promise<void>((resolve, reject) => {
+    this.promise = new Promise<void>((resolve) => {
       this.#resolve = resolve
-      this.#reject = reject
     })
 
     this.#addListeners()
@@ -91,7 +87,7 @@ class TransloaditAssemblyWatcher<
 
   #onImportError = (
     assembly: AssemblyResponse,
-    fileID: string,
+    _fileID: string,
     error: Error,
   ) => {
     const assemblyId = assembly.assembly_id

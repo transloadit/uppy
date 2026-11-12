@@ -45,7 +45,7 @@ class UIPlugin<
 
   isTargetDOMEl!: boolean
 
-  el!: HTMLElement | null
+  el: HTMLElement | null = null
 
   parent: unknown
 
@@ -174,21 +174,22 @@ class UIPlugin<
    * so this.el and this.parent might not be available in `install`.
    * This is the case with @uppy/react plugins, for example.
    */
-  render(state: Record<string, unknown>, container?: HTMLElement): any {
+  render(_state: Record<string, unknown>, _container?: HTMLElement): any {
     throw new Error(
       'Extend the render method to add your plugin to a DOM element',
     )
   }
 
-  update(state: Partial<State<M, B>>): void {
+  override update(state: Partial<State<M, B>>): void {
     if (this.el != null) {
       this.#updateUI?.(state)
     }
   }
 
   unmount(): void {
-    if (this.isTargetDOMEl) {
-      this.el?.remove()
+    if (this.isTargetDOMEl && this.el) {
+      render(null, this.el)
+      this.el.remove()
     }
     this.onUnmount()
   }
@@ -200,11 +201,12 @@ class UIPlugin<
 
 export default UIPlugin
 
+type PluginClass = new (...args: any[]) => BasePlugin<any, any, any>
+
 export type PluginTarget<M extends Meta, B extends Body> =
   | string
   | Element
-  | typeof BasePlugin
-  | typeof UIPlugin
+  | PluginClass
   | BasePlugin<any, M, B>
 
 export interface UIPluginOptions extends PluginOpts {

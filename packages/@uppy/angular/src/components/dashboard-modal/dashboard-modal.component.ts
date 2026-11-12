@@ -1,0 +1,84 @@
+import {
+	ChangeDetectionStrategy,
+	Component,
+	ElementRef,
+	Input,
+	inject,
+	type OnChanges,
+	type OnDestroy,
+	type SimpleChanges,
+} from "@angular/core";
+import { Uppy } from "@uppy/core";
+import type { DashboardOptions } from "@uppy/dashboard";
+import Dashboard from "@uppy/dashboard";
+import type { Body, Meta } from "@uppy/core";
+import { UppyAngularWrapper } from "../../utils/wrapper";
+
+@Component({
+	selector: "uppy-dashboard-modal",
+	template: "",
+	changeDetection: ChangeDetectionStrategy.OnPush,
+	standalone: true,
+})
+export class DashboardModalComponent<M extends Meta, B extends Body>
+	extends UppyAngularWrapper<M, B, DashboardOptions<M, B>, Dashboard<M, B>>
+	implements OnDestroy, OnChanges
+{
+	el = inject(ElementRef);
+
+	@Input() uppy: Uppy<M, B> = new Uppy();
+	@Input() props: DashboardOptions<M, B> = {};
+	@Input() open: boolean = false;
+
+	/** Inserted by Angular inject() migration for backwards compatibility */
+	constructor(...args: unknown[]);
+
+	constructor() {
+		super();
+	}
+
+	ngOnInit() {
+		this.onMount(
+			{
+				id: "angular:DashboardModal",
+				inline: false,
+				target: this.el.nativeElement,
+			},
+			Dashboard,
+		);
+		// Angular runs `ngOnChanges` before `ngOnInit`, so the initial value of
+		// `open` — which only ever shows up in that first `SimpleChanges` — has to
+		// be applied here, once the plugin actually exists.
+		if (this.open) {
+			this.plugin!.openModal();
+		}
+	}
+
+	ngOnChanges(changes: SimpleChanges): void {
+		// The first `ngOnChanges` runs before `ngOnInit`, when there is no plugin
+		// to talk to yet. Every input still carries `previousValue: undefined` at
+		// that point, so nothing is lost by skipping it: `ngOnInit` mounts the
+		// plugin with the current `props` and applies the current `open` value.
+		const previousPlugin = this.plugin;
+		if (previousPlugin === undefined) return;
+
+		this.handleChanges(changes, Dashboard);
+		if (this.plugin !== previousPlugin) {
+			// A new `uppy` got a freshly installed plugin, which starts out closed.
+			if (this.open) {
+				this.plugin!.openModal();
+			}
+		} else if (changes["open"] && this.open !== changes["open"].previousValue) {
+			if (this.open && !changes["open"].previousValue) {
+				this.plugin!.openModal();
+			}
+			if (!this.open && changes["open"].previousValue) {
+				this.plugin!.closeModal();
+			}
+		}
+	}
+
+	ngOnDestroy(): void {
+		this.uninstall();
+	}
+}

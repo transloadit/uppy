@@ -1,13 +1,22 @@
-import type { Readable } from 'node:stream'
 import got from 'got'
 import moment from 'moment-timezone'
 import pMap from 'p-map'
 import { isRecord } from '../../helpers/type-guards.js'
-import { getBasicAuthHeader, prepareStream } from '../../helpers/utils.js'
+import {
+  getBasicAuthHeader,
+  pathSegment,
+  prepareStream,
+} from '../../helpers/utils.js'
 import Provider, {
-  type CompanionLike,
+  type ProviderDeauthorizationCallbackOptions,
+  type ProviderDeauthorizationCallbackResponse,
+  type ProviderDownloadOptions,
+  type ProviderDownloadResponse,
+  type ProviderListOptions,
   type ProviderListResponse,
-  type Query,
+  type ProviderLogoutOptions,
+  type ProviderLogoutResponse,
+  type ProviderSizeOptions,
 } from '../Provider.js'
 import { withProviderErrorHandling } from '../providerErrors.js'
 import adaptData from './adapter.js'
@@ -46,7 +55,7 @@ async function findFile({
   recordingStart?: string
 }): Promise<ZoomFoundFile | undefined> {
   const body: unknown = await client
-    .get(`meetings/${encodeURIComponent(meetingId)}/recordings`, {
+    .get(`meetings/${pathSegment(meetingId)}/recordings`, {
       responseType: 'json',
     })
     .json()
@@ -103,11 +112,9 @@ export default class Zoom extends Provider<ZoomUserSession> {
     return 'zoom'
   }
 
-  override async list(options: {
-    providerUserSession: ZoomUserSession
-    query?: { cursor?: string | null } & Record<string, unknown>
-    directory?: string | undefined
-  }): Promise<ProviderListResponse> {
+  override list(
+    options: ProviderListOptions<ZoomUserSession>,
+  ): Promise<ProviderListResponse> {
     return this.#withErrorHandling('provider.zoom.list.error', async () => {
       const {
         providerUserSession: { accessToken: token },
@@ -137,7 +144,7 @@ export default class Zoom extends Provider<ZoomUserSession> {
 
       if (meetingId) {
         const recordingInfo = await client
-          .get(`meetings/${encodeURIComponent(meetingId)}/recordings`, {
+          .get(`meetings/${pathSegment(meetingId)}/recordings`, {
             responseType: 'json',
           })
           .json()
@@ -251,15 +258,11 @@ export default class Zoom extends Provider<ZoomUserSession> {
     })
   }
 
-  override async download({
+  override download({
     id: meetingId,
     providerUserSession: { accessToken: token },
     query,
-  }: {
-    id: string
-    providerUserSession: ZoomUserSession
-    query: Query
-  }): Promise<{ stream: Readable; size: number | undefined }> {
+  }: ProviderDownloadOptions<ZoomUserSession>): Promise<ProviderDownloadResponse> {
     return this.#withErrorHandling('provider.zoom.download.error', async () => {
       // meeting id + file id required
       // cc files don't have an ID or size
@@ -294,15 +297,11 @@ export default class Zoom extends Provider<ZoomUserSession> {
     })
   }
 
-  override async size({
+  override size({
     id: meetingId,
     providerUserSession: { accessToken: token },
     query,
-  }: {
-    id: string
-    providerUserSession: ZoomUserSession
-    query: Query
-  }): Promise<number | undefined> {
+  }: ProviderSizeOptions<ZoomUserSession>): Promise<number | undefined> {
     return this.#withErrorHandling('provider.zoom.size.error', async () => {
       const client = getClient({ token })
       const recordingStart =
@@ -327,13 +326,10 @@ export default class Zoom extends Provider<ZoomUserSession> {
     })
   }
 
-  override async logout({
+  override logout({
     companion,
     providerUserSession: { accessToken: token },
-  }: {
-    companion: CompanionLike
-    providerUserSession: ZoomUserSession
-  }): Promise<{ revoked: boolean }> {
+  }: ProviderLogoutOptions<ZoomUserSession>): Promise<ProviderLogoutResponse> {
     return this.#withErrorHandling('provider.zoom.logout.error', async () => {
       const { key, secret } = (await companion.getProviderCredentials?.())!
 
@@ -349,15 +345,11 @@ export default class Zoom extends Provider<ZoomUserSession> {
     })
   }
 
-  override async deauthorizationCallback({
+  override deauthorizationCallback({
     companion,
     body,
     headers,
-  }: {
-    companion: CompanionLike
-    body: unknown
-    headers: Record<string, string | undefined>
-  }): Promise<{ data?: unknown; status?: number }> {
+  }: ProviderDeauthorizationCallbackOptions): Promise<ProviderDeauthorizationCallbackResponse> {
     return this.#withErrorHandling('provider.zoom.deauth.error', async () => {
       if (!isRecord(body) || body['event'] !== DEAUTH_EVENT_NAME) {
         return { data: {}, status: 400 }
@@ -396,7 +388,7 @@ export default class Zoom extends Provider<ZoomUserSession> {
     })
   }
 
-  async #withErrorHandling<T>(tag: string, fn: () => Promise<T>): Promise<T> {
+  #withErrorHandling<T>(tag: string, fn: () => Promise<T>): Promise<T> {
     const authErrorCodes = [
       124, // expired token
       401,

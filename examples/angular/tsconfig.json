@@ -21,9 +21,7 @@
     "useDefineForClassFields": false,
     "lib": ["ES2022", "dom"],
     "paths": {
-      "@uppy/angular": [
-        "../../packages/@uppy/angular/projects/uppy/angular/src/public-api.ts"
-      ]
+      "@uppy/angular": ["../../packages/@uppy/angular/src/public-api.ts"]
     }
   },
   "angularCompilerOptions": {

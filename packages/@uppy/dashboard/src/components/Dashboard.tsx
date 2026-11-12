@@ -108,7 +108,7 @@ type DashboardUIProps<M extends Meta, B extends Body> = {
   parentElement: HTMLElement | null
   allowedFileTypes: string[] | null
   maxNumberOfFiles: number | null
-  requiredMetaFields: any
+  requiredMetaFields: string[]
   showSelectedFiles: boolean
   showNativePhotoCameraButton: boolean
   showNativeVideoCameraButton: boolean
@@ -131,9 +131,9 @@ type DashboardUIProps<M extends Meta, B extends Body> = {
 export default function Dashboard<M extends Meta, B extends Body>(
   props: DashboardUIProps<M, B>,
 ) {
+  const { activePickerPanel, fileCardFor } = props
   const isNoFiles = props.totalFileCount === 0
   const isSingleFile = props.totalFileCount === 1
-  const isSizeMD = props.containerWidth > WIDTH_MD
   const isSizeHeightMD = props.containerHeight > HEIGHT_MD
 
   const dashboardClassName = classNames({
@@ -320,17 +320,23 @@ export default function Dashboard<M extends Meta, B extends Body>(
 
           <Slide>
             {props.showAddFilesPanel ? (
-              <AddFilesPanel key="AddFiles" {...props} isSizeMD={isSizeMD} />
+              <AddFilesPanel key="AddFiles" {...props} />
             ) : null}
           </Slide>
 
           <Slide>
-            {props.fileCardFor ? <FileCard key="FileCard" {...props} /> : null}
+            {fileCardFor ? (
+              <FileCard key="FileCard" {...props} fileCardFor={fileCardFor} />
+            ) : null}
           </Slide>
 
           <Slide>
-            {props.activePickerPanel ? (
-              <PickerPanelContent key="Picker" {...props} />
+            {activePickerPanel ? (
+              <PickerPanelContent
+                key="Picker"
+                {...props}
+                activePickerPanel={activePickerPanel}
+              />
             ) : null}
           </Slide>
 

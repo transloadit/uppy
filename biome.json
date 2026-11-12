@@ -11,10 +11,10 @@
       "packages/**",
       "examples/**",
       "scripts/**",
-      "bin/**",
-      "e2e/**",
       "private/**",
-      "!packages/**/{dist,lib}",
+      "website/**",
+      "!website/static",
+      "!packages/**/{angular/src,dist,lib}",
       "!node_modules",
       "!.svelte-kit",
       "!packages/@uppy/components/src/input.css",
@@ -34,12 +34,16 @@
     "rules": {
       "recommended": true,
       "suspicious": {
-        "noExplicitAny": "off"
+        "noExplicitAny": "off",
+        "useAwait": "error"
+      },
+      "complexity": {
+        "noForEach": "error"
       },
       "correctness": {
         "useExhaustiveDependencies": "error",
         "useHookAtTopLevel": "error",
-        "noUnusedFunctionParameters": "off",
+        "noUnusedFunctionParameters": "error",
         "noUnusedImports": "error",
         "noUnusedPrivateClassMembers": "error",
         "noUnusedVariables": {
@@ -92,6 +96,19 @@
           "correctness": {
             "useHookAtTopLevel": "off",
             "useExhaustiveDependencies": "off"
+          }
+        }
+      }
+    },
+    {
+      "includes": ["website/**/*.css"],
+      "linter": {
+        "rules": {
+          "complexity": {
+            "noImportantStyles": "off"
+          },
+          "style": {
+            "noDescendingSpecificity": "off"
           }
         }
       }

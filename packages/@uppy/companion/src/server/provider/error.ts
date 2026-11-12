@@ -23,13 +23,30 @@ export class ProviderApiError extends Error {
 }
 
 /**
+ * What a `ProviderUserError` sends to the browser (as a 400 response body).
+ *
+ * - `code`: a stable identifier of the failure (`S3_NOT_FOUND`), for every
+ *   message Companion itself owns; `@uppy/core` maps it to the locale string
+ *   describing it. Older Uppy versions read only `message`, so a code that
+ *   replaces a message they used to show is sent together with that message.
+ * - `message` alone: text shown verbatim, for what cannot have a code (an
+ *   error forwarded from a provider's own API).
+ *
+ * See https://github.com/transloadit/uppy/issues/5436 for where this is going:
+ * codes with typed metadata for every Companion error, not only provider ones.
+ */
+export type ProviderUserErrorBody =
+  | { code: string; message?: string }
+  | { message: string; code?: undefined }
+
+/**
  * Error thrown when the provider response should be forwarded to the client
  * as-is (e.g. user-facing validation errors).
  */
 export class ProviderUserError extends ProviderApiError {
-  json: unknown // arbitrary JSON.stringify-able object that will be passed to the client
+  json: ProviderUserErrorBody
 
-  constructor(json: unknown) {
+  constructor(json: ProviderUserErrorBody) {
     super('User error', undefined)
     this.name = 'ProviderUserError'
     this.json = json
@@ -93,11 +110,7 @@ function errorToResponse(
   }
 
   if (name === 'ProviderUserError') {
-    const json = err['json'] as Record<string, unknown>
-    return {
-      code: 400,
-      json,
-    }
+    return { code: 400, json: err['json'] as ProviderUserErrorBody }
   }
 
   if (name === 'ProviderApiError') {

@@ -27,7 +27,7 @@ a versatile file encoding service.
 
 <script>
 import Uppy from '@uppy/core'
-import { DashboardModal } from '@uppy/vue'
+import DashboardModal from '@uppy/vue/dashboard-modal'
 
 export default {
   components: {
@@ -65,6 +65,9 @@ global `window.Uppy` object. See the
 
 Documentation for this plugin can be found on the
 [Uppy website](https://uppy.io/docs/vue).
+
+For a managed processing backend, follow the canonical
+[Vue + Uppy + Transloadit guide](https://uppy.io/docs/guides/uppy-transloadit/#vue).
 
 ## License
 

@@ -1,0 +1,13 @@
+{
+  "include": ["client"],
+  "compilerOptions": {
+    "allowImportingTsExtensions": true,
+    "composite": true,
+    "jsx": "react",
+    "jsxFactory": "h",
+    "module": "nodenext",
+    "noEmit": true,
+    "skipLibCheck": true,
+    "types": ["vite/client"]
+  }
+}

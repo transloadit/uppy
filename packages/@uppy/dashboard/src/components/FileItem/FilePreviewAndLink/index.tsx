@@ -1,10 +1,20 @@
+import type { Body, I18n, Meta, UppyFile } from '@uppy/core/utils'
+import type { DashboardState } from '../../../Dashboard.js'
 import getFileTypeIcon from '../../../utils/getFileTypeIcon.js'
 import FilePreview from '../../FilePreview.js'
 import MetaErrorMessage from '../MetaErrorMessage.js'
 
-type $TSFixMe = any
+interface FilePreviewAndLinkProps<M extends Meta, B extends Body> {
+  i18n: I18n
+  file: UppyFile<M, B>
+  metaFields: DashboardState<M, B>['metaFields']
+  showLinkToFileUploadResult: boolean
+  toggleFileCard: (show: boolean, fileId: string) => void
+}
 
-export default function FilePreviewAndLink(props: $TSFixMe) {
+export default function FilePreviewAndLink<M extends Meta, B extends Body>(
+  props: FilePreviewAndLinkProps<M, B>,
+) {
   const { file, i18n, toggleFileCard, metaFields, showLinkToFileUploadResult } =
     props
   const white = 'rgba(255, 255, 255, 0.5)'
