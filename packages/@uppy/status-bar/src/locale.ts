@@ -46,6 +46,8 @@ export default {
       1: '%{smart_count} more files added',
     },
     showErrorDetails: 'Show error details',
+    // Not used by the status bar (@uppy/core has its own copy). Kept so that
+    // passing it in the status bar's `locale.strings` still type-checks.
     failedToAddFiles: 'Failed to add files',
   },
 }
