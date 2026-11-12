@@ -43,7 +43,9 @@ getPatcher().patch('fetch', (url: unknown, options: unknown) =>
 
 // A parsed URL can't contain whitespace, and node-fetch puts a space after it.
 // Don't stop at quotes: `'` stays unencoded in userinfo and paths.
-const urlInText = /[a-z][a-z\d+.-]*:\/\/\S+/gi
+// Only http(s): WebDAV URLs are validated to those schemes, and a literal
+// prefix keeps the match linear on long messages.
+const urlInText = /https?:\/\/\S+/gi
 
 /**
  * node-fetch's transport errors (connection refused, DNS, TLS) and
@@ -55,7 +57,11 @@ const urlInText = /[a-z][a-z\d+.-]*:\/\/\S+/gi
  * the server's status text.
  */
 function redactUrls(err: unknown): unknown {
-  if (!(err instanceof Error) || err['response' as keyof Error] != null)
+  if (
+    !(err instanceof Error) ||
+    err['response' as keyof Error] != null ||
+    err['status' as keyof Error] != null
+  )
     return err
   const message = err.message.replace(urlInText, (url) => {
     try {
