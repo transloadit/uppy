@@ -14,8 +14,10 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.run_id }}
   cancel-in-progress: true
 
-permissions:
-  contents: read
+# The repository is public, so checking it out needs no token scopes, and the
+# Actions cache (actions/cache, buildx `type=gha`) authenticates with the
+# runtime token, not GITHUB_TOKEN. Grant scopes per job if one ever needs them.
+permissions: {}
 
 env:
   YARN_ENABLE_GLOBAL_CACHE: false
@@ -200,8 +202,6 @@ jobs:
     steps:
       - name: Checkout sources
         uses: actions/checkout@v7
-        with:
-          persist-credentials: false
       - name: Install Node.js
         uses: actions/setup-node@v7
         with:
@@ -221,8 +221,6 @@ jobs:
     steps:
       - name: Checkout sources
         uses: actions/checkout@v7
-        with:
-          persist-credentials: false
       - name: Install Node.js
         uses: actions/setup-node@v7
         with:
