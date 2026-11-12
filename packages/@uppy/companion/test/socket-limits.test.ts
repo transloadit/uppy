@@ -45,6 +45,27 @@ const closeCode = (ws: WebSocket) =>
   new Promise<number>((resolve) => ws.once('close', (code) => resolve(code)))
 
 describe('upload socket message limits', () => {
+  test('closes on the first malformed JSON frame', async () => {
+    const ws = await openSocket(`/api/${randomUUID()}`)
+    const closed = closeCode(ws)
+    ws.send('{{')
+    await expect(closed).resolves.toBe(1007)
+  })
+
+  test('bounds a burst of unpublished actions', async () => {
+    const emitter = (await import('../dist/server/emitter/index.js')).default
+    const publish = vi
+      .spyOn(emitter(), 'emit')
+      .mockImplementation(() => new Promise(() => {}))
+    const ws = await openSocket(`/api/${randomUUID()}`)
+    publish.mockClear()
+    const closed = closeCode(ws)
+    for (let index = 0; index < 32; index += 1) ws.send('{"action":"pause"}')
+    await expect(closed).resolves.toBe(1008)
+    expect(publish).toHaveBeenCalledTimes(16)
+    publish.mockRestore()
+  })
+
   test('closes the connection with 1009 when a message exceeds 1 KiB', async () => {
     const ws = await openSocket(`/api/${randomUUID()}`)
     const closed = closeCode(ws)

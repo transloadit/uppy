@@ -19,6 +19,7 @@ import {
   generateSecret,
   getCompanionOptions,
 } from './helper.js'
+import { limitPendingRequests } from './request-limit.js'
 
 // Query string keys whose values should not end up in logging output.
 const sensitiveKeys = new Set([
@@ -104,6 +105,7 @@ export default function server(
     companionOptions.preAuthSecret = generateSecret('preAuthSecret')
 
   const app = express()
+  app.use(limitPendingRequests())
 
   const router = express.Router()
 
@@ -253,23 +255,14 @@ export default function server(
       res.status(status).json({ message: error.message, requestId: req.id })
       return
     }
-    if (app.get('env') === 'production') {
-      // if the error is a URIError from the requested URL we only log the error message
-      // to avoid uneccessary error alerts
-      if (status === 400 && error.name === 'URIError') {
-        logger.error(error.message, 'root.error', req.id)
-      } else {
-        logger.error(err, 'root.error', req.id)
-      }
-      res
-        .status(500)
-        .json({ message: 'Something went wrong', requestId: req.id })
+    // if the error is a URIError from the requested URL we only log the error message
+    // to avoid uneccessary error alerts
+    if (status === 400 && error.name === 'URIError') {
+      logger.error(error.message, 'root.error', req.id)
     } else {
       logger.error(err, 'root.error', req.id)
-      res
-        .status(500)
-        .json({ message: error.message, error: err, requestId: req.id })
     }
+    res.status(500).json({ message: 'Something went wrong', requestId: req.id })
   })
 
   return { app, companionOptions, emitter }

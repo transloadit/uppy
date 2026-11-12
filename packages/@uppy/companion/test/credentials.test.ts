@@ -120,7 +120,7 @@ test('does not follow a redirecting credentials endpoint', async () => {
   expect(res.status).toBe(500)
   // The redirect target is for the operator's log only, like the endpoint's
   // other errors: the client gets the generic message.
-  expect(res.body.message).toBe('Could not fetch credentials')
+  expect(res.body.message).toBe('Something went wrong')
   expect(logError).toHaveBeenCalledWith(
     expect.objectContaining({
       message:
