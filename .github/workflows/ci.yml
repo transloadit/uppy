@@ -20,6 +20,7 @@ concurrency:
 permissions: {}
 
 env:
+  SKIP_YARN_COREPACK_CHECK: true
   YARN_ENABLE_GLOBAL_CACHE: false
 
 jobs:
@@ -174,8 +175,6 @@ jobs:
   lint_js:
     name: Lint
     runs-on: ubuntu-latest
-    env:
-      SKIP_YARN_COREPACK_CHECK: true
     steps:
       - name: Checkout sources
         uses: actions/checkout@v7
@@ -195,8 +194,6 @@ jobs:
   lint_mdx:
     name: Lint (MDX)
     runs-on: ubuntu-latest
-    env:
-      SKIP_YARN_COREPACK_CHECK: true
     steps:
       - name: Checkout sources
         uses: actions/checkout@v7
@@ -214,8 +211,6 @@ jobs:
   lint_md:
     name: Lint (Markdown)
     runs-on: ubuntu-latest
-    env:
-      SKIP_YARN_COREPACK_CHECK: true
     steps:
       - name: Checkout sources
         uses: actions/checkout@v7
