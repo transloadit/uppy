@@ -12,7 +12,7 @@ import type {
 import { UIPlugin } from '@uppy/core'
 import { defaultPickerIcon } from '@uppy/core/provider-views'
 import type { LocaleStrings } from '@uppy/core/utils'
-import { findAllDOMElements, getDroppedFiles, toArray } from '@uppy/core/utils'
+import { findAllDOMElements, getDroppedFiles } from '@uppy/core/utils'
 import type { ComponentChild, VNode } from '@uppy/core/utils/preact'
 import ThumbnailGenerator from '@uppy/thumbnail-generator'
 import { nanoid } from 'nanoid/non-secure'
@@ -681,7 +681,7 @@ export default class Dashboard<M extends Meta, B extends Body> extends UIPlugin<
 
     const nodesToDisable =
       this.#disabledNodes ??
-      toArray(this.el!.querySelectorAll(NODES_TO_DISABLE as any)).filter(
+      Array.from(this.el!.querySelectorAll(NODES_TO_DISABLE as any)).filter(
         (node) => !node.classList.contains('uppy-Dashboard-close'),
       )
 
@@ -763,7 +763,7 @@ export default class Dashboard<M extends Meta, B extends Body> extends UIPlugin<
     })
 
     // Add all dropped files
-    const files = toArray(event.clipboardData!.files)
+    const files = Array.from(event.clipboardData!.files)
     if (files.length > 0) {
       this.uppy.log('[Dashboard] Files pasted')
       this.addFiles(files)
@@ -774,7 +774,7 @@ export default class Dashboard<M extends Meta, B extends Body> extends UIPlugin<
     event: TargetedEvent<HTMLInputElement, Event>,
   ) => {
     event.preventDefault()
-    const files = toArray(event.currentTarget.files || [])
+    const files = Array.from(event.currentTarget.files || [])
     if (files.length > 0) {
       this.uppy.log('[Dashboard] Files selected through input')
       this.addFiles(files)
