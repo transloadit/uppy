@@ -54,6 +54,15 @@ function maskMessage(msg: string): string {
   return out
 }
 
+// Keep terminal controls and embedded line breaks in one visible log record.
+function escapeLogControls(message: string): string {
+  return message.replace(
+    /[\p{Cc}\u2028\u2029]/gu,
+    (character) =>
+      `\\u${character.charCodeAt(0).toString(16).padStart(4, '0')}`,
+  )
+}
+
 let processName = 'companion'
 
 export function setProcessName(newProcessName: string): void {
@@ -100,7 +109,7 @@ function log(params: {
   }
 
   const msgString = msgToString()
-  const maskedFull = maskMessage(msgString)
+  const maskedFull = escapeLogControls(maskMessage(msgString))
   const masked =
     maskedFull.length > MAX_LOG_MESSAGE_LENGTH
       ? `${maskedFull.slice(0, MAX_LOG_MESSAGE_LENGTH)}… [truncated ${
@@ -110,7 +119,9 @@ function log(params: {
   console.log(
     styleText(
       color,
-      `${processName}: ${time} [${level}] ${traceId}${whitespace}${tag}`,
+      escapeLogControls(
+        `${processName}: ${time} [${level}] ${traceId}${whitespace}${tag}`,
+      ),
     ),
     styleText(color, masked),
   )
