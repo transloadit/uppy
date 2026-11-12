@@ -7,7 +7,7 @@ import type { AwsBody, AwsS3Options } from '../lib/index.js'
 import { network } from 'virtual:msw'
 import Core from '@uppy/core'
 import { HttpResponse, http } from 'msw'
-import { describe, expect, test, vi } from 'vitest'
+import { describe, expect, onTestFinished, test, vi } from 'vitest'
 
 import AwsS3 from '../lib/index.js'
 
@@ -482,6 +482,42 @@ describe('AwsS3', () => {
         expect(onSuccess.mock.calls[0][1].body.key).toBe('client-photo.jpg')
       },
     )
+  })
+
+  describe('default object key', () => {
+    test('works without crypto.randomUUID (insecure context, #6839)', async () => {
+      const { signRequest, registerHandlers } = createMultipartMocks()
+      registerHandlers()
+
+      using core = new Core().use(AwsS3, {
+        s3Endpoint: 'https://test-bucket.s3.us-east-1.amazonaws.com',
+        region: 'us-east-1',
+        signRequest,
+        shouldUseMultipart: false,
+      })
+      core.addFile({
+        source: 'test',
+        name: 'test.txt',
+        type: 'text/plain',
+        data: new File([new Uint8Array(KB)], 'test.txt'),
+      })
+
+      // Insecure contexts (plain HTTP on a non-localhost host) have no `crypto.randomUUID`
+      vi.stubGlobal('crypto', {
+        getRandomValues: crypto.getRandomValues.bind(crypto),
+      })
+      onTestFinished(() => {
+        vi.unstubAllGlobals()
+      })
+      const result = await core.upload()
+
+      expect(result?.failed).toHaveLength(0)
+      expect(result?.successful).toHaveLength(1)
+      expect(signRequest).toHaveBeenCalledTimes(1)
+      expect(signRequest.mock.calls[0][0].key).toMatch(
+        /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}-test\.txt$/,
+      )
+    })
   })
 
   describe('signed headers (#6548)', () => {
