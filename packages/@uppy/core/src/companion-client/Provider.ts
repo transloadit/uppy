@@ -6,7 +6,7 @@ import type {
   UnknownProviderPlugin,
   Uppy,
 } from '../index.js'
-import { getErrorMessage, getSocketHost } from '../utils/index.js'
+import { getErrorMessage, getSocketHost, randomUUID } from '../utils/index.js'
 import { isAuthError } from './AuthError.js'
 import type { CompanionPluginOptions } from './index.js'
 import RequestClient, {
@@ -201,7 +201,7 @@ export default class Provider<
     // (We cannot wait until the websocket connection is established).
     // This opens up a race condtition if the websocket is not connected before the user
     // completes(or cancels) authentication, but that’s a small compromose we gotta make.
-    const authCallbackToken = crypto.randomUUID()
+    const authCallbackToken = randomUUID()
 
     const link = this.authUrl({
       query: { uppyVersions },

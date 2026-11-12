@@ -76,6 +76,7 @@ export {
   RateLimitedQueue,
   type WrapPromiseFunctionType,
 } from './RateLimitedQueue.js'
+export { default as randomUUID } from './randomUUID.js'
 export { default as remoteFileObjToLocal } from './remoteFileObjToLocal.js'
 export { default as secondsToTime } from './secondsToTime.js'
 export {
