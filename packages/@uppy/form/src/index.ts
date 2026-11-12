@@ -7,7 +7,7 @@ import type {
   UppyEventMap,
 } from '@uppy/core'
 import { BasePlugin } from '@uppy/core'
-import { findDOMElement, toArray } from '@uppy/core/utils'
+import { findDOMElement } from '@uppy/core/utils'
 
 import importedGetFormData from 'get-form-data'
 
@@ -117,9 +117,9 @@ export default class Form<M extends Meta, B extends Body> extends BasePlugin<
   handleFormSubmit(ev: Event): void {
     if (this.opts.triggerUploadOnSubmit) {
       ev.preventDefault()
-      const elements = toArray((ev.target as HTMLFormElement).elements)
+      const elements = Array.from((ev.target as HTMLFormElement).elements)
       const disabledByUppy: HTMLButtonElement[] = []
-      elements.forEach((el) => {
+      for (const el of elements) {
         const isButton =
           el.tagName === 'BUTTON' ||
           (el.tagName === 'INPUT' &&
@@ -128,20 +128,20 @@ export default class Form<M extends Meta, B extends Body> extends BasePlugin<
           ;(el as HTMLButtonElement).disabled = true
           disabledByUppy.push(el as HTMLButtonElement)
         }
-      })
+      }
       this.uppy
         .upload()
         .then(
           () => {
-            disabledByUppy.forEach((button) => {
+            for (const button of disabledByUppy) {
               button.disabled = false
-            })
+            }
           },
           (err) => {
-            disabledByUppy.forEach((button) => {
+            for (const button of disabledByUppy) {
               button.disabled = false
-            })
-            return Promise.reject(err)
+            }
+            throw err
           },
         )
         .catch((err) => {
@@ -192,7 +192,7 @@ export default class Form<M extends Meta, B extends Body> extends BasePlugin<
     this.uppy.setMeta(formMeta as Partial<M>)
   }
 
-  install(): void {
+  override install(): void {
     this.#form = assertHTMLFormElement(findDOMElement(this.opts.target))
 
     this.#form.addEventListener('submit', this.handleFormSubmit)
@@ -200,7 +200,7 @@ export default class Form<M extends Meta, B extends Body> extends BasePlugin<
     this.uppy.on('complete', this.handleSuccess)
   }
 
-  uninstall(): void {
+  override uninstall(): void {
     this.#form.removeEventListener('submit', this.handleFormSubmit)
     this.uppy.off('upload', this.handleUploadStart)
     this.uppy.off('complete', this.handleSuccess)

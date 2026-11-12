@@ -1,6 +1,6 @@
 import { useWebcam } from '@uppy/react'
 import { useEffect } from 'react'
-import MediaCapture from './MediaCapture.tsx'
+import { MediaCapture } from './MediaCapture.tsx'
 
 export interface WebcamProps {
   close: () => void
@@ -41,5 +41,3 @@ export function Webcam({ close }: WebcamProps) {
     />
   )
 }
-
-export default Webcam

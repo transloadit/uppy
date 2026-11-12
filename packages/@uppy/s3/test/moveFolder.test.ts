@@ -38,7 +38,7 @@ function createFakeProvider(
     get maxInFlight() {
       return state.maxInFlight
     },
-    async list(directory) {
+    list(directory) {
       const [encodedFolder = '', query = ''] = (directory ?? '').split('?')
       const folder = decodeURIComponent(encodedFolder)
       const page = Number(new URLSearchParams(query).get('page') ?? '0')
@@ -56,7 +56,7 @@ function createFakeProvider(
           : null,
       }
     },
-    async createFolder(parentId, name) {
+    createFolder(parentId, name) {
       const parent = parentId ?? ''
       const key = `${parent}${name}/`
       if ((state.tree[parent] ?? []).includes(key)) {
@@ -87,7 +87,7 @@ function createFakeProvider(
         inFlight -= 1
       }
     },
-    async deleteItem(id) {
+    deleteItem(id) {
       if (id.endsWith('/') && (state.tree[id] ?? []).length > 0) {
         throw userError('S3_FOLDER_NOT_EMPTY')
       }
@@ -180,7 +180,7 @@ describe('moveFolder', () => {
     const provider = createFakeProvider(tree())
     const failing: FolderMoveProvider = {
       ...provider,
-      moveItem: async () => {
+      moveItem() {
         throw userError('S3_FILE_TOO_LARGE_TO_MOVE')
       },
     }
@@ -189,6 +189,43 @@ describe('moveFolder', () => {
       moveFolder({ provider: failing, source: 'docs/', target: 'archive/' }),
     ).rejects.toThrow('S3_FILE_TOO_LARGE_TO_MOVE')
     expect(provider.tree['docs/']).toContain('docs/hello.txt')
+  })
+})
+
+describe('forEachFile', () => {
+  it('hands out no more files after a failure and settles once the busy workers are done', async () => {
+    const stuck = Promise.withResolvers<void>()
+    const deleted: string[] = []
+    const files = ['a', 'b', 'c', 'd', 'e'].map((name) => `docs/${name}`)
+    const provider: FolderMoveProvider = {
+      ...createFakeProvider({ '': ['docs/'], 'docs/': files }),
+      async deleteItem(id) {
+        deleted.push(id)
+        if (id === 'docs/a') throw userError('S3_ACCESS_DENIED')
+        if (id === 'docs/b') await stuck.promise
+        return { ok: true }
+      },
+    }
+
+    let settled = false
+    const operation = deleteFolder({
+      provider,
+      folder: 'docs/',
+      concurrency: 2,
+    }).catch((error: unknown) => {
+      settled = true
+      throw error
+    })
+    await vi.waitFor(() => expect(deleted).toEqual(['docs/a', 'docs/b']))
+    await new Promise((resolve) => setTimeout(resolve, 0))
+    // `a` failed while `b` is still in flight: nothing else starts, and the
+    // failure is only reported once `b` is done too.
+    expect(deleted).toEqual(['docs/a', 'docs/b'])
+    expect(settled).toBe(false)
+
+    stuck.resolve()
+    await expect(operation).rejects.toThrow('S3_ACCESS_DENIED')
+    expect(deleted).toEqual(['docs/a', 'docs/b'])
   })
 })
 
@@ -295,7 +332,7 @@ describe('deleteFolder', () => {
     const provider = createFakeProvider(tree())
     const order: string[] = []
     const deleteItem = provider.deleteItem.bind(provider)
-    provider.deleteItem = async (id, options) => {
+    provider.deleteItem = (id, options) => {
       order.push(id)
       return deleteItem(id, options)
     }

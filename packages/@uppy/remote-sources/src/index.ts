@@ -79,14 +79,14 @@ export default class RemoteSources<
     }
   }
 
-  setOptions(newOpts: Partial<Opts>): void {
+  override setOptions(newOpts: Partial<Opts>): void {
     this.uninstall()
     super.setOptions(newOpts)
     this.install()
   }
 
-  install(): void {
-    this.opts.sources.forEach((pluginId) => {
+  override install(): void {
+    for (const pluginId of this.opts.sources) {
       const { sources, ...rest } = this.opts
       const optsForRemoteSourcePlugin: CompanionPluginOptions = {
         ...rest,
@@ -109,10 +109,10 @@ export default class RemoteSources<
       this.#installedPlugins.add(
         this.uppy.getPlugin(pluginId) as UnknownProviderPlugin<M, B>,
       )
-    })
+    }
   }
 
-  uninstall(): void {
+  override uninstall(): void {
     for (const plugin of this.#installedPlugins) {
       this.uppy.removePlugin(plugin)
     }

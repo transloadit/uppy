@@ -3,13 +3,12 @@ import { createServer } from 'node:http'
 import { dirname, join } from 'node:path'
 import { setTimeout } from 'node:timers/promises'
 import { fileURLToPath } from 'node:url'
-import type { TestProject } from 'vitest/node'
 
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = dirname(__filename)
 const mockServerPort = 62450
 
-export default async function setup(project: TestProject) {
+export default async function setup() {
   const mockServer = createServer((req, res) => {
     const fileName = `DALL·E IMG_9078 - 学中文 🤑`
 

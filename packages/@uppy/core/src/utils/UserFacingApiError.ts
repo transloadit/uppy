@@ -14,7 +14,7 @@ type ErrorCode = CompanionErrorCode | (string & {})
  * already translated `message` for the same effect.
  */
 class UserFacingApiError extends Error {
-  name = 'UserFacingApiError'
+  override name = 'UserFacingApiError'
 
   /** Companion's error code; see `companion-client/errorCodes.ts`. */
   code: ErrorCode | undefined

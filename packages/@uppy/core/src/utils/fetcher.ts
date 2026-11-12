@@ -1,5 +1,6 @@
 import NetworkError from './NetworkError.js'
 import ProgressTimeout from './ProgressTimeout.js'
+import toError from './toError.js'
 
 const noop = (): void => {}
 
@@ -129,8 +130,7 @@ export function fetcher(
         } catch (err) {
           // This is important as we need to emit the xhr
           // over the upload-error event.
-          err.request = xhr
-          onError(err)
+          onError(Object.assign(toError(err), { request: xhr }))
           return
         }
 

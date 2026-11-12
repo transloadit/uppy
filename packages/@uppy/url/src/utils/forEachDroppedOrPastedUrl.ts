@@ -1,5 +1,3 @@
-import { toArray } from '@uppy/core/utils'
-
 /*
   SITUATION
 
@@ -59,7 +57,7 @@ export default function forEachDroppedOrPastedUrl(
   isDropOrPaste: 'drop' | 'paste',
   callback: (url: string) => void,
 ): void {
-  const items = toArray(dataTransfer.items)
+  const items = Array.from(dataTransfer.items)
 
   let urlItems: DataTransferItem[]
 
@@ -88,7 +86,7 @@ export default function forEachDroppedOrPastedUrl(
     }
   }
 
-  urlItems.forEach((item) => {
+  for (const item of urlItems) {
     item.getAsString((urlString) => callback(urlString))
-  })
+  }
 }

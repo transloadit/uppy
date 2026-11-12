@@ -28,9 +28,18 @@ import { ProviderApiError, ProviderAuthError } from '../error.js'
 import { userError } from '../errorCodes.js'
 import Provider, {
   type CompanionLike,
+  type ProviderCreateFolderOptions,
+  type ProviderCreateFolderResponse,
+  type ProviderDeleteItemOptions,
+  type ProviderDownloadOptions,
+  type ProviderDownloadResponse,
   type ProviderListItem,
+  type ProviderListOptions,
   type ProviderListResponse,
-  type Query,
+  type ProviderLogoutResponse,
+  type ProviderMoveItemOptions,
+  type ProviderMoveItemResponse,
+  type ProviderSimpleAuthOptions,
 } from '../Provider.js'
 import {
   type ParsedS3ProviderOptions,
@@ -74,19 +83,13 @@ export type S3Session<P extends ParsedS3ProviderOptions> = {
   config: ResolvedConfig<P>
 }
 
-/** What every request carries, on top of its own arguments. */
-type Args<T> = T & {
-  companion: CompanionLike
-  providerUserSession: S3UserSession
-}
-
 type SessionChecks = {
   requireWrite?: boolean
   /** Keys the request names; each must lie inside the session's prefix. */
   keys?: string[]
 }
 
-export type ItemRef = { id: string; requestPath: string }
+export type ItemRef = ProviderMoveItemResponse
 
 /**
  * The settings the provider may set on top of the `s3` upload block, as
@@ -160,6 +163,15 @@ export const withOwnCredentials = (
 ): S3ClientOptions => {
   const { credentials: _, ...awsClientOptions } = options.awsClientOptions ?? {}
   return { ...options, awsClientOptions }
+}
+
+// Not /^\/+|\/+$/: its backtracking is quadratic in the length of a run of slashes.
+function trimSlashes(name: string): string {
+  let start = 0
+  let end = name.length
+  while (start < end && name[start] === '/') start++
+  while (end > start && name[end - 1] === '/') end--
+  return name.slice(start, end)
 }
 
 /**
@@ -324,17 +336,14 @@ export default class S3Provider<
     }
   }
 
-  override async logout(): Promise<{ revoked: true }> {
+  override logout(): ProviderLogoutResponse {
     return { revoked: true }
   }
 
   override async simpleAuth({
     requestBody,
     companion,
-  }: {
-    requestBody: unknown
-    companion: CompanionLike
-  }): Promise<S3UserSession> {
+  }: ProviderSimpleAuthOptions): Promise<S3UserSession> {
     // Only the configuration goes through the error wrapper: a grant that
     // does not verify is the client's doing, not something to log as an error.
     const config = await this.withErrorHandling(
@@ -369,15 +378,12 @@ export default class S3Provider<
     }
   }
 
-  override async list({
+  override list({
     companion,
     providerUserSession,
     query,
     directory,
-  }: Args<{
-    query?: Query | undefined
-    directory?: string | undefined
-  }>): Promise<ProviderListResponse> {
+  }: ProviderListOptions<S3UserSession>): Promise<ProviderListResponse> {
     return this.withErrorHandling('provider.s3.list.error', async () => {
       // `directory` is the (already URL-decoded) key prefix of the folder
       // being listed; the root of the session is its prefix.
@@ -461,15 +467,12 @@ export default class S3Provider<
     })
   }
 
-  override async download({
+  override download({
     companion,
     id,
     query,
     providerUserSession,
-  }: Args<{ id: string; query?: unknown }>): Promise<{
-    stream: Readable
-    size: number | undefined
-  }> {
+  }: ProviderDownloadOptions<S3UserSession>): Promise<ProviderDownloadResponse> {
     return this.withErrorHandling('provider.s3.download.error', async () => {
       const { bucket, client } = this.session(companion, providerUserSession, {
         keys: [id],
@@ -532,11 +535,11 @@ export default class S3Provider<
     )
   }
 
-  override async deleteItem({
+  override deleteItem({
     companion,
     id,
     providerUserSession,
-  }: Args<{ id: string }>): Promise<void> {
+  }: ProviderDeleteItemOptions<S3UserSession>): Promise<void> {
     return this.withErrorHandling('provider.s3.delete.error', async () => {
       const { bucket, client } = this.session(companion, providerUserSession, {
         requireWrite: true,
@@ -557,13 +560,13 @@ export default class S3Provider<
    * prefix, so the client walks it and moves its files one by one); a backend
    * that `supportsMoveFolder` gets folders too, with a normalised target.
    */
-  override async moveItem({
+  override moveItem({
     companion,
     id,
     destination,
     providerUserSession,
-  }: Args<{ id: string; destination: string }>): Promise<ItemRef> {
-    return this.withErrorHandling('provider.s3.move.error', async () => {
+  }: ProviderMoveItemOptions<S3UserSession>): Promise<ProviderMoveItemResponse> {
+    return this.withErrorHandling('provider.s3.move.error', () => {
       const session = this.session(companion, providerUserSession, {
         requireWrite: true,
         keys: [id, destination],
@@ -647,12 +650,12 @@ export default class S3Provider<
     return itemRef(destination)
   }
 
-  override async createFolder({
+  override createFolder({
     companion,
     parentId,
     name,
     providerUserSession,
-  }: Args<{ parentId: string | null; name: string }>): Promise<ItemRef> {
+  }: ProviderCreateFolderOptions<S3UserSession>): Promise<ProviderCreateFolderResponse> {
     return this.withErrorHandling(
       'provider.s3.createFolder.error',
       async () => {
@@ -668,7 +671,7 @@ export default class S3Provider<
           requireWrite: true,
           keys: parentFolder ? [parentFolder] : [],
         })
-        const cleanName = name.trim().replace(/^\/+|\/+$/g, '')
+        const cleanName = trimSlashes(name.trim())
         if (
           cleanName.length === 0 ||
           cleanName.includes('/') ||
@@ -703,7 +706,7 @@ export default class S3Provider<
     )
   }
 
-  override async thumbnail(): Promise<never> {
+  override thumbnail(): Promise<never> {
     logger.error(
       'call to thumbnail is not implemented',
       'provider.s3.thumbnail.error',

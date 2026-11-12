@@ -14,6 +14,7 @@ import {
   ProviderAuthError,
   ProviderUserError,
 } from '../src/server/provider/error.js'
+import type { Query } from '../src/server/provider/Provider.js'
 import S3Provider from '../src/server/provider/s3/index.js'
 import TransloaditStorageProvider from '../src/server/provider/s3/transloadit-storage.js'
 import {
@@ -400,7 +401,8 @@ describe('S3 provider', () => {
         provider.download({
           companion,
           id: 'tenant/file.txt',
-          query,
+          // `undefined` is not a valid `Query`, but must still be refused
+          query: query as Query,
           providerUserSession,
         }),
       ).rejects.toEqual(userError('S3_SELECTED_IN_OTHER_SESSION'))
@@ -491,6 +493,7 @@ describe('S3 provider', () => {
       't/p-copy.txt': { ContentLength: 3, ETag: '"placeholder"' },
     }
     const makeMoveProvider = () => {
+      // biome-ignore lint/suspicious/useAwait: This mocks an asynchronous function.
       const send = vi.fn(async (cmd: unknown) => {
         if (cmd instanceof HeadObjectCommand) {
           const head = heads[(cmd as unknown as Cmd).input['Key'] as string]
@@ -593,6 +596,7 @@ describe('S3 provider', () => {
 
     test('a source replaced after the copy is kept and reported as a conflict', async () => {
       const { provider, send } = makeMoveProvider()
+      // biome-ignore lint/suspicious/useAwait: This mocks an asynchronous function.
       send.mockImplementation(async (cmd: unknown) => {
         if (cmd instanceof HeadObjectCommand) {
           const key = (cmd as unknown as Cmd).input['Key'] as string
@@ -620,6 +624,7 @@ describe('S3 provider', () => {
         ['t/a.txt', 'a'],
         ['t/b.txt', 'b'],
       ])
+      // biome-ignore lint/suspicious/useAwait: This mocks an asynchronous function.
       const send = vi.fn(async (cmd: unknown) => {
         const input = (cmd as unknown as Cmd).input
         const key = input['Key'] as string
@@ -716,13 +721,24 @@ describe('S3 provider', () => {
       await expect(create('docs/', '  ')).rejects.toEqual(
         userError('S3_INVALID_NAME'),
       )
+      // linear time even for a long run of slashes
+      const started = performance.now()
+      await expect(create('docs/', `x${'/'.repeat(100_000)}x`)).rejects.toEqual(
+        userError('S3_INVALID_NAME'),
+      )
+      expect(performance.now() - started).toBeLessThan(500)
       expect(inputsOf(send, PutObjectCommand)).toEqual([])
       expect(await create('docs/', ' fresh ')).toEqual({
         id: 'docs/fresh/',
         requestPath: 'docs%2Ffresh%2F',
       })
+      expect(await create('docs/', '//slashed//')).toEqual({
+        id: 'docs/slashed/',
+        requestPath: 'docs%2Fslashed%2F',
+      })
       expect(inputsOf(send, PutObjectCommand)).toEqual([
         { Bucket: 'b', Key: 'docs/fresh/', Body: '', IfNoneMatch: '*' },
+        { Bucket: 'b', Key: 'docs/slashed/', Body: '', IfNoneMatch: '*' },
       ])
     })
 
@@ -765,7 +781,19 @@ describe('S3 provider', () => {
   describe('transloadit-storage (native moves)', () => {
     const makeNative = (send: (cmd: unknown) => Promise<unknown> = vi.fn()) => {
       const provider = new TransloaditStorageProvider({ allowLocalUrls: true })
-      vi.spyOn(provider, 'getClient').mockReturnValue({ send } as never)
+      // Like a real client, sign with the key pair it was built with.
+      vi.spyOn(provider, 'getClient').mockImplementation(
+        ({ key, secret }) =>
+          ({
+            send,
+            config: {
+              credentials: async () => ({
+                accessKeyId: key,
+                secretAccessKey: secret,
+              }),
+            },
+          }) as never,
+      )
       return provider
     }
     const nativeCompanion = (apiEndpoint: string) =>
@@ -885,7 +913,7 @@ describe('S3 provider', () => {
       ])
       const params = requests[0]?.body.get('params') ?? ''
       expect(JSON.parse(params)).toMatchObject({
-        auth: { key: 'ws-key' },
+        auth: { key: 'ws-key', method: 'POST', path: '/dam/entries/move' },
         source: 'tenant/photo.jpg',
         destination: 'tenant/renamed.jpg',
       })
@@ -943,19 +971,24 @@ describe('S3 provider', () => {
       await expect(provider.moveItem(args)).rejects.toEqual(
         userError('S3_REQUEST_FAILED'),
       )
+      // Unreachable: a transport failure is an outage too, never a raw got error.
+      await expect(
+        provider.moveItem({
+          ...args,
+          companion: nativeCompanion('http://127.0.0.1:1'),
+        }),
+      ).rejects.toMatchObject({ name: 'ProviderApiError', statusCode: 502 })
     })
   })
 
   test('S3 errors reach the browser only as "not found" or a generic failure', async () => {
-    const denied = new S3ServiceException({
-      name: 'AccessDenied',
-      $fault: 'client',
-      $metadata: { httpStatusCode: 403 },
-    })
-    let error: unknown = denied
-    const send = vi.fn(async () => {
-      throw error
-    })
+    const send = vi.fn().mockRejectedValue(
+      new S3ServiceException({
+        name: 'AccessDenied',
+        $fault: 'client',
+        $metadata: { httpStatusCode: 403 },
+      }),
+    )
     const provider = makeProvider(send)
     const list = () =>
       provider.list({
@@ -963,15 +996,17 @@ describe('S3 provider', () => {
         providerUserSession: bucketSession,
       })
     await expect(list()).rejects.toEqual(userError('S3_REQUEST_FAILED'))
-    error = notFound()
+    send.mockRejectedValue(notFound())
     await expect(list()).rejects.toEqual(userError('S3_NOT_FOUND'))
-    error = new S3ServiceException({
-      name: 'PreconditionFailed',
-      $fault: 'client',
-      $metadata: { httpStatusCode: 412 },
-    })
+    send.mockRejectedValue(
+      new S3ServiceException({
+        name: 'PreconditionFailed',
+        $fault: 'client',
+        $metadata: { httpStatusCode: 412 },
+      }),
+    )
     await expect(list()).rejects.toEqual(userError('S3_CONFLICT'))
-    error = new ProviderUserError({ message: 'passthrough' })
+    send.mockRejectedValue(new ProviderUserError({ message: 'passthrough' }))
     await expect(list()).rejects.toEqual(
       expect.objectContaining({ json: { message: 'passthrough' } }),
     )

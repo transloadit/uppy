@@ -14,8 +14,6 @@ a versatile file encoding service.
 
 ## Example
 
-<!-- eslint-disable react/state-in-constructor -->
-
 ```jsx
 /** @jsx React */
 import React from 'react'

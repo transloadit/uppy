@@ -1,5 +1,97 @@
 # uppy
 
+## 6.0.7
+
+### Patch Changes
+
+- Updated dependencies [9755eb6]
+  - @uppy/transloadit@6.1.0
+
+## 6.0.6
+
+### Patch Changes
+
+- Updated dependencies [628b3c0]
+- Updated dependencies [f58058d]
+- Updated dependencies [f58058d]
+- Updated dependencies [62e4970]
+- Updated dependencies [f58058d]
+- Updated dependencies [a8e8b28]
+- Updated dependencies [dc82e9c]
+- Updated dependencies [a16a4bf]
+  - @uppy/core@6.3.1
+  - @uppy/dashboard@6.0.3
+  - @uppy/aws-s3@6.3.1
+  - @uppy/golden-retriever@6.0.1
+  - @uppy/transloadit@6.0.2
+  - @uppy/tus@6.0.1
+  - @uppy/webcam@6.0.3
+  - @uppy/locales@5.3.2
+  - @uppy/box@5.0.1
+  - @uppy/dropbox@6.0.1
+  - @uppy/facebook@6.0.1
+  - @uppy/google-drive@6.0.2
+  - @uppy/google-drive-picker@2.0.1
+  - @uppy/google-photos-picker@2.0.1
+  - @uppy/onedrive@6.0.1
+  - @uppy/unsplash@6.0.1
+  - @uppy/webdav@2.0.2
+  - @uppy/zoom@5.0.1
+  - @uppy/drag-drop@6.0.2
+  - @uppy/drop-target@5.0.2
+  - @uppy/screen-capture@6.0.3
+
+## 6.0.5
+
+### Patch Changes
+
+- 715eb80: Move the source map of the minified CSS into a separate file. The `.min.css` files, and `image-editor.css` in `@uppy/components`, `@uppy/react`, `@uppy/vue` and `@uppy/svelte`, embedded it inline and were larger than the unminified CSS. They now link to an external `.css.map` instead, at about half the gzipped size.
+- Updated dependencies [ec0c114]
+- Updated dependencies [b47ca2d]
+- Updated dependencies [b47ca2d]
+- Updated dependencies [715eb80]
+- Updated dependencies [a7a7997]
+- Updated dependencies [6088195]
+- Updated dependencies [54d543c]
+- Updated dependencies [78970b1]
+- Updated dependencies [a7a7997]
+- Updated dependencies [a17c84d]
+- Updated dependencies [debe26d]
+- Updated dependencies [c054368]
+  - @uppy/aws-s3@6.3.0
+  - @uppy/core@6.3.0
+  - @uppy/audio@4.0.2
+  - @uppy/dashboard@6.0.2
+  - @uppy/drag-drop@6.0.1
+  - @uppy/drop-target@5.0.1
+  - @uppy/image-editor@5.0.1
+  - @uppy/image-generator@2.0.1
+  - @uppy/screen-capture@6.0.2
+  - @uppy/status-bar@6.0.1
+  - @uppy/url@6.0.2
+  - @uppy/webcam@6.0.2
+  - @uppy/google-drive@6.0.1
+  - @uppy/locales@5.3.1
+  - @uppy/webdav@2.0.1
+  - @uppy/compressor@4.0.1
+
+## 6.0.4
+
+### Patch Changes
+
+- Updated dependencies [4895bcc]
+- Updated dependencies [3f1aca3]
+  - @uppy/core@6.2.0
+  - @uppy/audio@4.0.1
+  - @uppy/aws-s3@6.2.2
+  - @uppy/dashboard@6.0.1
+  - @uppy/screen-capture@6.0.1
+  - @uppy/thumbnail-generator@6.0.1
+  - @uppy/transloadit@6.0.1
+  - @uppy/url@6.0.1
+  - @uppy/webcam@6.0.1
+  - @uppy/xhr-upload@6.0.1
+
 ## 6.0.3
 
 ### Patch Changes
@@ -368,7 +460,6 @@
 - c5b51f6: ### Export maps for all packages
 
   All packages now have export maps. This is a breaking change in two cases:
-
   1. The css imports have changed from `@uppy[package]/dist/styles.min.css` to `@uppy[package]/css/styles.min.css`
   2. You were importing something that wasn't exported from the root, for instance `@uppy/core/lib/foo.js`. You can now only import things we explicitly exported.
 

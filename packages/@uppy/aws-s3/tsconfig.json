@@ -6,7 +6,6 @@
     }
   ],
   "compilerOptions": {
-    "noUncheckedIndexedAccess": false,
-    "useUnknownInCatchVariables": false
+    "noUncheckedIndexedAccess": false
   }
 }

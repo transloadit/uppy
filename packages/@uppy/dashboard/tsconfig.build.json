@@ -2,6 +2,9 @@
   "extends": "@uppy-dev/tsconfig/build",
   "references": [
     {
+      "path": "../../../private/msw-setup/tsconfig.build.json"
+    },
+    {
       "path": "../core/tsconfig.build.json"
     },
     {
@@ -24,7 +27,6 @@
     "exactOptionalPropertyTypes": false,
     "jsx": "react-jsx",
     "jsxImportSource": "preact",
-    "noImplicitOverride": false,
     "noUncheckedIndexedAccess": false
   }
 }

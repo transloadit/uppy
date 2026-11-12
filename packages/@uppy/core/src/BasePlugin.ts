@@ -107,7 +107,7 @@ export default class BasePlugin<
    * making them not conditional in use, such as `if (this.afterUpdate)`.
    */
 
-  addTarget(plugin: UnknownPlugin<M, B>): HTMLElement | null {
+  addTarget(_plugin: UnknownPlugin<M, B>): HTMLElement | null {
     throw new Error(
       "Extend the addTarget method to add your plugin to another plugin's target",
     )
@@ -117,7 +117,7 @@ export default class BasePlugin<
 
   uninstall(): void {}
 
-  update(state: Partial<State<M, B>>): void {}
+  update(_state: Partial<State<M, B>>): void {}
 
   // Called after every state update, after everything's mounted. Debounced.
   afterUpdate(): void {}

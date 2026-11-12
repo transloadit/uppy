@@ -180,8 +180,9 @@ export default class Tus<M extends Meta, B extends Body> extends BasePlugin<
     if (this.uploaders[fileID]) {
       this.uploaders[fileID] = null
     }
-    if (this.uploaderEvents[fileID]) {
-      this.uploaderEvents[fileID]!.remove()
+    const events = this.uploaderEvents[fileID]
+    if (events) {
+      events.remove()
       this.uploaderEvents[fileID] = null
     }
   }
@@ -219,9 +220,7 @@ export default class Tus<M extends Meta, B extends Body> extends BasePlugin<
    *    up a spot in the queue.
    *
    */
-  async #uploadLocalFile(
-    file: LocalUppyFile<M, B>,
-  ): Promise<tus.Upload | string> {
+  #uploadLocalFile(file: LocalUppyFile<M, B>): Promise<tus.Upload | string> {
     this.#abortUploader(file.id)
     this.#resetUploaderReferences(file.id)
 
@@ -469,13 +468,13 @@ export default class Tus<M extends Meta, B extends Body> extends BasePlugin<
         opts.allowedMetaFields,
         file.meta,
       )
-      allowedMetaFields.forEach((item) => {
+      for (const item of allowedMetaFields) {
         // tus type definition for metadata only accepts `Record<string, string>`
         // but in reality (at runtime) it accepts `Record<string, unknown>`
         // tus internally converts everything into a string, but let's do it here instead to be explicit.
         // because Uppy can have anything inside meta values, (for example relativePath: null is often sent by uppy)
         meta[item] = String(file.meta[item])
-      })
+      }
 
       // tusd uses metadata fields 'filetype' and 'filename'
       copyProp(meta, 'type', 'filetype')
@@ -656,7 +655,7 @@ export default class Tus<M extends Meta, B extends Body> extends BasePlugin<
     await this.#uploadFiles(filesToUpload)
   }
 
-  install(): void {
+  override install(): void {
     this.uppy.setState({
       capabilities: {
         ...this.uppy.getState().capabilities,
@@ -666,7 +665,7 @@ export default class Tus<M extends Meta, B extends Body> extends BasePlugin<
     this.uppy.addUploader(this.#handleUpload)
   }
 
-  uninstall(): void {
+  override uninstall(): void {
     this.uppy.setState({
       capabilities: {
         ...this.uppy.getState().capabilities,

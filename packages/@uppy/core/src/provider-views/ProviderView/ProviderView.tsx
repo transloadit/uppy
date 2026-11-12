@@ -2,6 +2,7 @@ import classNames from 'classnames'
 import debounce from 'lodash/debounce.js'
 import type { h } from 'preact'
 import packageJson from '../../../package.json' with { type: 'json' }
+import { isAuthError } from '../../companion-client/AuthError.js'
 import { describeCompanionError } from '../../companion-client/errorCodes.js'
 import type {
   Body,
@@ -18,12 +19,14 @@ import type {
 } from '../../index.js'
 import ErrorWithCause from '../../utils/ErrorWithCause.js'
 import type { CompanionFile, I18n } from '../../utils/index.js'
-import { remoteFileObjToLocal } from '../../utils/index.js'
+import {
+  getErrorMessage,
+  isAbortError,
+  remoteFileObjToLocal,
+} from '../../utils/index.js'
 import Browser from '../Browser.js'
-import BulkActions from '../BulkActions.js'
 import FilterInput from '../FilterInput.js'
 import FooterActions from '../FooterActions.js'
-import ItemDetailDialog from '../ItemDetailDialog.js'
 import ProviderDialog from '../ProviderDialog.js'
 import ProviderDialogController, {
   type ConfirmOptions,
@@ -72,7 +75,6 @@ const getDefaultState = (
   didFirstRender: false,
   username: null,
   loading: false,
-  selectionActive: false,
   detailItemId: undefined,
 })
 
@@ -132,7 +134,7 @@ export interface ProviderActionContext<M extends Meta, B extends Body> {
 export interface ProviderAction<M extends Meta, B extends Body> {
   id: string
   label: string
-  /** Renders red in the menu / detail dialog (destructive actions). */
+  /** Renders red in the menu (destructive actions). */
   danger?: boolean
   /** Which items get this action; defaults to 'all'. */
   appliesTo?: 'file' | 'folder' | 'all'
@@ -216,41 +218,22 @@ export interface Opts<M extends Meta, B extends Body> {
   /**
    * 'picker' (default): rows are checkboxes and the footer adds the selection
    * to Uppy. 'manager' (file-library UIs, until a dedicated file manager
-   * plugin replaces it): a plain click opens an item's details, multi-select
-   * hides behind an explicit toggle, and the selection feeds `bulkActions`
-   * instead of picking. 'manager' is list view only for
-   * now (`viewType: 'list'`): the grid view does not lay out its items.
+   * plugin replaces it): headless. A file library renders it with
+   * `useS3Manager`, which runs the plugin's actions and selects items for
+   * `bulkActions`; this panel renders nothing in manager mode.
    *
    * @experimental Part of the file-management API added for `@uppy/s3`: it
    * will change incompatibly, also in minor releases.
    */
   mode?: 'picker' | 'manager'
   /**
-   * Manager mode only: actions over the multi-selected items, in the footer
-   * of its selection mode. (Picker mode picks the checked items.) List view
-   * only for now (`viewType: 'list'`).
+   * Manager mode only: actions over the selected items, run with
+   * `runBulkAction` by a headless UI. (Picker mode picks the checked items.)
    *
    * @experimental Part of the file-management API added for `@uppy/s3`: it
    * will change incompatibly, also in minor releases.
    */
   bulkActions?: ProviderBulkAction<M, B>[]
-  /**
-   * Manager mode: resolves a preview image URL for the detail modal.
-   *
-   * @experimental Part of the file-management API added for `@uppy/s3`: it
-   * will change incompatibly, also in minor releases.
-   */
-  getPreviewUrl?: (
-    item: PartialTreeFile | PartialTreeFolderNode,
-  ) => Promise<string>
-  /**
-   * The plugin is the whole page: no user/logout row in the header (the app
-   * owns the session).
-   *
-   * @experimental Part of the file-management API added for `@uppy/s3`: it
-   * will change incompatibly, also in minor releases.
-   */
-  standalone?: boolean
   viewType: 'list' | 'grid'
   showTitles: boolean
   showFilter: boolean
@@ -417,7 +400,7 @@ export default class ProviderView<M extends Meta, B extends Body> {
       this.plugin.getPluginState()
     // The plugin may have been removed while the folder was listed.
     if (refreshedTree == null) return
-    // The item of an open detail modal did not survive the refresh. Only
+    // The detail item did not survive the refresh. Only
     // judged once the folder was listed again, and by the latest refresh (a
     // newer one aborted this listing and dropped the items again).
     const listed = refreshedTree.some(
@@ -444,6 +427,7 @@ export default class ProviderView<M extends Meta, B extends Body> {
         partialTree: PartialTreeUtils.afterToggleCheckbox(
           refreshedTree,
           survivors,
+          this.opts.mode === 'manager',
         ),
       })
     }
@@ -496,12 +480,11 @@ export default class ProviderView<M extends Meta, B extends Body> {
 
   #reportActionError(err: unknown): void {
     const { uppy } = this.plugin
-    if ((err as { name?: unknown } | null | undefined)?.name === 'AbortError') {
+    if (isAbortError(err)) {
       uppy.log('[ProviderView] action cancelled', 'warning')
       return
     }
-    const raw = err instanceof Error ? err.message : String(err)
-    uppy.log(`[ProviderView] action failed: ${raw}`, 'error')
+    uppy.log(`[ProviderView] action failed: ${getErrorMessage(err)}`, 'error')
     // A `UserFacingApiError` is for the user: a locale key from Companion, or a
     // translated message a plugin threw. Any other text is not: a failed
     // Companion request (the request client wraps those, auth errors aside)
@@ -510,8 +493,7 @@ export default class ProviderView<M extends Meta, B extends Body> {
     const message =
       err instanceof Error && err.name === 'UserFacingApiError'
         ? describeCompanionError(uppy.i18n, err)
-        : err instanceof ErrorWithCause ||
-            (err as { isAuthError?: unknown } | null)?.isAuthError === true
+        : err instanceof ErrorWithCause || isAuthError(err)
           ? uppy.i18n('companionError')
           : uppy.i18n('actionFailed')
     uppy.info(message, 'error', 5000)
@@ -520,11 +502,13 @@ export default class ProviderView<M extends Meta, B extends Body> {
   #cancelLongOperation: (() => void) | undefined
 
   /**
-   * Runs a long write operation (a folder move, a bulk delete) behind the
-   * loading screen, with a Cancel button and progress text. `signal` aborts
-   * when the user cancels, the panel closes or uploads are cancelled; pass it
-   * to every request. The operation should throw an `AbortError` when it
-   * stops early, which `#run` treats as a cancel rather than a failure.
+   * Runs a long write operation (a folder move, a bulk delete) with progress
+   * text in `loading`, cancellable with `cancelLongOperation()` (the hook's
+   * `cancelOperation`). For manager mode: the picker panel shows the progress
+   * text but offers no way to stop it. `signal` aborts when it is cancelled, the panel
+   * closes or uploads are cancelled; pass it to every request. The operation
+   * should throw an `AbortError` when it stops early, which `#run` treats as
+   * a cancel rather than a failure.
    *
    * @experimental Part of the file-management API added for `@uppy/s3`: it
    * will change incompatibly, also in minor releases.
@@ -550,28 +534,17 @@ export default class ProviderView<M extends Meta, B extends Body> {
   }
 
   /**
-   * Manager mode: switch the multi-select checkboxes on or off.
-   *
-   * @experimental Part of the file-management API added for `@uppy/s3`: it
-   * will change incompatibly, also in minor releases.
-   */
-  toggleSelectionMode = (): void => {
-    const { selectionActive } = this.plugin.getPluginState()
-    if (selectionActive) this.cancelSelection()
-    this.plugin.setPluginState({ selectionActive: !selectionActive })
-  }
-
-  /**
-   * The item of the open detail modal as last seen in the tree. A refresh
-   * drops the folder's items until it is listed again; the modal keeps
-   * showing this one meanwhile instead of closing and reopening.
+   * The detail item as last seen in the tree. A refresh drops the folder's
+   * items until it is listed again; the detail keeps this one meanwhile
+   * instead of closing and reopening.
    */
   #detailItem: PartialTreeFile | PartialTreeFolderNode | undefined
 
   #refreshes = 0
 
   /**
-   * Manager mode: open the detail modal for one item.
+   * Manager mode: make one item the detail item, which a headless UI shows
+   * (see `getDetailItem`).
    *
    * @experimental Part of the file-management API added for `@uppy/s3`: it
    * will change incompatibly, also in minor releases.
@@ -589,14 +562,32 @@ export default class ProviderView<M extends Meta, B extends Body> {
     this.plugin.setPluginState({ detailItemId: undefined })
   }
 
+  /**
+   * The detail item: as it is in the tree, or as last seen while a refresh
+   * relists its folder. `undefined` once closed.
+   *
+   * @experimental Part of the file-management API added for `@uppy/s3`: it
+   * will change incompatibly, also in minor releases.
+   */
+  getDetailItem = (): PartialTreeFile | PartialTreeFolderNode | undefined => {
+    const { partialTree, detailItemId } = this.plugin.getPluginState()
+    if (!detailItemId) return undefined
+    this.#detailItem =
+      partialTree.find(
+        (node): node is PartialTreeFile | PartialTreeFolderNode =>
+          node.type !== 'root' && node.id === detailItemId,
+      ) ?? this.#detailItem
+    return this.#detailItem?.id === detailItemId ? this.#detailItem : undefined
+  }
+
   // Checkbox aggregation also checks parents of selected children. Only user-selected folders
   // (and their selected descendants) may become folder mutation targets.
   #selectionRoots = new Set<string>()
 
   /**
    * The items a bulk action gets: the checked ones, top-most only (an action
-   * on a folder covers what is inside it). The selection count shown next to
-   * the bulk actions counts these too.
+   * on a folder covers what is inside it). A headless UI's selection count
+   * (`useS3Manager`'s `selected`) is these items.
    *
    * @experimental Part of the file-management API added for `@uppy/s3`: it
    * will change incompatibly, also in minor releases.
@@ -630,9 +621,9 @@ export default class ProviderView<M extends Meta, B extends Body> {
     this.#run(action, async () => {
       const items = this.getBulkActionItems()
       if (items.length === 0) return false
-      if ((await action.run({ items, ...this.#actionContext() })) === false)
-        return false
-      this.cancelSelection()
+      const result = await action.run({ items, ...this.#actionContext() })
+      if (result !== false) this.cancelSelection()
+      return result
     })
 
   #dialogs: ProviderDialogController
@@ -656,6 +647,25 @@ export default class ProviderView<M extends Meta, B extends Body> {
    */
   confirm(options: ConfirmOptions): Promise<boolean> {
     return this.#dialogs.confirm(options)
+  }
+
+  /**
+   * Answer the open dialog from a headless UI (`value` is the prompt's input).
+   *
+   * @experimental Part of the file-management API added for `@uppy/s3`: it
+   * will change incompatibly, also in minor releases.
+   */
+  submitDialog = (value?: string): void => this.#dialogs.submit(value)
+
+  /** @experimental See `submitDialog`. */
+  cancelDialog = (): void => this.#dialogs.cancel()
+
+  /** @experimental Stop the running `runWithProgress` operation, if any. */
+  cancelLongOperation = (): void => this.#cancelLongOperation?.()
+
+  /** @experimental Whether `cancelLongOperation` has something to stop. */
+  get canCancelOperation(): boolean {
+    return this.#cancelLongOperation !== undefined
   }
 
   tearDown(): void {
@@ -696,10 +706,13 @@ export default class ProviderView<M extends Meta, B extends Body> {
       abortController.abort()
     }
     try {
-      // @ts-expect-error this should be typed in @uppy/dashboard.
-      // Even then I don't think we can make this work without adding dashboard
-      // as a dependency to provider-views.
-      this.plugin.uppy.on('dashboard:close-panel', cancelRequest)
+      // A headless manager has no Dashboard panel: closing one is not about it.
+      if (this.opts.mode !== 'manager') {
+        // @ts-expect-error this should be typed in @uppy/dashboard.
+        // Even then I don't think we can make this work without adding dashboard
+        // as a dependency to provider-views.
+        this.plugin.uppy.on('dashboard:close-panel', cancelRequest)
+      }
       this.plugin.uppy.on('cancel-all', cancelRequest)
 
       await op(abortController.signal)
@@ -719,8 +732,8 @@ export default class ProviderView<M extends Meta, B extends Body> {
 
   /**
    * Ends a listing's loading state, unless a long operation (`runWithProgress`)
-   * has taken the screen over meanwhile: the listing it aborted must not wipe
-   * the progress screen on its way out.
+   * has started meanwhile: the listing it aborted must not wipe the
+   * operation's progress text on its way out.
    */
   #doneLoading(): void {
     if (this.#cancelLongOperation === undefined) this.setLoading(false)
@@ -1029,13 +1042,15 @@ export default class ProviderView<M extends Meta, B extends Body> {
       // 1. Enrich our partialTree by fetching all 'checked' but not-yet-fetched folders
       const enrichedTree: PartialTree = await PartialTreeUtils.afterFill(
         partialTree,
-        (path: PartialTreeId) => this.provider.list(path, { signal }),
+        (path: PartialTreeId, fillSignal) =>
+          this.provider.list(path, { signal: fillSignal }),
         this.validateSingleFile,
         (n) => {
           this.setLoading(
             this.plugin.uppy.i18n('addedNumFiles', { numFiles: n }),
           )
         },
+        signal,
       )
 
       // 2. Now that we know how many files there are - recheck aggregateRestrictions!
@@ -1056,15 +1071,23 @@ export default class ProviderView<M extends Meta, B extends Body> {
     this.#doneLoading()
   }
 
+  /**
+   * `visibleOrder` is the rows as a custom UI shows them (sorted, filtered),
+   * so a shift-click range matches what the user sees.
+   */
   toggleCheckbox(
     ourItem: PartialTreeFolderNode | PartialTreeFile,
     isShiftKeyPressed: boolean,
+    visibleOrder: (
+      | PartialTreeFolderNode
+      | PartialTreeFile
+    )[] = this.getDisplayedPartialTree(),
   ) {
     const { partialTree } = this.plugin.getPluginState()
 
     const clickedRange = getClickedRange(
       ourItem.id,
-      this.getDisplayedPartialTree(),
+      visibleOrder,
       isShiftKeyPressed,
       this.previousCheckbox,
     )
@@ -1072,6 +1095,7 @@ export default class ProviderView<M extends Meta, B extends Body> {
     const newPartialTree = PartialTreeUtils.afterToggleCheckbox(
       partialTree,
       clickedRange,
+      this.opts.mode === 'manager',
     )
 
     const statusById = new Map(
@@ -1139,11 +1163,11 @@ export default class ProviderView<M extends Meta, B extends Body> {
 
     // todo memoize this so we don't have to do it on every render
     const itemsById = new Map<string, PartialTreeFile | PartialTreeFolderNode>()
-    partialTree.forEach((item) => {
+    for (const item of partialTree) {
       if (item.type !== 'root') {
         itemsById.set(item.id, item)
       }
-    })
+    }
 
     // the search results view needs data from the partial tree,
     const searchResults = ids!.map((id) => {
@@ -1162,7 +1186,23 @@ export default class ProviderView<M extends Meta, B extends Body> {
     )
   }
 
-  render(state: unknown, viewOptions: RenderOpts<M, B> = {}): h.JSX.Element {
+  #warnedManagerRender = false
+
+  render(_state: unknown, viewOptions: RenderOpts<M, B> = {}): h.JSX.Element {
+    const opts: Opts<M, B> = { ...this.opts, ...viewOptions }
+    // Manager mode has no UI of its own: a file library renders it with
+    // `useS3Manager`. Nothing is listed for an empty panel either.
+    if (opts.mode === 'manager') {
+      if (!this.#warnedManagerRender) {
+        this.#warnedManagerRender = true
+        this.plugin.uppy.log(
+          `[${this.plugin.id}] manager mode has no panel UI: render it headlessly`,
+          'warning',
+        )
+      }
+      return <div className="uppy-ProviderBrowser" />
+    }
+
     const { didFirstRender } = this.plugin.getPluginState()
     const { i18n } = this.plugin.uppy
 
@@ -1172,7 +1212,6 @@ export default class ProviderView<M extends Meta, B extends Body> {
       this.openFolder(this.plugin.rootFolderId)
     }
 
-    const opts: Opts<M, B> = { ...this.opts, ...viewOptions }
     const { authenticated, loading } = this.plugin.getPluginState()
     const pluginIcon = this.plugin.icon || defaultPickerIcon
 
@@ -1189,39 +1228,9 @@ export default class ProviderView<M extends Meta, B extends Body> {
       )
     }
 
-    const {
-      partialTree,
-      currentFolderId,
-      username,
-      searchString,
-      searchResults,
-      dialog,
-      selectionActive = false,
-      detailItemId,
-    } = this.plugin.getPluginState()
+    const { partialTree, username, searchString, searchResults, dialog } =
+      this.plugin.getPluginState()
     const breadcrumbs = this.getBreadcrumbs()
-    const isManager = opts.mode === 'manager'
-    const selectable = !isManager || selectionActive
-    // A long operation owns the screen: anything that would start another
-    // request (and so abort it) is disabled or hidden meanwhile.
-    const busy = this.#cancelLongOperation !== undefined
-    // Nothing to select in a folder we know is empty (unlike one being listed).
-    const currentFolder = partialTree.find(({ id }) => id === currentFolderId)
-    const isEmptyFolder =
-      currentFolder?.type !== 'file' &&
-      currentFolder?.cached === true &&
-      !partialTree.some(
-        (node) => node.type !== 'root' && node.parentId === currentFolderId,
-      )
-    if (detailItemId) {
-      this.#detailItem =
-        partialTree.find(
-          (node): node is PartialTreeFile | PartialTreeFolderNode =>
-            node.type !== 'root' && node.id === detailItemId,
-        ) ?? this.#detailItem
-    }
-    const detailItem =
-      this.#detailItem?.id === detailItemId ? this.#detailItem : undefined
 
     return (
       <div
@@ -1241,18 +1250,6 @@ export default class ProviderView<M extends Meta, B extends Body> {
           i18n={i18n}
           toolbarActions={opts.toolbarActions ?? []}
           runToolbarAction={this.runToolbarAction}
-          standalone={opts.standalone ?? false}
-          selectionToggle={
-            isManager &&
-            (opts.bulkActions?.length ?? 0) > 0 &&
-            (selectionActive || !isEmptyFolder)
-              ? {
-                  active: selectionActive,
-                  onToggle: this.toggleSelectionMode,
-                }
-              : undefined
-          }
-          busy={busy}
         />
         {opts.showFilter && (
           <FilterInput
@@ -1261,7 +1258,6 @@ export default class ProviderView<M extends Meta, B extends Body> {
             onSubmit={() => {}}
             inputLabel={i18n('filter')}
             i18n={i18n}
-            disabled={busy}
           />
         )}
 
@@ -1279,47 +1275,19 @@ export default class ProviderView<M extends Meta, B extends Body> {
             showTitles={opts.showTitles}
             i18n={this.plugin.uppy.i18n}
             isLoading={loading}
-            onCancelLoading={this.#cancelLongOperation}
             utmSource="Companion"
             actions={opts.actions ?? []}
             runAction={this.runAction}
-            selectable={selectable}
-            onFileClick={
-              isManager && !selectionActive ? this.openItemDetail : undefined
-            }
           />
         )}
 
-        {busy ? null : isManager ? (
-          selectionActive && (
-            <BulkActions
-              selectedCount={this.getBulkActionItems().length}
-              bulkActions={opts.bulkActions ?? []}
-              runBulkAction={this.runBulkAction}
-              i18n={i18n}
-            />
-          )
-        ) : (
-          <FooterActions
-            partialTree={partialTree}
-            donePicking={this.donePicking}
-            cancelSelection={this.cancelSelection}
-            i18n={i18n}
-            validateAggregateRestrictions={this.validateAggregateRestrictions}
-          />
-        )}
-        {detailItem && (
-          <ItemDetailDialog
-            // A different item gets a fresh dialog (no stale preview).
-            key={detailItem.id}
-            item={detailItem}
-            actions={opts.actions ?? []}
-            runAction={this.runAction}
-            getPreviewUrl={opts.getPreviewUrl}
-            onClose={this.closeItemDetail}
-            i18n={i18n}
-          />
-        )}
+        <FooterActions
+          partialTree={partialTree}
+          donePicking={this.donePicking}
+          cancelSelection={this.cancelSelection}
+          i18n={i18n}
+          validateAggregateRestrictions={this.validateAggregateRestrictions}
+        />
         {dialog && (
           <ProviderDialog
             key={this.#dialogs.revision}
