@@ -2568,25 +2568,26 @@ describe('src/Core', () => {
       vi.useRealTimers()
     })
 
-    function setup() {
+    it('should check the online status 3s after creation', () => {
       vi.useFakeTimers()
       const statusEventMock = vi.fn()
-      const core = new Core()
-      core.on('is-offline', statusEventMock)
-      core.on('is-online', statusEventMock)
-      return { core, statusEventMock }
-    }
-
-    it('should check the online status 3s after creation', () => {
-      const { core, statusEventMock } = setup()
-      vi.advanceTimersByTime(3000)
-      expect(statusEventMock).toHaveBeenCalledOnce()
-      core.destroy()
+      {
+        using core = new Core()
+        core.on('is-offline', statusEventMock)
+        core.on('is-online', statusEventMock)
+        vi.advanceTimersByTime(3000)
+        expect(statusEventMock).toHaveBeenCalledOnce()
+      }
     })
 
     it('should not check the online status after destroy', () => {
-      const { core, statusEventMock } = setup()
-      core.destroy()
+      vi.useFakeTimers()
+      const statusEventMock = vi.fn()
+      {
+        using core = new Core()
+        core.on('is-offline', statusEventMock)
+        core.on('is-online', statusEventMock)
+      }
       vi.advanceTimersByTime(3000)
       expect(statusEventMock).not.toHaveBeenCalled()
     })
