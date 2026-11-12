@@ -1924,9 +1924,11 @@ export class Uppy<
     if (typeof window !== 'undefined' && window.addEventListener) {
       window.addEventListener('online', this.#updateOnlineStatus)
       window.addEventListener('offline', this.#updateOnlineStatus)
-      setTimeout(this.#updateOnlineStatus, 3000)
+      this.#onlineStatusTimeout = setTimeout(this.#updateOnlineStatus, 3000)
     }
   }
+
+  #onlineStatusTimeout?: ReturnType<typeof setTimeout>
 
   updateOnlineStatus(): void {
     const online = window.navigator.onLine ?? true
@@ -2092,6 +2094,7 @@ export class Uppy<
     if (typeof window !== 'undefined' && window.removeEventListener) {
       window.removeEventListener('online', this.#updateOnlineStatus)
       window.removeEventListener('offline', this.#updateOnlineStatus)
+      clearTimeout(this.#onlineStatusTimeout)
     }
   }
 
