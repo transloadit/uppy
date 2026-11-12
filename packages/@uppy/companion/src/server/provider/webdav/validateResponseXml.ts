@@ -1,4 +1,4 @@
-import { parser } from 'sax'
+import sax from 'sax'
 
 /**
  * Bound the XML tree the WebDAV library will build. A byte limit alone still
@@ -6,7 +6,7 @@ import { parser } from 'sax'
  * This SAX pass retains only the current element and rejects DTDs entirely.
  */
 export function validateResponseXml(xml: string): void {
-  const xmlParser = parser(true)
+  const xmlParser = sax.parser(true)
   let depth = 0
   let elements = 0
   let attributes = 0
