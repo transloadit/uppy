@@ -1,8 +1,21 @@
 import type { S3Client } from '@aws-sdk/client-s3'
+import type {
+  Request as ExpressRequest,
+  RequestHandler as ExpressRequestHandler,
+} from 'express'
 import type { Promisable } from 'type-fest'
 import type { CredentialsFetchResponse } from '../schemas/companion.js'
 import type Provider from '../server/provider/Provider.js'
 import type { CompanionRuntimeOptions } from './companion-options.js'
+
+/**
+ * Express types `req.body` as `any`, but its contents depend on the client and
+ * on which body parser ran (Express 5 leaves it `undefined` when nothing was
+ * parsed). Type it as `unknown` so it has to be validated before use.
+ */
+type Params = ExpressRequest['params']
+export type Request<P = Params> = ExpressRequest<P, any, unknown>
+export type RequestHandler<P = Params> = ExpressRequestHandler<P, any, unknown>
 
 export type BuildUrl = (
   subPath: string,

@@ -1,6 +1,7 @@
 import type { Readable } from 'node:stream'
-import type { Request, Response } from 'express'
+import type { Response } from 'express'
 import type { Promisable } from 'type-fest'
+import type { Request } from '../../types/express.js'
 import logger from '../logger.js'
 import Uploader from '../Uploader.js'
 import { toError } from './type-guards.js'
