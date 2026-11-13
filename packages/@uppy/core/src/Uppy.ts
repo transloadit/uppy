@@ -1167,9 +1167,13 @@ export class Uppy<
           nextFilesState,
         )
 
-        // update state after onBeforeFileAdded
-        existingFiles = this.getState().files
-        nextFilesState = { ...existingFiles, ...nextFilesState }
+        // update state after onBeforeFileAdded, but only re-merge if it actually
+        // changed: spreading the whole map per file makes addFiles quadratic
+        const currentFiles = this.getState().files
+        if (currentFiles !== existingFiles) {
+          existingFiles = currentFiles
+          nextFilesState = { ...existingFiles, ...nextFilesState }
+        }
 
         if (
           !onBeforeFileAddedResult &&
