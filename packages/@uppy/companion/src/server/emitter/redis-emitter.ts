@@ -76,7 +76,11 @@ export default function redisEmitter(
   publisher.on('error', (err) =>
     logger.error(`publisher redis error: ${describe(err)}`),
   )
-  const subscriber = publisher.duplicate()
+  // No ready check on the subscriber: ioredis writes a psubscribe as soon as
+  // the socket is open, and its ready check (INFO) is then refused because the
+  // connection is in subscriber mode. That fails the connection attempt, and
+  // messages published until ioredis has reconnected are lost.
+  const subscriber = publisher.duplicate({ enableReadyCheck: false })
   subscriber.on('error', (err) =>
     logger.error(`subscriber redis error: ${describe(err)}`),
   )
