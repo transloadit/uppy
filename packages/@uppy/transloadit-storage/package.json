@@ -37,6 +37,9 @@
     ".": "./lib/index.js",
     "./package.json": "./package.json"
   },
+  "uppy": {
+    "minCompanionVersion": "7.1.0"
+  },
   "dependencies": {
     "@uppy/s3": "workspace:^",
     "preact": "^10.29.2"

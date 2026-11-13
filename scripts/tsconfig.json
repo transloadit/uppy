@@ -1,0 +1,9 @@
+{
+  // The repository's own scripts, run with Node's type stripping, which
+  // needs `.ts` extensions in relative imports.
+  "extends": "@uppy-dev/tsconfig",
+  "compilerOptions": {
+    "allowImportingTsExtensions": true,
+    "types": ["node"]
+  }
+}
