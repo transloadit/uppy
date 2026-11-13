@@ -42,6 +42,23 @@ export default async function sendToken(
     next()
     return
   }
+  const allowedOrigins = companion.options.corsOrigins ?? true
+  const currentlyAllowed =
+    typeof allowedOrigins === 'function'
+      ? await new Promise<boolean>((resolve, reject) => {
+          allowedOrigins(clientOrigin, (err, finalOrigins) => {
+            if (err) {
+              reject(err)
+              return
+            }
+            resolve(isOriginAllowed(clientOrigin, finalOrigins))
+          })
+        })
+      : isOriginAllowed(clientOrigin, allowedOrigins)
+  if (!currentlyAllowed) {
+    res.sendStatus(403)
+    return
+  }
   const customerDefinedAllowedOrigins = oAuthState.getFromState(
     state,
     'customerDefinedAllowedOrigins',

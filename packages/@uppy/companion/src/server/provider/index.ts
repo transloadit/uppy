@@ -210,12 +210,8 @@ export function addProviderOptions(
       grantProviderConfig['key'] = providerOption.key
       grantProviderConfig['secret'] = providerOption.secret
       if (providerOption.credentialsURL) {
-        grantProviderConfig['dynamic'] = [
-          'key',
-          'secret',
-          'redirect_uri',
-          'origins',
-        ]
+        // Credentials from res.locals.grant are trusted; HTTP input is not.
+        grantProviderConfig['dynamic'] = []
       }
 
       const provider =
