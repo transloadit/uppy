@@ -1,5 +1,15 @@
 # uppy
 
+## 6.0.8
+
+### Patch Changes
+
+- Updated dependencies [5ed0aab]
+- Updated dependencies [7653846]
+- Updated dependencies [bf550b3]
+  - @uppy/core@6.3.2
+  - @uppy/thumbnail-generator@6.0.2
+
 ## 6.0.7
 
 ### Patch Changes

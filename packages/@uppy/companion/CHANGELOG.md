@@ -1,5 +1,12 @@
 # @uppy/companion
 
+## 7.2.3
+
+### Patch Changes
+
+- 50e109d: Transloadit Storage: native moves now include the request's method and path in their signed params, as the Transloadit API requires for Storage requests.
+- b0a41c9: Time out remote provider credential requests after 10 seconds and stop following redirects from the configured credentials endpoint (`credentialsURL` / `COMPANION_*_KEYS_ENDPOINT`). If your endpoint URL redirects (for example http → https), configure the final URL; a redirect now fails, and Companion logs the redirect target.
+
 ## 7.2.2
 
 ### Patch Changes
