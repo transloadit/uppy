@@ -591,4 +591,63 @@ describe('Transloadit', () => {
     plugin.assembly = new Assembly(status, new RateLimitedQueue())
     expect(uppy.getState().plugins.Transloadit.error).toBeUndefined()
   })
+
+  it.each([
+    [
+      'http://api2.transloadit.com/companion',
+      'https://api2.transloadit.com/companion',
+    ],
+    [
+      'https://api2.transloadit.com.evil.example/companion',
+      'https://api2.transloadit.com/companion',
+    ],
+    [
+      'https://evil.example/companion',
+      'https://api2.transloadit.com/companion',
+    ],
+    [
+      'https://api2-hu123ab.transloadit.com/companion',
+      'https://api2-hu123ab.transloadit.com/companion',
+    ],
+    [
+      'https://api2-us-east-1.transloadit.com/companion/',
+      'https://api2-us-east-1.transloadit.com/companion',
+    ],
+  ])("reroutes remote files to companion_url %s only if it is Transloadit's", async (companionUrl, expected) => {
+    using uppy = new Core()
+    uppy.use(Transloadit, {
+      assemblyOptions: { params: { auth: { key: 'key' }, template_id: 'id' } },
+    })
+    uppy.registerRequestClient('companion', {
+      uploadRemoteFile: () => new Promise(() => {}),
+    })
+    uppy.getPlugin('Transloadit').client.createAssembly = () =>
+      Promise.resolve({
+        ok: 'ASSEMBLY_UPLOADING',
+        assembly_id: 'a1',
+        assembly_ssl_url: 'https://api2.transloadit.com/assemblies/a1',
+        tus_url: 'https://api2.transloadit.com/resumable/files/',
+        companion_url: companionUrl,
+      })
+    const id = uppy.addFile({
+      source: 'Dropbox',
+      name: 'remote.txt',
+      data: { size: 1 },
+      isRemote: true,
+      remote: {
+        requestClientId: 'companion',
+        companionUrl: 'https://api2.transloadit.com/companion',
+        url: 'https://api2.transloadit.com/companion/dropbox/get/x',
+      },
+    })
+
+    const created = new Promise((resolve) =>
+      uppy.once('transloadit:assembly-created', resolve),
+    )
+    uppy.upload().catch(() => {})
+    await created
+
+    expect(uppy.getFile(id).remote.companionUrl).toBe(expected)
+    uppy.cancelAll()
+  })
 })
