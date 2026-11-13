@@ -14,7 +14,9 @@
   threw: an unhandled rejection or uncaught exception. Such failures are now
   logged and fail the call that caused them, including imports waiting for
   their socket, once ioredis gives up on the command (`maxRetriesPerRequest`:
-  about 10 seconds with its default options). ioredis reconnects
+  about 10 seconds with its default options). With `maxRetriesPerRequest: null`
+  commands never fail, and such an import ends with the
+  `clientSocketConnectTimeout` (60 seconds by default) instead. ioredis reconnects
   and retries on its own, so Companion recovers when Redis comes back, also
   when it was down at startup. A message on a subscribed channel that is not a
   JSON array is now logged and dropped, and no longer cancels a `once()`

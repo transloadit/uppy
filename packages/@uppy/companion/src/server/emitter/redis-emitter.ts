@@ -51,6 +51,9 @@ export default function redisEmitter(
   // Fail the call that ran the command, and hand the error to 'error'
   // listeners (an import waiting for its socket listens), so nobody waits for
   // an event that cannot arrive.
+  // The listeners are shared, so one failed command fails every import that is
+  // waiting, not only the one it belonged to. ioredis has given up retrying by
+  // then, which means Redis is down for all of them.
   const handleError = (err: unknown): never => {
     const error = new Error(`Redis pub/sub failed: ${describe(err)}`)
     logger.error(error.message, 'redis.emitter.error')
