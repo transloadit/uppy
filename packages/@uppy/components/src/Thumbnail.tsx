@@ -32,25 +32,36 @@ export default function Thumbnail(props: ThumbnailProps) {
   const isPDF = fileTypeGeneral === 'application' && fileTypeSpecific === 'pdf'
 
   const objectUrl = useMemo(() => {
-    if (!props.images) {
-      return ''
+    if (!props.images || !isImage) {
+      return undefined
     }
     if (props.file.isRemote) {
       return props.file.preview
     }
     if (props.file.data == null) throw new Error('File data is empty')
+    // Opening an SVG blob in another tab executes its document scripts with
+    // the app's origin. Check the Blob's MIME, not mutable file metadata.
+    if (!/^image\/(jpe?g|gif|png|bmp|webp|avif)$/.test(props.file.data.type)) {
+      return undefined
+    }
     return URL.createObjectURL(props.file.data)
-  }, [props.file.data, props.images, props.file.isRemote, props.file.preview])
+  }, [
+    props.file.data,
+    props.images,
+    props.file.isRemote,
+    props.file.preview,
+    isImage,
+  ])
 
   const showThumbnail = props.images && isImage && objectUrl
 
   useEffect(() => {
     return () => {
-      if (objectUrl) {
+      if (objectUrl && !props.file.isRemote) {
         URL.revokeObjectURL(objectUrl)
       }
     }
-  }, [objectUrl])
+  }, [objectUrl, props.file.isRemote])
 
   return (
     <div
