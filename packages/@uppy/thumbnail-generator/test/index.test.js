@@ -421,8 +421,16 @@ describe('uploader/ThumbnailGeneratorPlugin', () => {
     it.each([
       // [orientation, thumbnail size, quadrant colours as RGB bits]
       [1, [200, 150], ['100', '010', '001', '110']],
+      // 3 = rotate 180°: yellow, blue / green, red
+      [3, [200, 150], ['110', '001', '010', '100']],
+      // 5 = mirror across the main diagonal: red, blue / green, yellow
+      [5, [200, 267], ['100', '001', '010', '110']],
       // 6 = rotate 90° clockwise to display: blue, red / yellow, green
       [6, [200, 267], ['001', '100', '110', '010']],
+      // 7 = mirror across the other diagonal: yellow, green / blue, red
+      [7, [200, 267], ['110', '010', '001', '100']],
+      // 8 = rotate 90° counter-clockwise: green, yellow / red, blue
+      [8, [200, 267], ['010', '110', '100', '001']],
     ])('should draw EXIF orientation %i the way the browser displays it', async (orientation, size, colors) => {
       const plugin = new ThumbnailGeneratorPlugin(new MockCore())
       const file = await jpegWithOrientation(orientation)
