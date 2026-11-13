@@ -57,10 +57,10 @@ export default function FileCard<M extends Meta, B extends Body>(
   const showEditButton = canEditFile(file)
 
   const storedMetaData = {} as M
-  computedMetaFields.forEach((field) => {
+  for (const field of computedMetaFields) {
     // @ts-expect-error TODO fix me
     storedMetaData[field.id] = file.meta[field.id] ?? ''
-  })
+  }
 
   const [formState, setFormState] = useState(storedMetaData)
 
