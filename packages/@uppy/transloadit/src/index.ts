@@ -1031,6 +1031,9 @@ export default class Transloadit<
       // preprocessor that has started.
       this.uppy.getPlugin(this.id) !== this ||
       this.#cancels !== cancelsAtStart ||
+      // Cancelled before this step started (an earlier preprocessor was
+      // pending): an upload without files is still in `currentUploads`.
+      this.#endedUploads.has(uploadID) ||
       !(uploadID in this.uppy.getState().currentUploads)
     // This attempt's Assembly: a restored one it claims, or one it creates.
     // The latter is `created` as well: it is cancelled on the server if the
@@ -1372,6 +1375,12 @@ export default class Transloadit<
     if (this.opts.importFromUploadURLs) {
       this.uppy.off('upload-success', this.#onFileUploadURLAvailable)
     }
+
+    // Nothing reports on its Assemblies any more: they stop updating, and an
+    // upload waiting for one ends.
+    for (const use of [...this.#inUse]) this.#release(use)
+    this.assembly?.close()
+    this.assembly = undefined
 
     const { capabilities } = this.uppy.getState()
     this.uppy.setState({

@@ -1271,6 +1271,79 @@ describe('Transloadit', () => {
     expect(plugin.assembly).toBeUndefined()
   })
 
+  it('cancels the Assembly whose files were reserved while the plugin was removed', async () => {
+    const uppy = new Core()
+    uppy.use(Transloadit, {
+      importFromUploadURLs: true,
+      assemblyOptions: { params: { auth: { key: 'k' }, template_id: 't' } },
+    })
+    const plugin = uppy.getPlugin('Transloadit')
+    plugin.client.createAssembly = vi.fn(async () => assemblyStatus('A1'))
+    const reserving = Promise.withResolvers()
+    plugin.client.reserveFile = vi.fn(() => reserving.promise)
+    plugin.client.cancelAssembly = vi.fn(async () => {})
+    uppy.addFile({ source: 'test', name: 'a.txt', data: new Blob(['a']) })
+
+    const upload = uppy.upload().catch(() => {})
+    await vi.waitFor(() =>
+      expect(plugin.client.reserveFile).toHaveBeenCalledOnce(),
+    )
+    uppy.removePlugin(plugin)
+    reserving.resolve()
+    await upload
+
+    expect(plugin.client.cancelAssembly).toHaveBeenCalledOnce()
+    expect(plugin.client.cancelAssembly.mock.calls[0][0].assembly_id).toBe('A1')
+    expect(plugin.assembly).toBeUndefined()
+  })
+
+  it.each([
+    'cancelAll',
+    'destroy',
+  ])('creates no Assembly for an upload without files when %s() runs before its preparation starts', async (method) => {
+    const earlier = Promise.withResolvers()
+    const uppy = new Core()
+    // Still pending when the upload is cancelled: Transloadit's own
+    // preprocessor only starts afterwards.
+    uppy.addPreProcessor(() => earlier.promise)
+    uppy.use(Transloadit, {
+      assemblyOptions: { params: { auth: { key: 'k' }, template_id: 't' } },
+    })
+    const plugin = uppy.getPlugin('Transloadit')
+    plugin.client.createAssembly = vi.fn(async () => assemblyStatus('A1'))
+
+    const upload = uppy.upload().catch(() => {})
+    await vi.waitFor(() =>
+      expect(Object.keys(uppy.getState().currentUploads)).toHaveLength(1),
+    )
+    uppy[method]()
+    earlier.resolve()
+    await upload
+
+    expect(plugin.client.createAssembly).not.toHaveBeenCalled()
+    expect(plugin.assembly).toBeUndefined()
+  })
+
+  it('closes its Assembly when removed while an upload uses it', async () => {
+    serveAssemblies()
+    const uppy = new Core()
+    uppy.use(Transloadit, {
+      assemblyOptions: { params: { auth: { key: 'k' }, template_id: 't' } },
+    })
+    const plugin = uppy.getPlugin('Transloadit')
+    uppy.emit('restored', {
+      Transloadit: { assemblyResponse: assemblyStatus('R1') },
+    })
+    await plugin.restored
+    const { assembly } = plugin
+    const close = vi.spyOn(assembly, 'close')
+
+    uppy.removePlugin(plugin)
+
+    expect(close).toHaveBeenCalled()
+    expect(plugin.assembly).toBeUndefined()
+  })
+
   it('closes the assembly and clears state as soon as cancel-all fires', async () => {
     const uppy = new Core()
     uppy.use(Transloadit, {
