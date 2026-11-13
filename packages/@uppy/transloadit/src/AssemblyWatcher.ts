@@ -112,6 +112,15 @@ class TransloaditAssemblyWatcher<
     }
   }
 
+  /**
+   * Stop waiting: nothing of these Assemblies is awaited any more (cancelled,
+   * say), so the promise settles and the listeners go.
+   */
+  stop(): void {
+    this.#removeListeners()
+    this.#resolve()
+  }
+
   #removeListeners() {
     this.#uppy.off('transloadit:complete', this.#onAssemblyComplete)
     this.#uppy.off('transloadit:assembly-cancel', this.#onAssemblyCancel)
