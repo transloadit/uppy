@@ -180,6 +180,59 @@ describe('remote credentials with transloadit_gateway', () => {
       'redirect_uri=https://gateway.example.com/',
     )
   })
+
+  test('unusable credentials are logged and return 424', async () => {
+    const error = vi.spyOn(logger, 'error').mockImplementation(() => {})
+    try {
+      // invalid gateway makes `new URL(path, gateway)` throw
+      const res = await connectWithGateway('not a valid url')
+      expect(res.status).toBe(424)
+      expect(res.text).toContain('Could not fetch credentials')
+      expect(error.mock.calls).toContainEqual([
+        'TypeError: Invalid URL',
+        'credentials.override.fail',
+        undefined,
+      ])
+    } finally {
+      error.mockRestore()
+    }
+  })
+
+  test('a failing credentials service returns 424 and logs its name and message', async () => {
+    const error = vi.spyOn(logger, 'error').mockImplementation(() => {})
+    try {
+      nock('http://localhost:2111').post('/dropbox-keys').reply(500)
+      const res = await request(await getDropboxServer()).get(
+        `/connect/dropbox?state=${encodeURIComponent(state)}`,
+      )
+      expect(res.status).toBe(424)
+      expect(error.mock.calls).toContainEqual([
+        'ProviderApiError: HTTP 500: Could not fetch credentials',
+        'credentials.override.fail',
+        undefined,
+      ])
+    } finally {
+      error.mockRestore()
+    }
+  })
+
+  test("an error of Companion's own returns 500", async () => {
+    vi.spyOn(logger, 'error').mockImplementation(() => {})
+    const getFromState = vi
+      .spyOn(oAuthState, 'getFromState')
+      .mockImplementation(() => {
+        throw new Error('bug')
+      })
+    try {
+      const res = await request(await getDropboxServer()).get(
+        `/connect/dropbox?state=${encodeURIComponent(state)}`,
+      )
+      expect(res.status).toBe(500)
+    } finally {
+      getFromState.mockRestore()
+      vi.restoreAllMocks()
+    }
+  })
 })
 
 describe('credentials endpoint failures', () => {

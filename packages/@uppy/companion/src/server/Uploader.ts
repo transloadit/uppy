@@ -416,9 +416,7 @@ export default class Uploader {
         if (this.#uploadState !== states.uploading) return
         this.#uploadState = states.paused
         this.#pausedAt = Date.now()
-        if (this.tus) {
-          this.tus.abort()
-        }
+        this.#abortTus(false)
       })
 
       emitter().on(`resume:${this.token}`, () => {
@@ -437,10 +435,7 @@ export default class Uploader {
 
     emitter().on(`cancel:${this.token}`, () => {
       logger.debug('Received from client: cancel', 'uploader', this.shortToken)
-      if (this.tus) {
-        const shouldTerminate = !!this.tus.url
-        this.tus.abort(shouldTerminate).catch(() => {})
-      }
+      this.#abortTus(!!this.tus?.url)
       this.#canceled = true
       this.abortReadStream(new Error('Canceled'))
     })
@@ -702,8 +697,25 @@ export default class Uploader {
     if (!this.tmpPath) return
     try {
       await unlink(this.tmpPath)
-    } catch {}
+    } catch (err) {
+      // The file may never have been created (e.g. canceled before download)
+      if (!(isRecord(err) && err['code'] === 'ENOENT')) {
+        logger.warn(err, 'uploader.cleanup.error', this.shortToken)
+      }
+    }
     Uploader.#tmpFilesInUse.delete(this.fileName)
+  }
+
+  #abortTus(shouldTerminate: boolean): void {
+    this.tus?.abort(shouldTerminate).catch((err) => {
+      // a tus DetailedError holds the request, upload headers included
+      const { name, message } = toError(err)
+      logger.warn(
+        `${name}: ${message}`,
+        'uploader.tus.abort.error',
+        this.shortToken,
+      )
+    })
   }
 
   async tryUploadStream(

@@ -21,6 +21,7 @@ import { defaultOptions } from '../dist/config/companion.js'
 import Emitter from '../dist/server/emitter/index.js'
 import { isRecord } from '../dist/server/helpers/type-guards.js'
 import { startDownUpload } from '../dist/server/helpers/upload.js'
+import * as logger from '../dist/server/logger.js'
 import Uploader, {
   PAUSED_TIMEOUT_MS,
   STALL_TIMEOUT_MS,
@@ -312,6 +313,43 @@ describe('uploader', () => {
         'upload destination does not match any allowed destinations',
       ),
     )
+  })
+
+  test('a failed tus abort is logged without its request headers', async () => {
+    const warn = vi.spyOn(logger, 'warn').mockImplementation(() => {})
+    try {
+      const uploader = new Uploader({
+        companionOptions,
+        endpoint: 'http://url.myendpoint.com/files',
+        protocol: 'tus',
+        size: 1,
+        pathPrefix,
+        metadata: { name: 'file.txt', type: 'text/plain' },
+      })
+      // what tus-js-client rejects with: a DetailedError holding the request
+      const failure = Object.assign(new Error('tus: failed to terminate'), {
+        name: 'DetailedError',
+        originalRequest: { headers: { Authorization: 'Bearer secret-token' } },
+      })
+      uploader.tus = {
+        url: 'https://tus.endpoint/files/foo-bar',
+        abort: () => Promise.reject(failure),
+      } as never
+      // With Redis the uploader subscribes asynchronously; subscriptions on
+      // one connection complete in order, so once ours is in, so is its.
+      await Emitter().on(`cancel:${uploader.token}`, () => {})
+      Emitter().emit(`cancel:${uploader.token}`)
+      await vi.waitFor(() =>
+        expect(warn).toHaveBeenCalledWith(
+          'DetailedError: tus: failed to terminate',
+          'uploader.tus.abort.error',
+          uploader.shortToken,
+        ),
+      )
+      expect(JSON.stringify(warn.mock.calls)).not.toContain('secret-token')
+    } finally {
+      warn.mockRestore()
+    }
   })
 
   test('upload functions with tus protocol', async () => {
