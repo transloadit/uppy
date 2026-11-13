@@ -264,6 +264,13 @@ export function getAssemblyUrlSsl(
   )
 }
 
+/** Fails an upload whose plugin was removed while it was being prepared. */
+class PluginRemovedError extends Error {
+  constructor() {
+    super('The Transloadit plugin was removed while the upload was prepared')
+  }
+}
+
 const COMPANION_URL = 'https://api2.transloadit.com/companion'
 // Regex matching acceptable postMessage() origins for authentication feedback from companion.
 const COMPANION_ALLOWED_HOSTS = /\.transloadit\.com$/
@@ -312,6 +319,13 @@ export default class Transloadit<
    * may not have dropped yet: they no longer hold admission closed.
    */
   #endedUploads = new Set<string>()
+
+  /**
+   * Uploads whose preparation started here. Only they hold admission closed:
+   * one that core restored and nobody resumed sits in `currentUploads`
+   * without ever ending.
+   */
+  #preparedUploads = new Set<string>()
 
   constructor(uppy: Uppy<M, B>, opts?: TransloaditOptions<M, B>) {
     super(uppy, { ...defaultOptions, ...opts })
@@ -553,8 +567,24 @@ export default class Transloadit<
     use.assembly.close()
     use.watcher.stop()
     if (this.assembly === use.assembly) {
-      this.assembly = this.#inUse.values().next().value?.assembly
+      const next = this.#inUse.values().next().value?.assembly
+      const { error } = this.getPluginState()
+      this.assembly = next
+      // Showing another upload's Assembly is no new run: the error this one
+      // just failed with stays.
+      if (next && error) this.setPluginState({ error })
     }
+  }
+
+  /** Lets go of every Assembly, and of a live one that was set from outside. */
+  #releaseAll() {
+    const uses = [...this.#inUse]
+    // Emptied first, so the live slot is cleared once instead of moving on
+    // to each remaining Assembly in turn.
+    this.#inUse.clear()
+    for (const use of uses) this.#release(use)
+    this.assembly?.close()
+    this.assembly = undefined
   }
 
   /** Fails the files of Assembly `id` and reports the error. */
@@ -809,19 +839,16 @@ export default class Transloadit<
     // resurrect one, the UI must reset even when a cancel request fails
     // (offline, say), and an upload started before the requests return must
     // create its own Assembly, not take one of these.
-    for (const use of [...this.#inUse]) this.#release(use)
-    this.assembly?.close()
-    this.assembly = undefined
+    this.#releaseAll()
     for (const assembly of assemblies) {
       this.uppy.emit('transloadit:assembly-cancel', assembly.status)
     }
-    for (const assembly of assemblies) {
-      try {
-        await this.#cancelAssembly(assembly)
-      } catch (err) {
-        this.uppy.log(err)
-      }
-    }
+    // Together: one request that never settles must not hold up the others.
+    await Promise.all(
+      [...assemblies].map((assembly) =>
+        this.#cancelAssembly(assembly).catch((err) => this.uppy.log(err)),
+      ),
+    )
     // Reopen admission, unless an upload started meanwhile holds it.
     this.#allowNewUploadIfIdle()
   }
@@ -1019,6 +1046,7 @@ export default class Transloadit<
     // TODO we should rewrite to instead infer allowNewUpload based on upload state
     this.uppy.setState({ allowNewUpload: false })
     this.#closedAdmission = true
+    this.#preparedUploads.add(uploadID)
     // Cancelled while waiting below. Core does not stop a running preprocessor,
     // and a file added again meanwhile has the id of the removed one, so the
     // files alone cannot tell: an Assembly created now would attach to that
@@ -1026,15 +1054,24 @@ export default class Transloadit<
     // upload without files (a Template importing its own inputs) even stays
     // in `currentUploads` when all are cancelled.
     const cancelsAtStart = this.#cancels
-    const cancelled = () =>
-      // Removed (or its Uppy destroyed) while waiting: core keeps running a
-      // preprocessor that has started.
-      this.uppy.getPlugin(this.id) !== this ||
+    const dropped = () =>
       this.#cancels !== cancelsAtStart ||
       // Cancelled before this step started (an earlier preprocessor was
       // pending): an upload without files is still in `currentUploads`.
       this.#endedUploads.has(uploadID) ||
       !(uploadID in this.uppy.getState().currentUploads)
+    const cancelled = () =>
+      // Removed (or its Uppy destroyed) while waiting: core keeps running a
+      // preprocessor that has started.
+      this.uppy.getPlugin(this.id) !== this || dropped()
+    // Ends a cancelled attempt. Removed with the upload still going, it has
+    // nothing to upload to: it fails, rather than go on to the uploader and
+    // end as if its files had reached Transloadit.
+    const endCancelled = () => {
+      const stranded = !dropped()
+      this.#allowNewUploadIfIdle(uploadID)
+      if (stranded) throw new PluginRemovedError()
+    }
     // This attempt's Assembly: a restored one it claims, or one it creates.
     // The latter is `created` as well: it is cancelled on the server if the
     // attempt is.
@@ -1059,9 +1096,10 @@ export default class Transloadit<
       // Restored with Golden Retriever (#onRestored): for this upload, or for
       // none yet. Claimed before anything is awaited, so that another upload
       // preparing meanwhile creates its own.
-      const restored =
-        this.#inUseBy(uploadID) ??
-        [...this.#inUse].find((use) => use.uploadID == null)
+      const restored = cancelled()
+        ? undefined
+        : (this.#inUseBy(uploadID) ??
+          [...this.#inUse].find((use) => use.uploadID == null))
       if (restored) {
         restored.uploadID = uploadID
         assembly = restored.assembly
@@ -1083,8 +1121,10 @@ export default class Transloadit<
         // server, so the next batch cannot pick it up. One in use already (a
         // restored one) was let go of by the cancel, or is as the upload was
         // dropped (`#onStateUpdate`).
-        if (created) await this.#cancelAssembly(created)
-        this.#allowNewUploadIfIdle(uploadID)
+        const toCancel = created
+        created = undefined
+        if (toCancel) await this.#cancelAssembly(toCancel)
+        endCancelled()
         return
       }
       for (const fileID of fileIDs) {
@@ -1106,6 +1146,7 @@ export default class Transloadit<
       }
     } catch (err) {
       const error = toError(err)
+      if (error instanceof PluginRemovedError) throw error
       if (cancelled()) {
         // Its files are gone, or belong to a newer upload by now, which owns
         // their error state and admission: this attempt has nothing to report.
@@ -1119,7 +1160,7 @@ export default class Transloadit<
             this.uppy.log(cancelError),
           )
         }
-        this.#allowNewUploadIfIdle(uploadID)
+        endCancelled()
         return
       }
       // The Assembly it failed with (a restored one whose reservation was
@@ -1149,11 +1190,11 @@ export default class Transloadit<
   #allowNewUploadIfIdle(endedUploadID?: string) {
     if (endedUploadID) this.#endedUploads.add(endedUploadID)
     const { currentUploads } = this.uppy.getState()
-    for (const id of this.#endedUploads) {
-      // Dropped by core by now: nothing left to discount.
-      if (!(id in currentUploads)) this.#endedUploads.delete(id)
+    // Dropped by core by now: nothing left to count or discount.
+    for (const ids of [this.#endedUploads, this.#preparedUploads]) {
+      for (const id of ids) if (!(id in currentUploads)) ids.delete(id)
     }
-    const running = Object.keys(currentUploads).filter(
+    const running = [...this.#preparedUploads].filter(
       (id) => !this.#endedUploads.has(id),
     )
     if (running.length === 0) {
@@ -1378,9 +1419,7 @@ export default class Transloadit<
 
     // Nothing reports on its Assemblies any more: they stop updating, and an
     // upload waiting for one ends.
-    for (const use of [...this.#inUse]) this.#release(use)
-    this.assembly?.close()
-    this.assembly = undefined
+    this.#releaseAll()
 
     const { capabilities } = this.uppy.getState()
     this.uppy.setState({

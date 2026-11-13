@@ -1236,15 +1236,20 @@ describe('Transloadit', () => {
     uppy.addFile({ source: 'test', name: 'a.txt', data: new Blob(['a']) })
 
     // Core keeps running a preprocessor that has started.
-    const upload = uppy.upload().catch(() => {})
+    const uploader = vi.fn()
+    uppy.addUploader(uploader)
+    const upload = uppy.upload()
     await vi.waitFor(() => expect(signer.calls).toBe(1))
     uppy.removePlugin(plugin)
     signer.signings[0].resolve({
       params: { auth: { key: 'k' }, template_id: 't' },
     })
-    await upload
+    // It fails: its files must not be uploaded with no Assembly to go to.
+    await expect(upload).rejects.toThrow('plugin was removed')
 
     expect(plugin.client.createAssembly).not.toHaveBeenCalled()
+    expect(uploader).not.toHaveBeenCalled()
+    expect(uppy.getState().allowNewUpload).toBe(true)
   })
 
   it('cancels the Assembly created while the plugin was removed', async () => {
@@ -1324,7 +1329,7 @@ describe('Transloadit', () => {
     expect(plugin.assembly).toBeUndefined()
   })
 
-  it('closes its Assembly when removed while an upload uses it', async () => {
+  it('closes a restored Assembly when the plugin is removed', async () => {
     serveAssemblies()
     const uppy = new Core()
     uppy.use(Transloadit, {
@@ -1342,6 +1347,74 @@ describe('Transloadit', () => {
 
     expect(close).toHaveBeenCalled()
     expect(plugin.assembly).toBeUndefined()
+  })
+
+  it('allows new uploads after one ends beside a restored upload nobody resumed', async () => {
+    const uppy = new Core()
+    uppy.use(Transloadit, {
+      assemblyOptions: () => Promise.reject(new Error('signing unavailable')),
+    })
+    // As Golden Retriever leaves it until the restore is confirmed.
+    uppy.setState({
+      currentUploads: { restored: { fileIDs: [], step: 0, result: {} } },
+    })
+    uppy.addFile({ source: 'test', name: 'a.txt', data: new Blob(['a']) })
+
+    await expect(uppy.upload()).rejects.toThrow('signing unavailable')
+
+    expect(Object.keys(uppy.getState().currentUploads)).toEqual(['restored'])
+    expect(uppy.getState().allowNewUpload).toBe(true)
+  })
+
+  it("keeps a failed Assembly's error in state when another upload's Assembly becomes the live one", async () => {
+    serveAssemblies()
+    const uppy = new Core()
+    uppy.use(Transloadit, {
+      // The test's uploader instead of Transloadit's own Tus one.
+      importFromUploadURLs: true,
+      assemblyOptions: { params: { auth: { key: 'k' }, template_id: 't' } },
+    })
+    const plugin = uppy.getPlugin('Transloadit')
+    let created = 0
+    plugin.client.createAssembly = vi.fn(async () =>
+      assemblyStatus(`A${++created}`),
+    )
+    plugin.client.reserveFile = vi.fn(async () => {})
+    plugin.client.cancelAssembly = vi.fn(async () => {})
+    plugin.client.submitError = vi.fn(async () => {})
+    // Holds both uploads.
+    const uploading = Promise.withResolvers()
+    uppy.addUploader(() => uploading.promise)
+    uppy.addFile({ source: 'test', name: 'new.txt', data: new Blob(['new']) })
+    const failed = uppy.addFile({
+      source: 'test',
+      name: 'failed.txt',
+      data: new Blob(['failed']),
+    })
+    // Uploaded once before, so upload() leaves it out.
+    uppy.setFileState(failed, {
+      progress: { ...uppy.getFile(failed).progress, uploadStarted: 1 },
+    })
+    const upload = uppy.upload().catch(() => {})
+    await vi.waitFor(() =>
+      expect(plugin.assembly?.status.assembly_id).toBe('A1'),
+    )
+    uppy.setFileState(failed, { error: 'earlier failure' })
+    const retry = uppy.retryUpload(failed).catch(() => {})
+    await vi.waitFor(() =>
+      expect(plugin.assembly?.status.assembly_id).toBe('A2'),
+    )
+
+    plugin.assembly.emit('error', new Error('boom'))
+
+    // The first upload's Assembly is the live one again, beside the error.
+    const state = uppy.getState().plugins.Transloadit
+    expect(state.assemblyStatus.assembly_id).toBe('A1')
+    expect(state.error?.message).toBe('boom')
+
+    uppy.cancelAll()
+    uploading.resolve()
+    await Promise.all([upload, retry])
   })
 
   it('closes the assembly and clears state as soon as cancel-all fires', async () => {
