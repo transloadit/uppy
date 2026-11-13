@@ -277,7 +277,7 @@ describe('list provider files', () => {
 
   test('drive', async () => {
     nock('https://www.googleapis.com')
-      .get('/drive/v3/drives?fields=*&pageToken=&pageSize=100')
+      .get('/drive/v3/drives?fields=*&pageSize=100')
       .reply(200, {
         kind: 'drive#driveList',
         drives: [],

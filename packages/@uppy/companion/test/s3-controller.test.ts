@@ -476,3 +476,42 @@ describe('s3.conditions on multipart uploads', () => {
     expect(sent(CompleteMultipartUploadCommand)).toBe(1)
   })
 })
+
+describe('multipart target bounds', () => {
+  test.each([
+    ['', 'upload-1'],
+    ['a'.repeat(1025), 'upload-1'],
+    ['é'.repeat(513), 'upload-1'],
+    ['a.jpg', 'a'.repeat(2049)],
+  ])('rejects invalid key/id before sending or signing', async (key, uploadId) => {
+    const send = vi.fn()
+    const app = makeApp(send)
+    await request(app)
+      .get(`/s3/multipart/${uploadId}/batch`)
+      .query({ key, partNumbers: '1' })
+      .expect(400)
+    await request(app)
+      .delete(`/s3/multipart/${uploadId}`)
+      .query({ key })
+      .expect(400)
+    expect(send).not.toHaveBeenCalled()
+  })
+
+  test.each([
+    undefined,
+    '',
+    '0',
+    'not-a-number',
+  ])('stops truncated part listings with cursor %j', async (marker) => {
+    const send = vi.fn(async () => ({
+      IsTruncated: true,
+      NextPartNumberMarker: marker,
+      Parts: [],
+    }))
+    await request(makeApp(send))
+      .get('/s3/multipart/upload-1')
+      .query({ key: 'a.jpg' })
+      .expect(500)
+    expect(send).toHaveBeenCalledTimes(1)
+  })
+})
