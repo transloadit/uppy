@@ -1,4 +1,4 @@
-import { beforeAll, describe, expect, test } from 'vitest'
+import { beforeAll, describe, expect, test, vi } from 'vitest'
 
 // We don't care about colors in our tests, so force `util.styleText` to disable colors.
 process.env['FORCE_COLOR'] = 'false'
@@ -124,6 +124,19 @@ describe('Test Logger secret mask', () => {
 })
 
 describe('log message bounds and error formatting', () => {
+  test('escapes line breaks and terminal controls while retaining ordinary Unicode', () => {
+    const message = captureConsoleLog(() => {
+      logger.info('é\nsecond\r\u001b[31m\u2028third')
+    })
+    expect(message).toBe('é\\u000asecond\\u000d\\u001b[31m\\u2028third')
+  })
+
+  test('escapes controls in the tag and request id too', () => {
+    using logged = vi.spyOn(console, 'log').mockImplementation(() => {})
+    logger.info('message', 'tag\rnext', 'id\u001b[0m')
+    expect(logged.mock.calls[0]?.[0]).toContain('id\\u001b[0m tag\\u000dnext')
+  })
+
   test('caps a log line at MAX_LOG_MESSAGE_LENGTH', () => {
     const msg = captureConsoleLog(() => {
       logger.error(new Error('x'.repeat(50_000)))
