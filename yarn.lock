@@ -8536,7 +8536,7 @@ __metadata:
     express-prom-bundle: "npm:^8.0.0"
     express-session: "npm:^1.19.0"
     fast-safe-stringify: "npm:^2.1.1"
-    form-data-encoder: "npm:^2.1.4"
+    form-data-encoder: "npm:^4.1.0"
     formdata-node: "npm:^6.0.3"
     got: "npm:^16.0.0"
     grant: "npm:^5.4.24"
@@ -13886,10 +13886,17 @@ __metadata:
   languageName: node
   linkType: hard
 
-"form-data-encoder@npm:^2.1.2, form-data-encoder@npm:^2.1.4":
+"form-data-encoder@npm:^2.1.2":
   version: 2.1.4
   resolution: "form-data-encoder@npm:2.1.4"
   checksum: 10/3778e7db3c21457296e6fdbc4200642a6c01e8be9297256e845ee275f9ddaecb5f49bfb0364690ad216898c114ec59bf85f01ec823a70670b8067273415d62f6
+  languageName: node
+  linkType: hard
+
+"form-data-encoder@npm:^4.1.0":
+  version: 4.1.0
+  resolution: "form-data-encoder@npm:4.1.0"
+  checksum: 10/a3f5a2f50d8832b9d39a36acce04ac388290982a944d0a8aac9735a50d1fb3276b1e40e3a9bce9eeb8bb17f6ab6f91a5ec1d65c6ee2603d83f1b9caad6b7ded2
   languageName: node
   linkType: hard
 
