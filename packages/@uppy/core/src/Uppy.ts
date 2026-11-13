@@ -457,6 +457,8 @@ export class Uppy<
 
   #storeUnsubscribe
 
+  #onlineStatusTimeout: ReturnType<typeof setTimeout> | undefined
+
   #emitter = ee()
 
   #preProcessors: Set<Processor> = new Set()
@@ -2079,6 +2081,9 @@ export class Uppy<
    * Uninstall all plugins and close down this Uppy instance.
    */
   destroy(): void {
+    clearTimeout(this.#onlineStatusTimeout)
+    this.#onlineStatusTimeout = undefined
+
     this.log(
       `Closing Uppy instance ${this.opts.id}: removing all files and uninstalling plugins`,
     )
