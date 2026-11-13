@@ -1,6 +1,6 @@
-import querystring from 'node:querystring'
 import mime from 'mime-types'
 import type { BuildUrl } from '../../../types/express.js'
+import { getNextPagePath } from '../../helpers/utils.js'
 import type { ProviderListResponse } from '../Provider.js'
 
 type DropboxItem = {
@@ -59,13 +59,8 @@ const getItemThumbnailUrl = (item: DropboxItem): string => {
   return `/dropbox/thumbnail/${getItemRequestPath(item)}`
 }
 
-const getNextPagePath = (data: DropboxListResponse): string | null => {
-  if (!data.has_more) {
-    return null
-  }
-  const query = { cursor: data.cursor }
-  return `?${querystring.stringify(query)}`
-}
+const getDropboxNextPagePath = (data: DropboxListResponse): string | null =>
+  data.has_more ? getNextPagePath('', {}, data.cursor) : null
 
 const adaptData = (
   res: DropboxListResponse,
@@ -88,7 +83,7 @@ const adaptData = (
   return {
     username: email,
     items,
-    nextPagePath: getNextPagePath(res),
+    nextPagePath: getDropboxNextPagePath(res),
   }
 }
 

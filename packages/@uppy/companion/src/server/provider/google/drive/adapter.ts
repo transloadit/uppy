@@ -1,4 +1,4 @@
-import querystring from 'node:querystring'
+import { getNextPagePath } from '../../../helpers/utils.js'
 import type { Query } from '../../Provider.js'
 
 export type DriveItem = {
@@ -169,7 +169,7 @@ const getItemThumbnailUrl = (item: DriveItem) => {
   return item.thumbnailLink
 }
 
-const getNextPagePath = (
+const getDriveNextPagePath = (
   data: DriveListResponse,
   currentQuery: Query | undefined,
   currentPath: string | undefined,
@@ -177,8 +177,11 @@ const getNextPagePath = (
   if (!data.nextPageToken) {
     return null
   }
-  const query = { ...currentQuery, cursor: data.nextPageToken }
-  return `${currentPath}?${querystring.stringify(query)}`
+  return getNextPagePath(
+    currentPath ?? '',
+    currentQuery ?? {},
+    data.nextPageToken,
+  )
 }
 
 const getImageHeight = (item: DriveItem) => item.imageMediaMetadata?.height
@@ -251,6 +254,6 @@ export const adaptData = (
   return {
     username: getUsername(about),
     items: adaptedItems,
-    nextPagePath: getNextPagePath(listFilesResp, query, directory),
+    nextPagePath: getDriveNextPagePath(listFilesResp, query, directory),
   }
 }

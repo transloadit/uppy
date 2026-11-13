@@ -1,6 +1,6 @@
-import querystring from 'node:querystring'
 import mime from 'mime-types'
 import type { BuildUrl } from '../../../types/express.js'
+import { getNextPagePath } from '../../helpers/utils.js'
 
 type BoxItem = {
   type?: string
@@ -63,15 +63,14 @@ const getItemThumbnailUrl = (item: BoxItem): string => {
   return `/box/thumbnail/${getItemRequestPath(item)}`
 }
 
-const getNextPagePath = (data: BoxListResponse): string | null => {
+const getBoxNextPagePath = (data: BoxListResponse): string | null => {
   if (
     data.total_count < data.limit ||
     data.offset + data.limit > data.total_count
   ) {
     return null
   }
-  const query = { cursor: data.offset + data.limit }
-  return `?${querystring.stringify(query)}`
+  return getNextPagePath('', {}, data.offset + data.limit)
 }
 
 const adaptData = function adaptData(
@@ -91,7 +90,7 @@ const adaptData = function adaptData(
     size: getItemSize(item),
   }))
 
-  const nextPagePath = getNextPagePath(res)
+  const nextPagePath = getBoxNextPagePath(res)
 
   return { username, items, nextPagePath }
 }

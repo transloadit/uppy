@@ -8,7 +8,7 @@ vi.mock('../dist/server/helpers/jwt.js', () => {
   return {
     generateEncryptedToken: () => 'dummy token',
     verifyEncryptedToken: () => '',
-    addToCookiesIfNeeded: () => {},
+    issueAuthToken: () => 'dummy token',
     removeFromCookies: () => {},
   }
 })

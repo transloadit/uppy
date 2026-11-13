@@ -18,7 +18,7 @@ import Provider, {
   type ProviderLogoutResponse,
   type ProviderSizeOptions,
 } from '../Provider.js'
-import { withProviderErrorHandling } from '../providerErrors.js'
+import { jsonStringAt, withProviderErrorHandling } from '../providerErrors.js'
 import adaptData from './adapter.js'
 
 const BASE_URL = 'https://zoom.us/v2'
@@ -401,10 +401,7 @@ export default class Zoom extends Provider<ZoomUserSession> {
       isAuthError: (response) =>
         typeof response.statusCode === 'number' &&
         authErrorCodes.includes(response.statusCode),
-      getJsonErrorMessage: (body) =>
-        isRecord(body) && typeof body['message'] === 'string'
-          ? body['message']
-          : undefined,
+      getJsonErrorMessage: jsonStringAt('message'),
     })
   }
 }

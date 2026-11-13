@@ -1,3 +1,5 @@
+import { getNextPagePath } from '../../helpers/utils.js'
+
 type OneDriveParentReference = { driveId: string }
 
 type OneDriveRemoteItem = {
@@ -76,7 +78,7 @@ const getItemModifiedDate = (item: OneDriveItem): string | undefined => {
   return item.lastModifiedDateTime
 }
 
-const getNextPagePath = ({
+const getOneDriveNextPagePath = ({
   res,
   query: currentQuery,
   directory,
@@ -93,8 +95,7 @@ const getNextPagePath = ({
   const skipToken = new URL(nextLink).searchParams.get('$skiptoken')
   if (skipToken == null || skipToken.length === 0) return null
 
-  const query = { ...currentQuery, cursor: skipToken }
-  return `${directory ?? ''}?${new URLSearchParams(query).toString()}`
+  return getNextPagePath(directory ?? '', currentQuery, skipToken)
 }
 
 const adaptData = (
@@ -115,7 +116,7 @@ const adaptData = (
     size: getItemSize(item),
   }))
 
-  const nextPagePath = getNextPagePath({ res, query, directory })
+  const nextPagePath = getOneDriveNextPagePath({ res, query, directory })
 
   return { username, items, nextPagePath }
 }
