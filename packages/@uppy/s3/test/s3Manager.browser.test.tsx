@@ -100,6 +100,16 @@ it('refuses a plugin that is not a manager-mode storage browser', () => {
   )
 })
 
+it('warns about a storage plugin in picker mode', () => {
+  uppy = new Uppy().use(S3, { companionUrl: COMPANION })
+  const log = vi.spyOn(uppy, 'log')
+  createS3ManagerController(uppy, 'S3')
+  expect(log).toHaveBeenCalledWith(
+    expect.stringContaining("pass `mode: 'manager'`"),
+    'warning',
+  )
+})
+
 it('walks to the initial folder once, StrictMode remounts included', async () => {
   const companion = createMockS3Companion({ token: 'test-token' })
   network.use(...toMswHandlers(companion, COMPANION, { http }))
@@ -131,7 +141,7 @@ it('refuses to navigate while an operation can be cancelled', async () => {
     .getSnapshot()
     .state.partialTree.find((item) => item.data.name === 'docs')!
 
-  // A long operation (a folder move, a bulk delete) behind the progress screen.
+  // A long operation (a folder move, a bulk delete), cancellable meanwhile.
   let finish!: () => void
   const operation = plugin.view.runWithProgress(
     () =>

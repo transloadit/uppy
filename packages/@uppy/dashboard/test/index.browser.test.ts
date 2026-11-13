@@ -58,14 +58,14 @@ test('Upload, pause, and resume functionality', async () => {
     hideProgressAfterFinish: false, // Keep StatusBar visible after completion
   })
 
-  uppy.addUploader(async (fileIDs) => {
+  uppy.addUploader((fileIDs) => {
     const files = fileIDs.map((id) => uppy.getFile(id))
 
     // Emit upload-start event
     uppy.emit('upload-start', files)
 
     // Set initial progress state for all files
-    fileIDs.forEach((fileID) => {
+    for (const fileID of fileIDs) {
       const file = uppy.getFile(fileID)
       if (file) {
         uppy.setFileState(fileID, {
@@ -79,21 +79,21 @@ test('Upload, pause, and resume functionality', async () => {
           },
         })
       }
-    })
+    }
 
     // Simulate upload progress with pause/resume support
     const progressInterval = setInterval(() => {
-      fileIDs.forEach((fileID) => {
+      for (const fileID of fileIDs) {
         const file = uppy.getFile(fileID)
         if (!file) {
           clearInterval(progressInterval)
-          return
+          continue
         }
 
         // Check if file is paused
         if (file.isPaused) {
           isPaused = true
-          return
+          continue
         } else if (isPaused) {
           // Resuming from pause
           isPaused = false
@@ -147,7 +147,7 @@ test('Upload, pause, and resume functionality', async () => {
             uploadResolve?.()
           }
         }
-      })
+      }
     }, 200) // 200ms intervals for controlled testing
 
     return uploadPromise
@@ -205,4 +205,32 @@ test('Upload, pause, and resume functionality', async () => {
 
   // Verify upload completion state using Playwright selector
   await expect(page.getByText('Complete', { exact: true })).toBeVisible()
+})
+
+test('onDrop runs while the drop event is dispatched', async () => {
+  render('<div id="uppy"></div>')
+  let droppedFileCount: number | undefined
+  new Uppy().use(Dashboard, {
+    target: '#uppy',
+    inline: true,
+    onDrop: (event) => {
+      droppedFileCount = event.dataTransfer?.files.length
+    },
+  })
+
+  await expect
+    .element(page.getByText('Drop files here or browse files'))
+    .toBeVisible()
+  const dataTransfer = new DataTransfer()
+  dataTransfer.items.add(new File(['Hello, World!'], 'test.txt'))
+  document
+    .querySelector('.uppy-Dashboard-inner')!
+    .dispatchEvent(
+      new DragEvent('drop', { bubbles: true, cancelable: true, dataTransfer }),
+    )
+
+  // Browsers empty the DataTransfer when dispatch ends,
+  // so onDrop must run before the handler awaits anything.
+  expect(droppedFileCount).toBe(1)
+  await expect.element(page.getByText('test.txt')).toBeVisible()
 })

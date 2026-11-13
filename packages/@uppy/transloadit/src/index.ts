@@ -24,13 +24,21 @@ import Tus, { type TusDetailedError, type TusOpts } from '@uppy/tus'
 import packageJson from '../package.json' with { type: 'json' }
 import Assembly from './Assembly.js'
 import AssemblyWatcher from './AssemblyWatcher.js'
-import Client, { type AssemblyError } from './Client.js'
+import Client from './Client.js'
 import locale from './locale.js'
 
 export type AssemblyResponse = AssemblyStatus & {
   progress_combined?: number
 }
 export type AssemblyFile = AssemblyStatusUpload
+/**
+ * What the Assembly actually emits on `'error'`: a plain `Error` with the
+ * API's error response (or a network error) spread onto it. It is not an
+ * `AssemblyError` instance, and a network failure carries none of the
+ * response fields, so they are all optional.
+ */
+export type AssemblyStateError = Error &
+  Partial<AssemblyResponse> & { assembly?: AssemblyResponse }
 export type AssemblyResult = AssemblyStatusResult & { localId: string | null }
 export type AssemblyParameters = AssemblyInstructionsInput
 
@@ -95,6 +103,11 @@ type TransloaditState = {
    * status update routed through `#handleAssemblyStatusUpdate`.
    */
   lastAssemblyStatus: AssemblyResponse | undefined
+  /**
+   * The error the live assembly failed with, if any. Cleared when the next
+   * assembly starts and on cancel-all.
+   */
+  error: AssemblyStateError | undefined
   results: Array<{
     result: AssemblyResult
     stepName: string
@@ -454,9 +467,9 @@ export default class Transloadit<
       const assemblyID = ensureAssemblyId(status)
 
       const updatedFiles: Record<string, UppyFile<M, B>> = {}
-      files.forEach((file) => {
+      for (const file of files) {
         updatedFiles[file.id] = this.#attachAssemblyMetadata(file, status)
-      })
+      }
 
       this.uppy.setState({
         files: {
@@ -497,10 +510,10 @@ export default class Transloadit<
 
     watcher.on('assembly-complete', (id: string) => {
       const files = this.getAssemblyFiles(id)
-      files.forEach((file) => {
+      for (const file of files) {
         this.completedFiles[file.id] = true
         this.uppy.emit('postprocess-complete', file)
-      })
+      }
     })
 
     watcher.on('assembly-error', (id: string, error: Error) => {
@@ -548,21 +561,21 @@ export default class Transloadit<
   #reportAssemblyError(id: string, error: Error) {
     // Clear postprocessing state for all our files.
     const filesFromAssembly = this.getAssemblyFiles(id)
-    filesFromAssembly.forEach((file) => {
+    for (const file of filesFromAssembly) {
       // TODO Maybe make a postprocess-error event here?
 
       this.uppy.emit('upload-error', file, error)
       this.uppy.emit('postprocess-complete', file)
-    })
+    }
 
     // Reset `tus` key in the file state, so when the upload is retried,
     // old tus upload is not re-used — Assebmly expects a new upload, can't currently
     // re-use the old one. See: https://github.com/transloadit/uppy/issues/4412
     // and `onReceiveUploadUrl` in @uppy/tus
     const files = { ...this.uppy.getState().files }
-    filesFromAssembly.forEach((file) => {
+    for (const file of filesFromAssembly) {
       delete files[file.id].tus
-    })
+    }
     this.uppy.setState({ files })
 
     this.uppy.emit('error', error)
@@ -596,10 +609,14 @@ export default class Transloadit<
   #handleAssemblyStatusUpdate = (
     assemblyResponse: AssemblyResponse | undefined,
   ) => {
-    if (assemblyResponse != null) {
-      this.setPluginState({ lastAssemblyStatus: assemblyResponse })
-    }
-    this.setPluginState({ assemblyStatus: assemblyResponse })
+    this.setPluginState(
+      assemblyResponse != null
+        ? {
+            lastAssemblyStatus: assemblyResponse,
+            assemblyStatus: assemblyResponse,
+          }
+        : { assemblyStatus: undefined },
+    )
     this.uppy.emit('restore:plugin-data-changed', {
       [this.id]: assemblyResponse ? { assemblyResponse } : undefined,
     })
@@ -609,9 +626,18 @@ export default class Transloadit<
     return this.#assembly
   }
   set assembly(newAssembly: Assembly | undefined) {
-    // Only the live one reports its status (another one may still be in use).
-    this.#assembly?.off('status', this.#handleAssemblyStatusUpdate)
+    // Detach unconditionally. Only unsubscribing when clearing left the old
+    // assembly attached whenever one live assembly replaced another, so its
+    // later failure would write over the new run's status, and assigning the
+    // same assembly twice would subscribe twice.
+    this.assembly?.off('status', this.#handleAssemblyStatusUpdate)
     this.#assembly = newAssembly
+
+    if (newAssembly) {
+      // A new run starts clean. Write this before the status so no
+      // subscriber sees the new status next to the previous run's error.
+      this.setPluginState({ error: undefined })
+    }
 
     this.#handleAssemblyStatusUpdate(newAssembly?.status)
 
@@ -728,29 +754,36 @@ export default class Transloadit<
    * When an Assembly has finished processing, get the final state
    * and emit it.
    */
-  #onAssemblyFinished(assembly: Assembly) {
+  async #onAssemblyFinished(assembly: Assembly) {
     const url = getAssemblyUrlSsl(assembly.status)
-    this.client.getAssemblyStatus(url).then(
-      (finalStatus) => {
-        assembly.status = finalStatus
-        this.uppy.emit('transloadit:complete', finalStatus)
-      },
-      (err) => {
-        // Without the final status the upload would wait forever: it fails
-        // as it does when a status request fails while polling.
-        this.uppy.emit(
-          'transloadit:assembly-error',
-          assembly.status,
-          toError(err),
-        )
-      },
-    )
+    const finalStatus = await this.client
+      .getAssemblyStatus(url)
+      .catch((err: Error) => err)
+    // Nothing cancels this request, so the assembly may have been cancelled
+    // or let go of locally while it was in flight. Whatever ended it has
+    // already notified the watcher, and the consumer does not want a
+    // completion for an assembly they just cancelled. One still in use
+    // counts even when it is not the live one: another upload's may be.
+    const inUse = [...this.#inUse].some((use) => use.assembly === assembly)
+    if (!inUse && assembly !== this.assembly) return
+
+    if (finalStatus instanceof Error) {
+      // Without a terminal event the AssemblyWatcher, and with it
+      // `uppy.upload()`, would never settle.
+      assembly.emit('error', finalStatus)
+      return
+    }
+
+    assembly.status = finalStatus
+    // Like the `assembly_finished` message this mirrors, this says the
+    // assembly ended, not that it succeeded: the status carries `ok` and
+    // `error` so the consumer can tell a success from a cancellation or a
+    // failure.
+    this.uppy.emit('transloadit:complete', assembly.status)
   }
 
   async #cancelAssembly(assembly: Assembly) {
     await this.client.cancelAssembly(assembly.status)
-    // TODO bubble this through AssemblyWatcher so its event handlers can clean up correctly
-
     // Its status may have been updated after the cancellation was triggered.
     this.uppy.emit('transloadit:assembly-cancelled', assembly.status)
   }
@@ -766,11 +799,23 @@ export default class Transloadit<
     for (const id of Object.keys(this.uppy.getState().currentUploads)) {
       this.#endedUploads.add(id)
     }
-    // Let go of before the requests: an upload started before they return
-    // must create its own Assembly, not take one of these.
-    const uses = [...this.#inUse]
-    for (const use of uses) this.#release(use)
-    for (const { assembly } of uses) {
+    // Whatever was showing, a live assembly or a previous run's error, is gone.
+    this.setPluginState({ error: undefined })
+
+    // Every Assembly in use, and the live one if it was set from outside.
+    const assemblies = new Set([...this.#inUse].map((use) => use.assembly))
+    if (this.assembly) assemblies.add(this.assembly)
+    // Let go of them before the requests go out: a late SSE frame must not
+    // resurrect one, the UI must reset even when a cancel request fails
+    // (offline, say), and an upload started before the requests return must
+    // create its own Assembly, not take one of these.
+    for (const use of [...this.#inUse]) this.#release(use)
+    this.assembly?.close()
+    this.assembly = undefined
+    for (const assembly of assemblies) {
+      this.uppy.emit('transloadit:assembly-cancel', assembly.status)
+    }
+    for (const assembly of assemblies) {
       try {
         await this.#cancelAssembly(assembly)
       } catch (err) {
@@ -806,19 +851,21 @@ export default class Transloadit<
       }[] = []
       const id = ensureAssemblyId(previousAssembly)
 
-      previousAssembly.uploads?.forEach((uploadedFile) => {
-        const file = this.#findFile(uploadedFile)
-        files[uploadedFile.id] = {
-          id: file!.id,
-          assembly: id,
-          uploadedFile,
+      if (previousAssembly.uploads) {
+        for (const uploadedFile of previousAssembly.uploads) {
+          const file = this.#findFile(uploadedFile)
+          files[uploadedFile.id] = {
+            id: file!.id,
+            assembly: id,
+            uploadedFile,
+          }
         }
-      })
+      }
 
       const state = this.getPluginState()
       const restoredResults = previousAssembly.results ?? {}
 
-      Object.keys(restoredResults).forEach((stepName) => {
+      for (const stepName of Object.keys(restoredResults)) {
         const stepResults = restoredResults[stepName] ?? []
         for (const result of stepResults) {
           if (!('id' in result)) {
@@ -845,10 +892,9 @@ export default class Transloadit<
             assembly: id,
           })
         }
-      })
+      }
 
       const assembly = new Assembly(previousAssembly, this.#rateLimitedQueue)
-      assembly.status = previousAssembly
       this.assembly = assembly
       this.setPluginState({ files, results })
       return files
@@ -902,8 +948,14 @@ export default class Transloadit<
     assembly.on('upload', (file: AssemblyFile) => {
       this.#onFileUploadComplete(assembly, file)
     })
-    assembly.on('error', (error: AssemblyError) => {
+    assembly.on('error', (error: AssemblyStateError) => {
       error.assembly = assembly.status
+      // A cancelled or replaced assembly must not write over the current
+      // run's state, but the event still has to go out: AssemblyWatcher
+      // settles `#afterUpload` off it.
+      if (assembly === this.assembly) {
+        this.setPluginState({ error })
+      }
       this.uppy.emit('transloadit:assembly-error', assembly.status, error)
     })
 
@@ -943,14 +995,13 @@ export default class Transloadit<
       })
     }
 
+    const onAssemblyFinished = () => {
+      this.#onAssemblyFinished(assembly).catch((err) => this.uppy.log(err))
+    }
     if (this.opts.waitForEncoding) {
-      assembly.on('finished', () => {
-        this.#onAssemblyFinished(assembly)
-      })
+      assembly.on('finished', onAssemblyFinished)
     } else if (this.opts.waitForMetadata) {
-      assembly.on('metadata', () => {
-        this.#onAssemblyFinished(assembly)
-      })
+      assembly.on('metadata', onAssemblyFinished)
     }
 
     // No need to connect to the socket if the Assembly has completed by now.
@@ -1030,10 +1081,10 @@ export default class Transloadit<
         this.#allowNewUploadIfIdle(uploadID)
         return
       }
-      fileIDs.forEach((fileID) => {
+      for (const fileID of fileIDs) {
         const file = this.uppy.getFile(fileID)
         this.uppy.emit('preprocess-complete', file)
-      })
+      }
       // A restored one has been watched and connected since the restore.
       if (created) {
         this.#inUse.add({
@@ -1068,13 +1119,13 @@ export default class Transloadit<
       // The Assembly it failed with (a restored one whose reservation was
       // rejected, say) goes as core drops the upload (`#onStateUpdate`), so
       // a retry does not fail with it again.
-      fileIDs.forEach((fileID) => {
+      for (const fileID of fileIDs) {
         const file = this.uppy.getFile(fileID)
         // Clear preprocessing state when the Assembly could not be created,
         // otherwise the UI gets confused about the lingering progress keys
         this.uppy.emit('preprocess-complete', file)
         this.uppy.emit('upload-error', file, error)
-      })
+      }
       // Reopen admission, unless another upload still holds it closed.
       this.#allowNewUploadIfIdle(uploadID)
       throw error
@@ -1177,15 +1228,16 @@ export default class Transloadit<
         return
       }
 
-      const incompleteFiles = files.filter(
-        (file) => !Object.hasOwn(this.completedFiles, file.id),
-      )
-      incompleteFiles.forEach((file) => {
+      for (const file of files) {
+        if (Object.hasOwn(this.completedFiles, file.id)) {
+          continue
+        }
+
         this.uppy.emit('postprocess-progress', file, {
           mode: 'indeterminate',
           message: this.i18n('encoding'),
         })
-      })
+      }
 
       // Settles once the Assembly is done or has failed, or once it is let go
       // of (cancelled, or its upload dropped by core) while waited for.
@@ -1288,6 +1340,7 @@ export default class Transloadit<
     this.setPluginState({
       assemblyStatus: undefined,
       lastAssemblyStatus: undefined,
+      error: undefined,
       // Contains file data from Transloadit, indexed by their Transloadit-assigned ID.
       files: {},
       // Contains result data from Transloadit.

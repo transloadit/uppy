@@ -26,6 +26,8 @@ export default {
     companionError: 'Connection with Companion failed',
     actionFailed: 'The action failed',
     authAborted: 'Authentication aborted',
+    googleDrivePickerFailed:
+      'Google Drive could not be loaded. If this keeps happening, try allowing third-party cookies for this site.',
     companionUnauthorizeHint:
       'To unauthorize to your %{provider} account, please go to %{url}',
     failedToUpload: 'Failed to upload %{file}',
@@ -40,21 +42,8 @@ export default {
     },
     allFilesFromFolderNamed: 'All files from folder %{name}',
     openFolderNamed: 'Open folder %{name}',
-    openFileNamed: 'Open %{name}',
     itemActionsNamed: 'Actions for %{name}',
-    itemsSelected: {
-      0: '%{smart_count} selected',
-      1: '%{smart_count} selected',
-    },
-    selectMultiple: 'Select multiple',
-    cancelSelection: 'Cancel selection',
-    close: 'Close',
-    detailSize: 'Size',
-    detailType: 'Type',
-    detailModified: 'Modified',
     cancel: 'Cancel',
-    // Stops a long operation (moving or deleting many files) midway.
-    stopOperation: 'Stop',
     dialogConfirm: 'OK',
     logOut: 'Log out',
     logIn: 'Log in',

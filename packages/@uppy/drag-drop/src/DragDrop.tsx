@@ -7,7 +7,7 @@ import type {
 } from '@uppy/core'
 import { UIPlugin } from '@uppy/core'
 import type { LocaleStrings } from '@uppy/core/utils'
-import { getDroppedFiles, isDragDropSupported, toArray } from '@uppy/core/utils'
+import { getDroppedFiles, isDragDropSupported } from '@uppy/core/utils'
 import type { ComponentChild, h } from '@uppy/core/utils/preact'
 import packageJson from '../package.json' with { type: 'json' }
 import locale from './locale.js'
@@ -89,7 +89,7 @@ export default class DragDrop<M extends Meta, B extends Body> extends UIPlugin<
   private onInputChange = (
     event: h.JSX.TargetedEvent<HTMLInputElement, Event>,
   ) => {
-    const files = toArray(event.currentTarget.files || [])
+    const files = Array.from(event.currentTarget.files || [])
     if (files.length > 0) {
       this.uppy.log('[DragDrop] Files selected through input')
       this.addFiles(files)
@@ -143,14 +143,15 @@ export default class DragDrop<M extends Meta, B extends Body> extends UIPlugin<
       this.uppy.log(error, 'error')
     }
 
+    // Browsers empty `event.dataTransfer` once this handler yields
+    this.opts.onDrop?.(event)
+
     // Add all dropped files
     const files = await getDroppedFiles(event.dataTransfer!, { logDropError })
     if (files.length > 0) {
       this.uppy.log('[DragDrop] Files dropped')
       this.addFiles(files)
     }
-
-    this.opts.onDrop?.(event)
   }
 
   private renderHiddenFileInput() {

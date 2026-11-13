@@ -2,7 +2,11 @@ import got from 'got'
 import moment from 'moment-timezone'
 import pMap from 'p-map'
 import { isRecord } from '../../helpers/type-guards.js'
-import { getBasicAuthHeader, prepareStream } from '../../helpers/utils.js'
+import {
+  getBasicAuthHeader,
+  pathSegment,
+  prepareStream,
+} from '../../helpers/utils.js'
 import Provider, {
   type ProviderDeauthorizationCallbackOptions,
   type ProviderDeauthorizationCallbackResponse,
@@ -51,7 +55,7 @@ async function findFile({
   recordingStart?: string
 }): Promise<ZoomFoundFile | undefined> {
   const body: unknown = await client
-    .get(`meetings/${encodeURIComponent(meetingId)}/recordings`, {
+    .get(`meetings/${pathSegment(meetingId)}/recordings`, {
       responseType: 'json',
     })
     .json()
@@ -108,7 +112,7 @@ export default class Zoom extends Provider<ZoomUserSession> {
     return 'zoom'
   }
 
-  override async list(
+  override list(
     options: ProviderListOptions<ZoomUserSession>,
   ): Promise<ProviderListResponse> {
     return this.#withErrorHandling('provider.zoom.list.error', async () => {
@@ -140,7 +144,7 @@ export default class Zoom extends Provider<ZoomUserSession> {
 
       if (meetingId) {
         const recordingInfo = await client
-          .get(`meetings/${encodeURIComponent(meetingId)}/recordings`, {
+          .get(`meetings/${pathSegment(meetingId)}/recordings`, {
             responseType: 'json',
           })
           .json()
@@ -254,7 +258,7 @@ export default class Zoom extends Provider<ZoomUserSession> {
     })
   }
 
-  override async download({
+  override download({
     id: meetingId,
     providerUserSession: { accessToken: token },
     query,
@@ -293,7 +297,7 @@ export default class Zoom extends Provider<ZoomUserSession> {
     })
   }
 
-  override async size({
+  override size({
     id: meetingId,
     providerUserSession: { accessToken: token },
     query,
@@ -322,7 +326,7 @@ export default class Zoom extends Provider<ZoomUserSession> {
     })
   }
 
-  override async logout({
+  override logout({
     companion,
     providerUserSession: { accessToken: token },
   }: ProviderLogoutOptions<ZoomUserSession>): Promise<ProviderLogoutResponse> {
@@ -341,7 +345,7 @@ export default class Zoom extends Provider<ZoomUserSession> {
     })
   }
 
-  override async deauthorizationCallback({
+  override deauthorizationCallback({
     companion,
     body,
     headers,
@@ -384,7 +388,7 @@ export default class Zoom extends Provider<ZoomUserSession> {
     })
   }
 
-  async #withErrorHandling<T>(tag: string, fn: () => Promise<T>): Promise<T> {
+  #withErrorHandling<T>(tag: string, fn: () => Promise<T>): Promise<T> {
     const authErrorCodes = [
       124, // expired token
       401,
