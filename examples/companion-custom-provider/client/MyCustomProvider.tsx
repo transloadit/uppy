@@ -1,4 +1,5 @@
 import type {
+  AsyncStore,
   Body,
   Meta,
   PluginTarget,
@@ -9,9 +10,9 @@ import type {
 } from '@uppy/core'
 import { UIPlugin } from '@uppy/core'
 import {
+  defaultStorage,
   getAllowedHosts,
   Provider,
-  tokenStorage,
 } from '@uppy/core/companion-client'
 import { ProviderViews } from '@uppy/core/provider-views'
 // biome-ignore lint/correctness/noUnusedImports: This is used as the jsxFactory.
@@ -21,7 +22,7 @@ const defaultOptions = {}
 
 interface MyCustomProviderPluginOptions<M extends Meta, B extends Body> {
   id?: string
-  storage?: typeof tokenStorage
+  storage?: AsyncStore
   companionUrl: string
   companionAllowedHosts?: string | RegExp | (string | RegExp)[] | undefined
   target?: PluginTarget<M, B> | undefined
@@ -43,12 +44,12 @@ export default class MyCustomProvider<M extends Meta, B extends Body>
 
   provider: Provider<M, B>
   view!: ProviderViews<M, B>
-  storage: typeof tokenStorage
+  storage: AsyncStore
 
   constructor(uppy: Uppy<M, B>, opts: MyCustomProviderPluginOptions<M, B>) {
     super(uppy, opts)
     this.id = this.opts.id || 'MyCustomProvider'
-    this.storage = this.opts.storage || tokenStorage
+    this.storage = this.opts.storage || defaultStorage
 
     this.opts.companionAllowedHosts = getAllowedHosts(
       this.opts.companionAllowedHosts,

@@ -1,5 +1,19 @@
 # @uppy/drop-target
 
+## 5.0.2
+
+### Patch Changes
+
+- a8e8b28: `onDrop` now runs before dropped files are read, while `event.dataTransfer`
+  still holds the dropped items. Dropped files are not in state yet at that point.
+
+## 5.0.1
+
+### Patch Changes
+
+- 715eb80: Move the source map of the minified CSS into a separate file. The `.min.css` files, and `image-editor.css` in `@uppy/components`, `@uppy/react`, `@uppy/vue` and `@uppy/svelte`, embedded it inline and were larger than the unminified CSS. They now link to an external `.css.map` instead, at about half the gzipped size.
+- 78970b1: Add a README, so the npm page is no longer empty.
+
 ## 5.0.0
 
 ### Patch Changes
@@ -50,7 +64,6 @@
 - c5b51f6: ### Export maps for all packages
 
   All packages now have export maps. This is a breaking change in two cases:
-
   1. The css imports have changed from `@uppy[package]/dist/styles.min.css` to `@uppy[package]/css/styles.min.css`
   2. You were importing something that wasn't exported from the root, for instance `@uppy/core/lib/foo.js`. You can now only import things we explicitly exported.
 

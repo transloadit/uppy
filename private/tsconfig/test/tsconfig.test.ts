@@ -32,6 +32,7 @@ test('tsconfig.json', async () => {
       { path: './examples/aws-php/tsconfig.json' },
       { path: './examples/companion/tsconfig.json' },
       { path: './examples/companion-custom-provider/tsconfig.json' },
+      { path: './examples/companion-digitalocean-spaces/tsconfig.json' },
       { path: './examples/nextjs/tsconfig.json' },
       { path: './examples/react/tsconfig.json' },
       { path: './examples/reactrouter/tsconfig.json' },
@@ -40,6 +41,7 @@ test('tsconfig.json', async () => {
       { path: './examples/xhr-node/tsconfig.json' },
       { path: './examples/xhr-php/tsconfig.json' },
       { path: './examples/xhr-python/tsconfig.json' },
+      { path: './website/tsconfig.json' },
     ],
   })
 })

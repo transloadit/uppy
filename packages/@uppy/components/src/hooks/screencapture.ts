@@ -1,6 +1,7 @@
 import type { Uppy, UppyEventMap } from '@uppy/core'
 import type ScreenCapture from '@uppy/screen-capture'
 import type { ScreenCaptureState } from '@uppy/screen-capture'
+import { Subscribers } from './utils.js'
 
 type ButtonProps = {
   type: 'button'
@@ -33,25 +34,6 @@ export type ScreenCaptureStore = {
 
 const videoId = 'uppy-screencapture-video'
 
-class Subscribers {
-  private subscribers: Set<() => void> = new Set()
-
-  add = (listener: () => void): (() => void) => {
-    this.subscribers.add(listener)
-    return () => this.subscribers.delete(listener)
-  }
-
-  emit = (): void => {
-    for (const listener of this.subscribers) {
-      listener()
-    }
-  }
-
-  clear = (): void => {
-    this.subscribers.clear()
-  }
-}
-
 export function createScreenCaptureController(
   uppy: Uppy,
   onSubmit?: () => void,
@@ -65,26 +47,28 @@ export function createScreenCaptureController(
   const subscribers = new Subscribers()
 
   const onStateUpdate: UppyEventMap<any, any>['state-update'] = (
-    _prev,
-    _next,
-    patch,
+    prev,
+    next,
   ): void => {
-    const screenCapturePatch = patch?.plugins?.ScreenCapture as
-      | ScreenCaptureState
-      | undefined
-
-    if (screenCapturePatch) {
+    if (prev.plugins[plugin.id] !== next.plugins[plugin.id]) {
       subscribers.emit()
     }
   }
 
+  const subscribe = (listener: () => void) => {
+    if (subscribers.size === 0) uppy.on('state-update', onStateUpdate)
+    const unsubscribe = subscribers.add(listener)
+    return () => {
+      unsubscribe()
+      if (subscribers.size === 0) uppy.off('state-update', onStateUpdate)
+    }
+  }
+
   const stop = () => {
-    uppy.off('state-update', onStateUpdate)
     plugin.stop()
   }
 
   const start = () => {
-    uppy.on('state-update', onStateUpdate)
     plugin.start()
   }
 
@@ -180,7 +164,7 @@ export function createScreenCaptureController(
     return {
       type: 'button' as const,
       onClick: () => {
-        plugin.submit()
+        if (!plugin.submit()) return
         plugin.stop()
         onSubmit?.()
       },
@@ -220,5 +204,5 @@ export function createScreenCaptureController(
     return cachedSnapshot
   }
 
-  return { subscribe: subscribers.add, getSnapshot: getCachedSnapshot }
+  return { subscribe, getSnapshot: getCachedSnapshot }
 }

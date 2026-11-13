@@ -2,7 +2,7 @@ import type { Readable } from 'node:stream'
 import got from 'got'
 import { MAX_AGE_REFRESH_TOKEN } from '../../../helpers/jwt.js'
 import { isRecord } from '../../../helpers/type-guards.js'
-import { prepareStream } from '../../../helpers/utils.js'
+import { pathSegment, prepareStream } from '../../../helpers/utils.js'
 import logger from '../../../logger.js'
 import { ProviderAuthError } from '../../error.js'
 import Provider, {
@@ -62,7 +62,7 @@ async function getStats({ id, token }: { id: string; token: string }) {
 
   const getStatsInner = async (statsOfId: string) =>
     client
-      .get(`files/${encodeURIComponent(statsOfId)}`, {
+      .get(`files/${pathSegment(statsOfId)}`, {
         searchParams: { fields: DRIVE_FILE_FIELDS, supportsAllDrives: true },
         responseType: 'json',
       })
@@ -126,19 +126,29 @@ export async function streamGoogleFile({
         responseType: 'json',
       })
     } else {
-      stream = client.stream.get(`files/${encodeURIComponent(id)}/export`, {
+      stream = client.stream.get(`files/${pathSegment(id)}/export`, {
         searchParams: { supportsAllDrives: true, mimeType: mimeType2 },
         responseType: 'json',
       })
     }
   } else {
-    stream = client.stream.get(`files/${encodeURIComponent(id)}`, {
+    stream = client.stream.get(`files/${pathSegment(id)}`, {
       searchParams: { alt: 'media', supportsAllDrives: true },
       responseType: 'json',
     })
   }
 
-  const { size } = await prepareStream(stream)
+  const { size: contentLength } = await prepareStream(stream)
+
+  // Google doesn't send a Content-Length for `alt=media` downloads, so fall back
+  // to the size from the file metadata. GSuite exports have no fixed size.
+  const statsSize = Number(stats.size)
+  const size =
+    contentLength ??
+    (!isGsuiteFile(mimeType) && Number.isFinite(statsSize) && statsSize > 0
+      ? statsSize
+      : undefined)
+
   return { stream, size }
 }
 
@@ -168,7 +178,7 @@ export class Drive extends Provider<GoogleUserSession> {
     return refreshToken(args)
   }
 
-  override async list({
+  override list({
     directory: directoryIn,
     providerUserSession: { accessToken: token },
     query,
@@ -223,7 +233,7 @@ export class Drive extends Provider<GoogleUserSession> {
           return response
         }
 
-        async function fetchFiles() {
+        function fetchFiles() {
           // Shared with me items in root don't have any parents
           const q = isVirtualSharedDirRoot
             ? `sharedWithMe and trashed=false`
@@ -246,7 +256,7 @@ export class Drive extends Provider<GoogleUserSession> {
             .json<DriveListResponse>()
         }
 
-        async function fetchAbout() {
+        function fetchAbout() {
           const searchParams = { fields: 'user' }
 
           return client
@@ -272,7 +282,7 @@ export class Drive extends Provider<GoogleUserSession> {
     )
   }
 
-  override async download({
+  override download({
     id,
     providerUserSession: { accessToken: token },
   }: ProviderDownloadOptions<GoogleUserSession>): Promise<ProviderDownloadResponse> {
@@ -288,9 +298,7 @@ export class Drive extends Provider<GoogleUserSession> {
     return withGoogleErrorHandling(
       Drive.oauthProvider,
       'provider.drive.download.error',
-      async () => {
-        return streamGoogleFile({ token, id })
-      },
+      () => streamGoogleFile({ token, id }),
     )
   }
 }

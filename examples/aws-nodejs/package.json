@@ -14,7 +14,7 @@
     "@aws-sdk/client-s3": "^3.338.0",
     "@aws-sdk/client-sts": "^3.1139.0",
     "@aws-sdk/s3-request-presigner": "^3.338.0",
-    "body-parser": "^2.2.2",
+    "body-parser": "^2.4.0",
     "express": "^5.2.1"
   }
 }
