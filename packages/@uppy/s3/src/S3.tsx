@@ -7,6 +7,7 @@ import type {
   AsyncStore,
   Body,
   Meta,
+  PartialTreeId,
   PluginTarget,
   UnknownProviderPlugin,
   UnknownProviderPluginState,
@@ -418,9 +419,10 @@ export default class S3<M extends Meta, B extends Body>
   }
 
   /**
-   * Opens the folder at `key` (e.g. `docs/photos/`), walking down from the
-   * browsing root so each parent listing reveals the next segment — loading
-   * further pages when a segment is not on the first one. Returns false when a
+   * Opens the folder at `key` (e.g. `docs/photos/`). With a grant, lists the
+   * target directly and constructs its breadcrumbs from the scoped path. An
+   * empty or missing target falls back to walking the parents and their pages,
+   * so stale deep links still stop at the nearest existing folder. Returns false when a
    * segment no longer exists, or when the key is outside the session's root:
    * the view then stays where the walk got to (useful for restoring stale deep
    * links).
@@ -440,6 +442,59 @@ export default class S3<M extends Meta, B extends Body>
       prefix.split('/').some((segment) => segment === '..' || segment === '.')
     )
       return false
+    if (prefix !== root && this.#grant) {
+      const folderId = encodeURIComponent(prefix)
+      const before = this.getPluginState()
+      const known = before.partialTree.some(
+        (node) => node.type === 'folder' && node.id === folderId,
+      )
+      if (!known) {
+        const partialTree = [...before.partialTree]
+        let path = root
+        let parentId: PartialTreeId = this.rootFolderId
+        let checked = false
+        for (const segment of prefix
+          .slice(root.length)
+          .split('/')
+          .filter(Boolean)) {
+          path += `${segment}/`
+          const id = encodeURIComponent(path)
+          const existing = partialTree.find((node) => node.id === id)
+          if (existing?.type === 'folder')
+            checked = existing.status === 'checked'
+          if (!existing) {
+            partialTree.push({
+              type: 'folder',
+              id,
+              parentId,
+              cached: false,
+              nextPagePath: null,
+              status: checked ? 'checked' : 'unchecked',
+              data: { name: segment, icon: 'folder', isFolder: true },
+            })
+          }
+          parentId = id
+        }
+        this.setPluginState({ partialTree })
+      }
+      await this.view.openFolder(folderId)
+      const state = this.getPluginState()
+      // Object stores also return an empty listing for a nonexistent prefix. Only the parent
+      // listing can distinguish that case from a genuinely empty folder.
+      if (
+        state.currentFolderId === folderId &&
+        (known ||
+          state.partialTree.some(
+            (node) => node.type !== 'root' && node.parentId === folderId,
+          ))
+      )
+        return true
+      if (state.authenticated === false) return false
+      this.setPluginState({
+        partialTree: before.partialTree,
+        currentFolderId: before.currentFolderId,
+      })
+    }
     await this.view.openFolder(this.rootFolderId)
     let path = root
     for (const segment of prefix
@@ -469,7 +524,7 @@ export default class S3<M extends Meta, B extends Body>
     if (
       !this.getPluginState().authenticated &&
       this.#needsLogin &&
-      !(await this.#connect())
+      !(await this.#connect(!this.opts.getGrant))
     )
       return false
     // Without a grant only a listing tells us which prefix the session is
@@ -484,9 +539,9 @@ export default class S3<M extends Meta, B extends Body>
     return this.#grant !== null || this.#session !== undefined
   }
 
-  /** Logs in (which lists the root); resolves to whether that worked. */
-  async #connect(): Promise<boolean> {
-    await this.view.handleAuth({})
+  /** Logs in, optionally leaving the first listing to the scoped deep-link navigation. */
+  async #connect(listRoot = true): Promise<boolean> {
+    await this.view.handleAuth({}, { skipInitialListing: !listRoot })
     return Boolean(this.getPluginState().authenticated)
   }
 

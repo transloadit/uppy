@@ -964,14 +964,19 @@ export default class ProviderView<M extends Meta, B extends Body> {
     }).catch(handleError(this.plugin.uppy))
   }
 
-  async handleAuth(authFormData?: unknown): Promise<void> {
+  async handleAuth(
+    authFormData?: unknown,
+    { skipInitialListing = false }: { skipInitialListing?: boolean } = {},
+  ): Promise<void> {
     await this.#withAbort(async (signal) => {
       this.setLoading(true)
       await this.provider.login({ authFormData, signal })
       this.plugin.setPluginState({ authenticated: true })
       await Promise.all([
         this.provider.fetchPreAuthToken(),
-        this.openFolder(this.plugin.rootFolderId),
+        skipInitialListing
+          ? Promise.resolve()
+          : this.openFolder(this.plugin.rootFolderId),
       ])
     }).catch(handleError(this.plugin.uppy))
     this.#doneLoading()

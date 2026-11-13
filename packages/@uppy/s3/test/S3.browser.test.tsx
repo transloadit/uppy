@@ -228,6 +228,86 @@ describe('S3 provider in the browser', () => {
     expect(plugin.rootPrefix).toBe('tenant/')
   })
 
+  it('opens a granted deep folder with one listing and reconstructs its breadcrumbs', async () => {
+    const { plugin } = setup({
+      mode: 'manager',
+      getGrant: async () =>
+        mockGrant({ bucket: 'my-bucket', prefix: 'tenant/' }),
+      companion: {
+        folders: {
+          'tenant/': [{ name: 'photos', isFolder: true }],
+          'tenant/photos/': [{ name: '2026', isFolder: true }],
+          'tenant/photos/2026/': [{ name: 'chair.jpg', isFolder: false }],
+        },
+      },
+    })
+    const list = vi.spyOn(plugin.provider, 'list')
+    expect(await plugin.openFolderPath('tenant/photos/2026/')).toBe(true)
+    expect(list.mock.calls.map(([id]) => id)).toEqual([
+      'tenant%2Fphotos%2F2026%2F',
+    ])
+    expect(names(plugin)).toEqual(['chair.jpg'])
+    expect(itemOf(plugin, 'tenant%2Fphotos%2F2026%2F')).toMatchObject({
+      parentId: 'tenant%2Fphotos%2F',
+      data: { name: '2026' },
+    })
+    expect(itemOf(plugin, 'tenant%2Fphotos%2F')).toMatchObject({
+      parentId: null,
+      data: { name: 'photos' },
+      cached: false,
+    })
+    await plugin.view.openFolder('tenant%2Fphotos%2F')
+    expect(names(plugin)).toEqual(['2026'])
+  })
+
+  it('falls back to the last existing ancestor of a stale granted deep link', async () => {
+    const { plugin } = setup({
+      mode: 'manager',
+      getGrant: async () => mockGrant({ bucket: 'my-bucket' }),
+    })
+    expect(await plugin.openFolderPath('docs/missing/deeper/')).toBe(false)
+    expect(plugin.getPluginState().currentFolderId).toBe('docs%2F')
+    expect(names(plugin)).toContain('hello.txt')
+    expect(
+      plugin
+        .getPluginState()
+        .partialTree.some((node) => node.id === 'docs%2Fmissing%2F'),
+    ).toBe(false)
+  })
+
+  it('validates an empty granted folder through its paginated parent listing', async () => {
+    const { plugin } = setup({
+      mode: 'manager',
+      getGrant: async () => mockGrant({ bucket: 'my-bucket' }),
+      companion: {
+        pageSize: 1,
+        folders: {
+          '': [
+            { name: 'readme.md', isFolder: false },
+            { name: 'empty', isFolder: true },
+          ],
+          'empty/': [],
+        },
+      },
+    })
+    expect(await plugin.openFolderPath('empty/')).toBe(true)
+    expect(plugin.getPluginState().currentFolderId).toBe('empty%2F')
+    expect(names(plugin)).toEqual([])
+  })
+
+  it('rejects paths outside a grant or containing dot segments before any listing', async () => {
+    const { plugin } = setup({
+      mode: 'manager',
+      getGrant: async () =>
+        mockGrant({ bucket: 'my-bucket', prefix: 'tenant/' }),
+    })
+    const list = vi.spyOn(plugin.provider, 'list')
+    expect(await plugin.openFolderPath('tenant-adjacent/photos/')).toBe(false)
+    expect(await plugin.openFolderPath('tenant/../outside/')).toBe(false)
+    expect(await plugin.openFolderPath('tenant/./photos/')).toBe(false)
+    expect(list).not.toHaveBeenCalled()
+  })
+
   it('forgets the session on logout', async () => {
     const { plugin } = setup({
       getGrant: async () =>
