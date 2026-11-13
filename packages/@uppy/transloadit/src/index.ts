@@ -1027,6 +1027,9 @@ export default class Transloadit<
     // in `currentUploads` when all are cancelled.
     const cancelsAtStart = this.#cancels
     const cancelled = () =>
+      // Removed (or its Uppy destroyed) while waiting: core keeps running a
+      // preprocessor that has started.
+      this.uppy.getPlugin(this.id) !== this ||
       this.#cancels !== cancelsAtStart ||
       !(uploadID in this.uppy.getState().currentUploads)
     // This attempt's Assembly: a restored one it claims, or one it creates.

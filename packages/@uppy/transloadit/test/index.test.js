@@ -1227,6 +1227,50 @@ describe('Transloadit', () => {
     expect(plugin.assembly).toBeUndefined()
   })
 
+  it('creates no Assembly when the plugin is removed while its options are fetched', async () => {
+    const signer = deferredSignings(1)
+    const uppy = new Core()
+    uppy.use(Transloadit, { assemblyOptions: signer.assemblyOptions })
+    const plugin = uppy.getPlugin('Transloadit')
+    plugin.client.createAssembly = vi.fn()
+    uppy.addFile({ source: 'test', name: 'a.txt', data: new Blob(['a']) })
+
+    // Core keeps running a preprocessor that has started.
+    const upload = uppy.upload().catch(() => {})
+    await vi.waitFor(() => expect(signer.calls).toBe(1))
+    uppy.removePlugin(plugin)
+    signer.signings[0].resolve({
+      params: { auth: { key: 'k' }, template_id: 't' },
+    })
+    await upload
+
+    expect(plugin.client.createAssembly).not.toHaveBeenCalled()
+  })
+
+  it('cancels the Assembly created while the plugin was removed', async () => {
+    const creating = Promise.withResolvers()
+    const uppy = new Core()
+    uppy.use(Transloadit, {
+      assemblyOptions: { params: { auth: { key: 'k' }, template_id: 't' } },
+    })
+    const plugin = uppy.getPlugin('Transloadit')
+    plugin.client.createAssembly = vi.fn(() => creating.promise)
+    plugin.client.cancelAssembly = vi.fn(async () => {})
+    uppy.addFile({ source: 'test', name: 'a.txt', data: new Blob(['a']) })
+
+    const upload = uppy.upload().catch(() => {})
+    await vi.waitFor(() =>
+      expect(plugin.client.createAssembly).toHaveBeenCalledOnce(),
+    )
+    uppy.removePlugin(plugin)
+    const status = assemblyStatus('A1')
+    creating.resolve(status)
+    await upload
+
+    expect(plugin.client.cancelAssembly).toHaveBeenCalledWith(status)
+    expect(plugin.assembly).toBeUndefined()
+  })
+
   it('closes the assembly and clears state as soon as cancel-all fires', async () => {
     const uppy = new Core()
     uppy.use(Transloadit, {
