@@ -13,17 +13,22 @@ type Listener = ((...args: any[]) => void) & {
  *   to the name of the event being emitted, and exactly six arguments;
  * - `off(event)` without a listener removes all listeners for that event.
  *
- * Two differences, both fixes: `off(event, fn)` also removes a listener added
- * with `once(event, fn)`, and a `'*'` listener fires for a namespaced event
- * even when it was registered after a listener for that namespace.
+ * Four differences, all fixes:
+ * - `off(event, fn)` also removes a listener added with `once(event, fn)`;
+ * - a `'*'` listener fires for a namespaced event even when it was registered
+ *   after a listener for that namespace;
+ * - `emit('*')` calls `'*'` listeners once, not twice;
+ * - any string is a valid event name, including `'constructor'` and other
+ *   names of `Object.prototype` members.
  */
 export default function createEmitter() {
-  const fns: Record<string, Listener[]> = {}
+  const fns = new Map<string, Listener[]>()
 
   const emitter = {
     on(event: string, fn: Listener): void {
-      fns[event] ??= []
-      fns[event].push(fn)
+      const listeners = fns.get(event)
+      if (listeners) listeners.push(fn)
+      else fns.set(event, [fn])
     },
 
     once(event: string, fn: Listener): void {
@@ -38,19 +43,21 @@ export default function createEmitter() {
     off(event: string, fn?: Listener): void {
       const keep =
         event && fn
-          ? (fns[event] ?? []).filter((f) => f !== fn && f.fn !== fn)
+          ? // `f?.`: nothing stops a JavaScript caller from registering a
+            // non-function, and removing another listener must not throw.
+            (fns.get(event) ?? []).filter((f) => f !== fn && f?.fn !== fn)
           : []
-      if (keep.length) fns[event] = keep
-      else delete fns[event]
+      if (keep.length) fns.set(event, keep)
+      else fns.delete(event)
     },
 
     emit(event: string, ...args: unknown[]): void {
-      let listeners = fns[event] ?? []
+      let listeners = fns.get(event) ?? []
       const idx = event.indexOf(':')
       const namespace = idx === -1 ? undefined : event.slice(0, idx)
-      for (const key of Object.keys(fns)) {
-        if (key === '*' || key === namespace) {
-          listeners = listeners.concat(fns[key])
+      for (const [key, list] of fns) {
+        if ((key === '*' && event !== '*') || key === namespace) {
+          listeners = listeners.concat(list)
         }
       }
       // Listeners always get exactly six arguments, as with namespace-emitter.

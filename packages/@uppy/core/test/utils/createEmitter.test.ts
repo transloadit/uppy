@@ -77,6 +77,58 @@ describe('createEmitter', () => {
     expect(events).toEqual(['namespace', '*'])
   })
 
+  it('matches only the first segment as the namespace, exact listeners first', () => {
+    const emitter = createEmitter()
+    const events: string[] = []
+    emitter.on('*', () => events.push('*'))
+    emitter.on('a', () => events.push('a'))
+    emitter.on('a:b', () => events.push('a:b'))
+    emitter.on('a:b:c', () => events.push('a:b:c'))
+    emitter.emit('a:b:c')
+    expect(events).toEqual(['a:b:c', '*', 'a'])
+  })
+
+  it('calls * listeners once when * itself is emitted', () => {
+    const emitter = createEmitter()
+    const all = vi.fn()
+    const once = vi.fn()
+    emitter.on('*', all)
+    emitter.once('*', once)
+    emitter.emit('*')
+    expect(all).toHaveBeenCalledOnce()
+    expect(once).toHaveBeenCalledOnce()
+  })
+
+  it.each([
+    'constructor',
+    'toString',
+    'hasOwnProperty',
+    '__proto__',
+  ])('treats %s as an ordinary event name', (name) => {
+    const emitter = createEmitter()
+    const fn = vi.fn()
+    emitter.emit(name)
+    emitter.off(name, fn)
+    emitter.on(name, fn)
+    emitter.emit(name, 1)
+    emitter.off(name, fn)
+    emitter.emit(name, 2)
+    expect(fn.mock.calls).toEqual([
+      [1, undefined, undefined, undefined, undefined, undefined],
+    ])
+  })
+
+  it('off does not throw when something that is not a function was registered', () => {
+    const emitter = createEmitter()
+    const fn = vi.fn()
+    // @ts-expect-error JavaScript callers can pass anything
+    emitter.on('x', undefined)
+    emitter.on('x', fn)
+    emitter.off('x', fn)
+    emitter.emit('x')
+    expect(fn).not.toHaveBeenCalled()
+  })
+
   it('does not call a listener added during an emit until the next emit', () => {
     const emitter = createEmitter()
     const calls: string[] = []
