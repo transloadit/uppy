@@ -17,6 +17,7 @@ import {
   filterFilesToUpload,
   getAllowedMetaFields,
   TaskQueue,
+  toError,
 } from '@uppy/core/utils'
 import packageJson from '../package.json' with { type: 'json' }
 import S3Uploader, { type UploadResult } from './S3Uploader.js'
@@ -300,7 +301,6 @@ export default class AwsS3<M extends Meta, B extends Body> extends BasePlugin<
           },
 
           onError: (err) => {
-            this.uppy.emit('upload-error', file, err)
             reject(err)
           },
 
@@ -315,6 +315,10 @@ export default class AwsS3<M extends Meta, B extends Body> extends BasePlugin<
         // Start the upload
         uploader.start()
       })
+    } catch (err) {
+      // Also reached by errors thrown before the upload starts, e.g. no `crypto.randomUUID` outside a secure context
+      this.uppy.emit('upload-error', file, toError(err))
+      throw err
     } finally {
       // Clean up uploader instance after upload completes or fails
       delete this.#uploaders[file.id]
