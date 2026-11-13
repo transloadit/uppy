@@ -1,5 +1,30 @@
 # @uppy/companion
 
+## 7.2.2
+
+### Patch Changes
+
+- 214e648: Fix multipart form-data uploads (the default for XHR uploads through Companion) sending an empty or truncated file (missing its first bytes) and reporting success when `maxFileSize` is set in streaming upload mode, a regression in 7.2.1. The stream that counts bytes against `maxFileSize` started flowing before the form-data body read it, so those bytes were lost.
+
+## 7.2.1
+
+### Patch Changes
+
+- 7a58ac6: Security: close several ways an anonymous client could crash or stall the Companion process. WebSocket messages are capped at 1 KiB; WebDAV listing and stat responses are capped at 5 MiB (larger listings are rejected), list item ids come from the server's paths, and a refused or failing WebDAV download rejects instead of crashing; URL imports follow redirects themselves, drop `authorization`/`cookie` headers across origins, no longer buffer (or proxy to the client) error bodies, and no longer retry one-shot PUT uploads; request bodies with `Content-Encoding` are rejected with 415 instead of being inflated; the standalone access log no longer re-parses malformed URLs.
+- 7a58ac6: Hand each OAuth token only to the browser session whose OAuth flow produced it, and only once; logout now clears the whole OAuth session, and custom OAuth providers now always get Grant's state check, which they can no longer turn off. Resolve client-chosen host names with DNS queries instead of the shared libuv thread pool (unless `allowLocalUrls` is set), trim S3 folder names in linear time, and keep credentials endpoint error details out of responses. tus transfers that stay paused for 10-12 minutes, or whose source sends nothing for 2-4 minutes, are now abandoned with an upload error: a remote file paused for longer than that has to be retried instead of resumed. Waiting for the tus server to answer gets 10-12 minutes instead. The DNS queries go to the system's DNS servers as read at startup, and do not use `/etc/hosts` or search domains; a name gets up to 5 seconds, and once one address family has answered, the other gets 300 ms more.
+- 7a58ac6: Security: harden how Companion stores and decodes the OAuth state when provider credentials come from a credentials endpoint that returns `origins`. Companion now ignores an `authCallbackToken` that is not a UUID, and posts the auth token to older Uppy clients (via `postMessage`) only to a state origin that is a plain `scheme://host[:port]` (a trailing slash is allowed).
+- 7a58ac6: Security: client-supplied ids are percent-encoded in Box, OneDrive, Facebook and Unsplash API paths, so a crafted id can no longer redirect a provider call to a different endpoint. Abandoned thumbnail requests now destroy the provider stream (returning its socket to the pool), and `res.write` keeps its backpressure flag on every route because the grant error interceptor runs only on the OAuth callback path. A refused import, or one whose progress socket never connects, destroys its download instead of leaking the socket and decompressor. Requests to URL-import and WebDAV servers that accept the connection but never answer now time out. Log lines are capped at 10 000 characters and errors are logged without their request options (which carry the Authorization header and uploadHeaders). The standalone access log censors the OAuth `code` and `authCallbackToken` query values.
+- 7a58ac6: Security: bound the work and memory the S3 upload endpoints spend on a client. `GET /s3/multipart/:uploadId/batch` signs at most 100 part numbers per request, and refuses part numbers that are not whole numbers from 1 to 10000. No current Uppy client uses this route; `@uppy/aws-s3-multipart` releases from 2021 and 2022 did, with batches no larger than their `limit` option (5 by default). Listing the parts of an upload stops, and cancels its S3 request, once the client has disconnected; each connection lists one upload at a time, starting the next listing only once the previous answer has been sent; and at most 4 listings longer than 1000 parts page through S3 at once (shorter listings never wait). If you set `s3.conditions`, check them before upgrading: multipart uploads that break them used to succeed and now fail. `s3.conditions` is now partly applied to multipart uploads: a Content-Type that the conditions refuse is rejected when the upload is created, and with a `content-length-range` condition Companion checks the total size of the parts on completion and aborts uploads outside the range. `/s3/sts` and uploads from providers and URLs still ignore `s3.conditions`.
+
+  If you set a `content-length-range` condition: completing a multipart upload now lists its parts first, so Companion's AWS credentials need the `s3:ListMultipartUploadParts` permission (already needed to resume uploads, and listed in the `@uppy/aws-s3` docs). Without it, multipart uploads fail on completion. A `content-length-range` condition whose minimum and maximum aren't sizes with minimum <= maximum is now refused at startup.
+
+- 7a58ac6: Security: the WebSocket routes now accept only UUID tokens, so a client can no longer subscribe to reserved emitter events or Redis patterns and receive other users' auth tokens or upload events. Upload error frames now carry only the error's `name` and `message`, and for a failed multipart upload the destination's answer in `extraData` (status, status text, body and headers), instead of the serialised error, which could include other users' request headers. Connection logs no longer print full tokens.
+- 7a58ac6: `uploadHeaders` now always win over client-sent headers of the same name, whatever their case. With `maxFileSize` set, streaming uploads now fail with `maxFileSize exceeded` once the source sends more bytes than the limit, also when it announced no size or a smaller one. With `streamingUpload: false`, pausing a tus upload while Companion is still downloading the file no longer crashes the process; the upload waits for resume (or the 10 minute paused timeout) as a paused transfer does. A tus upload that is paused or canceled no longer sends further requests, so a cancel that races a resume can no longer create a new upload or crash the process. The daily clean-up job no longer deletes temp files that an upload in progress in the same process is still using; Companion processes that share one `filePath` still can't see each other's uploads, but a temp file deleted under an upload now fails that upload instead of crashing the process.
+- 7a58ac6: Security: upload destinations are normalized before the `uploadUrls` check and the normalized URL is what Companion connects to, closing a mismatch between the allowlist parser and the client that connected; dot segments can no longer escape a path-anchored allowlist entry. Raw (`useFormData: false`) multipart uploads now fail when the source sends more or fewer bytes than its announced size, instead of letting surplus bytes be framed as a separate request on the keep-alive connection. tus upload URLs returned by the server and multipart redirect targets are re-checked against `uploadUrls`, and `Forwarded` / `X-Forwarded-*` client headers are no longer forwarded to the upload destination.
+- f58058d: Allow various asynchronous interfaces and callbacks to be synchronous. Some methods that never awaited anything are no longer `async`; for example `Webcam#getVideo()` now returns its value directly.
+- 1e70cc9: Report the file size for Google Picker (Drive) imports. Drive doesn't send a `Content-Length` for `alt=media` downloads, so Companion now falls back to the `size` from the file metadata, and the client shows the total and the percentage instead of "X of unknown".
+- 0b66920: Retain OAuth callback results briefly so login succeeds when the callback arrives before the WebSocket subscription is ready.
+
 ## 7.2.0
 
 ### Minor Changes
@@ -21,11 +46,11 @@
 ### Patch Changes
 
 - 452b52b: Reuse shared option and response types for all Companion provider methods. Some provider method types were widened to match the base `Provider` class:
-  
   - `logout()` of Box, Dropbox, Facebook and S3 now returns `{ revoked: boolean }` instead of `{ revoked: true }`.
   - Zoom `deauthorizationCallback()` headers may now be `string | string[]`.
   - Zoom `list()` query is now the generic `Query` type instead of `{ cursor?: string | null }`.
   - WebDAV `thumbnail()` no longer declares its unused parameters.
+
 - d85c649: Fix WebDAV provider bypassing SSRF protection: requests to private, loopback and link-local addresses are now blocked unless `allowLocalUrls` is enabled.
 
 ## 7.1.0
@@ -223,7 +248,6 @@
 - c5b51f6: ### Export maps for all packages
 
   All packages now have export maps. This is a breaking change in two cases:
-
   1. The css imports have changed from `@uppy[package]/dist/styles.min.css` to `@uppy[package]/css/styles.min.css`
   2. You were importing something that wasn't exported from the root, for instance `@uppy/core/lib/foo.js`. You can now only import things we explicitly exported.
 

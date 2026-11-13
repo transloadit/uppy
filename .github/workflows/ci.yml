@@ -3,22 +3,24 @@ name: CI
 on:
   push:
     branches: [main]
-    paths-ignore:
-      - '**.md'
-      - 'assets/**'
-      - 'website/**'
-      - '.github/**'
-      - '!.github/workflows/ci.yml'
   pull_request:
     # We want all branches so we configure types to be the GH default again
     types: [opened, synchronize, reopened]
-    paths-ignore:
-      - '**.md'
-      - 'website/**'
-      - '.github/**'
-      - '!.github/workflows/ci.yml'
+
+# Key on the PR number, not `head_ref`: branch names from different forks
+# (e.g. two `patch-1` PRs) would otherwise cancel each other's runs. Pushes
+# to main fall back to `run_id`, so they are never cancelled.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.run_id }}
+  cancel-in-progress: true
+
+# The repository is public, so checking it out needs no token scopes, and the
+# Actions cache (actions/cache, buildx `type=gha`) authenticates with the
+# runtime token, not GITHUB_TOKEN. Grant scopes per job if one ever needs them.
+permissions: {}
 
 env:
+  SKIP_YARN_COREPACK_CHECK: true
   YARN_ENABLE_GLOBAL_CACHE: false
 
 jobs:
@@ -81,8 +83,12 @@ jobs:
           --health-retries 5
     strategy:
       matrix:
-        # Current Node is covered separately in node26.yml.
-        node-version: ['22.23.4', '24.22.1']
+        # The other jobs use the version in .node-version, which should be the
+        # newest one here.
+        node-version:
+          - '22.23.4'
+          - '24.22.1'
+          - '26.12.1'
     steps:
       - name: Checkout sources
         uses: actions/checkout@v7
@@ -126,6 +132,56 @@ jobs:
       - name: Build and check examples
         run: corepack yarn run build:examples
 
+  # The @uppy/url browser tests start Companion behind a load balancer with
+  # Redis (multi-instance), so they need the build and a Redis service.
+  # `unit_tests` already runs the same browser project on every Node version,
+  # so this runs on one version only.
+  e2e_tests:
+    name: End-to-end tests
+    runs-on: ubuntu-latest
+    services:
+      redis:
+        image: redis:7.4
+        ports:
+          - 6379:6379
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+    steps:
+      - name: Checkout sources
+        uses: actions/checkout@v7
+      - name: Install Node.js
+        uses: actions/setup-node@v7
+        with:
+          node-version-file: .node-version
+      - name: Install Corepack
+        run: npm install --global corepack@0.36.0
+      - name: Get yarn cache directory path
+        id: yarn-cache-dir-path
+        run:
+          echo "dir=$(corepack yarn config get cacheFolder)" >> $GITHUB_OUTPUT
+      - uses: actions/cache@v6
+        with:
+          path: ${{ steps.yarn-cache-dir-path.outputs.dir }}
+          key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-yarn-
+      - name: Install dependencies
+        run: corepack yarn install --immutable
+      - name: Install Playwright Browsers
+        run: corepack yarn workspace @uppy/dashboard playwright install --with-deps chromium
+      - name: Build
+        run: corepack yarn run build
+      # This uncached task needs the Companion fixture environment in Turbo.
+      - name: Run end-to-end tests
+        run: corepack yarn run test:e2e
+        env:
+          TURBO_ENV_MODE: loose
+          COMPANION_PROTOCOL: http
+          COMPANION_REDIS_URL: redis://localhost:6379
+
   types:
     name: Types
     runs-on: ubuntu-latest
@@ -135,7 +191,7 @@ jobs:
       - name: Install Node.js
         uses: actions/setup-node@v7
         with:
-          node-version: '26.12.1'
+          node-version-file: .node-version
       - name: Install Corepack
         run: npm install --global corepack@0.36.0
       - name: Get yarn cache directory path
@@ -158,8 +214,6 @@ jobs:
   lint_js:
     name: Lint
     runs-on: ubuntu-latest
-    env:
-      SKIP_YARN_COREPACK_CHECK: true
     steps:
       - name: Checkout sources
         uses: actions/checkout@v7
@@ -167,7 +221,7 @@ jobs:
       - name: Install Node.js
         uses: actions/setup-node@v7
         with:
-          node-version: '26.12.1'
+          node-version-file: .node-version
       - name: Install Corepack
         run: npm install --global corepack@0.36.0
       - name: Install dependencies
@@ -179,20 +233,92 @@ jobs:
   lint_mdx:
     name: Lint (MDX)
     runs-on: ubuntu-latest
-    env:
-      SKIP_YARN_COREPACK_CHECK: true
     steps:
       - name: Checkout sources
         uses: actions/checkout@v7
-        with:
-          persist-credentials: false
       - name: Install Node.js
         uses: actions/setup-node@v7
         with:
-          node-version: '26.12.1'
+          node-version-file: .node-version
       - name: Install Corepack
         run: npm install --global corepack@0.36.0
       - name: Install dependencies
         run: corepack yarn workspaces focus @uppy-dev/build
       - name: Run linter
         run: corepack yarn run check:mdx
+
+  lint_md:
+    name: Lint (Markdown)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout sources
+        uses: actions/checkout@v7
+      - name: Install Node.js
+        uses: actions/setup-node@v7
+        with:
+          node-version-file: .node-version
+      - name: Install Corepack
+        run: npm install --global corepack@0.36.0
+      - name: Install dependencies
+        run: corepack yarn workspaces focus @uppy-dev/build
+      - name: Run linter
+        run: corepack yarn run check:md
+
+  lint_lockfile:
+    name: Lint yarn.lock
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout sources
+        uses: actions/checkout@v7
+      - name: Install Node.js
+        uses: actions/setup-node@v7
+        with:
+          node-version-file: .node-version
+      - name: Install Corepack
+        run: npm install --global corepack@0.36.0
+      - name: Get yarn cache directory path
+        id: yarn-cache-dir-path
+        run:
+          echo "dir=$(corepack yarn config get cacheFolder)" >> $GITHUB_OUTPUT
+      - uses: actions/cache@v6
+        with:
+          path: ${{ steps.yarn-cache-dir-path.outputs.dir }}
+          key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-yarn-
+      - name: Install dependencies
+        run: corepack yarn install --immutable --mode=skip-build
+      - name: Check for duplicate dependencies
+        run: corepack yarn dedupe --check
+
+  # Deploying the site stays in deploy-website.yml, which needs Pages scopes.
+  website:
+    name: Build and test (uppy.io)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout sources
+        uses: actions/checkout@v7
+      - name: Install Node.js
+        uses: actions/setup-node@v7
+        with:
+          node-version-file: .node-version
+      - name: Install Corepack
+        run: npm install --global corepack@0.36.0
+      - name: Get yarn cache directory path
+        id: yarn-cache-dir-path
+        run:
+          echo "dir=$(corepack yarn config get cacheFolder)" >> $GITHUB_OUTPUT
+      - uses: actions/cache@v6
+        with:
+          path: ${{ steps.yarn-cache-dir-path.outputs.dir }}
+          key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-yarn-
+      - name: Install dependencies
+        run: corepack yarn install --immutable
+      - name: Build Uppy
+        run: corepack yarn run build
+      - name: Build website
+        run: corepack yarn workspace uppy-io build
+      - name: Test website
+        run: corepack yarn workspace uppy-io test

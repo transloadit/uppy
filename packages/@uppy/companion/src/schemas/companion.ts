@@ -200,6 +200,15 @@ export interface CompanionInitOptions {
   s3?: S3ClientOptions &
     S3ObjectWriteOptions & {
       getKey?: GetKeyFn | undefined
+      /**
+       * POST policy conditions for `/s3/params` uploads, where S3 applies
+       * them all. On `/s3/multipart` uploads Companion applies only these:
+       * Content-Type conditions (`eq`, `starts-with` and the
+       * `{ 'Content-Type': value }` form) when the upload is created, and
+       * `content-length-range` when it is completed (the upload is aborted
+       * if its size is outside the range). `/s3/sts` credentials and
+       * server-side imports (from providers and URLs) ignore all conditions.
+       */
       conditions?: PresignedPostOptions['Conditions'] | undefined
       expires?: number | undefined
     }

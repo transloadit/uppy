@@ -1,7 +1,7 @@
 {
   "name": "@uppy/tus",
   "description": "Resumable uploads for Uppy using Tus.io",
-  "version": "6.0.0",
+  "version": "6.0.1",
   "license": "MIT",
   "type": "module",
   "sideEffects": false,
@@ -42,10 +42,10 @@
   "devDependencies": {
     "@uppy-dev/tsconfig": "workspace:^",
     "@uppy/core": "workspace:^",
-    "@vitest/browser-playwright": "^5.0.3",
-    "playwright": "1.64.0",
+    "@vitest/browser-playwright": "^5.0.5",
+    "playwright": "1.64.1",
     "typescript": "^6.0.3",
-    "vitest": "^5.0.3"
+    "vitest": "^5.0.5"
   },
   "peerDependencies": {
     "@uppy/core": "workspace:^"

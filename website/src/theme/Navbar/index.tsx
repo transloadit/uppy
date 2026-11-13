@@ -1,9 +1,8 @@
-import type { ReactNode } from 'react'
-import React from 'react'
-import Navbar from '@theme-original/Navbar'
-import type NavbarType from '@theme/Navbar'
-import type { WrapperProps } from '@docusaurus/types'
 import Link from '@docusaurus/Link'
+import type { WrapperProps } from '@docusaurus/types'
+import type NavbarType from '@theme/Navbar'
+import Navbar from '@theme-original/Navbar'
+import type { ReactNode } from 'react'
 
 import styles from './index.module.css'
 

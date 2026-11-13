@@ -5,6 +5,7 @@ import {
   dataURItoBlob,
   isObjectURL,
   isPreviewSupported,
+  toError,
 } from '@uppy/core/utils'
 // @ts-expect-error untyped
 import { rotation } from 'exifr/dist/mini.esm.mjs'
@@ -340,61 +341,60 @@ export default class ThumbnailGenerator<
   }
 
   addToQueue(fileID: string): void {
+    if (this.queue.includes(fileID)) {
+      return
+    }
     this.queue.push(fileID)
     if (this.queueProcessing === false) {
       this.processQueue()
     }
   }
 
-  processQueue(): Promise<void> {
+  async processQueue(): Promise<void> {
     this.queueProcessing = true
-    if (this.queue.length > 0) {
+    while (this.queue.length > 0) {
       const current = this.uppy.getFile(this.queue.shift() as string)
       if (!current) {
         this.uppy.log(
           '[ThumbnailGenerator] file was removed before a thumbnail could be generated, but not removed from the queue. This is probably a bug',
           'error',
         )
-        return Promise.resolve()
       }
-      return this.requestThumbnail(current)
-        .catch(() => {})
-        .then(() => this.processQueue())
+      await this.requestThumbnail(current)
     }
     this.queueProcessing = false
     this.uppy.log('[ThumbnailGenerator] Emptied thumbnail queue')
     this.uppy.emit('thumbnail:all-generated')
-    return Promise.resolve()
   }
 
-  requestThumbnail(file: UppyFile<M, B>): Promise<void> {
+  async requestThumbnail(file: UppyFile<M, B>): Promise<void> {
     if (isPreviewSupported(file.type) && !file.isRemote) {
-      return this.createThumbnail(
-        file,
-        this.opts.thumbnailWidth,
-        this.opts.thumbnailHeight,
-      )
-        .then((preview) => {
-          this.setPreviewURL(file.id, preview)
-          this.uppy.log(
-            `[ThumbnailGenerator] Generated thumbnail for ${file.id}`,
-          )
-          this.uppy.emit(
-            'thumbnail:generated',
-            this.uppy.getFile(file.id),
-            preview,
-          )
-        })
-        .catch((err) => {
-          this.uppy.log(
-            `[ThumbnailGenerator] Failed thumbnail for ${file.id}:`,
-            'warning',
-          )
-          this.uppy.log(err, 'warning')
-          this.uppy.emit('thumbnail:error', this.uppy.getFile(file.id), err)
-        })
+      try {
+        const preview = await this.createThumbnail(
+          file,
+          this.opts.thumbnailWidth,
+          this.opts.thumbnailHeight,
+        )
+        this.setPreviewURL(file.id, preview)
+        this.uppy.log(`[ThumbnailGenerator] Generated thumbnail for ${file.id}`)
+        this.uppy.emit(
+          'thumbnail:generated',
+          this.uppy.getFile(file.id),
+          preview,
+        )
+      } catch (err) {
+        this.uppy.log(
+          `[ThumbnailGenerator] Failed thumbnail for ${file.id}:`,
+          'warning',
+        )
+        this.uppy.log(err, 'warning')
+        this.uppy.emit(
+          'thumbnail:error',
+          this.uppy.getFile(file.id),
+          toError(err),
+        )
+      }
     }
-    return Promise.resolve()
   }
 
   onFileAdded = (file: UppyFile<M, B>): void => {
@@ -435,12 +435,12 @@ export default class ThumbnailGenerator<
 
   onRestored = (): void => {
     const restoredFiles = this.uppy.getFiles().filter((file) => file.isRestored)
-    restoredFiles.forEach((file) => {
+    for (const file of restoredFiles) {
       // Only add blob URLs; they are likely invalid after being restored.
       if (!file.preview || isObjectURL(file.preview)) {
         this.addToQueue(file.id)
       }
-    })
+    }
   }
 
   onAllFilesRemoved = (): void => {
@@ -448,19 +448,19 @@ export default class ThumbnailGenerator<
   }
 
   waitUntilAllProcessed = (fileIDs: string[]): Promise<void> => {
-    fileIDs.forEach((fileID) => {
+    for (const fileID of fileIDs) {
       const file = this.uppy.getFile(fileID)
       this.uppy.emit('preprocess-progress', file, {
         mode: 'indeterminate',
         message: this.i18n('generatingThumbnails'),
       })
-    })
+    }
 
     const emitPreprocessCompleteForAll = () => {
-      fileIDs.forEach((fileID) => {
+      for (const fileID of fileIDs) {
         const file = this.uppy.getFile(fileID)
         this.uppy.emit('preprocess-complete', file)
-      })
+      }
     }
 
     return new Promise((resolve) => {

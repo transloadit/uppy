@@ -582,11 +582,11 @@ providers like Dropbox and Google Drive directly into S3.
 
 ##### `s3.key` `COMPANION_AWS_KEY`
 
-The S3 access key ID.
+The S3 access key ID (optional).
 
 ##### `s3.secret` `COMPANION_AWS_SECRET` `COMPANION_AWS_SECRET_FILE`
 
-The S3 secret access key.
+The S3 secret access key (optional).
 
 :::note
 
@@ -594,6 +594,17 @@ Using a secret file means passing an absolute path to a file with any extension,
 which has only the secret, nothing else.
 
 :::
+
+If you leave out `s3.key` and `s3.secret`, Companion passes no credentials to
+the AWS SDK, so the SDK uses its
+[default credential provider chain](https://docs.aws.amazon.com/sdk-for-javascript/v3/developer-guide/setting-credentials-node.html).
+This lets Companion use an IAM role, for example an EC2 instance profile or an
+ECS task role, instead of long-term keys.
+
+The `/s3/sts` endpoint is the exception: it needs `s3.key`, `s3.secret` and
+`s3.region`, because it requests temporary credentials with
+[`GetFederationToken`](https://docs.aws.amazon.com/STS/latest/APIReference/API_GetFederationToken.html),
+which needs long-term IAM user keys. Without them it responds with an error.
 
 ##### `s3.endpoint` `COMPANION_AWS_ENDPOINT`
 
@@ -690,6 +701,26 @@ app.use(
 
 When signing on the client, this function will only be called for multipart
 uploads.
+
+##### `s3.conditions`
+
+An array of
+[POST policy conditions](https://docs.aws.amazon.com/AmazonS3/latest/API/sigv4-HTTPPOSTConstructPolicy.html)
+for uploads signed with `/s3/params`, where S3 applies all of them. S3 does not
+apply them to multipart uploads, so Companion checks these itself on
+`/s3/multipart`:
+
+- Content-Type conditions (`["eq", "$Content-Type", …]`,
+  `["starts-with", "$Content-Type", …]` and `{ "Content-Type": … }`), when the
+  upload is created;
+- `["content-length-range", min, max]`, when the upload is completed. Companion
+  lists the parts to add up their size, which needs the
+  `s3:ListMultipartUploadParts` permission, and aborts the upload if it is out
+  of range.
+
+Other conditions are not applied to multipart uploads. Credentials from
+`/s3/sts`, and files that Companion uploads to S3 itself (from providers and
+URLs), ignore all conditions. **Default**: `[]`.
 
 #### `COMPANION_AWS_USE_ACCELERATE_ENDPOINT`
 

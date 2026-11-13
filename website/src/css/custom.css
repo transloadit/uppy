@@ -5,42 +5,42 @@
  */
 
 @font-face {
-  font-family: 'IBM Plex Mono';
+  font-family: "IBM Plex Mono";
   font-style: normal;
   font-weight: normal;
   font-display: swap;
   src:
-    local('IBM Plex Mono'),
-    local('IBMPlexMono'),
-    url('/fonts/IBMPlexMono-Regular.woff2') format('woff2');
+    local("IBM Plex Mono"),
+    local("IBMPlexMono"),
+    url("/fonts/IBMPlexMono-Regular.woff2") format("woff2");
 }
 @font-face {
-  font-family: 'IBM Plex Mono';
+  font-family: "IBM Plex Mono";
   font-style: normal;
   font-weight: 600;
   font-display: swap;
   src:
-    local('IBM Plex Mono SemiBold'),
-    local('IBMPlexMono-SemiBold'),
-    url('/fonts/IBMPlexMono-SemiBold.woff2') format('woff2');
+    local("IBM Plex Mono SemiBold"),
+    local("IBMPlexMono-SemiBold"),
+    url("/fonts/IBMPlexMono-SemiBold.woff2") format("woff2");
 }
 
 /* Inter, self-hosted as a variable font so the whole 100–900 weight range
    costs a single file. */
 @font-face {
-  font-family: 'Inter';
+  font-family: "Inter";
   font-style: normal;
   font-weight: 100 900;
   font-display: swap;
-  src: url('/fonts/InterVariable.woff2') format('woff2');
+  src: url("/fonts/InterVariable.woff2") format("woff2");
 }
 
 @font-face {
-  font-family: 'Inter';
+  font-family: "Inter";
   font-style: italic;
   font-weight: 100 900;
   font-display: swap;
-  src: url('/fonts/InterVariable-Italic.woff2') format('woff2');
+  src: url("/fonts/InterVariable-Italic.woff2") format("woff2");
 }
 
 /* ==========================================================================
@@ -134,10 +134,10 @@
   --ifm-code-font-size: 95%;
   --ifm-font-size-base: 18px;
   --ifm-font-family-base:
-    'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
-  --ifm-font-family-monospace: 'IBM Plex Mono', mono-space;
+    "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --ifm-font-family-monospace: "IBM Plex Mono", mono-space;
   --ifm-heading-font-family:
-    'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
+    "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
   /* Semibold, not bold — Inter's 700 is heavy enough to shout at display sizes. */
   --ifm-heading-font-weight: 600;
   /* Left at Infima's default: 10% black over the code block's #f6f8fa lands on
@@ -168,8 +168,8 @@ html {
      property overrides font-optical-sizing, which would render 13px sidebar
      text with letterforms drawn for 24px display use. */
   font-feature-settings:
-    'kern' 1,
-    'calt' 1;
+    "kern" 1,
+    "calt" 1;
   font-optical-sizing: auto;
 }
 
@@ -233,7 +233,7 @@ html .uppy-Dashboard-poweredByIcon {
    but only asserts itself under the cursor. `:has(img)` opts out the links that
    wrap a logo or screenshot, where an underline would just underline the image. */
 .markdown :is(p, li, td, th, blockquote) a:not(:has(img)),
-[class*='mdxPageWrapper']
+[class*="mdxPageWrapper"]
   article
   :is(p, li, td, th, blockquote)
   a:not(:has(img)) {
@@ -245,7 +245,7 @@ html .uppy-Dashboard-poweredByIcon {
 }
 
 .markdown :is(p, li, td, th, blockquote) a:not(:has(img)):hover,
-[class*='mdxPageWrapper']
+[class*="mdxPageWrapper"]
   article
   :is(p, li, td, th, blockquote)
   a:not(:has(img)):hover {
@@ -254,7 +254,7 @@ html .uppy-Dashboard-poweredByIcon {
 
 @media (prefers-reduced-motion: reduce) {
   .markdown :is(p, li, td, th, blockquote) a,
-  [class*='mdxPageWrapper'] article :is(p, li, td, th, blockquote) a {
+  [class*="mdxPageWrapper"] article :is(p, li, td, th, blockquote) a {
     transition: none;
   }
 }
@@ -267,7 +267,9 @@ html .uppy-Dashboard-poweredByIcon {
 
 .markdown > h4:not(:first-of-type) {
   margin-top: calc(
-    var(--ifm-heading-vertical-rhythm-top) * var(--ifm-leading) * 2
+    var(--ifm-heading-vertical-rhythm-top) *
+    var(--ifm-leading) *
+    2
   );
 }
 
@@ -284,8 +286,8 @@ p > code {
 * Admonitions have long generated class names.
 * We want to change the heading font, but it's not an config option.
 */
-div[class^='admonitionHeading'],
-div[class*=' admonitionHeading'] {
+div[class^="admonitionHeading"],
+div[class*=" admonitionHeading"] {
   font-family: var(--ifm-font-family-base);
 }
 
@@ -369,8 +371,8 @@ div[class*=' admonitionHeading'] {
 
    Forum and Support are `target="_blank"`: they leave the page, so there is no
    state to animate and they never take an indicator. */
-.navbar__items > .navbar__link:not([target='_blank'])::after {
-  content: '';
+.navbar__items > .navbar__link:not([target="_blank"])::after {
+  content: "";
   position: absolute;
   inset-inline: 0.75rem;
   bottom: calc(-1 * var(--ifm-navbar-padding-vertical) - 1px);
@@ -384,7 +386,7 @@ div[class*=' admonitionHeading'] {
    route change, so the newly active one is created already active and a
    transition has no previous value to run from. A keyframe animation plays on
    mount, which is exactly when the wipe should happen. */
-.navbar__items > .navbar__link--active:not([target='_blank'])::after {
+.navbar__items > .navbar__link--active:not([target="_blank"])::after {
   clip-path: inset(0 0 0 0);
   /* Longhands: a `var()` inside the `animation` shorthand is opaque to the CSS
      minifier, which warns and skips the declaration. */
@@ -401,7 +403,7 @@ div[class*=' admonitionHeading'] {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .navbar__items > .navbar__link--active:not([target='_blank'])::after {
+  .navbar__items > .navbar__link--active:not([target="_blank"])::after {
     animation: none;
   }
 }
@@ -489,7 +491,7 @@ div[class*=' admonitionHeading'] {
   padding: 0 var(--ifm-pre-padding);
 }
 
-[data-theme='dark'] .docusaurus-highlight-code-line {
+[data-theme="dark"] .docusaurus-highlight-code-line {
   background-color: rgba(0, 0, 0, 0.3);
 }
 
@@ -501,14 +503,14 @@ div[class*=' admonitionHeading'] {
 
 /* Post titles are links, so Infima paints them with the accent. A headline is
    a headline — the accent is reserved for things you click on purpose. */
-h1 > a[class*='title'],
-h2 > a[class*='title'] {
+h1 > a[class*="title"],
+h2 > a[class*="title"] {
   color: var(--u-ink-900);
   letter-spacing: -0.025em;
 }
 
-h1 > a[class*='title']:hover,
-h2 > a[class*='title']:hover {
+h1 > a[class*="title"]:hover,
+h2 > a[class*="title"]:hover {
   color: var(--u-ink-900);
   text-decoration: none;
 }
@@ -524,7 +526,7 @@ h2 > a[class*='title']:hover {
   border: 1px solid rgba(165, 165, 165, 0.3);
 }
 
-div[data-uppy-element='dropzone'] p {
+div[data-uppy-element="dropzone"] p {
   margin-bottom: 0;
 }
 
@@ -552,7 +554,7 @@ div[data-uppy-element='dropzone'] p {
 }
 
 /* Date and reading time: tertiary, and kept close to the title it belongs to. */
-.blog-wrapper article > header div[class*='container'] {
+.blog-wrapper article > header div[class*="container"] {
   margin: 0.875rem 0 0 !important;
   font-size: 0.875rem;
   color: var(--u-ink-500);
@@ -569,7 +571,7 @@ div[data-uppy-element='dropzone'] p {
   margin: 1.75rem 0 0 !important;
 }
 
-.blog-wrapper article > header .row > [class*='authorCol'] {
+.blog-wrapper article > header .row > [class*="authorCol"] {
   flex: 0 0 auto;
   width: auto;
   max-width: none;
@@ -582,7 +584,7 @@ div[data-uppy-element='dropzone'] p {
 
 /* Docusaurus renders an empty socials div beneath the name; left in place it
    adds height inside the intro and pushes the name off the avatar's centre. */
-.blog-wrapper div[class*='authorSocials']:empty {
+.blog-wrapper div[class*="authorSocials"]:empty {
   display: none;
 }
 
@@ -724,14 +726,14 @@ div[data-uppy-element='dropzone'] p {
    footer and the prev/next pagination sit on the same measure, and centred so
    the column isn't stranded against the sidebar with a gap before the
    contents list. */
-.docs-wrapper div[class*='docItemContainer'] {
+.docs-wrapper div[class*="docItemContainer"] {
   max-width: 36rem;
   margin-inline: auto;
 }
 
 /* The page title sat hard against the navbar. This moves the content column
    and the table of contents down together, since they share the row. */
-.docs-wrapper main[class*='docMainContainer'] > .container {
+.docs-wrapper main[class*="docMainContainer"] > .container {
   padding-top: 3.25rem !important;
 }
 
@@ -741,7 +743,7 @@ div[data-uppy-element='dropzone'] p {
    sidebar and the main column lands its left edge on exactly the same pixel
    as the navbar's logo. */
 @media screen and (min-width: 997px) {
-  .docs-wrapper div[class*='docRoot'] {
+  .docs-wrapper div[class*="docRoot"] {
     /* The gutter plus the navbar's own 1rem padding. Without matching that
        padding here, the docs run 18px wider than the header on viewports
        narrower than the container. */
@@ -753,11 +755,11 @@ div[data-uppy-element='dropzone'] p {
   /* Capping the row costs horizontal room, so the two side columns give some
      back: a slimmer sidebar and a wider contents list, which was wrapping
      every entry onto four lines. */
-  .docs-wrapper div[class*='docSidebarContainer'] {
+  .docs-wrapper div[class*="docSidebarContainer"] {
     --doc-sidebar-width: 236px;
   }
 
-  .docs-wrapper main[class*='docMainContainer'] .row > .col--3 {
+  .docs-wrapper main[class*="docMainContainer"] .row > .col--3 {
     --ifm-col-width: 30%;
   }
 }
@@ -970,13 +972,13 @@ div[data-uppy-element='dropzone'] p {
 
 /* ----- Code blocks and tabs ----- */
 
-.docs-wrapper div[class*='codeBlockContainer'] {
+.docs-wrapper div[class*="codeBlockContainer"] {
   border: 1px solid var(--u-line);
   border-radius: var(--u-radius-lg);
   box-shadow: none;
 }
 
-.docs-wrapper div[class*='codeBlockTitle'] {
+.docs-wrapper div[class*="codeBlockTitle"] {
   border-bottom: 1px solid var(--u-line);
   font-size: 0.8125rem;
   color: var(--u-ink-600);
@@ -1036,7 +1038,7 @@ div[data-uppy-element='dropzone'] p {
   padding: 1rem 1.125rem;
 }
 
-.docs-wrapper .theme-admonition div[class*='admonitionHeading'] {
+.docs-wrapper .theme-admonition div[class*="admonitionHeading"] {
   display: flex;
   align-items: center;
   gap: 0.5rem;
@@ -1049,7 +1051,7 @@ div[data-uppy-element='dropzone'] p {
 }
 
 /* The icon carries the whole colour signal now, so it gets the disc. */
-.docs-wrapper .theme-admonition span[class*='admonitionIcon'] {
+.docs-wrapper .theme-admonition span[class*="admonitionIcon"] {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -1060,7 +1062,7 @@ div[data-uppy-element='dropzone'] p {
   background: var(--u-adm-tint);
 }
 
-.docs-wrapper .theme-admonition span[class*='admonitionIcon'] svg {
+.docs-wrapper .theme-admonition span[class*="admonitionIcon"] svg {
   width: 0.875rem;
   height: 0.875rem;
   fill: var(--u-adm);
@@ -1148,8 +1150,7 @@ div[data-uppy-element='dropzone'] p {
 /* Every column but the label column holds a single status icon, which belongs
    under the middle of its heading rather than jammed against the left edge. The
    heading centres with it so the two read as one column. */
-.docs-wrapper
-  .theme-doc-markdown
+.docs-wrapper .theme-doc-markdown
   table:has(th:nth-child(6))
   tr
   > :not(:first-child) {
@@ -1196,7 +1197,7 @@ div[data-uppy-element='dropzone'] p {
 }
 
 .cmp-icon::before {
-  content: '';
+  content: "";
   width: 0.875rem;
   height: 0.875rem;
   background: currentcolor;

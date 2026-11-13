@@ -11,6 +11,14 @@ function replacer(key: string, value: unknown): unknown {
 }
 
 /**
+ * Backslash-escape the glob characters of a Redis PSUBSCRIBE pattern so an
+ * event name can only ever match itself.
+ */
+export function escapeGlob(name: string): string {
+  return name.replace(/[\\*?[\]]/g, '\\$&')
+}
+
+/**
  * This module simulates the builtin events.EventEmitter but with the use of redis.
  * This is useful for when companion is running on multiple instances and events need
  * to be distributed across.
@@ -23,7 +31,11 @@ export default function redisEmitter(
   redisPubSubScope?: string,
 ): EmitterLike {
   const prefix = redisPubSubScope ? `${redisPubSubScope}:` : ''
-  const getPrefixedEventName = (eventName: string) => `${prefix}${eventName}`
+  // literal channel, used for publishing
+  const getChannelName = (eventName: string) => `${prefix}${eventName}`
+  // escaped pattern, used for (p)subscribing and matching
+  const getPatternName = (eventName: string) =>
+    `${prefix}${escapeGlob(eventName)}`
 
   const errorEmitter = new EventEmitter()
   // Redis errors carry their command's arguments, which name the channel and
@@ -123,7 +135,7 @@ export default function redisEmitter(
     await runWhenConnected(async ({ subscriber }) => {
       subscriber.off('pmessage', actualHandler)
       if (didRemoveLastListener) {
-        await subscriber.punsubscribe(getPrefixedEventName(eventName))
+        await subscriber.punsubscribe(getPatternName(eventName))
       }
     })
   }
@@ -146,7 +158,7 @@ export default function redisEmitter(
     }
 
     function actualHandler(pattern: string, _channel: string, message: string) {
-      if (pattern !== getPrefixedEventName(eventName)) {
+      if (pattern !== getPatternName(eventName)) {
         return
       }
 
@@ -182,7 +194,7 @@ export default function redisEmitter(
     await runWhenConnected(async ({ subscriber }) => {
       subscriber.on('pmessage', actualHandler)
       try {
-        await subscriber.psubscribe(getPrefixedEventName(eventName))
+        await subscriber.psubscribe(getPatternName(eventName))
       } catch (err) {
         // a failed on() must leave no listener behind
         subscriber.off('pmessage', actualHandler)
@@ -233,7 +245,7 @@ export default function redisEmitter(
   async function emit(eventName: string, ...args: unknown[]) {
     await runWhenConnected(async ({ publisher }) =>
       publisher.publish(
-        getPrefixedEventName(eventName),
+        getChannelName(eventName),
         safeStringify.default(args, replacer),
       ),
     )

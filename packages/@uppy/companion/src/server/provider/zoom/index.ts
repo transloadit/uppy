@@ -2,7 +2,11 @@ import got from 'got'
 import moment from 'moment-timezone'
 import pMap from 'p-map'
 import { isRecord } from '../../helpers/type-guards.js'
-import { getBasicAuthHeader, prepareStream } from '../../helpers/utils.js'
+import {
+  getBasicAuthHeader,
+  pathSegment,
+  prepareStream,
+} from '../../helpers/utils.js'
 import Provider, {
   type ProviderDeauthorizationCallbackOptions,
   type ProviderDeauthorizationCallbackResponse,
@@ -51,7 +55,7 @@ async function findFile({
   recordingStart?: string
 }): Promise<ZoomFoundFile | undefined> {
   const body: unknown = await client
-    .get(`meetings/${encodeURIComponent(meetingId)}/recordings`, {
+    .get(`meetings/${pathSegment(meetingId)}/recordings`, {
       responseType: 'json',
     })
     .json()
@@ -140,7 +144,7 @@ export default class Zoom extends Provider<ZoomUserSession> {
 
       if (meetingId) {
         const recordingInfo = await client
-          .get(`meetings/${encodeURIComponent(meetingId)}/recordings`, {
+          .get(`meetings/${pathSegment(meetingId)}/recordings`, {
             responseType: 'json',
           })
           .json()

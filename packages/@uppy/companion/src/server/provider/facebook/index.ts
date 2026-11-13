@@ -1,7 +1,7 @@
 import crypto from 'node:crypto'
 import got from 'got'
 import { isRecord } from '../../helpers/type-guards.js'
-import { HttpError, prepareStream } from '../../helpers/utils.js'
+import { HttpError, pathSegment, prepareStream } from '../../helpers/utils.js'
 import logger from '../../logger.js'
 import Provider, {
   type ProviderDownloadOptions,
@@ -89,7 +89,7 @@ async function getMediaUrl({
     requests: [
       {
         method: 'GET',
-        relative_url: `${id}?${new URLSearchParams({ fields: 'images' }).toString()}`,
+        relative_url: `${pathSegment(id)}?${new URLSearchParams({ fields: 'images' }).toString()}`,
       },
     ],
   })
@@ -143,7 +143,7 @@ export default class Facebook extends Provider<FacebookUserSession> {
 
       let path = 'me/albums'
       if (directory) {
-        path = `${directory}/photos`
+        path = `${pathSegment(directory)}/photos`
         qs['fields'] = 'icon,images,name,width,height,created_time'
       }
 

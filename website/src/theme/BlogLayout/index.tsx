@@ -1,9 +1,8 @@
-import type { ReactNode } from 'react'
-import React from 'react'
-import clsx from 'clsx'
-import Layout from '@theme/Layout'
-import BlogSidebar from '@theme/BlogSidebar'
 import type { Props } from '@theme/BlogLayout'
+import BlogSidebar from '@theme/BlogSidebar'
+import Layout from '@theme/Layout'
+import clsx from 'clsx'
+import type { ReactNode } from 'react'
 
 /**
  * Upstream renders the table-of-contents column as a bare `<div class="col
