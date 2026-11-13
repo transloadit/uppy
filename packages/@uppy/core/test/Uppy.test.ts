@@ -1428,6 +1428,330 @@ describe('src/Core', () => {
   })
 
   describe('retries', () => {
+    function createGate() {
+      let resolve!: () => void
+      const promise = new Promise<void>((done) => {
+        resolve = done
+      })
+      return { promise, resolve }
+    }
+
+    describe.each([
+      'retryAll',
+      'retryUpload',
+    ] as const)('overlapping %s', (retryMethod) => {
+      it.each([
+        { retryFirst: false, retryFails: false },
+        { retryFirst: false, retryFails: true },
+        { retryFirst: true, retryFails: false },
+        { retryFirst: true, retryFails: true },
+      ])('reports a retried file only in its new batch (retryFirst: $retryFirst, retryFails: $retryFails)', async ({
+        retryFirst,
+        retryFails,
+      }) => {
+        const core = new Core({ store: DeepFrozenStore() })
+        const gates = Array.from({ length: 2 }, createGate)
+        const ids = ['a.txt', 'b.txt'].map((name) =>
+          core.addFile({ name, data: new Blob([name]) }),
+        )
+        const onComplete = vi.fn()
+        const postprocessor = vi.fn()
+        let uploadCount = 0
+        const uploader = vi.fn((fileIDs: string[]) => {
+          core.emit('upload-start', core.getFilesByIds(fileIDs))
+          return gates[uploadCount++].promise
+        })
+        core.on('complete', onComplete)
+        core.addUploader(uploader)
+        core.addPostProcessor(postprocessor)
+
+        try {
+          const original = core.upload()
+          await vi.waitFor(() => expect(uploader).toHaveBeenCalledTimes(1))
+          core.emit(
+            'upload-error',
+            core.getFile(ids[1]),
+            new Error('First attempt failed'),
+          )
+          const retry =
+            retryMethod === 'retryAll'
+              ? core.retryAll()
+              : core.retryUpload(ids[1])
+          await vi.waitFor(() => expect(uploader).toHaveBeenCalledTimes(2))
+
+          const finishOriginal = () => {
+            core.emit('upload-success', core.getFile(ids[0]), {
+              status: 200,
+              body: {},
+            })
+            gates[0].resolve()
+          }
+          const finishRetry = () => {
+            if (retryFails) {
+              core.emit(
+                'upload-error',
+                core.getFile(ids[1]),
+                new Error('Retry failed'),
+              )
+            } else {
+              core.emit('upload-success', core.getFile(ids[1]), {
+                status: 200,
+                body: {},
+              })
+            }
+            gates[1].resolve()
+          }
+
+          if (retryFirst) {
+            finishRetry()
+            await retry
+            finishOriginal()
+          } else {
+            finishOriginal()
+            await original
+            expect(core.getFile(ids[1]).progress.uploadComplete).toBe(false)
+            finishRetry()
+          }
+          const originalResult = await original
+          const retryResult = await retry
+
+          // The retry owns B; the earlier batch must neither classify nor
+          // postprocess B using the retry's mutable file state.
+          expect(originalResult).toMatchObject({
+            successful: [{ id: ids[0] }],
+            failed: [],
+          })
+          expect(retryResult).toMatchObject({
+            successful: retryFails ? [] : [{ id: ids[1] }],
+            failed: retryFails ? [{ id: ids[1], error: 'Retry failed' }] : [],
+          })
+          expect(postprocessor.mock.calls.map(([fileIDs]) => fileIDs)).toEqual(
+            retryFirst ? [[ids[1]], [ids[0]]] : [[ids[0]], [ids[1]]],
+          )
+          const emittedResults = onComplete.mock.calls.map(([result]) => result)
+          expect(emittedResults).toContainEqual(originalResult)
+          if (retryMethod === 'retryAll') {
+            expect(emittedResults).toContainEqual(retryResult)
+          }
+          expect(core.getState().currentUploads).toEqual({})
+        } finally {
+          gates.forEach(({ resolve }) => {
+            resolve()
+          })
+          core.destroy()
+        }
+      })
+    })
+
+    it('does not complete retry-owned postprocessing when an older batch finishes', async () => {
+      const core = new Core({ store: DeepFrozenStore() })
+      const originalGate = createGate()
+      const retryPostprocessGate = createGate()
+      const retryPostprocessStarted = createGate()
+      const ids = ['a.txt', 'b.txt'].map((name) =>
+        core.addFile({ name, data: new Blob([name]) }),
+      )
+      const onPostprocessComplete = vi.fn()
+      let uploadCount = 0
+      core.on('postprocess-complete', onPostprocessComplete)
+      core.addUploader(async () => {
+        if (uploadCount++ === 0) {
+          await originalGate.promise
+        }
+      })
+      core.addPostProcessor(async (fileIDs) => {
+        if (fileIDs.length === 1 && fileIDs[0] === ids[1]) {
+          retryPostprocessStarted.resolve()
+          await retryPostprocessGate.promise
+        }
+      })
+
+      try {
+        const original = core.upload()
+        await vi.waitFor(() => expect(uploadCount).toBe(1))
+        core.emit(
+          'upload-error',
+          core.getFile(ids[1]),
+          new Error('First attempt failed'),
+        )
+        const retry = core.retryAll()
+        await retryPostprocessStarted.promise
+        core.emit('postprocess-progress', core.getFile(ids[1]), {
+          mode: 'indeterminate',
+        })
+        originalGate.resolve()
+        await original
+        const retryProgress = core.getFile(ids[1]).progress.postprocess
+        const completedByOriginal = onPostprocessComplete.mock.calls.map(
+          ([file]) => file.id,
+        )
+        retryPostprocessGate.resolve()
+        await retry
+
+        expect(retryProgress).toEqual({ mode: 'indeterminate' })
+        expect(completedByOriginal).not.toContain(ids[1])
+        expect(
+          onPostprocessComplete.mock.calls.map(([file]) => file.id),
+        ).toContain(ids[1])
+      } finally {
+        originalGate.resolve()
+        retryPostprocessGate.resolve()
+        core.destroy()
+      }
+    })
+
+    it('reports a file only in its latest overlapping retry, even when older batches become empty', async () => {
+      const core = new Core({ store: DeepFrozenStore() })
+      const gates = Array.from({ length: 3 }, createGate)
+      const id = core.addFile({ name: 'a.txt', data: new Blob(['A']) })
+      let uploadCount = 0
+      core.addUploader(async (_fileIDs, uploadID) => {
+        const attempt = uploadCount++
+        await gates[attempt].promise
+        core.addResultData(uploadID, { attempt })
+      })
+      const postprocessor = vi.fn()
+      core.addPostProcessor(postprocessor)
+
+      try {
+        const original = core.upload()
+        await vi.waitFor(() => expect(uploadCount).toBe(1))
+        core.emit(
+          'upload-error',
+          core.getFile(id),
+          new Error('First attempt failed'),
+        )
+        const retry = core.retryAll()
+        await vi.waitFor(() => expect(uploadCount).toBe(2))
+        core.emit(
+          'upload-error',
+          core.getFile(id),
+          new Error('Second attempt failed'),
+        )
+        const latest = core.retryAll()
+        await vi.waitFor(() => expect(uploadCount).toBe(3))
+        gates[2].resolve()
+        const latestResult = await latest
+        gates[1].resolve()
+        const retryResult = await retry
+        gates[0].resolve()
+        const originalResult = await original
+
+        expect(latestResult).toMatchObject({
+          successful: [{ id }],
+          failed: [],
+          attempt: 2,
+        })
+        expect(retryResult).toMatchObject({ successful: [], failed: [] })
+        expect(originalResult).toMatchObject({ successful: [], failed: [] })
+        expect(postprocessor.mock.calls.map(([fileIDs]) => fileIDs)).toEqual([
+          [id],
+        ])
+        expect(core.getState().currentUploads).toEqual({})
+      } finally {
+        gates.forEach(({ resolve }) => {
+          resolve()
+        })
+        core.destroy()
+      }
+    })
+
+    it('does not restore an older batch after all of its files have been retried', async () => {
+      const core = new Core({ store: DeepFrozenStore() })
+      const restoredCore = new Core({ store: DeepFrozenStore() })
+      const gates = Array.from({ length: 2 }, createGate)
+      const id = core.addFile({ name: 'a.txt', data: new Blob(['A']) })
+      let uploadCount = 0
+      core.addUploader(() => gates[uploadCount++].promise)
+
+      try {
+        const original = core.upload()
+        await vi.waitFor(() => expect(uploadCount).toBe(1))
+        core.emit(
+          'upload-error',
+          core.getFile(id),
+          new Error('First attempt failed'),
+        )
+        const retry = core.retryAll()
+        await vi.waitFor(() => expect(uploadCount).toBe(2))
+
+        // GoldenRetriever persists currentUploads and restores every saved ID.
+        restoredCore.setState(core.getState())
+        const restoredUploader = vi.fn((_fileIDs: string[]) =>
+          Promise.resolve(),
+        )
+        const restoredPostprocessor = vi.fn()
+        restoredCore.addUploader(restoredUploader)
+        restoredCore.addPostProcessor(restoredPostprocessor)
+        for (const uploadID of Object.keys(
+          restoredCore.getState().currentUploads,
+        )) {
+          await restoredCore.restore(uploadID)
+        }
+        gates.forEach(({ resolve }) => {
+          resolve()
+        })
+        await Promise.all([original, retry])
+
+        expect(restoredUploader.mock.calls.map(([fileIDs]) => fileIDs)).toEqual(
+          [[id]],
+        )
+        expect(
+          restoredPostprocessor.mock.calls.map(([fileIDs]) => fileIDs),
+        ).toEqual([[id]])
+      } finally {
+        gates.forEach(({ resolve }) => {
+          resolve()
+        })
+        core.destroy()
+        restoredCore.destroy()
+      }
+    })
+
+    it.each([
+      'removeFile',
+      'cancelAll',
+    ] as const)('does not restore retried files to an earlier batch after %s', async (method) => {
+      const core = new Core({ store: DeepFrozenStore() })
+      const gates = Array.from({ length: 2 }, createGate)
+      const ids = ['a.txt', 'b.txt'].map((name) =>
+        core.addFile({ name, data: new Blob([name]) }),
+      )
+      let uploadCount = 0
+      core.addUploader(() => gates[uploadCount++].promise)
+
+      try {
+        const original = core.upload()
+        await vi.waitFor(() => expect(uploadCount).toBe(1))
+        core.emit(
+          'upload-error',
+          core.getFile(ids[1]),
+          new Error('First attempt failed'),
+        )
+        const retry = core.retryAll()
+        await vi.waitFor(() => expect(uploadCount).toBe(2))
+        if (method === 'removeFile') {
+          core.removeFile(ids[1])
+        } else {
+          core.cancelAll()
+        }
+        gates.forEach(({ resolve }) => {
+          resolve()
+        })
+        expect(await original).toMatchObject({
+          successful: method === 'removeFile' ? [{ id: ids[0] }] : [],
+          failed: [],
+        })
+        expect(await retry).toMatchObject({ successful: [], failed: [] })
+        expect(core.getState().currentUploads).toEqual({})
+      } finally {
+        gates.forEach(({ resolve }) => {
+          resolve()
+        })
+        core.destroy()
+      }
+    })
+
     it('should start a new upload with failed files', async () => {
       const onUpload = vi.fn()
       const onRetryAll = vi.fn()
