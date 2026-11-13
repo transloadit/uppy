@@ -24,5 +24,12 @@ export default function UploadButton(props: Omit<UploadButtonProps, 'ctx'>) {
     }
   }, [ctx, props])
 
+  useEffect(() => {
+    const container = ref.current
+    return () => {
+      if (container) preactRender(null, container)
+    }
+  }, [])
+
   return <div ref={ref} />
 }
