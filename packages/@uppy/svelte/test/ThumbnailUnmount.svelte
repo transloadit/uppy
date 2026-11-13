@@ -1,7 +1,7 @@
 <script lang="ts">
 import type Uppy from '@uppy/core'
 import type { UppyFile } from '@uppy/core'
-import { Thumbnail, UppyContextProvider } from '@uppy/svelte'
+import { Thumbnail, UppyContextProvider } from '../src/lib/index.js'
 
 let { uppy, file }: { uppy: Uppy; file: UppyFile<any, any> } = $props()
 let shown = $state(true)
