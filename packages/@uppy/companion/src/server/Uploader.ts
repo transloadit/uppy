@@ -1155,6 +1155,10 @@ export default class Uploader {
         },
       })
 
+      // Stay on form-data-encoder 2: version 4 splits byte arrays over 64 KiB
+      // by slicing the backing ArrayBuffer without the view's byteOffset, which
+      // sends the wrong bytes for a Buffer that is a view into a larger one.
+      // @ts-expect-error Version 2 types entries() as a Generator; formdata-node returns an IterableIterator.
       const encoder = new FormDataEncoder(formData)
       reqOptions.headers = { ...reqOptions.headers, ...encoder.headers }
       reqOptions.body = Readable.from(encoder)

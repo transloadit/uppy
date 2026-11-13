@@ -52,7 +52,7 @@
     "express-prom-bundle": "^8.0.0",
     "express-session": "^1.19.0",
     "fast-safe-stringify": "^2.1.1",
-    "form-data-encoder": "^4.1.0",
+    "form-data-encoder": "^2.1.4",
     "formdata-node": "^6.0.3",
     "got": "^16.0.0",
     "grant": "^5.4.24",
