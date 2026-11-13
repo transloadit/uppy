@@ -1,14 +1,14 @@
-import React from 'react'
-import Navbar from '@theme-original/Navbar'
-import type NavbarType from '@theme/Navbar'
-import type { WrapperProps } from '@docusaurus/types'
 import Link from '@docusaurus/Link'
+import type { WrapperProps } from '@docusaurus/types'
+import type NavbarType from '@theme/Navbar'
+import Navbar from '@theme-original/Navbar'
+import type { ReactNode } from 'react'
 
 import styles from './index.module.css'
 
 type Props = WrapperProps<typeof NavbarType>
 
-export default function NavbarWrapper(props: Props): JSX.Element {
+export default function NavbarWrapper(props: Props): ReactNode {
   return (
     <>
       {/* A landmark rather than a bare div: the bar sits above the navbar, so

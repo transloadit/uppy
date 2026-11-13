@@ -57,15 +57,14 @@
   },
   "devDependencies": {
     "@sveltejs/package": "^2.5.7",
-    "@sveltejs/vite-plugin-svelte": "^7.2.0",
+    "@sveltejs/vite-plugin-svelte": "^7.3.1",
     "@uppy/core": "workspace:^",
-    "@vitest/browser-playwright": "^5.0.3",
-    "playwright": "1.64.0",
+    "@vitest/browser-playwright": "^5.0.5",
+    "playwright": "1.64.1",
     "svelte": "^5.56.5",
-    "svelte-check": "^4.7.6",
-    "tslib": "^2.8.1",
+    "svelte-check": "^4.7.7",
     "typescript": "^6.0.3",
-    "vitest": "^5.0.3",
+    "vitest": "^5.0.5",
     "vitest-browser-svelte": "^3.1.0"
   },
   "peerDependencies": {

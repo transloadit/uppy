@@ -1,13 +1,12 @@
-import React, { type ReactNode } from 'react'
-import clsx from 'clsx'
-import Translate from '@docusaurus/Translate'
 import Link from '@docusaurus/Link'
-import type { Props } from '@theme/NotFound/Content'
+import Translate from '@docusaurus/Translate'
 import Heading from '@theme/Heading'
+import type { Props } from '@theme/NotFound/Content'
+import clsx from 'clsx'
+import type { ReactNode } from 'react'
 
 // These are static files, not routes; `<Link>` would append the configured
 // trailing slash and turn /llms.txt into /llms.txt/, which 404s.
-/* eslint-disable @docusaurus/no-html-links -- Static-file URLs must preserve their exact path. */
 
 // Recovery links rendered into the 404 body so that crawlers and AI agents that
 // hit a dead URL can find their way back without executing JavaScript.

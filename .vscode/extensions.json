@@ -1,6 +1,7 @@
 {
   "recommendations": [
     "biomejs.biome",
+    "remcohaszing.vscode-mdxlint",
     "unifiedjs.vscode-remark"
   ]
 }

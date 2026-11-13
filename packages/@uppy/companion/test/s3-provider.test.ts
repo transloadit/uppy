@@ -721,13 +721,24 @@ describe('S3 provider', () => {
       await expect(create('docs/', '  ')).rejects.toEqual(
         userError('S3_INVALID_NAME'),
       )
+      // linear time even for a long run of slashes
+      const started = performance.now()
+      await expect(create('docs/', `x${'/'.repeat(100_000)}x`)).rejects.toEqual(
+        userError('S3_INVALID_NAME'),
+      )
+      expect(performance.now() - started).toBeLessThan(500)
       expect(inputsOf(send, PutObjectCommand)).toEqual([])
       expect(await create('docs/', ' fresh ')).toEqual({
         id: 'docs/fresh/',
         requestPath: 'docs%2Ffresh%2F',
       })
+      expect(await create('docs/', '//slashed//')).toEqual({
+        id: 'docs/slashed/',
+        requestPath: 'docs%2Fslashed%2F',
+      })
       expect(inputsOf(send, PutObjectCommand)).toEqual([
         { Bucket: 'b', Key: 'docs/fresh/', Body: '', IfNoneMatch: '*' },
+        { Bucket: 'b', Key: 'docs/slashed/', Body: '', IfNoneMatch: '*' },
       ])
     })
 
@@ -902,7 +913,7 @@ describe('S3 provider', () => {
       ])
       const params = requests[0]?.body.get('params') ?? ''
       expect(JSON.parse(params)).toMatchObject({
-        auth: { key: 'ws-key' },
+        auth: { key: 'ws-key', method: 'POST', path: '/dam/entries/move' },
         source: 'tenant/photo.jpg',
         destination: 'tenant/renamed.jpg',
       })

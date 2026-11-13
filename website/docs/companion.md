@@ -406,12 +406,54 @@ which has only the secret, nothing else.
 
 :::
 
-#### `uploadUrls` `COMPANION_UPLOAD_URLS`
+#### `uploadUrls` `COMPANION_UPLOAD_URLS` {#uploadurls}
 
-An allowlist (array) of strings (exact URLs) or regular expressions. Companion
-will only accept uploads to these URLs. This ensures that your Companion
-instance is only allowed to upload to your trusted servers and prevents
-[SSRF](https://en.wikipedia.org/wiki/Server-side_request_forgery) attacks.
+An allowlist (array) of the URLs Companion may upload to. This ensures that your
+Companion instance is only allowed to upload to your trusted servers and
+prevents [SSRF](https://en.wikipedia.org/wiki/Server-side_request_forgery)
+attacks. Companion refuses to start without it when `NODE_ENV=production`.
+
+Entries are matched **literally**: the origin must be identical, and the path
+must match at a path boundary. So `https://uploads.example.com/files/` also
+allows `https://uploads.example.com/files/<id>`, which a resumable upload needs,
+but not `https://uploads.example.com/filesomething`. An entry without a path
+(`https://uploads.example.com`) allows its whole origin. A string entry must be
+an absolute URL, or Companion refuses to start.
+
+When configuring Companion programmatically, an entry may also be a `RegExp`.
+Standalone config can only hold strings, so there an entry that starts with `^`
+is read as a regular expression — in `COMPANION_UPLOAD_URLS` or in the JSON
+config file. A `COMPANION_UPLOAD_URLS` value that starts with `^` is not split
+on `,`, so combine several patterns with `|`.
+
+```sh
+COMPANION_UPLOAD_URLS='https://uploads.example.com/files/,https://other.example.com/files/'
+COMPANION_UPLOAD_URLS='^https://(?:api2-[a-z0-9]+|api2)\.example\.com/files/'
+```
+
+An entry without a leading `^` is a literal, so a pattern you forgot to anchor
+matches nothing and uploads fail rather than going somewhere unintended.
+
+A pattern is matched against the whole URL as written, so the pattern itself
+carries the security property. These mistakes let an attacker choose the host
+Companion uploads to, and neither stops uploads working:
+
+```
+^https://.*\.example\.com/         # "." spans "/" and "@": allows
+                                   # https://evil.example/x.example.com/y
+^https://[a-z0-9]+\.example\.com   # host not terminated: allows
+                                   # https://a.example.com.evil.example/
+                                   # and https://a.example.com@evil.example/
+```
+
+Example safe regular expression:
+
+```
+^https://[a-z0-9-]+\.example\.com/files/
+```
+
+Patterns see the URL as sent, without normalizing `..` path segments, so prefer
+literal entries where you can.
 
 #### `COMPANION_PORT`
 
@@ -470,7 +512,28 @@ Configuration options for the underlying server.
 | `oauthDomain` `COMPANION_OAUTH_DOMAIN`   | `String`          | If you have several instances of Companion with different (and perhaps dynamic) subdomains, you can set a single fixed subdomain and server (such as `sub1.example.com`) to handle your OAuth authentication for you. This would then redirect back to the correct instance with the required credentials on completion. This way you only need to configure a single callback URL for OAuth providers.                                      |
 | `path` `COMPANION_PATH`                  | `String`          | The server path to where the Companion app is sitting. For instance, if Companion is at `example.com/companion`, then the path would be `/companion`).                                                                                                                                                                                                                                                                                       |
 | `implicitPath` `COMPANION_IMPLICIT_PATH` | `String`          | If the URL’s path in your reverse proxy is different from your Companion path in your express app, then you need to set this path as `implicitPath`. For instance, if your Companion URL is `example.com/mypath/companion`. Where the path `/mypath` is defined in your NGINX server, while `/companion` is set in your express app. Then you need to set the option `implicitPath` to `/mypath`, and set the `path` option to `/companion`. |
-| `validHosts` `COMPANION_DOMAINS`         | `Array`           | If you are setting an `oauthDomain`, you need to set a list of valid hosts, so the oauth handler can validate the host of the Uppy instance requesting the authentication. This is essentially a list of valid domains running your Companion instances. The list may also contain regex patterns. e.g `['sub2.example.com', 'sub3.example.com', '(\\w+).example.com']`                                                                      |
+
+##### `server`.`validHosts` `COMPANION_DOMAINS`
+
+If you are setting an `oauthDomain`, you need to specify this option, so the
+oauth handler can validate the host of the Uppy instance requesting the
+authentication. Entries are hosts (a hostname plus any non-default port, such as
+`example.com:3020`), compared literally and case-insensitively, so `example.com`
+does not match `example.com:3020`. When `COMPANION_DOMAINS` is not set,
+`COMPANION_DOMAIN` is used.
+
+As with `uploadUrls`, a `validHosts` entry may be a `RegExp` programmatically,
+or start with `^` in `COMPANION_DOMAINS` or the JSON config file.
+
+```sh
+COMPANION_DOMAINS='sub1.example.com,sub2.example.com'
+COMPANION_DOMAINS='^(\w+)\.example\.com$'
+```
+
+A pattern is matched as written, so end it with `$` as well as starting it with
+`^` — a host is either in the set or it is not, and an unanchored pattern would
+let `example.com` admit `example.com.evil.com`. Note that `.` matches any
+character unless escaped.
 
 #### `sendSelfEndpoint` `COMPANION_SELF_ENDPOINT`
 
@@ -519,11 +582,11 @@ providers like Dropbox and Google Drive directly into S3.
 
 ##### `s3.key` `COMPANION_AWS_KEY`
 
-The S3 access key ID.
+The S3 access key ID (optional).
 
 ##### `s3.secret` `COMPANION_AWS_SECRET` `COMPANION_AWS_SECRET_FILE`
 
-The S3 secret access key.
+The S3 secret access key (optional).
 
 :::note
 
@@ -531,6 +594,17 @@ Using a secret file means passing an absolute path to a file with any extension,
 which has only the secret, nothing else.
 
 :::
+
+If you leave out `s3.key` and `s3.secret`, Companion passes no credentials to
+the AWS SDK, so the SDK uses its
+[default credential provider chain](https://docs.aws.amazon.com/sdk-for-javascript/v3/developer-guide/setting-credentials-node.html).
+This lets Companion use an IAM role, for example an EC2 instance profile or an
+ECS task role, instead of long-term keys.
+
+The `/s3/sts` endpoint is the exception: it needs `s3.key`, `s3.secret` and
+`s3.region`, because it requests temporary credentials with
+[`GetFederationToken`](https://docs.aws.amazon.com/STS/latest/APIReference/API_GetFederationToken.html),
+which needs long-term IAM user keys. Without them it responds with an error.
 
 ##### `s3.endpoint` `COMPANION_AWS_ENDPOINT`
 
@@ -627,6 +701,26 @@ app.use(
 
 When signing on the client, this function will only be called for multipart
 uploads.
+
+##### `s3.conditions`
+
+An array of
+[POST policy conditions](https://docs.aws.amazon.com/AmazonS3/latest/API/sigv4-HTTPPOSTConstructPolicy.html)
+for uploads signed with `/s3/params`, where S3 applies all of them. S3 does not
+apply them to multipart uploads, so Companion checks these itself on
+`/s3/multipart`:
+
+- Content-Type conditions (`["eq", "$Content-Type", …]`,
+  `["starts-with", "$Content-Type", …]` and `{ "Content-Type": … }`), when the
+  upload is created;
+- `["content-length-range", min, max]`, when the upload is completed. Companion
+  lists the parts to add up their size, which needs the
+  `s3:ListMultipartUploadParts` permission, and aborts the upload if it is out
+  of range.
+
+Other conditions are not applied to multipart uploads. Credentials from
+`/s3/sts`, and files that Companion uploads to S3 itself (from providers and
+URLs), ignore all conditions. **Default**: `[]`.
 
 #### `COMPANION_AWS_USE_ACCELERATE_ENDPOINT`
 

@@ -10,6 +10,7 @@ import * as oAuthState from '../helpers/oauth-state.js'
 import { isRecord, toError } from '../helpers/type-guards.js'
 import { getRedirectPath, getURLBuilder } from '../helpers/utils.js'
 import logger from '../logger.js'
+import { ProviderApiError, parseHttpError } from './error.js'
 import type Provider from './Provider.js'
 
 /**
@@ -23,11 +24,23 @@ async function fetchKeys(
   credentialRequestParams: unknown | null,
 ) {
   try {
-    const { credentials } = await got
-      .post(url, {
-        json: { provider: providerName, parameters: credentialRequestParams },
-      })
-      .json<{ credentials?: CredentialsFetchResponse }>()
+    const response = await got.post(url, {
+      json: { provider: providerName, parameters: credentialRequestParams },
+      // The endpoint is operator configuration: never follow it elsewhere,
+      // and don't hold the OAuth request open on a slow endpoint.
+      timeout: { request: 10_000 },
+      followRedirect: false,
+    })
+    // Without followRedirect, got hands 3xx responses back as successful.
+    if (response.statusCode >= 300) {
+      const { location } = response.headers
+      throw new Error(
+        `Credentials endpoint responded with a ${response.statusCode} redirect${location ? ` to ${location}` : ''}; configure its final URL`,
+      )
+    }
+    const { credentials } = JSON.parse(response.body) as {
+      credentials?: CredentialsFetchResponse
+    }
 
     if (!isRecord(credentials))
       throw new Error('Received no remote credentials')
@@ -35,7 +48,13 @@ async function fetchKeys(
     return credentials
   } catch (err) {
     logger.error(err, 'credentials.fetch.fail')
-    throw err
+    // The endpoint's error body, and got's messages naming its URL, are for the
+    // log only: callers pass this error on to anonymous clients.
+    const statusCode = parseHttpError(err)?.statusCode
+    if (statusCode != null) {
+      throw new ProviderApiError('Could not fetch credentials', statusCode)
+    }
+    throw new Error('Could not fetch credentials')
   }
 }
 
@@ -165,8 +184,10 @@ export const getCredentialsOverrideMiddleware = (
       // token through window.postMessage (see comment in connect.js).
       // postMessage happens in send-token.js, which is a different request, so we need to put the allowed origins
       // on the encrypted session state to access it later there.
+      // Only the session's own state (override requests): on the initial connect request the state is the client's,
+      // and Grant replaces the session there anyway, except on URLs it does not match, where the write would stick.
       const { origins } = credentials
-      if (Array.isArray(origins) && origins.length > 0) {
+      if (override && Array.isArray(origins) && origins.length > 0) {
         const decodedState = oAuthState.decodeState(state, secret)
         decodedState['customerDefinedAllowedOrigins'] = origins
         const newState = oAuthState.encodeState(decodedState, secret)
