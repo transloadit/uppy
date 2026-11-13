@@ -65,7 +65,7 @@ test('Upload, pause, and resume functionality', async () => {
     uppy.emit('upload-start', files)
 
     // Set initial progress state for all files
-    fileIDs.forEach((fileID) => {
+    for (const fileID of fileIDs) {
       const file = uppy.getFile(fileID)
       if (file) {
         uppy.setFileState(fileID, {
@@ -79,21 +79,21 @@ test('Upload, pause, and resume functionality', async () => {
           },
         })
       }
-    })
+    }
 
     // Simulate upload progress with pause/resume support
     const progressInterval = setInterval(() => {
-      fileIDs.forEach((fileID) => {
+      for (const fileID of fileIDs) {
         const file = uppy.getFile(fileID)
         if (!file) {
           clearInterval(progressInterval)
-          return
+          continue
         }
 
         // Check if file is paused
         if (file.isPaused) {
           isPaused = true
-          return
+          continue
         } else if (isPaused) {
           // Resuming from pause
           isPaused = false
@@ -147,7 +147,7 @@ test('Upload, pause, and resume functionality', async () => {
             uploadResolve?.()
           }
         }
-      })
+      }
     }, 200) // 200ms intervals for controlled testing
 
     return uploadPromise

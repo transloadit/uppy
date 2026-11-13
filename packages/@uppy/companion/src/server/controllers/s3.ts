@@ -403,10 +403,10 @@ export default function s3(
         config.awsSseKmsKeyId
     }
 
-    Object.entries(metadata).forEach(([metadataKey, value]) => {
-      if (typeof value !== 'string') return
+    for (const [metadataKey, value] of Object.entries(metadata)) {
+      if (typeof value !== 'string') continue
       fields[`x-amz-meta-${metadataKey}`] = value
-    })
+    }
 
     // `createPresignedPost` sometimes pulls in a nested copy of `@aws-sdk/client-s3`,
     // which makes the `S3Client` type nominally incompatible. The instance is still

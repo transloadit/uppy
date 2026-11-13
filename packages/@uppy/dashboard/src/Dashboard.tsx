@@ -12,7 +12,7 @@ import type {
 import { UIPlugin } from '@uppy/core'
 import { defaultPickerIcon } from '@uppy/core/provider-views'
 import type { LocaleStrings } from '@uppy/core/utils'
-import { findAllDOMElements, getDroppedFiles, toArray } from '@uppy/core/utils'
+import { findAllDOMElements, getDroppedFiles } from '@uppy/core/utils'
 import type { ComponentChild, VNode } from '@uppy/core/utils/preact'
 import ThumbnailGenerator from '@uppy/thumbnail-generator'
 import { nanoid } from 'nanoid/non-secure'
@@ -399,9 +399,9 @@ export default class Dashboard<M extends Meta, B extends Body> extends UIPlugin<
       activeOverlayType: 'FileEditor',
     })
 
-    editors.forEach((editor) => {
+    for (const editor of editors) {
       ;(this.uppy.getPlugin(editor.id) as any).selectFile(file)
-    })
+    }
   }
 
   closeFileEditor = (): void => {
@@ -426,9 +426,9 @@ export default class Dashboard<M extends Meta, B extends Body> extends UIPlugin<
     const { targets } = this.getPluginState()
     const editors = this.#getEditors(targets)
 
-    editors.forEach((editor) => {
+    for (const editor of editors) {
       ;(this.uppy.getPlugin(editor.id) as any).save()
-    })
+    }
 
     this.closeFileEditor()
   }
@@ -681,7 +681,7 @@ export default class Dashboard<M extends Meta, B extends Body> extends UIPlugin<
 
     const nodesToDisable =
       this.#disabledNodes ??
-      toArray(this.el!.querySelectorAll(NODES_TO_DISABLE as any)).filter(
+      Array.from(this.el!.querySelectorAll(NODES_TO_DISABLE as any)).filter(
         (node) => !node.classList.contains('uppy-Dashboard-close'),
       )
 
@@ -763,7 +763,7 @@ export default class Dashboard<M extends Meta, B extends Body> extends UIPlugin<
     })
 
     // Add all dropped files
-    const files = toArray(event.clipboardData!.files)
+    const files = Array.from(event.clipboardData!.files)
     if (files.length > 0) {
       this.uppy.log('[Dashboard] Files pasted')
       this.addFiles(files)
@@ -774,7 +774,7 @@ export default class Dashboard<M extends Meta, B extends Body> extends UIPlugin<
     event: TargetedEvent<HTMLInputElement, Event>,
   ) => {
     event.preventDefault()
-    const files = toArray(event.currentTarget.files || [])
+    const files = Array.from(event.currentTarget.files || [])
     if (files.length > 0) {
       this.uppy.log('[Dashboard] Files selected through input')
       this.addFiles(files)
@@ -969,9 +969,9 @@ export default class Dashboard<M extends Meta, B extends Body> extends UIPlugin<
     if (this.opts.trigger && !this.opts.inline) {
       const showModalTrigger = findAllDOMElements(this.opts.trigger)
       if (showModalTrigger) {
-        showModalTrigger.forEach((trigger) => {
+        for (const trigger of showModalTrigger) {
           trigger.addEventListener('click', this.openModal)
-        })
+        }
       } else {
         this.uppy.log(
           'Dashboard modal trigger not found. Make sure `trigger` is set in Dashboard options, unless you are planning to call `dashboard.openModal()` method yourself',
@@ -1009,9 +1009,9 @@ export default class Dashboard<M extends Meta, B extends Body> extends UIPlugin<
   removeEvents = (): void => {
     const showModalTrigger = findAllDOMElements(this.opts.trigger)
     if (!this.opts.inline && showModalTrigger) {
-      showModalTrigger.forEach((trigger) => {
+      for (const trigger of showModalTrigger) {
         trigger.removeEventListener('click', this.openModal)
-      })
+      }
     }
 
     this.stopListeningToResize()
@@ -1277,7 +1277,7 @@ export default class Dashboard<M extends Meta, B extends Body> extends UIPlugin<
   #addSpecifiedPluginsFromOptions = () => {
     const { plugins } = this.opts
 
-    plugins.forEach((pluginID) => {
+    for (const pluginID of plugins) {
       const plugin = this.uppy.getPlugin(pluginID)
       if (plugin) {
         ;(plugin as any).mount(this, plugin)
@@ -1287,7 +1287,7 @@ export default class Dashboard<M extends Meta, B extends Body> extends UIPlugin<
           'warning',
         )
       }
-    })
+    }
   }
 
   #autoDiscoverPlugins = () => {
@@ -1413,10 +1413,10 @@ export default class Dashboard<M extends Meta, B extends Body> extends UIPlugin<
     }
 
     const { plugins } = this.opts
-    plugins.forEach((pluginID) => {
+    for (const pluginID of plugins) {
       const plugin = this.uppy.getPlugin(pluginID)
       if (plugin) (plugin as any).unmount()
-    })
+    }
 
     if (this.opts.theme === 'auto') {
       this.darkModeMediaQuery?.removeListener(this.handleSystemDarkModeChange)
