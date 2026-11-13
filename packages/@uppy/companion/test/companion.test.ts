@@ -80,6 +80,20 @@ afterAll(() => {
   nock.restore()
 })
 
+test('development errors do not expose provider request credentials', async () => {
+  nock('https://api.unsplash.com')
+    .get('/search/photos')
+    .query(true)
+    .times(3)
+    .replyWithError(new Error('private-provider-secret'))
+  const response = await request(
+    await getServer({ COMPANION_UNSPLASH_KEY: 'private-provider-secret' }),
+  )
+    .get('/unsplash/list?q=landscape')
+    .expect(500)
+  expect(response.body).toEqual({ message: 'Something went wrong' })
+})
+
 describe('validate upload data', () => {
   test('access token expired or invalid when starting provider download', async () => {
     const meta: { size: null; mimeType: string; id: string } = {

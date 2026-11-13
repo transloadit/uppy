@@ -84,16 +84,34 @@ function handleUploadSocketConnection({
   }
   emitter().on(token, onRedisMessage)
 
+  let pendingActions = 0
+  let rejected = false
   ws.on('message', (jsonData) => {
+    if (rejected) return
     try {
       const data: unknown = JSON.parse(jsonData.toString())
       // whitelist triggered actions
       const action = isRecord(data) ? data['action'] : undefined
       if (action === 'pause' || action === 'resume' || action === 'cancel') {
-        emitter().emit(`${action}:${token}`)
+        if (pendingActions >= 16) {
+          rejected = true
+          ws.close(1008, 'Too many pending actions')
+          return
+        }
+        pendingActions += 1
+        Promise.resolve(emitter().emit(`${action}:${token}`))
+          .catch(() => {
+            rejected = true
+            ws.close(1011, 'Upload action failed')
+          })
+          .finally(() => {
+            pendingActions -= 1
+          })
       }
-    } catch (err) {
-      logger.error(err, 'websocket.error', Uploader.shortenToken(token))
+    } catch {
+      rejected = true
+      logger.warn('Invalid upload socket message', 'websocket.error')
+      ws.close(1007, 'Invalid JSON')
     }
   })
 
