@@ -16,6 +16,7 @@ import {
   filterFilesToEmitUploadStarted,
   filterFilesToUpload,
   getAllowedMetaFields,
+  randomUUID,
   TaskQueue,
 } from '@uppy/core/utils'
 import packageJson from '../package.json' with { type: 'json' }
@@ -339,10 +340,7 @@ export default class AwsS3<M extends Meta, B extends Body> extends BasePlugin<
     if ('companionEndpoint' in this.opts) {
       return file.name
     }
-    return (
-      this.opts.generateObjectKey?.(file) ??
-      `${crypto.randomUUID()}-${file.name}`
-    )
+    return this.opts.generateObjectKey?.(file) ?? `${randomUUID()}-${file.name}`
   }
 
   // --------------------------------------------------------------------------

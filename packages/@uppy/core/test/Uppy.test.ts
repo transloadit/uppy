@@ -2748,6 +2748,15 @@ describe('src/Core', () => {
       )
       expect(core.i18n('test')).toBe('beep boop')
     })
+
+    it('has the strings core itself uses without a locale pack', () => {
+      const logger = { debug: vi.fn(), warn: vi.fn(), error: vi.fn() }
+      using core = new Core({ logger })
+
+      // Used by the Google Picker when adding the picked files fails
+      expect(core.i18n('failedToAddFiles')).toBe('Failed to add files')
+      expect(logger.error).not.toHaveBeenCalled()
+    })
   })
 
   describe('default restrictions', () => {
