@@ -235,6 +235,21 @@ describe('list provider files', () => {
     expect(scope.isDone()).toBe(true)
   })
 
+  test('box: the next page of a folder stays in that folder', async () => {
+    nock('https://api.box.com').get('/2.0/users/me').reply(200, {
+      login: defaults.USERNAME,
+    })
+    nock('https://api.box.com')
+      .get('/2.0/folders/42/items')
+      .query(true)
+      .reply(200, { entries: [], total_count: 2000, offset: 0, limit: 1000 })
+    const res = await request(await getServerWithEnv())
+      .get('/box/list/42')
+      .set('uppy-auth-token', token)
+      .expect(200)
+    expect(res.body.nextPagePath).toBe('42?cursor=1000')
+  })
+
   // sent as raw paths: an HTTP client like supertest would resolve the dots
   // itself, a hand-written request does not
   test.each([
