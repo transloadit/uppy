@@ -431,51 +431,52 @@ export default class ScreenCapture<
     })
   }
 
-  submit(): void {
+  /** Returns whether the captured media was added to Uppy. */
+  submit(): boolean {
+    if (!this.capturedMediaFile) return false
     try {
-      // add recorded file to uppy
-      if (this.capturedMediaFile) {
-        this.uppy.addFile(this.capturedMediaFile)
-      }
+      this.uppy.addFile(this.capturedMediaFile)
+      return true
     } catch (err) {
       // Logging the error, exept restrictions, which is handled in Core
       if (!isRestrictionError(err)) {
         this.uppy.log(err, 'warning')
       }
+      return false
     }
   }
 
   stop(): void {
     // flush video stream
     if (this.videoStream) {
-      this.videoStream.getVideoTracks().forEach((track) => {
+      for (const track of this.videoStream.getVideoTracks()) {
         track.stop()
-      })
-      this.videoStream.getAudioTracks().forEach((track) => {
+      }
+      for (const track of this.videoStream.getAudioTracks()) {
         track.stop()
-      })
+      }
       this.videoStream = null
     }
 
     // flush audio stream
     if (this.audioStream) {
-      this.audioStream.getAudioTracks().forEach((track) => {
+      for (const track of this.audioStream.getAudioTracks()) {
         track.stop()
-      })
-      this.audioStream.getVideoTracks().forEach((track) => {
+      }
+      for (const track of this.audioStream.getVideoTracks()) {
         track.stop()
-      })
+      }
       this.audioStream = null
     }
 
     // flush output stream
     if (this.outputStream) {
-      this.outputStream.getAudioTracks().forEach((track) => {
+      for (const track of this.outputStream.getAudioTracks()) {
         track.stop()
-      })
-      this.outputStream.getVideoTracks().forEach((track) => {
+      }
+      for (const track of this.outputStream.getVideoTracks()) {
         track.stop()
-      })
+      }
       this.outputStream = null
     }
 

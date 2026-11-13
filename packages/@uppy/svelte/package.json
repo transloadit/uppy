@@ -58,8 +58,7 @@
     "@sveltejs/package": "^2.5.7",
     "@uppy/core": "workspace:^",
     "svelte": "^5.56.5",
-    "svelte-check": "^4.7.6",
-    "tslib": "^2.8.1",
+    "svelte-check": "^4.7.7",
     "typescript": "^6.0.3"
   },
   "peerDependencies": {

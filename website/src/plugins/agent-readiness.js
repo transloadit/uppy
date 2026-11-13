@@ -20,8 +20,8 @@ async function walk(dir) {
 // an explicit frontmatter `slug` winning over all of it.
 function routeFor(relPath, slug) {
   if (slug) {
-    return slug.startsWith('/') ?
-        path.posix.join(ROUTE_BASE, slug)
+    return slug.startsWith('/')
+      ? path.posix.join(ROUTE_BASE, slug)
       : path.posix.join(ROUTE_BASE, path.posix.dirname(relPath), slug)
   }
   const id = relPath
@@ -107,7 +107,7 @@ function firstParagraph(body) {
 // The surrounding caution is condensed for the Markdown twin.
 const uppyVersion = require('uppy/package.json').version
 
-function renderCdnExample(match, props, inner) {
+function renderCdnExample(_match, props, inner) {
   const attr = (name, fallback) =>
     new RegExp(`${name}="([^"]+)"`).exec(props)?.[1] ?? fallback
   const cssName = attr('uppyCssName', 'uppy.min.css')
@@ -517,9 +517,9 @@ module.exports = function agentReadiness(context) {
           target,
           // Docs that already open with an H1 keep theirs; the rest get one
           // so every twin has a title.
-          page.body.startsWith('# ') ?
-            `${page.body}\n\nSource: ${site}${page.route}\n`
-          : `# ${page.title}\n\nSource: ${site}${page.route}\n\n${page.body}\n`,
+          page.body.startsWith('# ')
+            ? `${page.body}\n\nSource: ${site}${page.route}\n`
+            : `# ${page.title}\n\nSource: ${site}${page.route}\n\n${page.body}\n`,
         )
       }
 

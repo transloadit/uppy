@@ -437,7 +437,8 @@ functionality but with maximum customization freedom.
 JavaScript framework or build step, such as server-rendered apps (PHP, Rails,
 Django) using the CDN bundle or plain `<script>` tags. Its framework wrappers
 were not restored: in React, Vue, or Svelte, use `Dropzone` or `useDropzone` as
-shown below.
+shown below. In Angular, use the plugin directly with
+`uppy.use(DragDrop, { target })`.
 
 :::
 
@@ -526,7 +527,10 @@ uppy.use(Dashboard, {
 
 **Migration steps:**
 
-1. Remove `@uppy/drag-drop` and `@uppy/file-input` from your dependencies
+1. Remove `@uppy/file-input` from your dependencies. Remove `@uppy/drag-drop`
+   too if you used it through the React, Vue, or Svelte wrapper. Otherwise you
+   can keep it and use it directly with `uppy.use(DragDrop, { target })`, which
+   in Angular replaces `UppyAngularDragDropModule`.
 2. Choose one of these approaches:
    - Use the framework-specific hooks (`@uppy/react`, `@uppy/vue`,
      `@uppy/svelte`) for maximum flexibility
@@ -694,10 +698,6 @@ There are too many small changes to cover, so you have to upgrade and see where
 TypeScript complains.
 
 One important thing to note are the new generics on `@uppy/core`.
-
-<!-- eslint-disable @typescript-eslint/no-unused-vars -->
-
-<!-- eslint-disable @typescript-eslint/no-non-null-assertion -->
 
 ```ts
 import Uppy from '@uppy/core'
@@ -1339,8 +1339,6 @@ uppy.use(Tus, {
 
 Uppy types are now individual exports and should be imported separately.
 
-<!-- eslint-disable @typescript-eslint/no-unused-vars -->
-
 ```ts
 import type { PluginOptions, UIPlugin, PluginTarget } from '@uppy/core'
 ```
@@ -1351,8 +1349,6 @@ import type { PluginOptions, UIPlugin, PluginTarget } from '@uppy/core'
 listen to [events](/docs/uppy/#events). The types for these events were loose
 and allowed for invalid events to be passed, such as
 `uppy.on('upload-errrOOOoooOOOOOrrrr')`.
-
-<!-- eslint-disable @typescript-eslint/no-unused-vars -->
 
 ```ts
 // Before:
@@ -1385,8 +1381,6 @@ Plugins that add their own events can merge with existing ones in `@uppy/core`
 with `declare module '@uppy/core' { ... }`. This is a TypeScript pattern called
 [module augmentation](https://www.typescriptlang.org/docs/handbook/declaration-merging.html#module-augmentation).
 For instance, when using [`@uppy/dashboard`][dashboard]:
-
-<!-- eslint-disable @typescript-eslint/no-unused-vars -->
 
 ```ts
 uppy.on('dashboard:file-edit-start', (file) => {
