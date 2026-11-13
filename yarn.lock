@@ -2596,6 +2596,127 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@cropper/element-canvas@npm:^2.3.1":
+  version: 2.3.1
+  resolution: "@cropper/element-canvas@npm:2.3.1"
+  dependencies:
+    "@cropper/element": "npm:^2.3.1"
+    "@cropper/utils": "npm:^2.3.1"
+  checksum: 10/43aa3d27f057d43fa183bdce5643e2c0a0cc9185ea576566166950a34b03886760f68a288a05c3624a6aad5dab2e6eabf7f9016a4b8e33871433a3527f0910b4
+  languageName: node
+  linkType: hard
+
+"@cropper/element-crosshair@npm:^2.3.1":
+  version: 2.3.1
+  resolution: "@cropper/element-crosshair@npm:2.3.1"
+  dependencies:
+    "@cropper/element": "npm:^2.3.1"
+    "@cropper/utils": "npm:^2.3.1"
+  checksum: 10/25d4ea0717a70a32fef5b734db027cc1e1cfb14a37f4d1cfd74ac72355db782d4fba3e2672df213fec3399a17af92b4f812b02d3316cb7309803c4af4aa28961
+  languageName: node
+  linkType: hard
+
+"@cropper/element-grid@npm:^2.3.1":
+  version: 2.3.1
+  resolution: "@cropper/element-grid@npm:2.3.1"
+  dependencies:
+    "@cropper/element": "npm:^2.3.1"
+    "@cropper/utils": "npm:^2.3.1"
+  checksum: 10/cb23a74431073a63ec6cdc89c9bc81d4b6ec44c47f60eeb533398d6365a1776c771593b5857b426ba4ebcd501f1864aba2d00bee1dfc2858f1107792ba7d4612
+  languageName: node
+  linkType: hard
+
+"@cropper/element-handle@npm:^2.3.1":
+  version: 2.3.1
+  resolution: "@cropper/element-handle@npm:2.3.1"
+  dependencies:
+    "@cropper/element": "npm:^2.3.1"
+    "@cropper/utils": "npm:^2.3.1"
+  checksum: 10/40bbc748ad88d4bc14e58b04d76ffe4c89027f70dfaf48fd8c876035e0a00a7fcc64cf67accd2392a1dccb6881542b3e792e33d75c8852ff5b9f81ac746945fa
+  languageName: node
+  linkType: hard
+
+"@cropper/element-image@npm:^2.3.1":
+  version: 2.3.1
+  resolution: "@cropper/element-image@npm:2.3.1"
+  dependencies:
+    "@cropper/element": "npm:^2.3.1"
+    "@cropper/element-canvas": "npm:^2.3.1"
+    "@cropper/utils": "npm:^2.3.1"
+  checksum: 10/6f68b68f31f580ca7b703ae045a8dabf4a51a0e65ab15232d1e6abdffa2481fc9f8a9f81708486a5cd29a71ee0db71ddb4fb054c099142d9b594f4a3f04a6abf
+  languageName: node
+  linkType: hard
+
+"@cropper/element-selection@npm:^2.3.1":
+  version: 2.3.1
+  resolution: "@cropper/element-selection@npm:2.3.1"
+  dependencies:
+    "@cropper/element": "npm:^2.3.1"
+    "@cropper/element-canvas": "npm:^2.3.1"
+    "@cropper/element-image": "npm:^2.3.1"
+    "@cropper/utils": "npm:^2.3.1"
+  checksum: 10/2d7f396707c04fefb5b0f7518ab0e9398694ae21e8f3ba7ea3f5e2e8d4f472998d287570ee1086f92fcff3b17792ecad1b72d77f846b43c2c34042583587e13e
+  languageName: node
+  linkType: hard
+
+"@cropper/element-shade@npm:^2.3.1":
+  version: 2.3.1
+  resolution: "@cropper/element-shade@npm:2.3.1"
+  dependencies:
+    "@cropper/element": "npm:^2.3.1"
+    "@cropper/element-canvas": "npm:^2.3.1"
+    "@cropper/element-selection": "npm:^2.3.1"
+    "@cropper/utils": "npm:^2.3.1"
+  checksum: 10/e4197cddb90db9f15589a1c0d8dca094ca628a545bb5e6202cfae3f9f2d89f93fe105964cf7b26458f6f325537f0198b54509c7c149dfee16b886b34985c07f2
+  languageName: node
+  linkType: hard
+
+"@cropper/element-viewer@npm:^2.3.1":
+  version: 2.3.1
+  resolution: "@cropper/element-viewer@npm:2.3.1"
+  dependencies:
+    "@cropper/element": "npm:^2.3.1"
+    "@cropper/element-canvas": "npm:^2.3.1"
+    "@cropper/element-image": "npm:^2.3.1"
+    "@cropper/element-selection": "npm:^2.3.1"
+    "@cropper/utils": "npm:^2.3.1"
+  checksum: 10/45e0c4aa169a0009df7152822e7adb4318f96b8a8b09afaf4fa93afb93f72aabb843ff9f0713138520e4e2a4386f321cc75939dd0135c08d0de1f4e07fa80baf
+  languageName: node
+  linkType: hard
+
+"@cropper/element@npm:^2.3.1":
+  version: 2.3.1
+  resolution: "@cropper/element@npm:2.3.1"
+  dependencies:
+    "@cropper/utils": "npm:^2.3.1"
+  checksum: 10/d259309a04eb8879a2c6339bcdf1f0ca92873e7db20d98fb2db48b8f2c5ac4066020f549ff93b91a5399227af649ea5f4eccf76e1f5951e8c0345a19102fb3e8
+  languageName: node
+  linkType: hard
+
+"@cropper/elements@npm:^2.3.1":
+  version: 2.3.1
+  resolution: "@cropper/elements@npm:2.3.1"
+  dependencies:
+    "@cropper/element": "npm:^2.3.1"
+    "@cropper/element-canvas": "npm:^2.3.1"
+    "@cropper/element-crosshair": "npm:^2.3.1"
+    "@cropper/element-grid": "npm:^2.3.1"
+    "@cropper/element-handle": "npm:^2.3.1"
+    "@cropper/element-image": "npm:^2.3.1"
+    "@cropper/element-selection": "npm:^2.3.1"
+    "@cropper/element-shade": "npm:^2.3.1"
+    "@cropper/element-viewer": "npm:^2.3.1"
+  checksum: 10/9aec9172048663b2343323953311fc5362698a3e7366cb53334c89e6b8435cb75313f783374d93923179e3c70c58fb9f43076ea70be9b64f28bf683c8d6080b3
+  languageName: node
+  linkType: hard
+
+"@cropper/utils@npm:^2.3.1":
+  version: 2.3.1
+  resolution: "@cropper/utils@npm:2.3.1"
+  checksum: 10/1051519d7b8747b877ac22e9fe0667a32c267505544d4eeb34f0387ff527c0bbc9df9bb59e7e84fae8af9e3194361529eff0142bc9658ef7bb4d2e75a6cc0440
+  languageName: node
+  linkType: hard
+
 "@csstools/cascade-layer-name-parser@npm:^2.0.5":
   version: 2.0.5
   resolution: "@csstools/cascade-layer-name-parser@npm:2.0.5"
@@ -8806,7 +8927,7 @@ __metadata:
   resolution: "@uppy/image-editor@workspace:packages/@uppy/image-editor"
   dependencies:
     "@uppy-dev/tsconfig": "workspace:^"
-    cropperjs: "npm:^1.6.2"
+    cropperjs: "npm:^2.3.1"
     cssnano: "npm:^8.0.1"
     postcss: "npm:^8.5.32"
     postcss-cli: "npm:^12.0.0"
@@ -11575,10 +11696,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"cropperjs@npm:^1.6.2":
-  version: 1.6.2
-  resolution: "cropperjs@npm:1.6.2"
-  checksum: 10/4b97ac27b7fd65316a531372dd96ce1073b4620c1b012fbad5acb0fdc28952112466bc333a98c510fe2bc9dcdeee58f5c8619522c045c6166300621673e3d759
+"cropperjs@npm:^2.3.1":
+  version: 2.3.1
+  resolution: "cropperjs@npm:2.3.1"
+  dependencies:
+    "@cropper/elements": "npm:^2.3.1"
+    "@cropper/utils": "npm:^2.3.1"
+  checksum: 10/993c3aff1a31280eff38f07a4adecddffb37a2faca7c350bb38dee1ee8faad7b0a52bbef18538d065141e49ec926ea6816b53c1ac47ae476c6878eb20f87d68e
   languageName: node
   linkType: hard
 
