@@ -33,7 +33,7 @@ jobs:
       - name: Install Node.js
         uses: actions/setup-node@v7
         with:
-          node-version: '26.12.1'
+          node-version-file: .node-version
       - name: Install Corepack
         run: npm install --global corepack@0.36.0
       - name: Install upload-to-cdn dependencies

@@ -1,4 +1,4 @@
-import { FOCUSABLE_ELEMENTS, toArray } from '@uppy/core/utils'
+import { FOCUSABLE_ELEMENTS } from '@uppy/core/utils'
 import getActiveOverlayEl from './getActiveOverlayEl.js'
 
 function focusOnFirstNode(event: Event, nodes: HTMLElement[]) {
@@ -31,7 +31,7 @@ function trapFocus(
   dashboardEl: HTMLElement,
 ): void {
   const activeOverlayEl = getActiveOverlayEl(dashboardEl, activeOverlayType)
-  const focusableNodes = toArray(
+  const focusableNodes = Array.from(
     activeOverlayEl.querySelectorAll<HTMLElement>(FOCUSABLE_ELEMENTS.join(',')),
   )
 

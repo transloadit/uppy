@@ -3,7 +3,11 @@ import { once } from 'node:events'
 import { createReadStream, createWriteStream, ReadStream } from 'node:fs'
 import { stat, unlink } from 'node:fs/promises'
 import { join } from 'node:path'
-import type { EventEmitter, Readable as NodeReadableStream } from 'node:stream'
+import {
+  type EventEmitter,
+  type Readable as NodeReadableStream,
+  Transform,
+} from 'node:stream'
 import { pipeline } from 'node:stream/promises'
 import type { PutObjectCommandInput, S3Client } from '@aws-sdk/client-s3'
 import { Upload } from '@aws-sdk/lib-storage'
@@ -13,7 +17,6 @@ import type { OptionsOfTextResponseBody, Response } from 'got'
 import got from 'got'
 import type { Redis } from 'ioredis'
 import throttle from 'lodash/throttle.js'
-import { serializeError } from 'serialize-error'
 import tus from 'tus-js-client'
 import validator from 'validator'
 import type { CompanionRuntimeOptions } from '../types/companion-options.js'
@@ -100,11 +103,56 @@ function exceedsMaxFileSize(
   return maxFileSize !== undefined && size !== undefined && size > maxFileSize
 }
 
+// Only what the client reads (RequestClient.ts). A serialised error can carry
+// request options, headers and streams from this and other users' uploads.
+// Apps read a failed multipart upload's destination answer as
+// err.cause.extraData: pass on those fields of it, and nothing else.
+export function toClientError(err: unknown): {
+  name: string
+  message: string
+  extraData?: UploadExtraDataResponse
+} {
+  const error = toError(err)
+  const extraData = Reflect.get(error, 'extraData')
+  if (!isRecord(extraData)) return { name: error.name, message: error.message }
+  const { status, statusText, responseText, headers } = extraData
+  return {
+    name: error.name,
+    message: error.message,
+    extraData: {
+      ...(typeof status === 'number' && { status }),
+      ...(typeof statusText === 'string' && { statusText }),
+      ...(typeof responseText === 'string' && { responseText }),
+      ...(isRecord(headers) && {
+        headers: Object.fromEntries(
+          Object.entries(headers).filter(([, v]) => typeof v === 'string'),
+        ),
+      }),
+    },
+  }
+}
+
 export class ValidationError extends Error {
   override name = 'ValidationError'
 }
 
-function validateOptions(options: UploaderOptions): void {
+/** A request Companion refuses before sending it: retrying it gets the same. */
+class RefusedRequestError extends Error {}
+
+/**
+ * Validates the upload options and returns the destination URLs normalized
+ * through WHATWG URL serialization.
+ *
+ * The allowlist check parsed the URL with `new URL()` while the raw string
+ * went on to tus-js-client / Node, which parse with legacy `url.parse()`. The
+ * two disagree on some spellings (`http://\\x@host/`), so a destination could
+ * pass the check as one host and be connected as another. Checking and
+ * connecting with the same normalized string removes the gap; it also
+ * resolves `..` segments before a path-anchored RegExp entry sees them.
+ */
+function validateOptions(
+  options: UploaderOptions,
+): Pick<UploaderOptions, 'endpoint' | 'uploadUrl'> {
   // validate HTTP Method (optional)
   if (options.httpMethod) {
     if (typeof options.httpMethod !== 'string') {
@@ -144,36 +192,112 @@ function validateOptions(options: UploaderOptions): void {
     throw new ValidationError('unsupported protocol specified')
   }
 
-  // s3 uploads don't require upload destination
-  // validation, because the destination is determined
-  // by the server's s3 config
-  if (options.protocol !== PROTOCOLS.s3Multipart) {
-    if (!options.endpoint && !options.uploadUrl) {
-      throw new ValidationError('no destination specified')
-    }
-
-    const validateUrl = (url: string | undefined): void => {
-      if (url == null) return
-      const validatorOpts = { require_protocol: true, require_tld: false }
-      if (!validator.isURL(url, validatorOpts)) {
-        throw new ValidationError('invalid destination url')
-      }
-
-      const allowedUrls = options.companionOptions.uploadUrls
-      if (allowedUrls && !hasUploadUrlMatch(url, allowedUrls)) {
-        throw new ValidationError(
-          'upload destination does not match any allowed destinations',
-        )
-      }
-    }
-
-    ;[options.endpoint, options.uploadUrl].forEach(validateUrl)
-  }
-
   if (options.chunkSize != null && typeof options.chunkSize !== 'number') {
     throw new ValidationError('incorrect chunkSize')
   }
+
+  // s3 uploads don't require upload destination
+  // validation, because the destination is determined
+  // by the server's s3 config
+  if (options.protocol === PROTOCOLS.s3Multipart) return {}
+
+  if (!options.endpoint && !options.uploadUrl) {
+    throw new ValidationError('no destination specified')
+  }
+
+  const normalizeUrl = (url: string | undefined): string | undefined => {
+    if (url == null) return undefined
+    const validatorOpts = { require_protocol: true, require_tld: false }
+    if (!validator.isURL(url, validatorOpts)) {
+      throw new ValidationError('invalid destination url')
+    }
+    let normalized: string
+    try {
+      normalized = new URL(url).href
+    } catch {
+      throw new ValidationError('invalid destination url')
+    }
+
+    const allowedUrls = options.companionOptions.uploadUrls
+    if (allowedUrls && !hasUploadUrlMatch(normalized, allowedUrls)) {
+      throw new ValidationError(
+        'upload destination does not match any allowed destinations',
+      )
+    }
+    return normalized
+  }
+
+  const endpoint = normalizeUrl(options.endpoint)
+  const uploadUrl = normalizeUrl(options.uploadUrl)
+  return {
+    ...(endpoint != null && { endpoint }),
+    ...(uploadUrl != null && { uploadUrl }),
+  }
 }
+
+/**
+ * Passes a one-shot body stream through a byte count. `check` gets the count
+ * so far after each chunk, and once more with `ended` when the source ends;
+ * an error it returns fails the stream before that chunk is passed on.
+ * Destroying the returned stream destroys the source too.
+ */
+function countBytes(
+  stream: NodeReadableStream,
+  check: (seen: number, ended: boolean) => Error | undefined,
+): NodeReadableStream {
+  let seen = 0
+  const counter = new Transform({
+    transform(chunk: Buffer, _enc, cb) {
+      seen += chunk.length
+      const err = check(seen, false)
+      if (err) {
+        cb(err)
+        return
+      }
+      cb(null, chunk)
+    },
+    flush(cb) {
+      cb(check(seen, true))
+    },
+  })
+  stream.on('error', (err) => counter.destroy(err))
+  counter.once('close', () => stream.destroy())
+  stream.pipe(counter)
+  // Keep the output paused until the upload consumes it: a progress 'data'
+  // listener attached first would make it flow, and the bytes would be gone
+  // before a lazily read body (FormData) gets to them.
+  counter.pause()
+  return counter
+}
+
+/**
+ * Caps a one-shot body stream at the announced Content-Length. got sends the
+ * length we set and pipes the stream; nothing stopped surplus bytes going out
+ * on the same keep-alive socket (the destination read them as the next
+ * request) or caught a body that ended early (the destination waited). Fail
+ * the upload on either mismatch before the extra bytes are written.
+ */
+function limitToAnnouncedSize(
+  stream: NodeReadableStream,
+  size: number,
+  onFramingError: (err: Error) => void,
+): NodeReadableStream {
+  return countBytes(stream, (seen, ended) => {
+    let err: Error | undefined
+    if (seen > size) {
+      err = new Error(`source sent more than the announced ${size} bytes`)
+    } else if (ended && seen < size) {
+      err = new Error(`source sent ${seen} of the announced ${size} bytes`)
+    }
+    if (err) onFramingError(err)
+    return err
+  })
+}
+
+// A tus transfer keeps up to a whole chunk of the source in memory, so one that
+// stops moving must not wait forever.
+export const STALL_TIMEOUT_MS = 2 * 60 * 1000
+export const PAUSED_TIMEOUT_MS = 10 * 60 * 1000
 
 const states = {
   idle: 'idle',
@@ -186,6 +310,13 @@ export default class Uploader {
   static FILE_NAME_PREFIX = 'uppy-file'
 
   static STORAGE_PREFIX = 'companion'
+
+  /** Temp files an Uploader in this process still uses; see jobs.ts. */
+  static #tmpFilesInUse = new Set<string>()
+
+  static isTmpFileInUse(fileName: string): boolean {
+    return Uploader.#tmpFilesInUse.has(fileName)
+  }
 
   storage: Redis | null | undefined
 
@@ -226,13 +357,29 @@ export default class Uploader {
    * @param optionsIn
    */
   constructor(optionsIn: UploaderOptions) {
-    validateOptions(optionsIn)
+    const destinations = validateOptions(optionsIn)
 
+    // Header names are case-insensitive: drop every client spelling of a
+    // header the operator fixed, or a differently cased copy would win. A
+    // client must not set forwarding headers either: the upload server builds
+    // its Location URLs from them. The operator's uploadHeaders may.
+    const { uploadHeaders } = optionsIn.companionOptions
+    const fixedNames = new Set(
+      Object.keys(uploadHeaders ?? {}).map((name) => name.toLowerCase()),
+    )
+    const isForwarding = (name: string) =>
+      /^(?:forwarded|x-forwarded-.*)$/i.test(name)
     const options = {
       ...optionsIn,
+      ...destinations,
       headers: {
-        ...optionsIn.headers,
-        ...optionsIn.companionOptions.uploadHeaders,
+        ...Object.fromEntries(
+          Object.entries(optionsIn.headers ?? {}).filter(
+            ([name]) =>
+              !fixedNames.has(name.toLowerCase()) && !isForwarding(name),
+          ),
+        ),
+        ...uploadHeaders,
       },
     } satisfies UploaderOptions
 
@@ -268,6 +415,7 @@ export default class Uploader {
         logger.debug('Received from client: pause', 'uploader', this.shortToken)
         if (this.#uploadState !== states.uploading) return
         this.#uploadState = states.paused
+        this.#pausedAt = Date.now()
         if (this.tus) {
           this.tus.abort()
         }
@@ -319,9 +467,82 @@ export default class Uploader {
 
   #canceled = false
 
+  #pausedAt = 0
+
+  #lastBytesUploaded = 0
+
+  /** Rejects the upload in progress; see uploadStream. */
+  #rejectUpload: ((err: Error) => void) | undefined
+
+  /** A tus request has been sent and its response has not arrived yet. */
+  #tusRequestPending = false
+
+  /** When the tus transfer last moved: a request, a response, or progress. */
+  #tusActivityAt = 0
+
+  /**
+   * Abandons a tus transfer that has been paused for PAUSED_TIMEOUT_MS, or that
+   * made no progress, neither reading the source nor sending, for
+   * STALL_TIMEOUT_MS. A source that keeps trickling in counts as progress.
+   * Samples are STALL_TIMEOUT_MS apart, so a stall is caught after 2-4 minutes
+   * and a pause after 10-12.
+   *
+   * readableLength sees the source being read because tus-js-client reads
+   * the stream with read(chunkSize): bytes wait in this stream's buffer until a
+   * whole chunk is there, instead of being copied out as they arrive.
+   *
+   * Once a chunk is sent, neither number moves until the server has stored it,
+   * which can take minutes, so a request waiting for its response gets
+   * PAUSED_TIMEOUT_MS instead. tus-js-client has no request timeout, so this
+   * is also what ends a request the server never answers.
+   */
+  #watchTusTransfer(): () => void {
+    let last: string | undefined
+    const timer = setInterval(() => {
+      if (this.#uploadState === states.paused) {
+        last = undefined
+        if (Date.now() - this.#pausedAt < PAUSED_TIMEOUT_MS) return
+        this.abortReadStream(new Error('Upload was paused for too long'))
+        return
+      }
+      const now = `${this.#lastBytesUploaded}:${this.readStream?.readableLength}`
+      if (now !== last) {
+        last = now
+        this.#tusActivityAt = Date.now()
+        return
+      }
+      const limit = this.#tusRequestPending
+        ? PAUSED_TIMEOUT_MS
+        : STALL_TIMEOUT_MS
+      if (Date.now() - this.#tusActivityAt < limit) return
+      this.tus?.abort().catch(() => {})
+      this.abortReadStream(new Error('Upload stalled'))
+    }, STALL_TIMEOUT_MS)
+    timer.unref()
+    return () => clearInterval(timer)
+  }
+
+  /**
+   * uploadUrls is checked once, on the endpoint the client named. The tus
+   * server's creation response can then point the upload at a different
+   * absolute URL (e.g. via a client-chosen X-Forwarded-Host), and got would
+   * follow a multipart redirect, with no further check. Re-check every URL we
+   * are about to connect to.
+   */
+  #assertAllowedDestination(url: string): void {
+    const allowedUrls = this.options.companionOptions.uploadUrls
+    if (allowedUrls && !hasUploadUrlMatch(url, allowedUrls)) {
+      throw new RefusedRequestError(
+        'upload URL does not match any allowed destinations',
+      )
+    }
+  }
+
   abortReadStream(err: Error): void {
     this.#uploadState = states.done
     if (this.readStream) this.readStream.destroy(err)
+    // A stream that already ended emits no 'error', so settle the upload here.
+    this.#rejectUpload?.(err)
   }
 
   _getUploadProtocol(): UploadProtocol {
@@ -348,6 +569,7 @@ export default class Uploader {
 
   async _downloadStreamAsFile(stream: NodeReadableStream): Promise<void> {
     this.tmpPath = join(this.options.pathPrefix, this.fileName)
+    Uploader.#tmpFilesInUse.add(this.fileName)
 
     logger.debug('fully downloading file', 'uploader.download', this.shortToken)
     const writeStream = createWriteStream(this.tmpPath)
@@ -380,7 +602,15 @@ export default class Uploader {
 
     this.size = size
 
+    // Canceled meanwhile: nothing will read the file, so don't open it.
+    if (this.#uploadState === states.done) return
+
     const fileStream = createReadStream(this.tmpPath)
+    // uploadStream fails the upload on this stream's errors; this keeps one
+    // outside that window (the file deleted under us) from exiting the process.
+    fileStream.on('error', (err) => {
+      logger.debug(err, 'uploader.download.tmpfile', this.shortToken)
+    })
     this.readStream = fileStream
   }
 
@@ -392,6 +622,7 @@ export default class Uploader {
     stream: NodeReadableStream,
     req: Request,
   ): Promise<UploadResult | undefined> {
+    let stopWatching: (() => void) | undefined
     try {
       if (this.#uploadState !== states.idle)
         throw new Error('Can only start an upload in the idle state')
@@ -412,20 +643,53 @@ export default class Uploader {
         // The stream will then typically come from a "Transfer-Encoding: chunked" response
         await this._downloadStreamAsFile(this.readStream)
       }
-      if (this.#uploadState !== states.uploading) return undefined
+      // A tus upload paused while we downloaded goes on paused: resume starts
+      // it, and the paused timeout abandons it, as during a transfer.
+      if (this.#uploadState === states.done) return undefined
 
-      const activeStream = this.readStream
+      let activeStream = this.readStream
       if (!activeStream) throw new Error('No readable stream available')
+      if (activeStream.destroyed) {
+        // The download errored or closed while we waited for the client's
+        // socket; surface that instead of reading from a dead stream.
+        throw (
+          activeStream.errored ??
+          new Error('Download stream closed before the upload started')
+        )
+      }
 
+      const { maxFileSize } = this.options.companionOptions
+      if (this._canStream() && maxFileSize != null) {
+        // validateOptions could only check the size the source announced,
+        // which it may omit or understate. Count the bytes that arrive, as
+        // _downloadStreamAsFile does.
+        activeStream = countBytes(activeStream, (seen) => {
+          if (!exceedsMaxFileSize(maxFileSize, seen)) return undefined
+          const err = new Error('maxFileSize exceeded')
+          this.abortReadStream(err)
+          return err
+        })
+        // The stream tus reads from, as the stall watcher expects.
+        this.readStream = activeStream
+      }
+
+      if (this._getUploadProtocol() === PROTOCOLS.tus) {
+        stopWatching = this.#watchTusTransfer()
+      }
       const { url, extraData } = await Promise.race([
         this._uploadByProtocol(req, activeStream),
         // If we don't handle stream errors, we get unhandled error in node.
         new Promise<never>((_resolve, reject) =>
           activeStream.on('error', reject),
         ),
+        new Promise<never>((_resolve, reject) => {
+          this.#rejectUpload = reject
+        }),
       ])
       return { url, extraData }
     } finally {
+      stopWatching?.()
+      this.#rejectUpload = undefined
       this.#uploadState = states.done
       logger.debug('cleanup', this.shortToken)
       if (this.readStream && !this.readStream.destroyed)
@@ -439,6 +703,7 @@ export default class Uploader {
     try {
       await unlink(this.tmpPath)
     } catch {}
+    Uploader.#tmpFilesInUse.delete(this.fileName)
   }
 
   async tryUploadStream(
@@ -460,10 +725,21 @@ export default class Uploader {
       logger.error(err, 'uploader.error', this.shortToken)
       this.#emitError(err)
     } finally {
-      emitter().removeAllListeners(`pause:${this.token}`)
-      emitter().removeAllListeners(`resume:${this.token}`)
-      emitter().removeAllListeners(`cancel:${this.token}`)
+      this.removeEmitterListeners()
     }
+  }
+
+  /**
+   * Remove the process-wide emitter listeners this Uploader registered in its
+   * constructor. tryUploadStream does this in its finally, but an import whose
+   * client socket never connects never reaches tryUploadStream, so the caller
+   * must call this to avoid leaking the listeners (and the Uploader they close
+   * over) for the life of the process.
+   */
+  removeEmitterListeners(): void {
+    emitter().removeAllListeners(`pause:${this.token}`)
+    emitter().removeAllListeners(`resume:${this.token}`)
+    emitter().removeAllListeners(`cancel:${this.token}`)
   }
 
   /**
@@ -614,6 +890,7 @@ export default class Uploader {
     bytesUploaded = 0,
     bytesTotalIn: number | null | undefined = 0,
   ): void {
+    this.#lastBytesUploaded = bytesUploaded
     const bytesTotal = bytesTotalIn || this.size || 0
 
     // If fully downloading before uploading, combine downloaded and uploaded bytes
@@ -667,13 +944,9 @@ export default class Uploader {
   }
 
   #emitError(err: unknown): void {
-    const error = toError(err)
-    // delete stack to avoid sending server info to client
-    // see PR discussion https://github.com/transloadit/uppy/pull/3832
-    const { stack, ...serializedErr } = serializeError(error)
     const dataToEmit = {
       action: 'error',
-      payload: { error: serializedErr },
+      payload: { error: toClientError(err) },
     }
     this.saveState(dataToEmit)
     emitter().emit(this.token, dataToEmit)
@@ -704,6 +977,49 @@ export default class Uploader {
         chunkSize,
         headers: headerSanitize(this.options.headers),
         addRequestId: true,
+        onBeforeRequest: (req: {
+          getURL: () => string
+          getMethod: () => string
+        }) => {
+          // abort() only stops the request in flight: a start() still waiting
+          // on its first request clears tus-js-client's aborted flag and goes
+          // on, creating uploads after a cancel's DELETE and reading a temp
+          // file we deleted. Refuse every request but that DELETE once the
+          // upload is paused or over; aborting first keeps tus quiet about it.
+          if (
+            this.#uploadState !== states.uploading &&
+            req.getMethod() !== 'DELETE'
+          ) {
+            this.tus?.abort().catch(() => {})
+            throw new RefusedRequestError('Upload is not running')
+          }
+          this.#assertAllowedDestination(req.getURL())
+          this.#tusRequestPending = true
+          this.#tusActivityAt = Date.now()
+        },
+        // Check where the server sends the upload as soon as it says, before
+        // tus reads any of the file for it: refused in onBeforeRequest, that
+        // read would be left to fail on a temp file we have deleted.
+        onAfterResponse: (req, res) => {
+          this.#tusRequestPending = false
+          this.#tusActivityAt = Date.now()
+          const location = res.getHeader('Location')
+          if (req.getMethod() !== 'POST' || !location) return
+          try {
+            this.#assertAllowedDestination(
+              new URL(location, this.options.endpoint).toString(),
+            )
+          } catch (err) {
+            this.tus?.abort().catch(() => {})
+            this.#rejectUpload?.(toError(err))
+          }
+        },
+        // tus-js-client retries any request that failed without a response,
+        // which includes the ones refused above.
+        onShouldRetry: (err, retryAttempt, options) =>
+          !(err.causingError instanceof RefusedRequestError) &&
+          (tus.defaultOptions?.onShouldRetry?.(err, retryAttempt, options) ??
+            true),
         metadata: {
           // file name and type as required by the tusd tus server
           // https://github.com/tus/tusd/blob/5b376141903c1fd64480c06dde3dfe61d191e53d/unrouted_handler.go#L614-L646
@@ -753,7 +1069,7 @@ export default class Uploader {
 
       this.tus = new tus.Upload(stream, tusOptions)
 
-      this.tus.start()
+      if (this.#uploadState === states.uploading) this.tus.start()
     })
 
     if (this.tus != null && this.size != null) {
@@ -798,19 +1114,36 @@ export default class Uploader {
     })
 
     const url = this.options.endpoint
+    let framingError: Error | undefined
     const reqOptions: OptionsOfTextResponseBody = {
       headers: headerSanitize(this.options.headers),
       isStream: false,
       resolveBodyOnly: false,
       responseType: 'text',
+      // The body is a one-shot stream (or FormData wrapping one). got retries
+      // PUT on network errors by default; the retry fired after this promise
+      // had settled and threw outside any handler, taking the process down.
+      retry: { limit: 0 },
+      hooks: {
+        beforeRedirect: [
+          (options) => {
+            const { url } = options
+            if (url != null) {
+              this.#assertAllowedDestination(
+                typeof url === 'string' ? url : url.href,
+              )
+            }
+          },
+        ],
+      },
     }
 
     if (this.options.useFormData) {
       const formData = new FormData()
 
-      Object.entries(this.metadata).forEach(([key, value]) => {
+      for (const [key, value] of Object.entries(this.metadata)) {
         formData.append(key, value)
-      })
+      }
 
       // see https://github.com/octet-stream/form-data/blob/73a5a24e635938026538673f94cbae1249a3f5cc/readme.md?plain=1#L232
       formData.set(this.fieldname, {
@@ -831,7 +1164,12 @@ export default class Uploader {
           'content-length': `${this.size}`,
         }
       }
-      reqOptions.body = stream
+      reqOptions.body =
+        this.size != null
+          ? limitToAnnouncedSize(stream, this.size, (err) => {
+              framingError = err
+            })
+          : stream
     }
 
     try {
@@ -858,6 +1196,9 @@ export default class Uploader {
         extraData: { response: getRespObj(response), bytesUploaded },
       }
     } catch (err) {
+      // A body that did not match the announced size is our own error; surface
+      // it rather than got's generic request failure.
+      if (framingError) throw framingError
       logger.error(err, 'upload.multipart.error')
       const errObj = isRecord(err) ? err : null
       const response =

@@ -1,6 +1,6 @@
 import got from 'got'
 import { isRecord } from '../../helpers/type-guards.js'
-import { prepareStream } from '../../helpers/utils.js'
+import { pathSegment, prepareStream } from '../../helpers/utils.js'
 import logger from '../../logger.js'
 import Provider, {
   type ProviderDownloadOptions,
@@ -42,7 +42,9 @@ function getQueryRecord(query: Query | undefined) {
 }
 
 const getRootPath = (query: Query): string =>
-  query['driveId'] ? `drives/${query['driveId']}` : 'me/drive'
+  query['driveId']
+    ? `drives/${pathSegment(query['driveId'] as string)}`
+    : 'me/drive'
 
 interface OneDriveUserSession {
   accessToken: string
@@ -72,7 +74,7 @@ export default class OneDrive extends Provider<OneDriveUserSession> {
   }: ProviderListOptions<OneDriveUserSession>): Promise<ProviderListResponse> {
     return this.#withErrorHandling('provider.onedrive.list.error', async () => {
       const queryRecord = getQueryRecord(query)
-      const path = directory ? `items/${directory}` : 'root'
+      const path = directory ? `items/${pathSegment(directory)}` : 'root'
       // https://learn.microsoft.com/en-us/graph/query-parameters?tabs=http#top-parameter
       const pageSize = 999
       // const pageSize = 20 // to test pagination easily
@@ -113,7 +115,7 @@ export default class OneDrive extends Provider<OneDriveUserSession> {
       async () => {
         const queryRecord = getQueryRecord(query)
         const stream = getClient({ token }).stream.get(
-          `${getRootPath(queryRecord)}/items/${id}/content`,
+          `${getRootPath(queryRecord)}/items/${pathSegment(id)}/content`,
           { responseType: 'json' },
         )
         const { size } = await prepareStream(stream)
@@ -139,7 +141,7 @@ export default class OneDrive extends Provider<OneDriveUserSession> {
     return this.#withErrorHandling('provider.onedrive.size.error', async () => {
       const queryRecord = getQueryRecord(query)
       const body = await getClient({ token })
-        .get(`${getRootPath(queryRecord)}/items/${id}`, {
+        .get(`${getRootPath(queryRecord)}/items/${pathSegment(id)}`, {
           responseType: 'json',
         })
         .json<Record<string, unknown>>()

@@ -1,18 +1,11 @@
-/* eslint-disable no-console, prefer-arrow-callback */
-
 import fs from 'node:fs'
+import { glob } from 'node:fs/promises'
 import path from 'node:path'
 import process from 'node:process'
 import { fileURLToPath } from 'node:url'
 import { styleText } from 'node:util'
-import { globSync } from 'glob'
-
-import {
-  getLocales,
-  getPaths,
-  localeNameFromLocalePath,
-  omit,
-} from './helpers.mjs'
+import type { Locale } from '@uppy/core/utils'
+import { getLocales, localeNameFromLocalePath, omit } from './helpers.ts'
 
 const root = fileURLToPath(new URL('../../../../', import.meta.url))
 const leadingLocaleName = 'en_US'
@@ -22,15 +15,16 @@ const leadingLocaleName = 'en_US'
 const localePackGlob = `${root}/packages/@uppy/locales/src/*.ts`
 const mode = process.argv[2]
 const verbose = process.argv.includes('--verbose')
-const pluginLocaleDependencies = {
+const pluginLocaleDependencies: Record<string, string[]> = {
   core: ['provider-views', 'companion-client'],
 }
 
-function getAllFilesPerPlugin(pluginNames) {
-  const filesPerPlugin = {}
+function getAllFilesPerPlugin(pluginNames: string[]) {
+  const filesPerPlugin: Record<string, string[]> = {}
 
-  function getFiles(name) {
-    return globSync(`${root}/packages/@uppy/${name}/lib/**/*.js`)
+  function getFiles(name: string) {
+    return fs
+      .globSync(`${root}/packages/@uppy/${name}/lib/**/*.js`)
       .filter((filePath) => !filePath.includes('locale.js'))
       .map((filePath) => fs.readFileSync(filePath, 'utf-8'))
   }
@@ -39,7 +33,7 @@ function getAllFilesPerPlugin(pluginNames) {
     filesPerPlugin[name] = getFiles(name)
 
     if (name in pluginLocaleDependencies) {
-      for (const subDeb of pluginLocaleDependencies[name]) {
+      for (const subDeb of pluginLocaleDependencies[name]!) {
         filesPerPlugin[name].push(...getFiles(subDeb))
       }
     }
@@ -48,7 +42,7 @@ function getAllFilesPerPlugin(pluginNames) {
   return filesPerPlugin
 }
 
-async function unused(filesPerPlugin, data) {
+async function unused(filesPerPlugin: Record<string, string[]>) {
   for (const [name, fileStrings] of Object.entries(filesPerPlugin)) {
     const fileString = fileStrings.join('\n')
     const localePath = path.join(
@@ -73,15 +67,18 @@ async function unused(filesPerPlugin, data) {
       }
     }
   }
+}
 
-  return data
+interface LocaleWithLeading {
+  leadingLocale: Locale
+  followerLocales: Record<string, Locale>
 }
 
 // Locales are community-contributed and always lag behind `en_US`, so
 // discrepancies are expected and this mode is advisory: it reports, it never
 // fails the build. Pass `--verbose` for the per-key breakdown; the default is a
 // one-line-per-locale summary so it stays readable in CI.
-function warnings({ leadingLocale, followerLocales }) {
+function warnings({ leadingLocale, followerLocales }: LocaleWithLeading) {
   const leadingStrings = leadingLocale.strings
   const total = Object.keys(leadingStrings).length
   const entries = Object.entries(followerLocales).sort(([a], [b]) =>
@@ -122,14 +119,14 @@ function warnings({ leadingLocale, followerLocales }) {
 
       if (typeof value === 'object') {
         // For values with plural forms, just take the first one right now
-        value = value[Object.keys(value)[0]]
+        value = Object.values(value)[0]
       }
 
       details.push(
         [
           `${styleText('cyan', name)} locale has missing string: '${styleText('red', key)}'`,
           `that is present in ${styleText('cyan', leadingLocaleName)}`,
-          `with value: ${styleText('yellow', value)}`,
+          `with value: ${styleText('yellow', value as string)}`,
         ].join(' '),
       )
     }
@@ -182,14 +179,17 @@ const placeholderPattern = /%\{(\w+)\}/g
  * `% {name}`, `%{ name }`, `%{name` and `{name}` all render verbatim.
  * Only meaningful for a `name` we already know is not present in its exact form.
  */
-function findMalformedPlaceholder(string, name) {
+function findMalformedPlaceholder(
+  string: string,
+  name: string,
+): string | undefined {
   const [match] = string.match(new RegExp(`%?\\s*\\{\\s*${name}\\s*\\}?`)) ?? []
   return match
 }
 
-function getPlaceholders(string) {
+function getPlaceholders(string: string): Set<string> {
   return new Set(
-    Array.from(string.matchAll(placeholderPattern), ([, name]) => name),
+    Array.from(string.matchAll(placeholderPattern), ([, name]) => name!),
   )
 }
 
@@ -198,7 +198,9 @@ function getPlaceholders(string) {
  * indices the locale's `pluralize` returns. Normalize both into `[form, string]`
  * pairs so every form gets checked.
  */
-function getForms(value) {
+function getForms(
+  value: string | Record<number, string>,
+): [string | null, string][] {
   if (typeof value === 'string') return [[null, value]]
   return Object.entries(value)
 }
@@ -207,7 +209,7 @@ function getForms(value) {
 // interpolate is never an intentional translation choice, it is a typo that
 // renders raw `%{...}` to users. Diverging placeholder *sets* are advisory,
 // since a translation may legitimately spell a number out instead.
-function placeholders({ leadingLocale, followerLocales }) {
+function placeholders({ leadingLocale, followerLocales }: LocaleWithLeading) {
   const errors = []
   const logs = []
 
@@ -275,49 +277,47 @@ function placeholders({ leadingLocale, followerLocales }) {
   }
 
   if (errors.length) {
-    return Promise.reject(
-      new Error(
-        `\n${errors.join('\n')}\n\n${errors.length} malformed placeholder(s).`,
-      ),
+    throw new Error(
+      `\n${errors.join('\n')}\n\n${errors.length} malformed placeholder(s).`,
     )
   }
-
-  return undefined
 }
 
-function test() {
+async function test() {
   switch (mode) {
-    case 'unused':
-      return getPaths(`${root}/packages/@uppy/**/src/locale.js`).then((paths) =>
-        unused(
-          getAllFilesPerPlugin(
-            paths.map((filePath) =>
-              path.basename(path.join(filePath, '..', '..')),
-            ),
+    case 'unused': {
+      const paths = glob(`${root}/packages/@uppy/**/src/locale.js`)
+
+      await unused(
+        getAllFilesPerPlugin(
+          await Array.fromAsync(paths, (filePath) =>
+            path.basename(path.join(filePath, '..', '..')),
           ),
         ),
       )
+      break
+    }
 
-    case 'warnings':
-      return getLocales(localePackGlob, localeNameFromLocalePath).then(
-        (locales) =>
-          warnings({
-            leadingLocale: locales[leadingLocaleName],
-            followerLocales: omit(locales, leadingLocaleName),
-          }),
-      )
+    case 'warnings': {
+      const locales = await getLocales(localePackGlob, localeNameFromLocalePath)
+      warnings({
+        leadingLocale: locales[leadingLocaleName]!,
+        followerLocales: omit(locales, leadingLocaleName),
+      })
+      break
+    }
 
-    case 'placeholders':
-      return getLocales(localePackGlob, localeNameFromLocalePath).then(
-        (locales) =>
-          placeholders({
-            leadingLocale: locales[leadingLocaleName],
-            followerLocales: omit(locales, leadingLocaleName),
-          }),
-      )
+    case 'placeholders': {
+      const locales = await getLocales(localePackGlob, localeNameFromLocalePath)
+      placeholders({
+        leadingLocale: locales[leadingLocaleName]!,
+        followerLocales: omit(locales, leadingLocaleName),
+      })
+      break
+    }
 
     default:
-      return Promise.reject(new Error(`Invalid mode "${mode}"`))
+      throw new Error(`Invalid mode "${mode}"`)
   }
 }
 

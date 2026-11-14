@@ -1,7 +1,7 @@
 {
   "name": "@uppy/core",
   "description": "Core module for the extensible JavaScript file upload widget with support for drag&drop, resumable uploads, previews, restrictions, file processing/encoding, remote providers like Dropbox, Google Drive, S3 and more :dog:",
-  "version": "6.3.0",
+  "version": "6.3.1",
   "license": "MIT",
   "style": "dist/style.min.css",
   "type": "module",
@@ -62,7 +62,6 @@
     "type-fest": "^5.10.0"
   },
   "devDependencies": {
-    "@types/deep-freeze": "^0",
     "@types/gapi": "^0.0.47",
     "@types/google.accounts": "^0.0.18",
     "@types/google.picker": "^0.0.52",
@@ -71,16 +70,16 @@
     "@types/namespace-emitter": "^2.0.0",
     "@types/node": "^22.20.1",
     "@uppy-dev/tsconfig": "workspace:^",
-    "@vitest/browser-playwright": "^5.0.3",
+    "@vitest/browser-playwright": "^5.0.5",
     "cssnano": "^8.0.1",
     "deep-freeze": "^0.0.1",
-    "msw": "^3.0.2",
-    "playwright": "1.64.0",
-    "postcss": "^8.5.23",
-    "postcss-cli": "^11.0.1",
+    "msw": "^3.0.3",
+    "playwright": "1.64.1",
+    "postcss": "^8.5.32",
+    "postcss-cli": "^12.0.0",
     "sass": "^1.89.2",
     "typescript": "^6.0.3",
-    "vite": "^8.3.4",
-    "vitest": "^5.0.3"
+    "vite": "^8.3.5",
+    "vitest": "^5.0.5"
   }
 }

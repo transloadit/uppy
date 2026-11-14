@@ -165,6 +165,15 @@ export const withOwnCredentials = (
   return { ...options, awsClientOptions }
 }
 
+// Not /^\/+|\/+$/: its backtracking is quadratic in the length of a run of slashes.
+function trimSlashes(name: string): string {
+  let start = 0
+  let end = name.length
+  while (start < end && name[start] === '/') start++
+  while (end > start && name[end - 1] === '/') end--
+  return name.slice(start, end)
+}
+
 /**
  * Adapter for browsing and managing S3-compatible object storage (AWS S3,
  * Cloudflare R2, MinIO, ...). Configured under `providerOptions.s3`;
@@ -662,7 +671,7 @@ export default class S3Provider<
           requireWrite: true,
           keys: parentFolder ? [parentFolder] : [],
         })
-        const cleanName = name.trim().replace(/^\/+|\/+$/g, '')
+        const cleanName = trimSlashes(name.trim())
         if (
           cleanName.length === 0 ||
           cleanName.includes('/') ||

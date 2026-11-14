@@ -36,7 +36,7 @@ existing server, or it may also be run as a standalone server:
 import express from 'express'
 import bodyParser from 'body-parser'
 import session from 'express-session'
-import companion from '@uppy/companion'
+import * as companion from '@uppy/companion'
 
 const app = express()
 app.use(bodyParser.json())

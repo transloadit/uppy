@@ -39,6 +39,28 @@ vi.mock('node:dns', () => ({
   },
 }))
 
+// client-chosen names are resolved with a Resolver, not dns.lookup
+vi.mock('node:dns/promises', () => ({
+  Resolver: class {
+    resolve4(hostname: string) {
+      if (hostname === fakeLocalhost) return Promise.resolve(['127.0.0.1'])
+      return Promise.reject(
+        Object.assign(new Error(`queryA ENOTFOUND ${hostname}`), {
+          code: 'ENOTFOUND',
+        }),
+      )
+    }
+
+    resolve6(hostname: string) {
+      return Promise.reject(
+        Object.assign(new Error(`queryAaaa ENODATA ${hostname}`), {
+          code: 'ENODATA',
+        }),
+      )
+    }
+  },
+}))
+
 const getServerWithEnv = async () =>
   getServer({ COMPANION_CLIENT_SOCKET_CONNECT_TIMEOUT: '0' })
 

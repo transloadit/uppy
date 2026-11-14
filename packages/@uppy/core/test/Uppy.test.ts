@@ -1164,7 +1164,7 @@ describe('src/Core', () => {
         store: DeepFrozenStore(),
       })
       core.addUploader((fileIDs) => {
-        fileIDs.forEach((fileID) => {
+        for (const fileID of fileIDs) {
           const file = core.getFile(fileID)
           if (file.name != null && /bar/.test(file.name)) {
             core.emit(
@@ -1173,8 +1173,7 @@ describe('src/Core', () => {
               new Error('This is bar and I do not like bar'),
             )
           }
-        })
-        return Promise.resolve()
+        }
       })
 
       core.addFile({
@@ -1338,14 +1337,13 @@ describe('src/Core', () => {
       let hasError = false
 
       core.addUploader((fileIDs) => {
-        fileIDs.forEach((fileID) => {
+        for (const fileID of fileIDs) {
           const file = core.getFile(fileID)
           if (!hasError) {
             core.emit('upload-error', file, new Error('foo'))
             hasError = true
           }
-        })
-        return Promise.resolve()
+        }
       })
       core.on('upload', onUpload)
       core.on('retry-all', onRetryAll)
@@ -2528,18 +2526,12 @@ describe('src/Core', () => {
   })
 
   describe('updateOnlineStatus', () => {
-    const RealNavigatorOnline = globalThis.window.navigator.onLine
-
     function mockNavigatorOnline(status: boolean) {
-      Object.defineProperty(globalThis.window.navigator, 'onLine', {
-        value: status,
-        writable: true,
-      })
+      vi.spyOn(window.navigator, 'onLine', 'get').mockReturnValue(status)
     }
 
     afterEach(() => {
-      // @ts-expect-error readonly but whatever
-      globalThis.window.navigator.onLine = RealNavigatorOnline
+      vi.restoreAllMocks()
     })
 
     it('should emit the correct event based on whether there is a network connection', () => {
@@ -2568,6 +2560,36 @@ describe('src/Core', () => {
       expect(onlineEventMock.mock.calls.length).toEqual(2)
       expect(offlineEventMock.mock.calls.length).toEqual(1)
       expect(backOnlineEventMock.mock.calls.length).toEqual(1)
+    })
+  })
+
+  describe('initial online status check', () => {
+    afterEach(() => {
+      vi.useRealTimers()
+    })
+
+    it('should check the online status 3s after creation', () => {
+      vi.useFakeTimers()
+      const statusEventMock = vi.fn()
+      {
+        using core = new Core()
+        core.on('is-offline', statusEventMock)
+        core.on('is-online', statusEventMock)
+        vi.advanceTimersByTime(3000)
+        expect(statusEventMock).toHaveBeenCalledOnce()
+      }
+    })
+
+    it('should not check the online status after destroy', () => {
+      vi.useFakeTimers()
+      const statusEventMock = vi.fn()
+      {
+        using core = new Core()
+        core.on('is-offline', statusEventMock)
+        core.on('is-online', statusEventMock)
+      }
+      vi.advanceTimersByTime(3000)
+      expect(statusEventMock).not.toHaveBeenCalled()
     })
   })
 

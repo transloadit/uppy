@@ -39,16 +39,16 @@ section a:hover {
   gap: 0.875rem;
 }
 
-.item[data-framework='react'] svg {
+.item[data-framework="react"] svg {
   color: #61dafb;
 }
-.item[data-framework='vue'] svg {
+.item[data-framework="vue"] svg {
   color: #4fc08d;
 }
-.item[data-framework='svelte'] svg {
+.item[data-framework="svelte"] svg {
   color: #ff3e00;
 }
-.item[data-framework='angular'] svg {
+.item[data-framework="angular"] svg {
   color: #dd0031;
 }
 
@@ -65,7 +65,7 @@ section a:hover {
 /* Small chevron on the right: these cards all navigate, and without it a card
    reads as a panel rather than a link. */
 .item::after {
-  content: '';
+  content: "";
   position: absolute;
   right: 1.125rem;
   top: 50%;

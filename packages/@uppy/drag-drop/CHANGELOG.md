@@ -1,5 +1,12 @@
 # @uppy/drag-drop
 
+## 6.0.2
+
+### Patch Changes
+
+- a8e8b28: `onDrop` now runs before dropped files are read, while `event.dataTransfer`
+  still holds the dropped items. Dropped files are not in state yet at that point.
+
 ## 6.0.1
 
 ### Patch Changes
@@ -68,7 +75,6 @@
 ### Major Changes
 
 - 3290864: All packages now have export maps. This is a breaking change in two cases:
-
   1. The css imports have changed from `@uppy[package]/dist/styles.min.css` to `@uppy[package]/css/styles.min.css`
   2. You were importing something that wasn't exported from the root, for instance `@uppy/core/lib/foo.js`. You can now only import things we explicitly exported.
 

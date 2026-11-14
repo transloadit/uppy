@@ -1,5 +1,5 @@
-import React from 'react'
 import Link from '@docusaurus/Link'
+import type { ReactNode } from 'react'
 
 import useLiveCount, { compact } from '../../hooks/useLiveCount'
 
@@ -22,7 +22,7 @@ type Props = {
   size?: 'md' | 'lg'
 }
 
-export default function GitHubStars({ size = 'md' }: Props): JSX.Element {
+export default function GitHubStars({ size = 'md' }: Props): ReactNode {
   const stars = useGitHubStars()
 
   return (

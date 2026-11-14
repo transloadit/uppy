@@ -29,7 +29,7 @@
 /* The fade is an overlay rather than a mask on the scroller, so the copy button
    sits on top of it at full strength. */
 .wrapper::after {
-  content: '';
+  content: "";
   position: absolute;
   inset-inline: 0;
   bottom: 0;

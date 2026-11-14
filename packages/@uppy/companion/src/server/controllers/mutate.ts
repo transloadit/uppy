@@ -73,7 +73,9 @@ const operations = {
       provider.moveItem({ ...context, id, destination }),
   ),
   'create-folder': mutation(
-    z.object({ name: requiredString, parentId: parentIdField }),
+    // folder names, not paths. Only a bound on the work done per request: the
+    // storage enforces its own limit (S3: keys of at most 1024 bytes).
+    z.object({ name: requiredString.max(1024), parentId: parentIdField }),
     (provider, context, { name, parentId }) =>
       provider.createFolder({ ...context, parentId, name }),
   ),

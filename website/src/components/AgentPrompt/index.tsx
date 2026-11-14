@@ -1,7 +1,6 @@
-import React from 'react'
-
-import CopyStateIcon from '../CopyStateIcon'
+import type { ReactNode } from 'react'
 import { useCopyToClipboard } from '../../hooks/useCopyToClipboard'
+import CopyStateIcon from '../CopyStateIcon'
 import { agentPrompt } from './prompt'
 import styles from './styles.module.css'
 
@@ -15,7 +14,7 @@ type Props = {
  * page; they copy it into an agent. The copy button always takes the whole
  * thing, whatever is scrolled into view.
  */
-export default function AgentPrompt({ className }: Props): JSX.Element {
+export default function AgentPrompt({ className }: Props): ReactNode {
   const { copied, copy } = useCopyToClipboard(agentPrompt)
 
   return (
@@ -23,6 +22,7 @@ export default function AgentPrompt({ className }: Props): JSX.Element {
       {/* Focusable so the panel can be scrolled from the keyboard. */}
       <pre
         className={styles.prompt}
+        // biome-ignore lint/a11y/noNoninteractiveTabindex: scrollable regions must be keyboard-focusable
         tabIndex={0}
         role="group"
         aria-label="Prompt for adding Uppy with a coding agent"

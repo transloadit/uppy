@@ -288,9 +288,9 @@ export default class Audio<M extends Meta, B extends Body> extends UIPlugin<
   #stop = async () => {
     if (this.#stream) {
       const audioTracks = this.#stream.getAudioTracks()
-      audioTracks.forEach((track) => {
+      for (const track of audioTracks) {
         track.stop()
-      })
+      }
     }
 
     if (this.#recorder) {
@@ -414,11 +414,11 @@ export default class Audio<M extends Meta, B extends Body> extends UIPlugin<
 
           const { audioSources, currentDeviceId } = this.getPluginState()
 
-          audioSources.forEach((audioSource) => {
+          for (const audioSource of audioSources) {
             if (currentDeviceId === audioSource.deviceId) {
               restartStream = false
             }
-          })
+          }
 
           if (restartStream) {
             this.#stop()

@@ -75,7 +75,10 @@ declare module 'express-session' {
       response?: {
         access_token?: string
         refresh_token?: string
+        error?: unknown
       }
+      /** The uppyAuthToken callback minted for this session, until send-token delivers it. */
+      pendingAuthToken?: string
     }
   }
 }

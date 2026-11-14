@@ -1,6 +1,6 @@
 import got from 'got'
 import { isRecord } from '../../helpers/type-guards.js'
-import { prepareStream } from '../../helpers/utils.js'
+import { pathSegment, prepareStream } from '../../helpers/utils.js'
 import { ProviderApiError } from '../error.js'
 import Provider, {
   type ProviderDownloadOptions,
@@ -25,7 +25,7 @@ const getClient = ({ token }: { token: string }): UnsplashClient =>
 
 const getPhotoMeta = async (client: UnsplashClient, id: string) =>
   client
-    .get(`photos/${id}`, { responseType: 'json' })
+    .get(`photos/${pathSegment(id)}`, { responseType: 'json' })
     .json<{ links: { download_location?: string } }>()
 
 interface UnsplashUserSession {

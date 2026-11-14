@@ -10,24 +10,29 @@ import type {
 import type { CompanionFile } from '../../../utils/index.js'
 import shallowClone from './shallowClone.js'
 
-export type ApiList = (directory: PartialTreeId) => Promise<{
+export type ApiList = (
+  directory: PartialTreeId,
+  signal: AbortSignal,
+) => Promise<{
   nextPagePath: PartialTreeId
   items: CompanionFile[]
 }>
 
 const recursivelyFetch = async (
-  queue: PQueue,
   poorTree: PartialTree,
   poorFolder: PartialTreeFolderNode,
   apiList: ApiList,
+  signal: AbortSignal,
   validateSingleFile: (file: CompanionFile) => string | null,
-) => {
+): Promise<PartialTreeFolderNode[]> => {
   let items: CompanionFile[] = []
   let currentPath: PartialTreeId = poorFolder.cached
     ? poorFolder.nextPagePath
     : poorFolder.id
   while (currentPath) {
-    const response = await apiList(currentPath)
+    // in case the last page ignored the abort
+    signal.throwIfAborted()
+    const response = await apiList(currentPath, signal)
     items = items.concat(response.items)
     currentPath = response.nextPagePath
   }
@@ -64,11 +69,7 @@ const recursivelyFetch = async (
   poorFolder.nextPagePath = null
   poorTree.push(...files, ...folders)
 
-  folders.forEach((folder) => {
-    queue.add(() =>
-      recursivelyFetch(queue, poorTree, folder, apiList, validateSingleFile),
-    )
-  })
+  return folders
 }
 
 const afterFill = async (
@@ -76,11 +77,48 @@ const afterFill = async (
   apiList: ApiList,
   validateSingleFile: (file: CompanionFile) => string | null,
   reportProgress: (n: number) => void,
+  signal?: AbortSignal,
 ): Promise<PartialTree> => {
+  signal?.throwIfAborted()
   const queue = new PQueue({ concurrency: 6 })
 
   // fill up the missing parts of a partialTree!
   const poorTree: PartialTree = shallowClone(partialTree)
+
+  // One failed listing fails the whole fill, or Done would add only part of the
+  // selection. So the first failure aborts the fill, as a cancel via `signal`
+  // does: running requests stop, queued listings are dropped, and `onIdle()`
+  // resolves at once. (`AbortSignal.any()` is too new for iOS < 17.4.)
+  const fill = new AbortController()
+  const cancel = () => fill.abort()
+  signal?.addEventListener('abort', cancel)
+  // Recorded inside the task, so it is set before `onIdle()` resolves.
+  let firstError: unknown
+  const enqueue = (folder: PartialTreeFolderNode) => {
+    queue
+      .add(
+        async () => {
+          try {
+            const subfolders = await recursivelyFetch(
+              poorTree,
+              folder,
+              apiList,
+              fill.signal,
+              validateSingleFile,
+            )
+            subfolders.forEach(enqueue)
+          } catch (err) {
+            if (fill.signal.aborted) return
+            firstError = err
+            fill.abort()
+          }
+        },
+        { signal: fill.signal },
+      )
+      // p-queue rejects the tasks the abort cut short: handled above.
+      .catch(() => {})
+  }
+
   const poorFolders = poorTree.filter(
     (item) =>
       item.type === 'folder' &&
@@ -89,17 +127,7 @@ const afterFill = async (
       (item.cached === false || item.nextPagePath),
   ) as PartialTreeFolderNode[]
   // per each poor folder, recursively fetch all files and make them .checked!
-  poorFolders.forEach((poorFolder) => {
-    queue.add(() =>
-      recursivelyFetch(
-        queue,
-        poorTree,
-        poorFolder,
-        apiList,
-        validateSingleFile,
-      ),
-    )
-  })
+  poorFolders.forEach(enqueue)
 
   queue.on('completed', () => {
     const nOfFilesChecked = poorTree.filter(
@@ -108,8 +136,15 @@ const afterFill = async (
     reportProgress(nOfFilesChecked)
   })
 
-  await queue.onIdle()
+  try {
+    await queue.onIdle()
+  } finally {
+    signal?.removeEventListener('abort', cancel)
+  }
 
+  // A cancel wins over an earlier failure: the user asked to stop.
+  signal?.throwIfAborted()
+  if (fill.signal.aborted) throw firstError
   return poorTree
 }
 

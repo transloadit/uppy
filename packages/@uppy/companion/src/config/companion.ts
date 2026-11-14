@@ -206,13 +206,13 @@ export function validateConfig(companionOptions: CompanionInitOptions): void {
       microsoft: 'providerOptions.onedrive',
       google: 'providerOptions.drive',
     }
-    Object.keys(deprecatedOptions).forEach((deprecated) => {
+    for (const deprecated of Object.keys(deprecatedOptions)) {
       if (Object.hasOwn(providerOptions, deprecated)) {
         throw new Error(
           `The Provider option "providerOptions.${deprecated}" is no longer supported. Please use the option "${deprecatedOptions[deprecated]}" instead.`,
         )
       }
-    })
+    }
 
     if (providerOptions['s3'] != null) {
       parseS3ProviderOptions(providerOptions['s3'])

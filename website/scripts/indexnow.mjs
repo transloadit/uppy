@@ -1,5 +1,5 @@
-import { createHash } from 'node:crypto'
 import { execFile } from 'node:child_process'
+import { createHash } from 'node:crypto'
 import { mkdir, readFile, writeFile } from 'node:fs/promises'
 import path from 'node:path'
 import { pathToFileURL } from 'node:url'
@@ -24,9 +24,9 @@ function decodeXml(value) {
     (_, entity) => {
       if (entity.startsWith('#')) {
         return String.fromCodePoint(
-          entity[1].toLowerCase() === 'x' ?
-            parseInt(entity.slice(2), 16)
-          : Number(entity.slice(1)),
+          entity[1].toLowerCase() === 'x'
+            ? parseInt(entity.slice(2), 16)
+            : Number(entity.slice(1)),
         )
       }
       return { amp: '&', lt: '<', gt: '>', quot: '"', apos: "'" }[entity]
@@ -136,13 +136,11 @@ async function snapshot({ buildDir, log }) {
         .replace(/<(script|style)\b[^>]*>[\s\S]*?<\/\1>/gi, '')
         // React hoists shared-logo preloads into the root, outside navigation.
         .replace(/<link\b[^>]*>/gi, (tag) =>
-          (
-            /\b(preload|modulepreload|prefetch|preconnect|dns-prefetch)\b/i.test(
-              attributes(tag).rel ?? '',
-            )
-          ) ?
-            ''
-          : tag,
+          /\b(preload|modulepreload|prefetch|preconnect|dns-prefetch)\b/i.test(
+            attributes(tag).rel ?? '',
+          )
+            ? ''
+            : tag,
         )
         .replace(/<(nav|aside)\b[^>]*>[\s\S]*?<\/\1>/gi, '')
         .replace(
@@ -262,7 +260,7 @@ async function save(stateDir, state) {
   await writeFile(path.join(stateDir, 'state.json'), JSON.stringify(state))
 }
 
-async function request(fetchImpl, url, options = {}) {
+function request(fetchImpl, url, options = {}) {
   return fetchImpl(url, {
     ...options,
     signal: AbortSignal.timeout(15000),
@@ -313,9 +311,9 @@ export async function prepare(options = {}) {
     cached,
   ].reduce(
     (latest, state) =>
-      state && (!latest || state.generation >= latest.generation) ?
-        state
-      : latest,
+      state && (!latest || state.generation >= latest.generation)
+        ? state
+        : latest,
     undefined,
   )
   if (!previous && recoveryError) throw recoveryError

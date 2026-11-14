@@ -259,6 +259,7 @@ describe('Test Custom Provider options', () => {
           config: {
             key: 'foo_key',
             secret: 'foo_secret',
+            state: false,
           },
           module: SomeProvider,
         },
@@ -273,6 +274,7 @@ describe('Test Custom Provider options', () => {
     )
     expect(someProvider['key']).toBe('foo_key')
     expect(someProvider['secret']).toBe('foo_secret')
+    expect(someProvider['state']).toBe(true)
     expect(providers['foo' as keyof typeof providers]).toBeTruthy()
   })
 })

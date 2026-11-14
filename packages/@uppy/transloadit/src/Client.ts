@@ -119,9 +119,9 @@ export default class Client<M extends Meta, B extends Body> {
       data.append('signature', signature)
     }
 
-    Object.keys(fields).forEach((key) => {
-      data.append(key, String(fields[key]))
-    })
+    for (const [key, value] of Object.entries(fields)) {
+      data.append(key, String(value))
+    }
     data.append('num_expected_upload_files', String(expectedFiles))
 
     const url = new URL(ASSEMBLIES_ENDPOINT, `${this.opts.service}`).href

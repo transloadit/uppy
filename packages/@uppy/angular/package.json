@@ -19,7 +19,8 @@
     "url": "git+https://github.com/transloadit/uppy.git"
   },
   "scripts": {
-    "build": "ng-packagr -c tsconfig.lib.prod.json && node scripts/collect-dist.mjs"
+    "build": "ng-packagr -c tsconfig.lib.prod.json && node scripts/collect-dist.mjs",
+    "test": "vitest run --silent='passed-only'"
   },
   "main": "./fesm2022/uppy-angular.mjs",
   "types": "./types/uppy-angular.d.ts",
@@ -45,13 +46,18 @@
     }
   },
   "devDependencies": {
-    "@angular/compiler": "^22.2.1",
-    "@angular/compiler-cli": "^22.2.1",
-    "@angular/core": "^22.2.1",
+    "@angular/common": "^22.2.3",
+    "@angular/compiler": "^22.2.3",
+    "@angular/compiler-cli": "^22.2.3",
+    "@angular/core": "^22.2.3",
+    "@angular/platform-browser": "^22.2.3",
     "@uppy-dev/tsconfig": "workspace:^",
-    "ng-packagr": "^22.2.4",
+    "@vitest/browser-playwright": "^5.0.5",
+    "ng-packagr": "^22.2.5",
+    "playwright": "1.64.1",
     "rxjs": "~7.8.0",
-    "typescript": "^6.0.3"
+    "typescript": "^6.0.3",
+    "vitest": "^5.0.5"
   },
   "sideEffects": false
 }

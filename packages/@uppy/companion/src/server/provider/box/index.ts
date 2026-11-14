@@ -1,6 +1,6 @@
 import got from 'got'
 import { isRecord } from '../../helpers/type-guards.js'
-import { prepareStream } from '../../helpers/utils.js'
+import { pathSegment, prepareStream } from '../../helpers/utils.js'
 import Provider, {
   type ProviderDownloadOptions,
   type ProviderDownloadResponse,
@@ -52,7 +52,7 @@ function list({
   const cursor =
     typeof query?.['cursor'] === 'string' ? query?.['cursor'] : undefined
   return getClient({ token })
-    .get(`folders/${directory || rootFolderID}/items`, {
+    .get(`folders/${pathSegment(directory || rootFolderID)}/items`, {
       searchParams: {
         fields: BOX_FILES_FIELDS,
         offset: cursor,
@@ -107,9 +107,12 @@ export default class Box extends Provider<BoxUserSession> {
     providerUserSession: { accessToken: token },
   }: ProviderDownloadOptions<BoxUserSession>): Promise<ProviderDownloadResponse> {
     return this.#withErrorHandling('provider.box.download.error', async () => {
-      const stream = getClient({ token }).stream.get(`files/${id}/content`, {
-        responseType: 'json',
-      })
+      const stream = getClient({ token }).stream.get(
+        `files/${pathSegment(id)}/content`,
+        {
+          responseType: 'json',
+        },
+      )
 
       const { size } = await prepareStream(stream)
       return { stream, size }
@@ -133,7 +136,7 @@ export default class Box extends Provider<BoxUserSession> {
       //
       // This can be reproduced more easily by changing extension to png and trying on a newly uploaded image
       const stream = getClient({ token }).stream.get(
-        `files/${id}/thumbnail.${extension}`,
+        `files/${pathSegment(id)}/thumbnail.${extension}`,
         {
           searchParams: {
             max_height: BOX_THUMBNAIL_SIZE,
@@ -154,7 +157,7 @@ export default class Box extends Provider<BoxUserSession> {
   }: ProviderSizeOptions<BoxUserSession>): Promise<number> {
     return this.#withErrorHandling('provider.box.size.error', async () => {
       const file = await getClient({ token })
-        .get(`files/${id}`, { responseType: 'json' })
+        .get(`files/${pathSegment(id)}`, { responseType: 'json' })
         .json<Record<string, unknown>>()
       const sizeValue = file['size']
       const sizeStr =

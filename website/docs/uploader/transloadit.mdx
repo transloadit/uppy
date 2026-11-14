@@ -514,7 +514,7 @@ render Assembly progress without wiring up event listeners. Read it with
 `plugins.Transloadit` (the key is the plugin [`id`](#id)).
 
 ```js
-const { assemblyStatus, lastAssemblyStatus } = uppy
+const { assemblyStatus, lastAssemblyStatus, error } = uppy
   .getPlugin('Transloadit')
   .getPluginState()
 ```
@@ -542,6 +542,19 @@ _observed_, not necessarily the final outcome: with the default
 Assembly once the upload is done, so the stored status can still say
 `ASSEMBLY_UPLOADING` or `ASSEMBLY_EXECUTING` while Transloadit finishes the job
 server-side.
+
+#### `error`
+
+The error the current Assembly failed with
+(`AssemblyStateError | undefined`, default: `undefined`).
+
+When the Assembly fails, this is an `Error` with the API’s error fields (such as
+`error`) and the Assembly Status on its `assembly` property. An error that isn’t
+an API response, such as a network failure, has only the `Error` properties and
+`assembly`. [`lastAssemblyStatus`](#lastassemblystatus) keeps the last good
+status; it isn’t replaced by the error response.
+
+It is cleared when the next Assembly starts and when the upload is cancelled.
 
 ### Static exports
 
@@ -682,6 +695,44 @@ uppy.on('transloadit:complete', (assembly) => {
 })
 ```
 
+#### `transloadit:assembly-error`
+
+Fired when an Assembly fails, including when its final status could not be
+fetched. The files in it get an upload error.
+
+**Parameters**
+
+- `assembly` - The [Assembly Status][assembly-status] of the failed Assembly.
+- `error` - The error. For the current Assembly it is also stored in the plugin
+  state as [`error`](#error).
+
+#### `transloadit:assembly-cancel`
+
+Fired when the upload is cancelled (for example with `uppy.cancelAll()`) while
+an Assembly is running. The plugin has already stopped following the Assembly,
+and the request to cancel it on Transloadit is about to be sent. No other
+`transloadit:*` events fire for this Assembly afterwards, apart from
+`transloadit:assembly-cancelled`.
+
+**Parameters**
+
+- `assembly` - The [Assembly Status][assembly-status] at the moment of
+  cancelling.
+
+#### `transloadit:assembly-cancelled`
+
+Fired when Transloadit has confirmed that the Assembly was cancelled. It doesn’t
+fire if the cancel request fails.
+
+At this point the Assembly is no longer in the plugin state: `getAssembly()` and
+[`assemblyStatus`](#assemblystatus) are `undefined`. Use the `assembly`
+parameter, or [`lastAssemblyStatus`](#lastassemblystatus).
+
+**Parameters**
+
+- `assembly` - The [Assembly Status][assembly-status] at the moment of
+  cancelling.
+
 ## Frequently Asked Questions
 
 ### Accessing the assembly when an error occurred
@@ -696,6 +747,17 @@ uppy.on('error', (error) => {
     console.log(error.assembly)
   }
 })
+```
+
+The error also stays in the plugin state as [`error`](#error) until the next
+Assembly starts or the upload is cancelled, so you can read it without an event
+listener:
+
+```js
+const { error } = uppy.getPlugin('Transloadit').getPluginState()
+if (error?.assembly) {
+  console.log(`Assembly ID ${error.assembly.assembly_id} failed!`)
+}
 ```
 
 ### Assembly behavior when Uppy is closed

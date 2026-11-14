@@ -2,6 +2,7 @@ import type { CorsOptions } from 'cors'
 import type { NextFunction, Request, Response } from 'express'
 import * as oAuthState from '../helpers/oauth-state.js'
 import { isRecord } from '../helpers/type-guards.js'
+import { SOCKET_TOKEN_RE } from '../helpers/utils.js'
 
 /**
  * Derived from `cors` npm package.
@@ -123,8 +124,12 @@ export default function connect(
     stateObj.preAuthToken = preAuthTokenValue
   }
 
+  // The auth callback socket only accepts UUIDs, so any other token could never be delivered to.
   const authCallbackToken = req.query['authCallbackToken']
-  if (typeof authCallbackToken === 'string') {
+  if (
+    typeof authCallbackToken === 'string' &&
+    SOCKET_TOKEN_RE.test(authCallbackToken)
+  ) {
     stateObj.authCallbackToken = authCallbackToken
   }
 

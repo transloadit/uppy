@@ -5,6 +5,7 @@ import { ProviderViews } from '@uppy/core/provider-views'
 import Dashboard from '@uppy/dashboard'
 import Dropbox from '@uppy/dropbox'
 import GoogleDrive from '@uppy/google-drive'
+import { delay, HttpResponse, http } from 'msw'
 import { afterEach, beforeAll, describe, expect, test } from 'vitest'
 import { page, userEvent } from 'vitest/browser'
 import { handlers } from './mocks/CompanionHandler.js'
@@ -567,5 +568,53 @@ describe('ProviderView Search E2E', () => {
       item.textContent?.includes('readme.md'),
     )
     expect(readmeFiltered).toBeTruthy()
+  })
+})
+
+describe('ProviderView Done E2E', () => {
+  test('one checked folder fails to load -> nothing added, selection kept, error shown', async () => {
+    let failedListingRequested = false
+    // tried before the file's handlers; returning nothing falls through to
+    // them for other paths
+    network.use(
+      http.get(
+        'http://companion.test/:provider/list/*',
+        async ({ request }) => {
+          const { pathname } = new URL(request.url)
+          if (!pathname.endsWith(encodeURIComponent('/workspace/project')))
+            return undefined
+          failedListingRequested = true
+          // fail after the other checked folder has loaded
+          await delay(100)
+          return HttpResponse.json({ message: 'boom' }, { status: 500 })
+        },
+      ),
+    )
+    uppy = initializeUppy(['Dropbox'])
+
+    await page.getByRole('tab', { name: 'Dropbox' }).click()
+    const first = page.getByRole('checkbox', {
+      name: 'All files from folder first',
+    })
+    const workspace = page.getByRole('checkbox', {
+      name: 'All files from folder workspace',
+    })
+    await first.click()
+    await workspace.click()
+
+    await page.getByRole('button', { name: /^Select / }).click()
+    await expect.poll(() => failedListingRequested).toBe(true)
+    await expect
+      .poll(() => uppy!.getPlugin('Dropbox')!.getPluginState().loading)
+      .toBe(false)
+
+    // `.first()`: the Dashboard renders the Informer twice
+    await expect
+      .element(page.getByText('Connection with Companion failed').first())
+      .toBeVisible()
+    // before the fix, the files that did load (6) were added
+    expect(uppy.getFiles()).toHaveLength(0)
+    await expect.element(first).toBeChecked()
+    await expect.element(workspace).toBeChecked()
   })
 })

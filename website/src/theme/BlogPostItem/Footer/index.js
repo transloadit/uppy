@@ -1,10 +1,8 @@
-import React from 'react'
-import clsx from 'clsx'
-import { useBlogPost } from '@docusaurus/plugin-content-blog/client'
-import EditThisPage from '@theme/EditThisPage'
-import TagsListInline from '@theme/TagsListInline'
 import Link from '@docusaurus/Link'
+import { useBlogPost } from '@docusaurus/plugin-content-blog/client'
 import ReadMoreLink from '@theme/BlogPostItem/Footer/ReadMoreLink'
+import TagsListInline from '@theme/TagsListInline'
+import clsx from 'clsx'
 import styles from './styles.module.css'
 
 export default function BlogPostItemFooter() {

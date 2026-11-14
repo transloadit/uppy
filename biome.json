@@ -12,6 +12,8 @@
       "examples/**",
       "scripts/**",
       "private/**",
+      "website/**",
+      "!website/static",
       "!packages/**/{angular/src,dist,lib}",
       "!node_modules",
       "!.svelte-kit",
@@ -34,6 +36,9 @@
       "suspicious": {
         "noExplicitAny": "off",
         "useAwait": "error"
+      },
+      "complexity": {
+        "noForEach": "error"
       },
       "correctness": {
         "useExhaustiveDependencies": "error",
@@ -91,6 +96,19 @@
           "correctness": {
             "useHookAtTopLevel": "off",
             "useExhaustiveDependencies": "off"
+          }
+        }
+      }
+    },
+    {
+      "includes": ["website/**/*.css"],
+      "linter": {
+        "rules": {
+          "complexity": {
+            "noImportantStyles": "off"
+          },
+          "style": {
+            "noDescendingSpecificity": "off"
           }
         }
       }

@@ -28,8 +28,13 @@ export default function callback(req: Request, res: Response): void {
     oAuthState.getFromState(grantDynamic.state, 'origin', secret)
   const originString = typeof origin === 'string' ? origin : undefined
 
-  const accessToken = req.session?.grant?.response?.access_token
-  const refreshToken = req.session?.grant?.response?.refresh_token
+  const grant = req.session?.grant
+  const response = grant?.response
+  // One OAuth response mints one token: a repeated callback must not mint another.
+  if (grant) delete grant.response
+  // Grant passes an error callback's query through as the response, token fields included.
+  const accessToken = response?.error ? undefined : response?.access_token
+  const refreshToken = response?.refresh_token
 
   if (!accessToken) {
     logger.debug(
@@ -37,7 +42,7 @@ export default function callback(req: Request, res: Response): void {
       undefined,
       req.id,
     )
-    logger.debug(req.session?.grant?.response, 'callback.oauth.resp', req.id)
+    logger.debug(response, 'callback.oauth.resp', req.id)
     const authCallbackToken =
       grantDynamic.state &&
       oAuthState.getFromState(
@@ -94,10 +99,21 @@ export default function callback(req: Request, res: Response): void {
     res.sendStatus(500)
     return
   }
-  res.redirect(
-    req.companion.buildURL(
-      `/${providerName}/send-token?uppyAuthToken=${uppyAuthToken}`,
-      true,
-    ),
+  const sendTokenUrl = req.companion.buildURL(
+    `/${providerName}/send-token?uppyAuthToken=${uppyAuthToken}`,
+    true,
   )
+  // send-token delivers only this token, and only to this session.
+  if (grant) grant.pendingAuthToken = uppyAuthToken
+  // Save before redirecting, like Grant: express-session sends the headers
+  // before its store write finishes, so send-token could miss the token.
+  if (typeof req.session?.save === 'function') {
+    req.session.save((err) => {
+      // send-token may then miss the token; the user can retry the login.
+      if (err) logger.error(err, 'callback.session.save.error', req.id)
+      res.redirect(sendTokenUrl)
+    })
+  } else {
+    res.redirect(sendTokenUrl)
+  }
 }

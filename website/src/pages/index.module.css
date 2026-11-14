@@ -242,7 +242,7 @@
    above the glow it de-bands, but below the sparks: noise over a 1px hairline
    makes a clean line look like sensor dirt. */
 .hero::after {
-  content: '';
+  content: "";
   position: absolute;
   z-index: -2;
   inset: 0;
@@ -401,7 +401,7 @@
    wipes in instead of growing out of a 1px stub. Same pink as the navbar's
    active indicator, so "you are here" reads the same in both places. */
 .targetInput + label::after {
-  content: '';
+  content: "";
   position: absolute;
   inset-inline: 0;
   bottom: 0;
@@ -1017,8 +1017,8 @@
   position: relative;
   display: grid;
   grid-template-areas:
-    'logo'
-    'rail';
+    "logo"
+    "rail";
   align-items: center;
   /* Wide enough for the file to clear the mark above it on its way past. */
   gap: 1.5rem;
@@ -1050,7 +1050,7 @@
    Transloadit's three. Roughly by how much work each does, not in proportion to
    it — the ground is a territory, not a bar chart, and 1:3 would leave the lane
    this site is about as a sliver. */
-.lineLane[data-owner='uppy'] {
+.lineLane[data-owner="uppy"] {
   --leg-start: 0;
   --leg-len: 32;
   /* Carrying the boundary alone, so a good deal stronger than it was over a
@@ -1060,7 +1060,7 @@
   flex: 0 0 39.7%;
 }
 
-.lineLane[data-owner='transloadit'] {
+.lineLane[data-owner="transloadit"] {
   --leg-start: 41.2;
   --leg-len: 46.8;
   /* Lighter than the pink one at face value, level with it on the page: a
@@ -1089,7 +1089,7 @@
 /* Full row height: without the chip around it the roundel was carrying 26px
    against a 91px wordmark, and the lane it heads is the one this whole site is
    about. */
-.lineLane[data-owner='uppy'] .lineLogo img {
+.lineLane[data-owner="uppy"] .lineLogo img {
   display: block;
   height: var(--logo-h);
   width: auto;
@@ -1098,7 +1098,7 @@
 /* Small enough to be the Uppy roundel's peer rather than the loudest thing on a
    card about Uppy: this is a near-black display wordmark against Inter, so it
    carries far more ink per pixel than anything around it. */
-.lineLane[data-owner='transloadit'] .lineLogo img {
+.lineLane[data-owner="transloadit"] .lineLogo img {
   display: block;
   height: 0.9375rem;
   width: auto;
@@ -1116,7 +1116,7 @@
 /* Dashed rather than solid: a conveyor reads as segments, and the dashes give
    the file something to travel against. */
 .lineRail::before {
-  content: '';
+  content: "";
   position: absolute;
   top: var(--rail-y);
   inset-inline: 0;
@@ -1147,7 +1147,7 @@
 .lineLane:first-child::after {
   --nib: 2.1px;
 
-  content: '';
+  content: "";
   position: absolute;
   top: 50%;
   left: calc(100% + 0.875rem);
@@ -1190,7 +1190,9 @@
   /* The moment the file reaches this station, derived rather than written
      down: how far into the lane's leg it sits, as a share of the loop. */
   animation-delay: calc(
-    (var(--leg-start) + var(--leg-len) * var(--at-frac)) * var(--loop) / 100
+    (var(--leg-start) + var(--leg-len) * var(--at-frac)) *
+    var(--loop) /
+    100
   );
 }
 
@@ -1212,7 +1214,7 @@
 /* ink-400 is a blue-grey, and on the warm pink ground it was the only cool thing
    in the lane — the labels read as borrowed from the slate side. Warmed just
    enough to belong, not enough to compete with the lit stations. */
-.lineLane[data-owner='uppy'] .lineStation em {
+.lineLane[data-owner="uppy"] .lineStation em {
   color: color-mix(in srgb, var(--u-pink-600) 35%, var(--u-ink-400));
 }
 
@@ -1283,11 +1285,11 @@
    the outgoing one, which then leaves on a step rather than a fade. For those
    0.44ms there are two chips 0.06px apart, which is nothing, and at no point in
    the loop is there none. */
-.lineLane[data-owner='uppy'] .lineFile {
+.lineLane[data-owner="uppy"] .lineFile {
   animation-name: travel-browser, hand-off-arc;
 }
 
-.lineLane[data-owner='transloadit'] .lineFile {
+.lineLane[data-owner="transloadit"] .lineFile {
   animation-name: travel-cloud;
 }
 
@@ -1475,20 +1477,20 @@
   /* Stacked, both rails are the lane's full width, so equal-length legs are
      what keeps the file at one speed — the side-by-side 32/46.8 split would run
      it across the top row nearly twice as fast as the bottom one. */
-  .lineLane[data-owner='uppy'] {
+  .lineLane[data-owner="uppy"] {
     --leg-len: 38;
   }
 
-  .lineLane[data-owner='transloadit'] {
+  .lineLane[data-owner="transloadit"] {
     --leg-start: 47;
     --leg-len: 38;
   }
 
-  .lineLane[data-owner='uppy'] .lineFile {
+  .lineLane[data-owner="uppy"] .lineFile {
     animation-name: travel-browser-stacked;
   }
 
-  .lineLane[data-owner='transloadit'] .lineFile {
+  .lineLane[data-owner="transloadit"] .lineFile {
     animation-name: travel-cloud-stacked;
   }
 }

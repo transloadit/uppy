@@ -232,15 +232,15 @@ export default class StatusBar<
       )
     ) {
       totalSize = 0
-      startedFiles.forEach((file) => {
+      for (const file of startedFiles) {
         totalSize! += file.progress.bytesTotal || 0
         totalUploadedSize += file.progress.bytesUploaded || 0
-      })
+      }
     } else {
       // however uploaded size we will always have
-      startedFiles.forEach((file) => {
+      for (const file of startedFiles) {
         totalUploadedSize += file.progress.bytesUploaded || 0
-      })
+      }
     }
 
     const totalETA = this.#computeSmoothETA({

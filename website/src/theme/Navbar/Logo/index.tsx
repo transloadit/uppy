@@ -1,5 +1,5 @@
-import React from 'react'
 import Link from '@docusaurus/Link'
+import type { ReactNode } from 'react'
 
 import styles from './index.module.css'
 
@@ -9,7 +9,7 @@ import styles from './index.module.css'
  *
  * The two halves are separate links, so this can't be a single wrapping anchor.
  */
-export default function NavbarLogo(): JSX.Element {
+export default function NavbarLogo(): ReactNode {
   return (
     <div className={styles.lockup}>
       <Link to="/" className={styles.uppy} aria-label="Uppy, home">
