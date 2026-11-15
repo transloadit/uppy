@@ -1,11 +1,10 @@
 import type {
   PartialTree,
-  PartialTreeFile,
   PartialTreeFolder,
-  PartialTreeFolderNode,
   PartialTreeId,
 } from '../../../index.js'
 import type { CompanionFile } from '../../../utils/index.js'
+import addListedItems from './addListedItems.js'
 
 const afterScrollFolder = (
   oldPartialTree: PartialTree,
@@ -18,48 +17,18 @@ const afterScrollFolder = (
     (i) => i.id === currentFolderId,
   ) as PartialTreeFolder
 
-  const newFolders = items.filter((i) => i.isFolder === true)
-  const newFiles = items.filter((i) => i.isFolder === false)
-
   // just doing `scrolledFolder.nextPagePath = ...` in a non-mutating way
   const scrolledFolder: PartialTreeFolder = { ...currentFolder, nextPagePath }
   const partialTreeWithUpdatedScrolledFolder = oldPartialTree.map((folder) =>
     folder.id === scrolledFolder.id ? scrolledFolder : folder,
   )
-  const isParentFolderChecked =
-    scrolledFolder.type === 'folder' && scrolledFolder.status === 'checked'
-  const folders: PartialTreeFolderNode[] = newFolders.map((folder) => ({
-    type: 'folder',
-    id: folder.requestPath,
 
-    cached: false,
-    nextPagePath: null,
-
-    status: isParentFolderChecked ? 'checked' : 'unchecked',
-    parentId: scrolledFolder.id,
-    data: folder,
-  }))
-  const files: PartialTreeFile[] = newFiles.map((file) => {
-    const restrictionError = validateSingleFile(file)
-    return {
-      type: 'file',
-      id: file.requestPath,
-
-      restrictionError,
-
-      status:
-        isParentFolderChecked && !restrictionError ? 'checked' : 'unchecked',
-      parentId: scrolledFolder.id,
-      data: file,
-    }
-  })
-
-  const newPartialTree: PartialTree = [
-    ...partialTreeWithUpdatedScrolledFolder,
-    ...folders,
-    ...files,
-  ]
-  return newPartialTree
+  return addListedItems(
+    partialTreeWithUpdatedScrolledFolder,
+    items,
+    scrolledFolder,
+    validateSingleFile,
+  )
 }
 
 export default afterScrollFolder

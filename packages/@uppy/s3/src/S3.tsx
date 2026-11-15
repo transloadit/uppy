@@ -440,8 +440,15 @@ export default class S3<M extends Meta, B extends Body>
     if (
       !prefix.startsWith(root) ||
       prefix.split('/').some((segment) => segment === '..' || segment === '.')
-    )
+    ) {
+      // A granted login no longer lists the root, so show it rather than an empty library.
+      const rootFolder = this.getPluginState().partialTree.find(
+        (node) => node.id === this.rootFolderId,
+      )
+      if (rootFolder?.type === 'root' && !rootFolder.cached)
+        await this.view.openFolder(this.rootFolderId)
       return false
+    }
     if (prefix !== root && this.#grant) {
       const folderId = encodeURIComponent(prefix)
       const before = this.getPluginState()

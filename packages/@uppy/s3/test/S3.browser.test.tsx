@@ -295,17 +295,51 @@ describe('S3 provider in the browser', () => {
     expect(names(plugin)).toEqual([])
   })
 
-  it('rejects paths outside a grant or containing dot segments before any listing', async () => {
+  it('rejects paths outside a grant or containing dot segments, showing the root instead', async () => {
     const { plugin } = setup({
       mode: 'manager',
       getGrant: async () =>
         mockGrant({ bucket: 'my-bucket', prefix: 'tenant/' }),
+      companion: {
+        folders: {
+          'tenant/': [{ name: 'photos', isFolder: true }],
+          'tenant-adjacent/photos/': [{ name: 'secret.jpg', isFolder: false }],
+        },
+      },
     })
     const list = vi.spyOn(plugin.provider, 'list')
     expect(await plugin.openFolderPath('tenant-adjacent/photos/')).toBe(false)
     expect(await plugin.openFolderPath('tenant/../outside/')).toBe(false)
     expect(await plugin.openFolderPath('tenant/./photos/')).toBe(false)
-    expect(list).not.toHaveBeenCalled()
+    expect(list.mock.calls.map(([id]) => id)).toEqual([plugin.rootFolderId])
+    expect(plugin.getPluginState().currentFolderId).toBe(plugin.rootFolderId)
+    expect(names(plugin)).toEqual(['photos'])
+  })
+
+  it('lists placeholder ancestors in their parent’s order once the parent is opened', async () => {
+    const { plugin } = setup({
+      mode: 'manager',
+      getGrant: async () =>
+        mockGrant({ bucket: 'my-bucket', prefix: 'tenant/' }),
+      companion: {
+        pageSize: 2,
+        folders: {
+          'tenant/': [{ name: 'photos', isFolder: true }],
+          'tenant/photos/': [
+            { name: '2024', isFolder: true },
+            { name: '2025', isFolder: true },
+            { name: '2026', isFolder: true },
+            { name: '2027', isFolder: true },
+          ],
+          'tenant/photos/2026/': [{ name: 'chair.jpg', isFolder: false }],
+        },
+      },
+    })
+    expect(await plugin.openFolderPath('tenant/photos/2026/')).toBe(true)
+    await plugin.view.openFolder('tenant%2Fphotos%2F')
+    expect(names(plugin)).toEqual(['2024', '2025', '2026'])
+    expect(await plugin.view.loadNextPage()).toBe(true)
+    expect(names(plugin)).toEqual(['2024', '2025', '2026', '2027'])
   })
 
   it('forgets the session on logout', async () => {
