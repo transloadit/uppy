@@ -1,5 +1,10 @@
-import type { Readable } from 'node:stream'
-import fetch, { type RequestInfo, type RequestInit } from 'node-fetch'
+import { Readable } from 'node:stream'
+import fetch, {
+  Headers,
+  type RequestInfo,
+  type RequestInit,
+  Response,
+} from 'node-fetch'
 import type { WebDAVClientOptions } from 'webdav'
 import { AuthType, createClient, getPatcher } from 'webdav'
 import { getProtectedHttpAgent, validateURL } from '../../helpers/request.js'
@@ -15,30 +20,53 @@ import Provider, {
   type ProviderLogoutResponse,
   type ProviderSimpleAuthOptions,
 } from '../Provider.js'
+import { validateResponseXml } from './validateResponseXml.js'
 
 const defaultDirectory = '/'
 
 /**
  * Upper bound on a WebDAV response that Companion buffers in memory
  * (PROPFIND listings and stat calls). The `webdav` package reads those with
- * `response.text()` after decompression and parses them synchronously, so an
+ * `response.text()` and parses them synchronously, so an
  * anonymous caller pointing simple-auth at a hostile server could inflate a
- * small gzip body into hundreds of megabytes and abort the process.
+ * large response into hundreds of megabytes and abort the process.
+ * Compression is disabled separately, before any response decoder is allocated.
  * node-fetch enforces `size` only when a body is consumed whole, so file
  * downloads (which stream `response.body`) are not limited by this.
  *
  * The webdav patcher is a package-wide singleton, so this applies to every
- * webdav client in the process, and a later `getPatcher().patch('fetch', …)`
- * by an embedding app would replace it.
+ * webdav client in the process. An embedder that replaces this fetch patch
+ * must preserve the same bounds.
  */
 export const MAX_WEBDAV_RESPONSE_BYTES = 5 * 1024 * 1024
 
-getPatcher().patch('fetch', (url: unknown, options: unknown) =>
-  fetch(url as RequestInfo, {
-    ...(options as RequestInit),
+getPatcher().patch('fetch', async (url: unknown, options: unknown) => {
+  // webdav's hot-patcher has no typed fetch boundary.
+  const requestOptions = options as RequestInit
+  const headers = new Headers(requestOptions.headers)
+  headers.set('accept-encoding', 'identity')
+  const response = await fetch(url as RequestInfo, {
+    ...requestOptions,
+    headers,
+    compress: false,
     size: MAX_WEBDAV_RESPONSE_BYTES,
-  }),
-)
+  })
+  const encoding = response.headers.get('content-encoding')
+  if (response.ok && encoding && encoding.toLowerCase() !== 'identity') {
+    if (response.body instanceof Readable) response.body.destroy()
+    throw new Error('Encoded WebDAV responses are not supported')
+  }
+  if (response.ok && requestOptions.method?.toUpperCase() === 'PROPFIND') {
+    const xml = await response.text()
+    validateResponseXml(xml)
+    return new Response(xml, {
+      status: response.status,
+      statusText: response.statusText,
+      headers: response.headers,
+    })
+  }
+  return response
+})
 
 type WebdavUserSession = { webdavUrl?: string }
 type WebdavClient = ReturnType<typeof createClient>
@@ -158,6 +186,12 @@ export default class WebdavProvider extends Provider<WebdavUserSession> {
     if (!validateURL(url, allowLocalUrls)) {
       throw new Error('invalid webdav url')
     }
+    if (
+      decodeURIComponent(new URL(url).pathname).split('/').filter(Boolean)
+        .length > 32
+    ) {
+      throw new Error('WebDAV URL exceeds the maximum folder depth')
+    }
     const HttpAgent = getProtectedHttpAgent({
       protocol: 'http',
       allowLocalIPs: allowLocalUrls,
@@ -193,12 +227,17 @@ export default class WebdavProvider extends Provider<WebdavUserSession> {
         { signal: AbortSignal.timeout(this.requestTimeoutMs) },
       )
 
+      let pathBytes = 0
       for (const item of dir) {
         const isFolder = item.type === 'directory'
         // The server's own path for the item. Prefixing the client-supplied
         // route id instead let one request allocate (id length × item count)
         // bytes of strings, enough to exhaust the heap.
         const requestPath = encodeURIComponent(item.filename)
+        pathBytes += requestPath.length
+        if (pathBytes > MAX_WEBDAV_RESPONSE_BYTES) {
+          throw new Error('WebDAV listing paths exceed the response limit')
+        }
 
         let modifiedDate: string | undefined
         try {

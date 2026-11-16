@@ -82,17 +82,63 @@ describe('webdav SSRF protection', () => {
 describe('webdav response bounds', () => {
   test('rejects a PROPFIND body over 5 MiB', async () => {
     const padding = ' '.repeat(6 * 1024 * 1024)
-    const body = gzipSync(
-      `<?xml version="1.0"?><d:multistatus xmlns:d="DAV:">${padding}</d:multistatus>`,
-    )
+    const body = `<?xml version="1.0"?><d:multistatus xmlns:d="DAV:">${padding}</d:multistatus>`
     handler = (_req, res) => {
       res.writeHead(207, {
         'content-type': 'application/xml',
-        'content-encoding': 'gzip',
       })
       res.end(body)
     }
     await expect(simpleAuth(true)).rejects.toThrow(/max-size|over limit/)
+  })
+
+  test('rejects encoded responses without creating a decompressor', async () => {
+    handler = (req, res) => {
+      expect(req.headers['accept-encoding']).toBe('identity')
+      res.writeHead(207, {
+        'content-type': 'application/xml',
+        'content-encoding': 'gzip',
+      })
+      res.end(gzipSync(emptyListing))
+    }
+    await expect(simpleAuth(true)).rejects.toThrow(
+      'Encoded WebDAV responses are not supported',
+    )
+  })
+
+  test('rejects a deeply nested base URL before requesting a listing', async () => {
+    await expect(
+      provider().simpleAuth({
+        requestBody: { form: { webdavUrl: `${webdavUrl}${'a/'.repeat(33)}` } },
+        companion: {} as never,
+      }),
+    ).rejects.toThrow('maximum folder depth')
+    expect(requestCount).toBe(0)
+  })
+
+  test('rejects an attribute-heavy listing within the byte limit', async () => {
+    handler = (_req, res) => {
+      const attributes = Array.from(
+        { length: 1000 },
+        (_, index) => `a${index}="x"`,
+      ).join(' ')
+      res.writeHead(207, { 'content-type': 'application/xml' })
+      res.end(`<d:multistatus xmlns:d="DAV:" ${attributes}></d:multistatus>`)
+    }
+    await expect(simpleAuth(true)).rejects.toThrow('structural limits')
+  })
+
+  test('rejects recursive XML and DTDs before tree parsing', async () => {
+    handler = (_req, res) => {
+      res.writeHead(207, { 'content-type': 'application/xml' })
+      res.end(`${'<a>'.repeat(65)}${'</a>'.repeat(65)}`)
+    }
+    await expect(simpleAuth(true)).rejects.toThrow('structural limits')
+    handler = (_req, res) => {
+      res.writeHead(207, { 'content-type': 'application/xml' })
+      res.end('<!DOCTYPE a [<!ENTITY b "text">]><a>&b;</a>')
+    }
+    await expect(simpleAuth(true)).rejects.toThrow('structural limits')
   })
 
   test('builds item ids from the server path, not the route id', async () => {
