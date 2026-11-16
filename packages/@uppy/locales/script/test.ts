@@ -1,10 +1,12 @@
+import type { Locale } from '@uppy/core/utils'
+
 import fs from 'node:fs'
 import { glob } from 'node:fs/promises'
 import path from 'node:path'
 import process from 'node:process'
 import { fileURLToPath } from 'node:url'
 import { styleText } from 'node:util'
-import type { Locale } from '@uppy/core/utils'
+
 import { getLocales, localeNameFromLocalePath, omit } from './helpers.ts'
 
 const root = fileURLToPath(new URL('../../../../', import.meta.url))

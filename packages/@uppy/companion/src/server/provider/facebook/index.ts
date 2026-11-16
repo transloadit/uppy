@@ -1,19 +1,24 @@
+import type {
+  ProviderDownloadOptions,
+  ProviderDownloadResponse,
+  ProviderListOptions,
+  ProviderListResponse,
+  ProviderLogoutOptions,
+  ProviderLogoutResponse,
+  ProviderThumbnailResponse,
+} from '../Provider.js'
+import type { FacebookListResponse } from './adapter.js'
+
 import crypto from 'node:crypto'
+
 import got from 'got'
+
 import { isRecord } from '../../helpers/type-guards.js'
 import { HttpError, pathSegment, prepareStream } from '../../helpers/utils.js'
 import logger from '../../logger.js'
-import Provider, {
-  type ProviderDownloadOptions,
-  type ProviderDownloadResponse,
-  type ProviderListOptions,
-  type ProviderListResponse,
-  type ProviderLogoutOptions,
-  type ProviderLogoutResponse,
-  type ProviderThumbnailResponse,
-} from '../Provider.js'
+import Provider from '../Provider.js'
 import { withProviderErrorHandling } from '../providerErrors.js'
-import { adaptData, type FacebookListResponse, sortImages } from './adapter.js'
+import { adaptData, sortImages } from './adapter.js'
 
 type FacebookBatchRequest = {
   method: string

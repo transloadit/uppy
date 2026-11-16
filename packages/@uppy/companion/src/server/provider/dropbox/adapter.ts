@@ -1,7 +1,9 @@
-import querystring from 'node:querystring'
-import mime from 'mime-types'
 import type { BuildUrl } from '../../../types/express.js'
 import type { ProviderListResponse } from '../Provider.js'
+
+import querystring from 'node:querystring'
+
+import mime from 'mime-types'
 
 type DropboxItem = {
   '.tag'?: string

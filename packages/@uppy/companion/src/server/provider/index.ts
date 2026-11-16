@@ -1,5 +1,8 @@
 import type { NextFunction, Request, Response } from 'express'
+
 import type { GrantProviderStaticConfig } from '../../config/grant.js'
+import type { ProviderCtor } from './Provider.js'
+
 import { getRedirectPath, getURLBuilder } from '../helpers/utils.js'
 import * as logger from '../logger.js'
 import box from './box/index.js'
@@ -8,7 +11,7 @@ import dropbox from './dropbox/index.js'
 import facebook from './facebook/index.js'
 import { Drive } from './google/drive/index.js'
 import onedrive from './onedrive/index.js'
-import { isOAuthProvider, type ProviderCtor } from './Provider.js'
+import { isOAuthProvider } from './Provider.js'
 import s3 from './s3/index.js'
 import TransloaditStorageProvider from './s3/transloadit-storage.js'
 import unsplash from './unsplash/index.js'

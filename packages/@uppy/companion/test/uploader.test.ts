@@ -1,8 +1,11 @@
+import type { AddressInfo } from 'node:net'
+
+import type { Request } from 'express'
+
 import fs from 'node:fs'
 import http from 'node:http'
-import type { AddressInfo } from 'node:net'
 import { PassThrough, Readable } from 'node:stream'
-import type { Request } from 'express'
+
 import express from 'express'
 import nock from 'nock'
 import request from 'supertest'
@@ -17,6 +20,7 @@ import {
   test,
   vi,
 } from 'vitest'
+
 import { defaultOptions } from '../dist/config/companion.js'
 import Emitter from '../dist/server/emitter/index.js'
 import { isRecord } from '../dist/server/helpers/type-guards.js'

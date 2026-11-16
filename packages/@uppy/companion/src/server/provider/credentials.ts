@@ -1,17 +1,20 @@
-import { htmlEscape } from 'escape-goat'
 import type { NextFunction, Request, Response } from 'express'
-import got from 'got'
 import type { Promisable } from 'type-fest'
+
 import type { CredentialsFetchResponse } from '../../schemas/companion.js'
 import type { CompanionRuntimeOptions } from '../../types/companion-options.js'
 import type { CompanionExpressLocals } from '../../types/express.js'
+import type Provider from './Provider.js'
+
+import { htmlEscape } from 'escape-goat'
+import got from 'got'
+
 import * as tokenService from '../helpers/jwt.js'
 import * as oAuthState from '../helpers/oauth-state.js'
 import { isRecord, toError } from '../helpers/type-guards.js'
 import { getRedirectPath, getURLBuilder } from '../helpers/utils.js'
 import logger from '../logger.js'
 import { ProviderApiError, parseHttpError } from './error.js'
-import type Provider from './Provider.js'
 
 /**
  * @param url

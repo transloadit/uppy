@@ -1,6 +1,7 @@
 <script lang="ts">
 import type { PartialTreeFolderNode } from '@uppy/core'
 import type { AvailablePluginsKeys } from '@uppy/remote-sources'
+
 import { useRemoteSource } from '@uppy/svelte'
 
 interface Props {

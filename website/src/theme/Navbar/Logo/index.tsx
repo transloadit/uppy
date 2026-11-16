@@ -1,5 +1,6 @@
-import Link from '@docusaurus/Link'
 import type { ReactNode } from 'react'
+
+import Link from '@docusaurus/Link'
 
 import styles from './index.module.css'
 

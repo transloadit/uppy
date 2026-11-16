@@ -8,6 +8,7 @@ import GoogleDrive from '@uppy/google-drive'
 import { delay, HttpResponse, http } from 'msw'
 import { afterEach, beforeAll, describe, expect, test } from 'vitest'
 import { page, userEvent } from 'vitest/browser'
+
 import { handlers } from './mocks/CompanionHandler.js'
 
 import '@uppy/core/css/style.css'

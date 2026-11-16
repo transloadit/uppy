@@ -1,5 +1,8 @@
-import { S3Client, type S3ClientConfig } from '@aws-sdk/client-s3'
+import type { S3ClientConfig } from '@aws-sdk/client-s3'
+
 import type { S3ClientOptions } from '../schemas/companion.js'
+
+import { S3Client } from '@aws-sdk/client-s3'
 
 export type { S3ClientOptions }
 

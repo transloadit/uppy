@@ -1,5 +1,6 @@
 <script lang="ts">
 import type { UppyFile } from '@uppy/core'
+
 import { useImageEditor } from '@uppy/svelte'
 
 interface Props {

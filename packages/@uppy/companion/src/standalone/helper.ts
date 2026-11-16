@@ -1,12 +1,15 @@
-import crypto from 'node:crypto'
-import fs from 'node:fs'
-import merge from 'lodash/merge.js'
-import z from 'zod'
-import packageJson from '../../package.json' with { type: 'json' }
 import type {
   CompanionInitOptions,
   S3ProviderOptions,
 } from '../schemas/index.js'
+
+import crypto from 'node:crypto'
+import fs from 'node:fs'
+
+import merge from 'lodash/merge.js'
+import z from 'zod'
+
+import packageJson from '../../package.json' with { type: 'json' }
 import * as utils from '../server/helpers/utils.js'
 import logger from '../server/logger.js'
 import { toKeyList } from '../server/provider/s3/grant.js'

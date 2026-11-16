@@ -1,5 +1,6 @@
-import querystring from 'node:querystring'
 import type { Query } from '../../Provider.js'
+
+import querystring from 'node:querystring'
 
 export type DriveItem = {
   kind?: string

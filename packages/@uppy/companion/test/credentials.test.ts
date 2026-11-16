@@ -12,6 +12,7 @@ import {
   test,
   vi,
 } from 'vitest'
+
 import * as tokenService from '../dist/server/helpers/jwt.js'
 import * as oAuthState from '../dist/server/helpers/oauth-state.js'
 import logger from '../dist/server/logger.js'

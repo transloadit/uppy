@@ -5,6 +5,7 @@ import { RateLimitedQueue } from '@uppy/core/utils'
 import Transloadit from '@uppy/transloadit'
 import { HttpResponse, http } from 'msw'
 import { describe, expect, it, vi } from 'vitest'
+
 import Assembly from '../lib/Assembly.js'
 
 // Transloadit reports client-side upload failures to this endpoint. Several

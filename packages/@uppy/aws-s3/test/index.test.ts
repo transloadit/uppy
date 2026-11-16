@@ -1,9 +1,15 @@
 import '@uppy-dev/msw-setup'
+
+import type { Meta, UppyFile } from '@uppy/core'
+
+import type { AwsBody, AwsS3Options } from '../lib/index.js'
+
 import { network } from 'virtual:msw'
-import Core, { type Meta, type UppyFile } from '@uppy/core'
+import Core from '@uppy/core'
 import { HttpResponse, http } from 'msw'
 import { describe, expect, test, vi } from 'vitest'
-import AwsS3, { type AwsBody, type AwsS3Options } from '../lib/index.js'
+
+import AwsS3 from '../lib/index.js'
 
 const KB = 1024
 const MB = KB * KB

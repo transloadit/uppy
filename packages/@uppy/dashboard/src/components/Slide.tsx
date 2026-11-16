@@ -1,9 +1,6 @@
-import {
-  type ComponentChildren,
-  cloneElement,
-  toChildArray,
-  type VNode,
-} from '@uppy/core/utils/preact'
+import type { ComponentChildren, VNode } from '@uppy/core/utils/preact'
+
+import { cloneElement, toChildArray } from '@uppy/core/utils/preact'
 import {
   useCallback,
   useEffect,

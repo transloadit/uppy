@@ -1,5 +1,6 @@
-import { Readable } from 'node:stream'
 import type { ProviderListResponse } from '@uppy/companion'
+
+import { Readable } from 'node:stream'
 
 const BASE_URL = 'https://api.unsplash.com'
 

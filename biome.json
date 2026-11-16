@@ -63,6 +63,13 @@
       "style": {
         "noDescendingSpecificity": "off",
         "noNonNullAssertion": "off",
+        "useImportType": {
+          "level": "error",
+          "options": {
+            "style": "separatedType"
+          }
+        },
+        "useNodejsImportProtocol": "error",
         "useVueMultiWordComponentNames": "off"
       },
       "a11y": {
@@ -91,7 +98,52 @@
     "enabled": true,
     "actions": {
       "source": {
-        "organizeImports": "on"
+        "organizeImports": {
+          "level": "on",
+          "options": {
+            "groups": [
+              {
+                "type": true,
+                "source": [":NODE:"]
+              },
+              ":BLANK_LINE:",
+              {
+                "type": true,
+                "source": [":PACKAGE:", "virtual:*"]
+              },
+              ":BLANK_LINE:",
+              {
+                "type": true,
+                "source": [":ALIAS:"]
+              },
+              ":BLANK_LINE:",
+              {
+                "type": true,
+                "source": [":PATH:"]
+              },
+              ":BLANK_LINE:",
+              {
+                "type": false,
+                "source": [":NODE:"]
+              },
+              ":BLANK_LINE:",
+              {
+                "type": false,
+                "source": [":PACKAGE:", "virtual:*"]
+              },
+              ":BLANK_LINE:",
+              {
+                "type": false,
+                "source": [":ALIAS:"]
+              },
+              ":BLANK_LINE:",
+              {
+                "type": false,
+                "source": [":PATH:"]
+              }
+            ]
+          }
+        }
       }
     }
   },

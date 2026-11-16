@@ -1,5 +1,8 @@
 // The components are compiled at runtime (JIT), so the compiler has to be loaded first.
 import '@angular/compiler'
+
+import type Dashboard from '@uppy/dashboard'
+
 import { ChangeDetectorRef, Component, inject } from '@angular/core'
 import { TestBed } from '@angular/core/testing'
 import {
@@ -7,8 +10,8 @@ import {
   platformBrowserTesting,
 } from '@angular/platform-browser/testing'
 import { Uppy } from '@uppy/core'
-import type Dashboard from '@uppy/dashboard'
 import { afterEach, beforeAll, expect, it } from 'vitest'
+
 import { DashboardModalComponent } from '../src/public-api'
 
 beforeAll(() => {
