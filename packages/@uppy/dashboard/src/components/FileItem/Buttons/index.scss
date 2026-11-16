@@ -64,8 +64,8 @@
 
 // Only for mobile screens
 .uppy-Dashboard:not(.uppy-size--md):not(
-    .uppy-Dashboard--singleFile.uppy-size--height-md
-  ) {
+  .uppy-Dashboard--singleFile.uppy-size--height-md
+) {
   // Vertically center Edit&Remove buttons on mobile
   .uppy-Dashboard-Item-actionWrapper {
     display: flex;

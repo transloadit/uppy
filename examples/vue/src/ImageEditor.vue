@@ -20,11 +20,12 @@
     </div>
 
     <div class="mb-4">
-      <label class="block text-sm font-medium mb-2">
+      <label class="block text-sm font-medium mb-2" for="editor-angle">
         Fine Rotation: {{ editor.state.angle }}°
       </label>
       <input
         class="w-full"
+        id="editor-angle"
         v-bind="editor.getRotationSliderProps()"
       />
     </div>
