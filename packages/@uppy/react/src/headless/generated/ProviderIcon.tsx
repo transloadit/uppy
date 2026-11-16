@@ -24,5 +24,12 @@ export default function ProviderIcon(props: Omit<ProviderIconProps, 'ctx'>) {
     }
   }, [ctx, props])
 
+  useEffect(() => {
+    const container = ref.current
+    return () => {
+      if (container) preactRender(null, container)
+    }
+  }, [])
+
   return <div ref={ref} />
 }
