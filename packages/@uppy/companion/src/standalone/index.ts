@@ -1,7 +1,7 @@
 import type { Express, NextFunction, Request, Response } from 'express'
 import type { SessionOptions } from 'express-session'
 
-import type { CompanionInitOptions } from '../schemas/index.js'
+import type { CompanionInitOptions } from '../schemas/companion.js'
 import type { EmitterLike } from '../server/emitter/index.js'
 
 import { randomUUID } from 'node:crypto'
