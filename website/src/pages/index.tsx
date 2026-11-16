@@ -1,3 +1,5 @@
+import 'uppy/dist/uppy.min.css'
+
 import type React from 'react'
 import type { ReactNode } from 'react'
 
@@ -36,9 +38,6 @@ import IconUpload from '../../static/img/upload.svg'
 import IconWrench from '../../static/img/wrench.svg'
 import AgentPrompt from '../components/AgentPrompt'
 import InstallCommand from '../components/InstallCommand'
-
-import 'uppy/dist/uppy.min.css'
-
 import styles from './index.module.css'
 
 const companionUrl = 'https://companion.uppy.io'

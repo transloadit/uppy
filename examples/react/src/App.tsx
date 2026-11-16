@@ -1,11 +1,17 @@
 /** biome-ignore-all lint/correctness/useUniqueElementIds: it's fine */
 
+import '@uppy/react/css/image-editor.css'
+import '@uppy/react/css/style.css'
+
+import './app.css'
+
 import type { UppyFile } from '@uppy/core'
 
 import type { CustomDropzonePlugin } from './CustomDropzone'
 
 import Uppy from '@uppy/core'
 import GoogleDrivePicker from '@uppy/google-drive-picker'
+import GooglePhotosPicker from '@uppy/google-photos-picker'
 import UppyImageEditor from '@uppy/image-editor'
 import {
   Dropzone,
@@ -25,11 +31,6 @@ import { ImageEditor } from './ImageEditor'
 import { RemoteSource } from './RemoteSource'
 import { ScreenCapture } from './ScreenCapture'
 import { Webcam } from './Webcam'
-
-import './app.css'
-import '@uppy/react/css/style.css'
-import '@uppy/react/css/image-editor.css'
-import GooglePhotosPicker from '@uppy/google-photos-picker'
 
 const companionUrl = 'http://localhost:3020'
 const googlePickerClientId = '' // see GOOGLE_PICKER_CLIENT_ID in dev Dashboard
