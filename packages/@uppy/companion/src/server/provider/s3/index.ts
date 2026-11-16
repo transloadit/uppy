@@ -85,6 +85,7 @@ export type S3Session<P extends ParsedS3ProviderOptions> = {
 
 type SessionChecks = {
   requireWrite?: boolean
+  download?: boolean
   /** Keys the request names; each must lie inside the session's prefix. */
   keys?: string[]
 }
@@ -288,10 +289,13 @@ export default class S3Provider<
     companion: CompanionLike,
     config: ResolvedConfig<P>,
     bucket: string,
+    download = false,
   ): S3Client {
     const { cacheKey, clientOptions } = this.clientOptionsFor(config, bucket)
     // Provider names and bucket names cannot contain `/`, so the two cannot collide.
-    const key = `${this.optionsKey}/${cacheKey}`
+    // Unconsumed GetObject bodies hold agent sockets. Keep the finite download
+    // pool separate so paused imports cannot starve browsing and mutations.
+    const key = `${this.optionsKey}/${cacheKey}${download ? '/download' : ''}`
     let client = companion.s3ProviderClients.get(key)
     if (client == null) {
       client = this.getClient(clientOptions)
@@ -308,7 +312,7 @@ export default class S3Provider<
   protected session(
     companion: CompanionLike,
     providerUserSession: S3UserSession,
-    { requireWrite = false, keys = [] }: SessionChecks = {},
+    { requireWrite = false, keys = [], download = false }: SessionChecks = {},
   ): S3Session<P> {
     const config = this.#config(companion)
     if (!this.isAuthenticated({ providerUserSession })) {
@@ -331,7 +335,7 @@ export default class S3Provider<
     return {
       bucket,
       prefix,
-      client: this.#client(companion, config, bucket),
+      client: this.#client(companion, config, bucket, download),
       config,
     }
   }
@@ -476,6 +480,7 @@ export default class S3Provider<
     return this.withErrorHandling('provider.s3.download.error', async () => {
       const { bucket, client } = this.session(companion, providerUserSession, {
         keys: [id],
+        download: true,
       })
       // A queued file outlives the browser session that selected it. Its key
       // must never be read from a bucket the user connected to later.

@@ -23,12 +23,16 @@ async function thumbnail(
       id,
       providerUserSession,
     })
-    if (contentType != null) res.set('Content-Type', contentType)
-    // pipeline (unlike pipe) destroys the provider stream when the client
-    // disconnects, so its socket returns to the agent instead of leaking.
-    await pipeline(stream, res)
+    try {
+      // The browser can leave while thumbnail() is still awaiting headers.
+      if (res.destroyed) return
+      if (contentType != null) res.set('Content-Type', contentType)
+      await pipeline(stream, res)
+    } finally {
+      stream.destroy()
+    }
   } catch (err) {
-    if (res.headersSent) return
+    if (res.headersSent || res.destroyed) return
     if (respondWithError(err, res)) return
     next(err)
   }

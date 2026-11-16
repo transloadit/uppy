@@ -2,7 +2,7 @@ import http from 'node:http'
 import type { AddressInfo } from 'node:net'
 import { PassThrough } from 'node:stream'
 import express from 'express'
-import { afterEach, describe, expect, test } from 'vitest'
+import { afterEach, describe, expect, test, vi } from 'vitest'
 import thumbnail from '../dist/server/controllers/thumbnail.js'
 
 let stream: PassThrough
@@ -45,6 +45,26 @@ describe('thumbnail streaming', () => {
     })
     await new Promise((r) => setTimeout(r, 150))
     expect(stream.destroyed).toBe(true)
+  })
+
+  test('destroys a source that arrives after the browser disconnects', async () => {
+    const pending = Promise.withResolvers<void>()
+    const started = Promise.withResolvers<void>()
+    stream = new PassThrough()
+    const port = await listen({
+      thumbnail: async () => {
+        started.resolve()
+        await pending.promise
+        return { stream, contentType: 'image/jpeg' }
+      },
+    })
+    const req = http.get(`http://127.0.0.1:${port}/t/thumb`)
+    req.on('error', () => {})
+    await started.promise
+    req.destroy()
+    await new Promise((resolve) => setTimeout(resolve, 25))
+    pending.resolve()
+    await vi.waitFor(() => expect(stream.destroyed).toBe(true))
   })
 
   test('streams the whole body and sets the content type on the normal path', async () => {
