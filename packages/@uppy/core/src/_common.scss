@@ -1,11 +1,11 @@
-@use "sass:color";
+@use 'sass:color';
 
 @use './_variables.scss' as *;
 @use './_utils.scss' as *;
 
 /**
-* General Uppy styles that apply to everything inside the .uppy-Root container
-*/
+ * General Uppy styles that apply to everything inside the .uppy-Root container
+ */
 
 .uppy-Root {
   position: relative;

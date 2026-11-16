@@ -3,7 +3,7 @@
   max-width: 900px;
   margin: 0 auto;
   padding: 20px;
-  font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
 }
 
 .app-header {
@@ -23,7 +23,7 @@
 }
 
 .app-header::before {
-  content: "";
+  content: '';
   position: absolute;
   top: 0;
   left: 0;
@@ -99,7 +99,7 @@
 }
 
 .toggle-button::before {
-  content: "";
+  content: '';
   position: absolute;
   top: 0;
   left: -100%;

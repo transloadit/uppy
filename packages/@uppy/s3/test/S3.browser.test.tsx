@@ -348,33 +348,33 @@ describe('S3 provider in the browser', () => {
   it.for<[string, (plugin: TestPlugin) => Promise<unknown>]>([
     ['deleting', (plugin) => plugin.provider.deleteItem('docs')],
     ['moving', (plugin) => plugin.provider.moveItem('docs', 'x')],
-  ])('the mock preserves a same-named folder when %s a file', async ([
-    ,
-    mutate,
-  ]) => {
-    const { companion, plugin } = setup({
-      companion: {
-        folders: {
-          '': [
-            { name: 'readme.md', isFolder: false },
-            { name: 'docs', isFolder: false },
-            { name: 'docs', isFolder: true },
-          ],
-          'docs/': [],
+  ])(
+    'the mock preserves a same-named folder when %s a file',
+    async ([, mutate]) => {
+      const { companion, plugin } = setup({
+        companion: {
+          folders: {
+            '': [
+              { name: 'readme.md', isFolder: false },
+              { name: 'docs', isFolder: false },
+              { name: 'docs', isFolder: true },
+            ],
+            'docs/': [],
+          },
         },
-      },
-    })
-    await openBucket()
-    await mutate(plugin)
-    expect(companion.folders.get('')).toContainEqual({
-      name: 'docs',
-      isFolder: true,
-    })
-    expect(companion.folders.get('')).not.toContainEqual({
-      name: 'docs',
-      isFolder: false,
-    })
-  })
+      })
+      await openBucket()
+      await mutate(plugin)
+      expect(companion.folders.get('')).toContainEqual({
+        name: 'docs',
+        isFolder: true,
+      })
+      expect(companion.folders.get('')).not.toContainEqual({
+        name: 'docs',
+        isFolder: false,
+      })
+    },
+  )
 
   it('restores a session scoped to a prefix and opens its nested folder', async () => {
     const { plugin } = setup({

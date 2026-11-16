@@ -40,7 +40,7 @@
 
       <article>
         <h2 class="text-2xl my-4">With custom dropzone</h2>
-        <CustomDropzone :openModal="openModal" />
+        <CustomDropzone :open-modal="openModal" />
       </article>
     </main>
   </UppyContextProvider>
