@@ -11,7 +11,7 @@ interface Props {
 const { close, id }: Props = $props()
 
 // Use the value directly, destructuring looses reactivity
-const remoteSource = useRemoteSource(id)
+const remoteSource = useRemoteSource(id, { onClose: () => close() })
 
 const dtf = new Intl.DateTimeFormat('en-US', {
   dateStyle: 'short',
@@ -22,22 +22,33 @@ function setFolderCheckboxIndeterminate(
   node: HTMLInputElement,
   item: PartialTreeFolderNode,
 ) {
-  if (item.status === 'partial') {
+  const update = (current: PartialTreeFolderNode) => {
     // Can only be set via JS
-    node.indeterminate = true
+    node.indeterminate = current.status === 'partial'
   }
+  update(item)
+  return { update }
 }
 </script>
 
 {#if !remoteSource.state.authenticated}
   <div class="p-4 pt-0 min-w-xl min-h-96">
-    <button
-      type="button"
-      class="block ml-auto text-blue-500"
-      onclick={() => remoteSource.login()}
-    >
-      Login
-    </button>
+    <div class="flex justify-end gap-2">
+      <button
+        type="button"
+        class="text-blue-500"
+        onclick={() => remoteSource.login()}
+      >
+        Login
+      </button>
+      <button
+        type="button"
+        class="text-blue-500"
+        onclick={() => close()}
+      >
+        Close
+      </button>
+    </div>
   </div>
 {:else}
   <div class="w-screen h-screen max-w-3xl max-h-96 relative flex flex-col">
@@ -72,6 +83,13 @@ function setFolderCheckboxIndeterminate(
           }}
         >
           Logout
+        </button>
+        <button
+          type="button"
+          class="text-blue-500"
+          onclick={() => remoteSource.cancel()}
+        >
+          Close
         </button>
       </div>
     </div>
@@ -126,11 +144,9 @@ function setFolderCheckboxIndeterminate(
       >
         <button
           type="button"
-          class="text-blue-500"
-          onclick={() => {
-            remoteSource.done()
-            close()
-          }}
+          class="text-blue-500 disabled:text-gray-400"
+          disabled={remoteSource.state.error !== null}
+          onclick={() => remoteSource.done()}
         >
           Done
         </button>
@@ -144,6 +160,11 @@ function setFolderCheckboxIndeterminate(
         <p class="text-gray-500 text-sm">
           Selected {remoteSource.state.selectedAmount} items
         </p>
+        {#if remoteSource.state.error}
+          <p role="alert" class="text-red-500 text-sm">
+            {remoteSource.state.error}
+          </p>
+        {/if}
       </div>
     {/if}
   </div>

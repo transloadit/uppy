@@ -29,8 +29,14 @@ export type RemoteSourceSnapshot = {
   logout: ProviderViews<any, any>['logout']
   open: ProviderViews<any, any>['openFolder']
   checkbox: ProviderViews<any, any>['toggleCheckbox']
-  done: ProviderViews<any, any>['donePicking']
-  cancel: ProviderViews<any, any>['cancelSelection']
+  /** Adds the selected files, then calls `onClose` if they were added. */
+  done: () => Promise<void>
+  /** Clears the selection, then calls `onClose`. */
+  cancel: () => void
+}
+
+export type RemoteSourceOptions = {
+  onClose?: (() => void) | undefined
 }
 
 export type RemoteSourceStore = {
@@ -40,9 +46,27 @@ export type RemoteSourceStore = {
   unmount: () => void
 }
 
+type Files = ReturnType<Uppy['getState']>['files']
+
+/** Whether the files the restrictions look at (which, their size, ghosts) are unchanged. */
+const sameFilesForRestrictions = (a: Files, b: Files) => {
+  if (a === b) return true
+  const ids = Object.keys(b)
+  return (
+    Object.keys(a).length === ids.length &&
+    ids.every(
+      (id) =>
+        a[id] !== undefined &&
+        a[id].size === b[id]!.size &&
+        a[id].isGhost === b[id]!.isGhost,
+    )
+  )
+}
+
 export function createRemoteSourceController(
   uppy: Uppy,
   sourceId: RemoteSourceKeys,
+  options?: RemoteSourceOptions,
 ): RemoteSourceStore {
   const plugin = uppy.getPlugin<UnknownProviderPlugin<any, any>>(sourceId)
   if (!plugin) {
@@ -52,16 +76,35 @@ export function createRemoteSourceController(
   }
   const subscribers = new Subscribers()
   const view = plugin.view as ProviderViews<any, any>
-  let didFirstRender = false
+  let mounted = false
+
+  const cancel = () => {
+    view.cancelSelection()
+    options?.onClose?.()
+  }
+
+  const done = async () => {
+    // The consumer may have unmounted while files were added, and `onClose`
+    // could now close something else
+    if ((await view.donePicking()) && mounted) options?.onClose?.()
+  }
 
   const onStateUpdate: UppyEventMap<any, any>['state-update'] = (
-    _prev,
-    _next,
+    prev,
+    next,
     patch,
   ) => {
-    if (patch?.plugins?.[sourceId]) {
-      subscribers.emit()
+    // `error` also depends on the files in Uppy (not their progress), and on
+    // restrictions and locale, which `setOptions()` changes with an empty patch
+    if (
+      patch &&
+      prev.plugins[sourceId] === next.plugins[sourceId] &&
+      sameFilesForRestrictions(prev.files, next.files)
+    ) {
+      return
     }
+    const prevSnapshot = cachedSnapshot
+    if (getSnapshot() !== prevSnapshot) subscribers.emit()
   }
 
   // Keep a cached snapshot so that the reference stays stable when nothing
@@ -82,8 +125,8 @@ export function createRemoteSourceController(
     logout: view?.logout,
     open: view?.openFolder,
     checkbox: view?.toggleCheckbox,
-    done: view?.donePicking,
-    cancel: view?.cancelSelection,
+    done,
+    cancel,
   }
   const getSnapshot = () => {
     const nextSnapshot = {
@@ -109,15 +152,15 @@ export function createRemoteSourceController(
   const mount = () => {
     uppy.on('state-update', onStateUpdate)
 
-    if (!didFirstRender) {
+    if (!mounted) {
       view.openFolder?.(plugin.rootFolderId)
       view.provider.fetchPreAuthToken?.()
-      didFirstRender = true
+      mounted = true
     }
   }
 
   const unmount = () => {
-    didFirstRender = false
+    mounted = false
     uppy.off('state-update', onStateUpdate)
   }
 
