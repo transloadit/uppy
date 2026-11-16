@@ -416,11 +416,11 @@ export const buildHelpfulStartupMessage = (
     server: companionOptions.server ?? {},
   })
   const callbackURLs: string[] = []
-  Object.keys(companionOptions.providerOptions ?? {}).forEach(
-    (providerName) => {
+  if (companionOptions.providerOptions) {
+    for (const providerName of Object.keys(companionOptions.providerOptions)) {
       callbackURLs.push(buildURL(`/${providerName}/redirect`, true))
-    },
-  )
+    }
+  }
 
   return `
 Welcome to Companion v${packageJson.version}

@@ -451,37 +451,37 @@ describe('AwsS3', () => {
       expect(keys.every((k: string) => k === 'client-big.dat')).toBe(true)
     })
 
-    test.for([
-      '',
-      '   ',
-    ])('ignores a blank key from the signer (%j)', async (key) => {
-      const { signRequest, registerHandlers } = createMultipartMocks()
-      registerHandlers()
-      signRequest.mockImplementation(async (req: any) => ({
-        url: `${bucketUrl}/${req.key}?method=${req.method}`,
-        key,
-      }))
+    test.for(['', '   '])(
+      'ignores a blank key from the signer (%j)',
+      async (key) => {
+        const { signRequest, registerHandlers } = createMultipartMocks()
+        registerHandlers()
+        signRequest.mockImplementation(async (req: any) => ({
+          url: `${bucketUrl}/${req.key}?method=${req.method}`,
+          key,
+        }))
 
-      using core = new Core().use(AwsS3, {
-        s3Endpoint: bucketUrl,
-        region: 'us-east-1',
-        signRequest,
-        shouldUseMultipart: false,
-        generateObjectKey: () => 'client-photo.jpg',
-      })
-      core.addFile({
-        source: 'test',
-        name: 'photo.jpg',
-        type: 'image/jpeg',
-        data: new File([new Uint8Array(KB)], 'photo.jpg'),
-      })
+        using core = new Core().use(AwsS3, {
+          s3Endpoint: bucketUrl,
+          region: 'us-east-1',
+          signRequest,
+          shouldUseMultipart: false,
+          generateObjectKey: () => 'client-photo.jpg',
+        })
+        core.addFile({
+          source: 'test',
+          name: 'photo.jpg',
+          type: 'image/jpeg',
+          data: new File([new Uint8Array(KB)], 'photo.jpg'),
+        })
 
-      const onSuccess = vi.fn()
-      core.on('upload-success', onSuccess)
-      await core.upload()
+        const onSuccess = vi.fn()
+        core.on('upload-success', onSuccess)
+        await core.upload()
 
-      expect(onSuccess.mock.calls[0][1].body.key).toBe('client-photo.jpg')
-    })
+        expect(onSuccess.mock.calls[0][1].body.key).toBe('client-photo.jpg')
+      },
+    )
   })
 
   describe('signed headers (#6548)', () => {

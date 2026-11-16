@@ -1,5 +1,4 @@
 import '@uppy-dev/msw-setup'
-
 import { network } from 'virtual:msw'
 import Uppy from '@uppy/core'
 import { ProviderViews } from '@uppy/core/provider-views'

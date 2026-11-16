@@ -1,7 +1,7 @@
 import type { Body, DefinePluginOpts, Meta, PluginOpts, Uppy } from '@uppy/core'
 
 import { BasePlugin } from '@uppy/core'
-import { getDroppedFiles, toArray } from '@uppy/core/utils'
+import { getDroppedFiles } from '@uppy/core/utils'
 
 import packageJson from '../package.json' with { type: 'json' }
 
@@ -153,27 +153,27 @@ export default class DropTarget<
     if (target instanceof Element) {
       this.nodes = [target]
     } else if (typeof target === 'string') {
-      this.nodes = toArray(document.querySelectorAll(target))
+      this.nodes = Array.from(document.querySelectorAll(target))
     }
 
     if (!this.nodes || this.nodes.length === 0) {
       throw new Error(`"${target}" does not match any HTML elements`)
     }
 
-    this.nodes.forEach((node) => {
+    for (const node of this.nodes) {
       node.addEventListener('dragover', this.handleDragOver, false)
       node.addEventListener('dragleave', this.handleDragLeave, false)
       node.addEventListener('drop', this.handleDrop, false)
-    })
+    }
   }
 
   removeListeners = (): void => {
     if (this.nodes) {
-      this.nodes.forEach((node) => {
+      for (const node of this.nodes) {
         node.removeEventListener('dragover', this.handleDragOver, false)
         node.removeEventListener('dragleave', this.handleDragLeave, false)
         node.removeEventListener('drop', this.handleDrop, false)
-      })
+      }
     }
   }
 

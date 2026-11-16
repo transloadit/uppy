@@ -266,7 +266,7 @@ const adaptData = (
       )
   }
 
-  itemsToProcess.forEach((item) => {
+  for (const item of itemsToProcess) {
     data.items.push({
       isFolder: getIsFolder(item),
       icon: getIcon(item),
@@ -281,7 +281,7 @@ const adaptData = (
         topic: getItemTopic(item),
       },
     })
-  })
+  }
   return data
 }
 

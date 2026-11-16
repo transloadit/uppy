@@ -9,7 +9,7 @@ import http from 'node:http'
 import https from 'node:https'
 import path from 'node:path'
 
-import contentDisposition from 'content-disposition'
+import * as contentDisposition from 'content-disposition'
 import got from 'got'
 import ipaddr from 'ipaddr.js'
 import validator from 'validator'

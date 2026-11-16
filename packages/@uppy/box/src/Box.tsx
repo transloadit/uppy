@@ -9,7 +9,6 @@ import type {
 } from '@uppy/core'
 import type { CompanionPluginOptions } from '@uppy/core/companion-client'
 import type { LocaleStrings } from '@uppy/core/utils'
-import type { ComponentChild, h } from '@uppy/core/utils/preact'
 
 import { UIPlugin } from '@uppy/core'
 import {
@@ -18,6 +17,8 @@ import {
   Provider,
 } from '@uppy/core/companion-client'
 import { ProviderViews } from '@uppy/core/provider-views'
+// biome-ignore lint/style/useImportType: h is not a type
+import { type ComponentChild, h } from '@uppy/core/utils/preact'
 
 import packageJson from '../package.json' with { type: 'json' }
 import locale from './locale.js'

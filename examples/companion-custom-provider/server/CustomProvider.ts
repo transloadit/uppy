@@ -11,7 +11,7 @@ function adaptData(items: any[]) {
     nextPagePath: null,
   }
 
-  items.forEach((item) => {
+  for (const item of items) {
     const isFolder = !!item.published_at
     data.items.push({
       isFolder,
@@ -24,7 +24,7 @@ function adaptData(items: any[]) {
       modifiedDate: item.updated_at,
       size: null,
     })
-  })
+  }
 
   return data
 }

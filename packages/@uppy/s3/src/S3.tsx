@@ -16,7 +16,6 @@ import type {
   ProviderToolbarAction,
 } from '@uppy/core/provider-views'
 import type { LocaleStrings } from '@uppy/core/utils'
-import type { ComponentChild, h } from '@uppy/core/utils/preact'
 // Load Dashboard's event augmentation without adding a runtime dependency.
 import type {} from '@uppy/dashboard'
 
@@ -31,6 +30,8 @@ import {
   Provider,
 } from '@uppy/core/companion-client'
 import { ProviderViews } from '@uppy/core/provider-views'
+// biome-ignore lint/style/useImportType: h is not a type
+import { type ComponentChild, h } from '@uppy/core/utils/preact'
 
 import packageJson from '../package.json' with { type: 'json' }
 import { asFolderKey, splitKey } from './keys.js'

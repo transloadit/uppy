@@ -14,6 +14,10 @@ import type {
   ValidateableFile,
 } from '../../index.js'
 import type { CompanionFile, I18n } from '../../utils/index.js'
+import type {
+  ConfirmOptions,
+  PromptOptions,
+} from '../ProviderDialogController.js'
 
 import classNames from 'classnames'
 import debounce from 'lodash/debounce.js'
@@ -31,10 +35,7 @@ import Browser from '../Browser.js'
 import FilterInput from '../FilterInput.js'
 import FooterActions from '../FooterActions.js'
 import ProviderDialog from '../ProviderDialog.js'
-import ProviderDialogController, {
-  type ConfirmOptions,
-  type PromptOptions,
-} from '../ProviderDialogController.js'
+import ProviderDialogController from '../ProviderDialogController.js'
 import addFiles from '../utils/addFiles.js'
 import getClickedRange from '../utils/getClickedRange.js'
 import handleError from '../utils/handleError.js'
@@ -1166,11 +1167,11 @@ export default class ProviderView<M extends Meta, B extends Body> {
 
     // todo memoize this so we don't have to do it on every render
     const itemsById = new Map<string, PartialTreeFile | PartialTreeFolderNode>()
-    partialTree.forEach((item) => {
+    for (const item of partialTree) {
       if (item.type !== 'root') {
         itemsById.set(item.id, item)
       }
-    })
+    }
 
     // the search results view needs data from the partial tree,
     const searchResults = ids!.map((id) => {

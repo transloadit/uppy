@@ -3,6 +3,15 @@ import type { Readable } from 'node:stream'
 import type { RequestInfo, RequestInit } from 'node-fetch'
 import type { WebDAVClientOptions } from 'webdav'
 
+import type {
+  ProviderDownloadOptions,
+  ProviderDownloadResponse,
+  ProviderListOptions,
+  ProviderListResponse,
+  ProviderLogoutResponse,
+  ProviderSimpleAuthOptions,
+} from '../Provider.js'
+
 import fetch from 'node-fetch'
 import { AuthType, createClient, getPatcher } from 'webdav'
 
@@ -11,14 +20,7 @@ import { isRecord } from '../../helpers/type-guards.js'
 import logger from '../../logger.js'
 import { ProviderApiError, ProviderAuthError } from '../error.js'
 import { userError } from '../errorCodes.js'
-import Provider, {
-  type ProviderDownloadOptions,
-  type ProviderDownloadResponse,
-  type ProviderListOptions,
-  type ProviderListResponse,
-  type ProviderLogoutResponse,
-  type ProviderSimpleAuthOptions,
-} from '../Provider.js'
+import Provider from '../Provider.js'
 
 const defaultDirectory = '/'
 
@@ -197,7 +199,7 @@ export default class WebdavProvider extends Provider<WebdavUserSession> {
         { signal: AbortSignal.timeout(this.requestTimeoutMs) },
       )
 
-      dir.forEach((item) => {
+      for (const item of dir) {
         const isFolder = item.type === 'directory'
         // The server's own path for the item. Prefixing the client-supplied
         // route id instead let one request allocate (id length × item count)
@@ -233,7 +235,7 @@ export default class WebdavProvider extends Provider<WebdavUserSession> {
           }),
         }
         data.items.push(listItem)
-      })
+      }
 
       return data
     })

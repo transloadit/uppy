@@ -1,5 +1,15 @@
 import type { Readable } from 'node:stream'
 
+import type {
+  ProviderDownloadOptions,
+  ProviderDownloadResponse,
+  ProviderListOptions,
+  ProviderListResponse,
+  ProviderLogoutOptions,
+  ProviderLogoutResponse,
+  ProviderRefreshTokenOptions,
+  ProviderRefreshTokenResponse,
+} from '../../Provider.js'
 import type { GoogleUserSession } from '../index.js'
 import type {
   DriveAbout,
@@ -14,16 +24,7 @@ import { isRecord } from '../../../helpers/type-guards.js'
 import { pathSegment, prepareStream } from '../../../helpers/utils.js'
 import logger from '../../../logger.js'
 import { ProviderAuthError } from '../../error.js'
-import Provider, {
-  type ProviderDownloadOptions,
-  type ProviderDownloadResponse,
-  type ProviderListOptions,
-  type ProviderListResponse,
-  type ProviderLogoutOptions,
-  type ProviderLogoutResponse,
-  type ProviderRefreshTokenOptions,
-  type ProviderRefreshTokenResponse,
-} from '../../Provider.js'
+import Provider from '../../Provider.js'
 import { withGoogleErrorHandling } from '../../providerErrors.js'
 import { logout, refreshToken } from '../index.js'
 import {

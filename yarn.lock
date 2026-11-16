@@ -2262,19 +2262,25 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@biomejs/biome@npm:2.4.15":
-  version: 2.4.15
-  resolution: "@biomejs/biome@npm:2.4.15"
+"@biomejs/biome@npm:2.6.6":
+  version: 2.6.6
+  resolution: "@biomejs/biome@npm:2.6.6"
   dependencies:
-    "@biomejs/cli-darwin-arm64": "npm:2.4.15"
-    "@biomejs/cli-darwin-x64": "npm:2.4.15"
-    "@biomejs/cli-linux-arm64": "npm:2.4.15"
-    "@biomejs/cli-linux-arm64-musl": "npm:2.4.15"
-    "@biomejs/cli-linux-x64": "npm:2.4.15"
-    "@biomejs/cli-linux-x64-musl": "npm:2.4.15"
-    "@biomejs/cli-win32-arm64": "npm:2.4.15"
-    "@biomejs/cli-win32-x64": "npm:2.4.15"
+    "@biomejs/cli-android-arm64": "npm:2.6.6"
+    "@biomejs/cli-android-x64": "npm:2.6.6"
+    "@biomejs/cli-darwin-arm64": "npm:2.6.6"
+    "@biomejs/cli-darwin-x64": "npm:2.6.6"
+    "@biomejs/cli-linux-arm64": "npm:2.6.6"
+    "@biomejs/cli-linux-arm64-musl": "npm:2.6.6"
+    "@biomejs/cli-linux-x64": "npm:2.6.6"
+    "@biomejs/cli-linux-x64-musl": "npm:2.6.6"
+    "@biomejs/cli-win32-arm64": "npm:2.6.6"
+    "@biomejs/cli-win32-x64": "npm:2.6.6"
   dependenciesMeta:
+    "@biomejs/cli-android-arm64":
+      optional: true
+    "@biomejs/cli-android-x64":
+      optional: true
     "@biomejs/cli-darwin-arm64":
       optional: true
     "@biomejs/cli-darwin-x64":
@@ -2293,62 +2299,76 @@ __metadata:
       optional: true
   bin:
     biome: bin/biome
-  checksum: 10/1b48c62fb4d26de515599cfd3ab51fae16aa0b93e686e496ffc837d3a59887898b4a21d6653ae1a90751f52ae120078f0f998e370e35fa4af9faa3febd3d6e14
+  checksum: 10/8b8f9b249def8c969380e7f500d7d512f82f01edf55fd139e50d84c46487bb61d53ae05262ac99550dce06a6fba7c0a34c71c03c9981bc926d0cdaab6cdae3ab
   languageName: node
   linkType: hard
 
-"@biomejs/cli-darwin-arm64@npm:2.4.15":
-  version: 2.4.15
-  resolution: "@biomejs/cli-darwin-arm64@npm:2.4.15"
+"@biomejs/cli-android-arm64@npm:2.6.6":
+  version: 2.6.6
+  resolution: "@biomejs/cli-android-arm64@npm:2.6.6"
+  conditions: os=android & cpu=arm64
+  languageName: node
+  linkType: hard
+
+"@biomejs/cli-android-x64@npm:2.6.6":
+  version: 2.6.6
+  resolution: "@biomejs/cli-android-x64@npm:2.6.6"
+  conditions: os=android & cpu=x64
+  languageName: node
+  linkType: hard
+
+"@biomejs/cli-darwin-arm64@npm:2.6.6":
+  version: 2.6.6
+  resolution: "@biomejs/cli-darwin-arm64@npm:2.6.6"
   conditions: os=darwin & cpu=arm64
   languageName: node
   linkType: hard
 
-"@biomejs/cli-darwin-x64@npm:2.4.15":
-  version: 2.4.15
-  resolution: "@biomejs/cli-darwin-x64@npm:2.4.15"
+"@biomejs/cli-darwin-x64@npm:2.6.6":
+  version: 2.6.6
+  resolution: "@biomejs/cli-darwin-x64@npm:2.6.6"
   conditions: os=darwin & cpu=x64
   languageName: node
   linkType: hard
 
-"@biomejs/cli-linux-arm64-musl@npm:2.4.15":
-  version: 2.4.15
-  resolution: "@biomejs/cli-linux-arm64-musl@npm:2.4.15"
+"@biomejs/cli-linux-arm64-musl@npm:2.6.6":
+  version: 2.6.6
+  resolution: "@biomejs/cli-linux-arm64-musl@npm:2.6.6"
   conditions: os=linux & cpu=arm64 & libc=musl
   languageName: node
   linkType: hard
 
-"@biomejs/cli-linux-arm64@npm:2.4.15":
-  version: 2.4.15
-  resolution: "@biomejs/cli-linux-arm64@npm:2.4.15"
+"@biomejs/cli-linux-arm64@npm:2.6.6":
+  version: 2.6.6
+  resolution: "@biomejs/cli-linux-arm64@npm:2.6.6"
   conditions: os=linux & cpu=arm64 & libc=glibc
   languageName: node
   linkType: hard
 
-"@biomejs/cli-linux-x64-musl@npm:2.4.15":
-  version: 2.4.15
-  resolution: "@biomejs/cli-linux-x64-musl@npm:2.4.15"
+"@biomejs/cli-linux-x64-musl@npm:2.6.6":
+  version: 2.6.6
+  resolution: "@biomejs/cli-linux-x64-musl@npm:2.6.6"
   conditions: os=linux & cpu=x64 & libc=musl
   languageName: node
   linkType: hard
 
-"@biomejs/cli-linux-x64@npm:2.4.15":
-  version: 2.4.15
-  resolution: "@biomejs/cli-linux-x64@npm:2.4.15"
+"@biomejs/cli-linux-x64@npm:2.6.6":
+  version: 2.6.6
+  resolution: "@biomejs/cli-linux-x64@npm:2.6.6"
   conditions: os=linux & cpu=x64 & libc=glibc
   languageName: node
   linkType: hard
 
-"@biomejs/cli-win32-arm64@npm:2.4.15":
-  version: 2.4.15
-  resolution: "@biomejs/cli-win32-arm64@npm:2.4.15"
+"@biomejs/cli-win32-arm64@npm:2.6.6":
+  version: 2.6.6
+  resolution: "@biomejs/cli-win32-arm64@npm:2.6.6"
   conditions: os=win32 & cpu=arm64
   languageName: node
   linkType: hard
 
-"@biomejs/cli-win32-x64@npm:2.4.15":
-  version: 2.4.15
-  resolution: "@biomejs/cli-win32-x64@npm:2.4.15"
+"@biomejs/cli-win32-x64@npm:2.6.6":
+  version: 2.6.6
+  resolution: "@biomejs/cli-win32-x64@npm:2.6.6"
   conditions: os=win32 & cpu=x64
   languageName: node
   linkType: hard
@@ -5544,10 +5564,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@nodable/entities@npm:^3.0.0":
-  version: 3.0.0
-  resolution: "@nodable/entities@npm:3.0.0"
-  checksum: 10/185fef58192584a95c3417d6c59b89bfd0108910da1c2a48ac1c32988d0ff8a9bb4dada0ad27157af49cf18a1765140c61acd7deb6e61f99def08094cc2265db
+"@nodable/entities@npm:^3.0.0, @nodable/entities@npm:^3.1.0":
+  version: 3.1.0
+  resolution: "@nodable/entities@npm:3.1.0"
+  checksum: 10/b07d97b1dac8e0bc8a124ea52cdb6d6a50a8a750592acf540e47c4740a8b96b5add8d9dcce4dfbe74e08b2ab95303c1a2078cf4ba01a085a6de88a879f45576e
   languageName: node
   linkType: hard
 
@@ -7494,13 +7514,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@tsconfig/docusaurus@npm:^2.0.7":
-  version: 2.0.9
-  resolution: "@tsconfig/docusaurus@npm:2.0.9"
-  checksum: 10/47211b3cc2ed12cfb1d26701da44e7d069c42361c5e884388f456d99ac7f722c313e9fcfd93328f4741ff66c26a84467263a2b7152170d3023169a301092bcf4
-  languageName: node
-  linkType: hard
-
 "@tufjs/canonical-json@npm:2.0.0":
   version: 2.0.0
   resolution: "@tufjs/canonical-json@npm:2.0.0"
@@ -8334,7 +8347,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@uppy-dev/build@workspace:."
   dependencies:
-    "@biomejs/biome": "npm:2.4.15"
+    "@biomejs/biome": "npm:2.6.6"
     "@changesets/cli": "npm:^3.0.2"
     mdast-comment-marker: "npm:^3.0.0"
     mdxlint: "npm:^1.0.0"
@@ -8406,14 +8419,19 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@uppy/angular@workspace:packages/@uppy/angular"
   dependencies:
+    "@angular/common": "npm:^22.2.3"
     "@angular/compiler": "npm:^22.2.3"
     "@angular/compiler-cli": "npm:^22.2.3"
     "@angular/core": "npm:^22.2.3"
+    "@angular/platform-browser": "npm:^22.2.3"
     "@uppy-dev/tsconfig": "workspace:^"
+    "@vitest/browser-playwright": "npm:^5.0.5"
     ng-packagr: "npm:^22.2.5"
+    playwright: "npm:1.64.1"
     rxjs: "npm:~7.8.0"
     tslib: "npm:^2.8.1"
     typescript: "npm:^6.0.3"
+    vitest: "npm:^5.0.5"
   peerDependencies:
     "@angular/core": ^17.0.0 || ^18.0.0 || ^19.0.0 || ^20.0.0 || ^21.0.0 || ^22.0.0
     "@uppy/core": "workspace:^"
@@ -8506,7 +8524,7 @@ __metadata:
     "@types/ws": "npm:^8.18.1"
     "@uppy-dev/tsconfig": "workspace:^"
     connect-redis: "npm:^7.1.1"
-    content-disposition: "npm:^2.0.1"
+    content-disposition: "npm:^3.0.0"
     cookie-parser: "npm:^1.4.7"
     cors: "npm:^2.8.6"
     escape-goat: "npm:^4.0.0"
@@ -8834,9 +8852,9 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@uppy/locales@workspace:packages/@uppy/locales"
   dependencies:
+    "@types/node": "npm:^22.20.1"
     "@uppy-dev/tsconfig": "workspace:^"
     "@uppy/core": "workspace:^"
-    glob: "npm:^13.0.6"
     typescript: "npm:^6.0.3"
   languageName: unknown
   linkType: soft
@@ -11369,10 +11387,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"content-disposition@npm:^2.0.1":
-  version: 2.0.1
-  resolution: "content-disposition@npm:2.0.1"
-  checksum: 10/d3981346fdcc5c72514c3b44e08137312f6969b55d151840222e0a75ecfe295e506cc1f4f4339eaad20c170634cbc673913a04d836089fbfe5a08cd4468f2e23
+"content-disposition@npm:^3.0.0":
+  version: 3.0.0
+  resolution: "content-disposition@npm:3.0.0"
+  checksum: 10/3ce58867a5b25b9043d70ff9a7c922f162f009f381c72983349736ed315c89fcbb578471c24e2d42d640fbd71603389bcdb1c7b71f49a87e0f84f9f93c86eee0
   languageName: node
   linkType: hard
 
@@ -13598,29 +13616,29 @@ __metadata:
   languageName: node
   linkType: hard
 
-"fast-xml-builder@npm:^1.2.0":
-  version: 1.2.0
-  resolution: "fast-xml-builder@npm:1.2.0"
+"fast-xml-builder@npm:^1.3.1":
+  version: 1.3.1
+  resolution: "fast-xml-builder@npm:1.3.1"
   dependencies:
-    path-expression-matcher: "npm:^1.5.0"
-    xml-naming: "npm:^0.1.0"
-  checksum: 10/5948add7796879d03b6c779cbb17f2f203a41cdf23dfaaa4789c65078a36376cd0709a6586701e980e3d244ebd5fdb35db1235ccb5e4fb9e9abfd8c51e7b8813
+    path-expression-matcher: "npm:^1.6.2"
+    xml-naming: "npm:^0.3.0"
+  checksum: 10/6e2774b07a089c325dbf9d193325a1bf78592e7f3877dfdb643f4898d89a154aa17054cea7270b8b3cc4a7a1145988b0d8a5a974c7086f0e28a6af22a536f55f
   languageName: node
   linkType: hard
 
 "fast-xml-parser@npm:^5.11.1":
-  version: 5.11.1
-  resolution: "fast-xml-parser@npm:5.11.1"
+  version: 5.12.0
+  resolution: "fast-xml-parser@npm:5.12.0"
   dependencies:
-    "@nodable/entities": "npm:^3.0.0"
-    fast-xml-builder: "npm:^1.2.0"
-    is-unsafe: "npm:^2.0.0"
+    "@nodable/entities": "npm:^3.1.0"
+    fast-xml-builder: "npm:^1.3.1"
+    is-unsafe: "npm:^2.0.3"
     path-expression-matcher: "npm:^1.6.2"
-    strnum: "npm:^2.4.2"
+    strnum: "npm:^2.5.1"
     xml-naming: "npm:^0.3.0"
   bin:
     fxparser: src/cli/cli.js
-  checksum: 10/9e0854bb49140bb2bdbe527fd71c74c502d5c8766587e6cad49e0175d5b1ee5e751f896445262d6ecdb7a407a644f7c25da5f20ad0feadd08787d3a9505f7dc4
+  checksum: 10/86b16fd9f4458350e95b5fcfe0bfe2b76a6c508dcc5fdeda128ecf8ed41f419a7e33acaf2718f2fd7b694392d7e204d242a0fd871368efbfb24f96b457e556d5
   languageName: node
   linkType: hard
 
@@ -15312,10 +15330,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"is-unsafe@npm:^2.0.0":
-  version: 2.0.2
-  resolution: "is-unsafe@npm:2.0.2"
-  checksum: 10/ebd5b9abfa1e66b221649c9e7f6ed5f1de51dc9913a5c35b192be81b2aeeccb99ef97ae11535d1aa32817e43f73538fb9271c709148f634173b78cebe2eebd2e
+"is-unsafe@npm:^2.0.3":
+  version: 2.0.3
+  resolution: "is-unsafe@npm:2.0.3"
+  checksum: 10/c3287873db0107ff00933b6cea08bb732479af2fefe3a9fe3f49086e094ba7dc7ce09d3e5ce90417a4d604cf8aaedc74c554257a75e1cacbb93e99460bb732ef
   languageName: node
   linkType: hard
 
@@ -19033,7 +19051,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"path-expression-matcher@npm:^1.5.0, path-expression-matcher@npm:^1.6.2":
+"path-expression-matcher@npm:^1.6.2":
   version: 1.6.2
   resolution: "path-expression-matcher@npm:1.6.2"
   checksum: 10/d7786b170933dd82ed897144daed7d54dbe2e7b7d8684182ee9bf51a966cc92548788e2f49280922202a0186409008d816aefa37ed4650e4038184181a73c4bd
@@ -23465,12 +23483,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"strnum@npm:^2.4.2":
-  version: 2.4.2
-  resolution: "strnum@npm:2.4.2"
+"strnum@npm:^2.5.1":
+  version: 2.5.1
+  resolution: "strnum@npm:2.5.1"
   dependencies:
     anynum: "npm:^1.0.1"
-  checksum: 10/c624b2f1a4ba0962cfa66e645b583782e868d0f0ab2e038c3c554e81c2040c3e48463d1e078ff1d6ab4932a0b352f34bc51fdd4f8bbd9bf8da66bf9332c85cf4
+  checksum: 10/97918f9e6a30a9a79b4de616e09778e846f8cbce1230ed67c1b68db06e3baaf8c89e4c255ef6eafb2404b26f2bd59627e94647c2389388e5897e5707dbe98178
   languageName: node
   linkType: hard
 
@@ -24445,12 +24463,13 @@ __metadata:
     "@docusaurus/plugin-client-redirects": "npm:^3.9.2"
     "@docusaurus/preset-classic": "npm:^3.9.2"
     "@mdx-js/react": "npm:^3.1.1"
-    "@tsconfig/docusaurus": "npm:^2.0.7"
     "@types/react": "npm:^19.2.7"
     "@types/react-dom": "npm:^19.2.3"
     "@uidotdev/usehooks": "npm:^2.4.1"
+    "@uppy-dev/tsconfig": "workspace:^"
     "@uppy/react": "workspace:*"
     clsx: "npm:^2.1.1"
+    dedent: "npm:^1.7.2"
     prism-react-renderer: "npm:^2.1.0"
     react: "npm:^19.2.0"
     react-dom: "npm:^19.2.0"
@@ -25407,13 +25426,6 @@ __metadata:
   bin:
     xml-js: ./bin/cli.js
   checksum: 10/55ce342a47bf14a138a3fcea0c9e325b81484cfc1a8aac78df13b4d6ca01f20e32820572bc3e927cd9b61b9da9cdee4657cb2f304e460343d8d85d6a3659d749
-  languageName: node
-  linkType: hard
-
-"xml-naming@npm:^0.1.0":
-  version: 0.1.0
-  resolution: "xml-naming@npm:0.1.0"
-  checksum: 10/45abd94ba64a508bda3f4d0b70e49811a3c3542596252c213caf47c858bbe9bba365ebba8eeff68e2a876e22a1bf6855d90cd2019b2f28012cebb167a4df2293
   languageName: node
   linkType: hard
 

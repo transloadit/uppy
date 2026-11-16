@@ -393,9 +393,9 @@ if (config) {
 
       expect(uploadResponses.length).toBe(totalParts)
 
-      uploadResponses.forEach((response) => {
+      for (const response of uploadResponses) {
         expect(response.etag).toBeDefined()
-      })
+      }
 
       // create multipart upload
 

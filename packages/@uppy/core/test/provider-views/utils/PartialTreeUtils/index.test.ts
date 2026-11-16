@@ -5,14 +5,13 @@ import type {
   PartialTreeFolderRoot,
   PartialTreeId,
 } from '../../../../lib/index.js'
+import type { ApiList } from '../../../../lib/provider-views/utils/PartialTreeUtils/afterFill.js'
 import type { CompanionFile } from '../../../../lib/utils/index.js'
 
 import { describe, expect, it, vi } from 'vitest'
 
 import getClickedRange from '../../../../lib/provider-views/utils/getClickedRange.js'
-import afterFill, {
-  type ApiList,
-} from '../../../../lib/provider-views/utils/PartialTreeUtils/afterFill.js'
+import afterFill from '../../../../lib/provider-views/utils/PartialTreeUtils/afterFill.js'
 import afterOpenFolder from '../../../../lib/provider-views/utils/PartialTreeUtils/afterOpenFolder.js'
 import afterScrollFolder from '../../../../lib/provider-views/utils/PartialTreeUtils/afterScrollFolder.js'
 import afterToggleCheckbox from '../../../../lib/provider-views/utils/PartialTreeUtils/afterToggleCheckbox.js'

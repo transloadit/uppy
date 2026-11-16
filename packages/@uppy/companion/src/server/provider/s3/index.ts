@@ -8,6 +8,21 @@ import type {
   S3ConnectionOptions,
   S3ObjectWriteOptions,
 } from '../../../schemas/companion.js'
+import type {
+  CompanionLike,
+  ProviderCreateFolderOptions,
+  ProviderCreateFolderResponse,
+  ProviderDeleteItemOptions,
+  ProviderDownloadOptions,
+  ProviderDownloadResponse,
+  ProviderListItem,
+  ProviderListOptions,
+  ProviderListResponse,
+  ProviderLogoutResponse,
+  ProviderMoveItemOptions,
+  ProviderMoveItemResponse,
+  ProviderSimpleAuthOptions,
+} from '../Provider.js'
 import type { ParsedS3ProviderOptions } from './config.js'
 
 import {
@@ -30,21 +45,7 @@ import logger from '../../logger.js'
 import getS3Client from '../../s3-client.js'
 import { ProviderApiError, ProviderAuthError } from '../error.js'
 import { userError } from '../errorCodes.js'
-import Provider, {
-  type CompanionLike,
-  type ProviderCreateFolderOptions,
-  type ProviderCreateFolderResponse,
-  type ProviderDeleteItemOptions,
-  type ProviderDownloadOptions,
-  type ProviderDownloadResponse,
-  type ProviderListItem,
-  type ProviderListOptions,
-  type ProviderListResponse,
-  type ProviderLogoutResponse,
-  type ProviderMoveItemOptions,
-  type ProviderMoveItemResponse,
-  type ProviderSimpleAuthOptions,
-} from '../Provider.js'
+import Provider from '../Provider.js'
 import { parseS3ProviderOptions, S3ConfigError } from './config.js'
 import {
   ensureTrailingSlash,

@@ -53,9 +53,9 @@ const oauthProviders: Record<string, string> = Object.fromEntries(
   ),
 )
 const authData: Record<string, { accessToken: string }> = {}
-providerNames.forEach((provider) => {
+for (const provider of providerNames) {
   authData[provider] = { accessToken: 'token value' }
-})
+}
 const token = tokenService.generateEncryptedAuthToken(authData, secret)
 
 const thisOrThat = <T>(value1: T | undefined, value2: T): T => {
@@ -240,43 +240,44 @@ describe('list provider files', () => {
 
   // sent as raw paths: an HTTP client like supertest would resolve the dots
   // itself, a hand-written request does not
-  test.each([
-    '..',
-    '.',
-    '%2E%2E',
-  ])('box: the id %j is refused, not resolved as a path step', async (id) => {
-    nock('https://api.box.com').get('/2.0/users/me').reply(200, {
-      login: defaults.USERNAME,
-    })
-    // as /2.0/folders/../items, this would list /2.0/items
-    const scope = nock('https://api.box.com').get(/.*/).reply(200, {})
-    const server = http.createServer(await getServerWithEnv())
-    await new Promise<void>((resolve) => server.listen(0, '127.0.0.1', resolve))
-    try {
-      const status = await new Promise<number | undefined>(
-        (resolve, reject) => {
-          http
-            .get(
-              {
-                host: '127.0.0.1',
-                port: (server.address() as AddressInfo).port,
-                path: `/box/list/${id}`,
-                headers: { 'uppy-auth-token': token },
-              },
-              (res) => {
-                res.resume()
-                resolve(res.statusCode)
-              },
-            )
-            .on('error', reject)
-        },
+  test.each(['..', '.', '%2E%2E'])(
+    'box: the id %j is refused, not resolved as a path step',
+    async (id) => {
+      nock('https://api.box.com').get('/2.0/users/me').reply(200, {
+        login: defaults.USERNAME,
+      })
+      // as /2.0/folders/../items, this would list /2.0/items
+      const scope = nock('https://api.box.com').get(/.*/).reply(200, {})
+      const server = http.createServer(await getServerWithEnv())
+      await new Promise<void>((resolve) =>
+        server.listen(0, '127.0.0.1', resolve),
       )
-      expect(status).toBe(400)
-      expect(scope.isDone()).toBe(false)
-    } finally {
-      server.close()
-    }
-  })
+      try {
+        const status = await new Promise<number | undefined>(
+          (resolve, reject) => {
+            http
+              .get(
+                {
+                  host: '127.0.0.1',
+                  port: (server.address() as AddressInfo).port,
+                  path: `/box/list/${id}`,
+                  headers: { 'uppy-auth-token': token },
+                },
+                (res) => {
+                  res.resume()
+                  resolve(res.statusCode)
+                },
+              )
+              .on('error', reject)
+          },
+        )
+        expect(status).toBe(400)
+        expect(scope.isDone()).toBe(false)
+      } finally {
+        server.close()
+      }
+    },
+  )
 
   test('drive', async () => {
     nock('https://www.googleapis.com')
@@ -547,22 +548,23 @@ describe('provider file gets downloaded from', () => {
 })
 
 describe('connect to provider', () => {
-  test.each(
-    providerNames,
-  )('connect to %s via grant.js endpoint', async (providerName: string) => {
-    const oauthProvider = oauthProviders[providerName]
+  test.each(providerNames)(
+    'connect to %s via grant.js endpoint',
+    async (providerName: string) => {
+      const oauthProvider = oauthProviders[providerName]
 
-    if (oauthProvider == null) return
+      if (oauthProvider == null) return
 
-    await request(await getServerWithEnv())
-      .get(`/${providerName}/connect?foo=bar`)
-      .set('uppy-auth-token', token)
-      .expect(302)
-      .expect(
-        'Location',
-        `http://localhost:3020/connect/${oauthProvider}?state=${OAUTH_STATE}`,
-      )
-  })
+      await request(await getServerWithEnv())
+        .get(`/${providerName}/connect?foo=bar`)
+        .set('uppy-auth-token', token)
+        .expect(302)
+        .expect(
+          'Location',
+          `http://localhost:3020/connect/${oauthProvider}?state=${OAUTH_STATE}`,
+        )
+    },
+  )
 })
 
 describe('logout of provider', () => {

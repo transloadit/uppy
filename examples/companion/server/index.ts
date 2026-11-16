@@ -3,7 +3,7 @@ import type { Request, Response } from 'express'
 
 import { styleText } from 'node:util'
 
-import companion from '@uppy/companion'
+import * as companion from '@uppy/companion'
 import bodyParser from 'body-parser'
 import express from 'express'
 import session from 'express-session'
