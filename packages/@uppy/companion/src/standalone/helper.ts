@@ -7,6 +7,7 @@ import type {
   CompanionInitOptions,
   S3ProviderOptions,
 } from '../schemas/index.js'
+import { isRecord } from '../server/helpers/type-guards.js'
 import * as utils from '../server/helpers/utils.js'
 import logger from '../server/logger.js'
 import { toKeyList } from '../server/provider/s3/grant.js'
@@ -368,14 +369,17 @@ const getConfigFromEnv = (): StandaloneCompanionOptions => {
 }
 
 const getConfigPath = (): string | undefined => {
-  let configPath: string | undefined
+  let configPath = process.env['COMPANION_CONFIG_FILE']
 
   for (let i = process.argv.length - 1; i >= 0; i--) {
     const isConfigFlag =
       process.argv[i] === '-c' || process.argv[i] === '--config'
-    const flagHasValue = i + 1 <= process.argv.length
-    if (isConfigFlag && flagHasValue) {
-      configPath = process.argv[i + 1]
+    if (isConfigFlag) {
+      const value = process.argv[i + 1]
+      if (!value || value.startsWith('-')) {
+        throw new Error(`${process.argv[i]} requires a config file path`)
+      }
+      configPath = value
       break
     }
   }
@@ -383,18 +387,30 @@ const getConfigPath = (): string | undefined => {
   return configPath
 }
 
-// todo use zod schema
 const getConfigFromFile = () => {
   const path = getConfigPath()
-  if (!path) return {}
+  const inline = process.env['COMPANION_CONFIG_JSON']
+  if (path && inline !== undefined) {
+    throw new Error(
+      'Choose either a Companion config file or COMPANION_CONFIG_JSON',
+    )
+  }
+  if (!path && inline === undefined) return {}
 
-  const rawdata = fs.readFileSync(path)
-  const config = JSON.parse(rawdata.toString('utf8'))
+  const rawdata = path ? fs.readFileSync(path, 'utf8') : inline
+  let config: Record<string, unknown>
+  try {
+    config = z.record(z.string(), z.unknown()).parse(JSON.parse(rawdata ?? ''))
+  } catch {
+    // Parser errors can contain values from the configuration.
+    throw new Error('Invalid Companion JSON configuration')
+  }
 
   // JSON cannot hold a RegExp either, so patterns are resolved here too.
-  config.uploadUrls = parseAllowlistArray(config.uploadUrls)
-  if (config.server?.validHosts != null) {
-    config.server.validHosts = parseAllowlistArray(config.server.validHosts)
+  config['uploadUrls'] = parseAllowlistArray(config['uploadUrls'])
+  const server = config['server']
+  if (isRecord(server) && server['validHosts'] != null) {
+    server['validHosts'] = parseAllowlistArray(server['validHosts'])
   }
   return config
 }

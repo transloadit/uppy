@@ -2,6 +2,7 @@ import { timingSafeEqual } from 'node:crypto'
 import type { NextFunction, Request, Response } from 'express'
 import { publishAuthCallback } from '../auth-callback.js'
 import {
+  authCallbackErrorHtml,
   authCallbackSuccessHtml,
   legacyAuthCallbackHtml,
 } from '../helpers/html.js'
@@ -64,11 +65,16 @@ export default async function sendToken(
   // only new Uppy clients will set an authCallbackToken in the state
   // in that case, we send the token through the emitter.
   if (authCallbackToken) {
-    await publishAuthCallback(
-      authCallbackToken,
-      { token: uppyAuthToken },
-      companion.options,
-    )
+    try {
+      await publishAuthCallback(
+        authCallbackToken,
+        { token: uppyAuthToken },
+        companion.options,
+      )
+    } catch {
+      res.status(500).send(authCallbackErrorHtml())
+      return
+    }
     res.send(authCallbackSuccessHtml())
   } else {
     // postMessage() delivers to the scheme://host:port of its target origin, so
