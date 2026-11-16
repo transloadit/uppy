@@ -28,14 +28,12 @@ jobs:
       - name: Install Corepack
         run: npm install --global corepack@0.36.0
       - name: Set SHA commit in version
-        run:
-          (cd packages/@uppy/companion && node -e 'const
+        run: (cd packages/@uppy/companion && node -e 'const
           pkg=require("./package.json");pkg.version+="+${{ github.sha
           }}";fs.writeFileSync("package.json",JSON.stringify(pkg, undefined,
           2)+"\n")')
       - name: Create Companion tarball
-        run:
-          corepack yarn workspace @uppy/companion pack --install-if-needed -o
+        run: corepack yarn workspace @uppy/companion pack --install-if-needed -o
           /tmp/companion-${{ github.sha }}.tar.gz
       - name: Upload artifact
         if: success()

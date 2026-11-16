@@ -100,8 +100,7 @@ jobs:
         run: npm install --global corepack@0.36.0
       - name: Get yarn cache directory path
         id: yarn-cache-dir-path
-        run:
-          echo "dir=$(corepack yarn config get cacheFolder)" >> $GITHUB_OUTPUT
+        run: echo "dir=$(corepack yarn config get cacheFolder)" >> $GITHUB_OUTPUT
 
       - uses: actions/cache@v6
         id: yarn-cache # use this to check for `cache-hit` (`steps.yarn-cache.outputs.cache-hit != 'true'`)
@@ -111,8 +110,7 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-yarn-
       - name: Install dependencies
-        run:
-          corepack yarn install --immutable
+        run: corepack yarn install --immutable
       - name: Install Playwright Browsers
         run: corepack yarn workspace @uppy/dashboard playwright install --with-deps chromium
       - name: Build
@@ -124,7 +122,7 @@ jobs:
           COMPANION_DOMAIN: localhost:3020
           COMPANION_PROTOCOL: http
           COMPANION_REDIS_URL: redis://localhost:6379
-          VITE_MINIO_CONFIG: "test_user,test_password,http://localhost:9002/test-bucket,us-east-1"
+          VITE_MINIO_CONFIG: 'test_user,test_password,http://localhost:9002/test-bucket,us-east-1'
       # The examples aren't covered by `yarn build` (packages only) or
       # `yarn test` (react/vue/sveltekit only), so build and typecheck them
       # explicitly. Run it after the unit tests so an example-only breakage
@@ -160,8 +158,7 @@ jobs:
         run: npm install --global corepack@0.36.0
       - name: Get yarn cache directory path
         id: yarn-cache-dir-path
-        run:
-          echo "dir=$(corepack yarn config get cacheFolder)" >> $GITHUB_OUTPUT
+        run: echo "dir=$(corepack yarn config get cacheFolder)" >> $GITHUB_OUTPUT
       - uses: actions/cache@v6
         with:
           path: ${{ steps.yarn-cache-dir-path.outputs.dir }}
@@ -196,8 +193,7 @@ jobs:
         run: npm install --global corepack@0.36.0
       - name: Get yarn cache directory path
         id: yarn-cache-dir-path
-        run:
-          echo "dir=$(corepack yarn config get cacheFolder)" >> $GITHUB_OUTPUT
+        run: echo "dir=$(corepack yarn config get cacheFolder)" >> $GITHUB_OUTPUT
 
       - uses: actions/cache@v6
         id: yarn-cache # use this to check for `cache-hit` (`steps.yarn-cache.outputs.cache-hit != 'true'`)
@@ -207,8 +203,7 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-yarn-
       - name: Install dependencies
-        run:
-          corepack yarn install --immutable
+        run: corepack yarn install --immutable
       - run: corepack yarn run typecheck
 
   lint_js:
@@ -225,8 +220,7 @@ jobs:
       - name: Install Corepack
         run: npm install --global corepack@0.36.0
       - name: Install dependencies
-        run:
-          corepack yarn workspaces focus @uppy-dev/build
+        run: corepack yarn workspaces focus @uppy-dev/build
       - name: Run linter
         run: corepack yarn run check:ci
 
@@ -278,8 +272,7 @@ jobs:
         run: npm install --global corepack@0.36.0
       - name: Get yarn cache directory path
         id: yarn-cache-dir-path
-        run:
-          echo "dir=$(corepack yarn config get cacheFolder)" >> $GITHUB_OUTPUT
+        run: echo "dir=$(corepack yarn config get cacheFolder)" >> $GITHUB_OUTPUT
       - uses: actions/cache@v6
         with:
           path: ${{ steps.yarn-cache-dir-path.outputs.dir }}
@@ -306,8 +299,7 @@ jobs:
         run: npm install --global corepack@0.36.0
       - name: Get yarn cache directory path
         id: yarn-cache-dir-path
-        run:
-          echo "dir=$(corepack yarn config get cacheFolder)" >> $GITHUB_OUTPUT
+        run: echo "dir=$(corepack yarn config get cacheFolder)" >> $GITHUB_OUTPUT
       - uses: actions/cache@v6
         with:
           path: ${{ steps.yarn-cache-dir-path.outputs.dir }}

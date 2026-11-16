@@ -46,8 +46,7 @@ jobs:
         run: npm install --global corepack@0.36.0
       - name: Get yarn cache directory path
         id: yarn-cache-dir-path
-        run:
-          echo "dir=$(corepack yarn config get cacheFolder)" >> $GITHUB_OUTPUT
+        run: echo "dir=$(corepack yarn config get cacheFolder)" >> $GITHUB_OUTPUT
       - uses: actions/cache@v6
         with:
           path: ${{ steps.yarn-cache-dir-path.outputs.dir }}
@@ -63,21 +62,18 @@ jobs:
         run: corepack yarn workspace uppy-io build
 
       - name: Restore IndexNow production state
-        if:
-          github.repository == 'transloadit/uppy' && github.ref ==
+        if: github.repository == 'transloadit/uppy' && github.ref ==
           'refs/heads/main'
         continue-on-error: true
         uses: actions/cache/restore@v6
         with:
           path: website/.cache-loader/indexnow/state.json
-          key:
-            indexnow-production-${{ github.run_id }}-${{ github.run_attempt }}
+          key: indexnow-production-${{ github.run_id }}-${{ github.run_attempt }}
           restore-keys: indexnow-production-
 
       - name: Prepare changed URLs for IndexNow
         id: indexnow
-        if:
-          github.repository == 'transloadit/uppy' && github.ref ==
+        if: github.repository == 'transloadit/uppy' && github.ref ==
           'refs/heads/main'
         continue-on-error: true
         timeout-minutes: 2
@@ -96,8 +92,7 @@ jobs:
         uses: actions/deploy-pages@v5
 
       - name: Submit changed URLs to IndexNow
-        if:
-          steps.indexnow.outcome == 'success' && steps.deployment.outcome ==
+        if: steps.indexnow.outcome == 'success' && steps.deployment.outcome ==
           'success' && github.ref == 'refs/heads/main'
         continue-on-error: true
         timeout-minutes: 2
@@ -105,19 +100,16 @@ jobs:
         run: node scripts/indexnow.mjs submit
 
       - name: Save IndexNow production state
-        if:
-          always() && steps.deployment.outcome == 'success' && github.ref ==
+        if: always() && steps.deployment.outcome == 'success' && github.ref ==
           'refs/heads/main'
         continue-on-error: true
         uses: actions/cache/save@v6
         with:
           path: website/.cache-loader/indexnow/state.json
-          key:
-            indexnow-production-${{ github.run_id }}-${{ github.run_attempt }}
+          key: indexnow-production-${{ github.run_id }}-${{ github.run_attempt }}
 
       - name: Archive IndexNow production state
-        if:
-          always() && steps.deployment.outcome == 'success' && github.ref ==
+        if: always() && steps.deployment.outcome == 'success' && github.ref ==
           'refs/heads/main'
         continue-on-error: true
         uses: actions/upload-artifact@v7
