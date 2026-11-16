@@ -2,7 +2,6 @@ import fs from 'node:fs'
 import path from 'node:path'
 import { setTimeout as sleep } from 'node:timers/promises'
 import got from 'got'
-import schedule from 'node-schedule'
 import { isRecord } from './helpers/type-guards.js'
 import * as logger from './logger.js'
 import Uploader from './Uploader.js'
@@ -61,8 +60,21 @@ const cleanUpFinishedUploads = (dirPath: string): void => {
  */
 export function startCleanUpJob(dirPath: string): void {
   logger.info('starting clean up job', 'jobs.cleanup.start')
-  // run once a day
-  schedule.scheduleJob('0 23 * * *', () => cleanUpFinishedUploads(dirPath))
+  // Run at 23:00 local time every day. The timer is unref'd: the server keeps
+  // the process alive.
+  function scheduleNext(after: number): void {
+    const next = new Date(after)
+    next.setHours(23, 0, 0, 0)
+    if (next.getTime() <= after) next.setDate(next.getDate() + 1)
+    setTimeout(() => {
+      // Schedule the next run first, so that a job that throws does not end
+      // the schedule. A timer can fire slightly before its time: count from
+      // the time this run was due, or the same 23:00 would be scheduled again.
+      scheduleNext(Math.max(Date.now(), next.getTime()))
+      cleanUpFinishedUploads(dirPath)
+    }, next.getTime() - Date.now()).unref()
+  }
+  scheduleNext(Date.now())
 }
 
 async function runPeriodicPing({

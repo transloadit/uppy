@@ -1,5 +1,10 @@
 import { inspect, styleText } from 'node:util'
-import escapeStringRegexp from 'escape-string-regexp'
+
+// TODO: Replace with RegExp.escape when we drop Node.js 22.
+/** Escape a string for use in a RegExp, as escape-string-regexp does. */
+function escapeStringRegexp(string: string): string {
+  return string.replace(/[|\\{}()[\]^$+*?.]/g, '\\$&').replace(/-/g, '\\x2d')
+}
 
 type Colors = Parameters<typeof styleText>[0]
 type LogLevel = 'error' | 'info' | 'warn' | 'debug'
