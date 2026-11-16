@@ -243,11 +243,13 @@ send.
 
 #### `limit`
 
-The maximum number of files to upload in parallel (`number`, default: `6`).
+The maximum number of concurrent requests to S3 (`number`, default: `6`).
 
-The parts of a single file are uploaded one after the other, so this is also the
-number of concurrent requests to S3. The default matches the number of
-connections browsers open per host over HTTP/1.1.
+Single-part uploads and the parts of a multipart upload share this pool, so one
+large file uses up to `limit` connections and several files divide them. A
+remote (Companion) upload takes one slot for its whole duration. `0` means
+unlimited. The default matches the number of connections browsers open per host
+over HTTP/1.1.
 
 #### `getChunkSize(file)`
 
