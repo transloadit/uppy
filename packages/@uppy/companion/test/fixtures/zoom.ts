@@ -17,38 +17,39 @@ export const expects = {
   remoteZoomVerificationToken: 'REMOTE-ZOOM-VERIFICATION-TOKEN',
 } as const
 
+export const zoomRecording = {
+  uuid: 'DUMMY-UUID==',
+  id: 12345678900,
+  account_id: 'DUMMY-ACCOUNT-ID',
+  host_id: 'DUMMY-HOST-ID',
+  topic: 'DUMMY TOPIC',
+  type: 2,
+  start_time: '2020-05-29T13:19:40Z',
+  timezone: 'Europe/Amsterdam',
+  duration: 0,
+  total_size: 723389,
+  recording_count: 4,
+  recording_files: [
+    {
+      id: 'DUMMY-FILE-ID',
+      meeting_id: 'DUMMY-UUID==',
+      recording_start: '2020-05-29T13:23:57Z',
+      recording_end: '2020-05-29T13:24:02Z',
+      file_type: 'MP4',
+      file_size: 758051,
+      play_url: 'https://us02web.zoom.us/rec/play/DUMMY-DOWNLOAD-PATH',
+      download_url: 'https://us02web.zoom.us/rec/download/DUMMY-DOWNLOAD-PATH',
+      status: 'completed',
+      recording_type: 'shared_screen_with_speaker_view',
+    },
+  ],
+}
+
 export const nockZoomRecordings = ({ times = 1 }: { times?: number } = {}) => {
   nock('https://zoom.us')
     .get('/v2/meetings/DUMMY-UUID%3D%3D/recordings')
     .times(times)
-    .reply(200, {
-      uuid: 'DUMMY-UUID==',
-      id: 12345678900,
-      account_id: 'DUMMY-ACCOUNT-ID',
-      host_id: 'DUMMY-HOST-ID',
-      topic: 'DUMMY TOPIC',
-      type: 2,
-      start_time: '2020-05-29T13:19:40Z',
-      timezone: 'Europe/Amsterdam',
-      duration: 0,
-      total_size: 723389,
-      recording_count: 4,
-      recording_files: [
-        {
-          id: 'DUMMY-FILE-ID',
-          meeting_id: 'DUMMY-UUID==',
-          recording_start: '2020-05-29T13:23:57Z',
-          recording_end: '2020-05-29T13:24:02Z',
-          file_type: 'MP4',
-          file_size: 758051,
-          play_url: 'https://us02web.zoom.us/rec/play/DUMMY-DOWNLOAD-PATH',
-          download_url:
-            'https://us02web.zoom.us/rec/download/DUMMY-DOWNLOAD-PATH',
-          status: 'completed',
-          recording_type: 'shared_screen_with_speaker_view',
-        },
-      ],
-    })
+    .reply(200, zoomRecording)
 }
 
 export const nockZoomRevoke = ({

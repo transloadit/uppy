@@ -24,6 +24,7 @@ import {
   nockZoomRecordings,
   nockZoomRevoke,
   expects as zoomExpects,
+  zoomRecording,
 } from './fixtures/zoom.js'
 import { getServer } from './mockserver.js'
 
@@ -445,6 +446,40 @@ describe('list provider files', () => {
 
     const { username, items, providerFixture } = await runTest('zoom')
     expect1({ username, items, providerFixture })
+  })
+
+  test('zoom lists meetings in a year without a meeting_id on the meeting', async () => {
+    nock('https://zoom.us').get('/v2/users/me').reply(200, {
+      email: defaults.USERNAME,
+      timezone: 'UTC',
+    })
+    const recordings = nock('https://zoom.us')
+      .get('/v2/users/me/recordings')
+      .query({ page_size: '300', from: '2020-05-01', to: '2020-05-31' })
+      .reply(200, { meetings: [zoomRecording] })
+      .get('/v2/users/me/recordings')
+      .query(true)
+      .times(11)
+      .reply(200, { meetings: [] })
+
+    const response = await request(await getServerWithEnv())
+      .get('/zoom/list/')
+      .query({ year: '2020' })
+      .set('uppy-auth-token', token)
+      .expect(200)
+
+    expect(response.body.username).toBe(defaults.USERNAME)
+    expect(response.body.items).toEqual([
+      expect.objectContaining({
+        isFolder: true,
+        name: 'DUMMY TOPIC (2020-05-29, 13:19)',
+        id: 'DUMMY-UUID%3D%3D',
+        requestPath: 'DUMMY-UUID%253D%253D',
+        mimeType: null,
+        size: 723389,
+      }),
+    ])
+    recordings.done()
   })
 })
 

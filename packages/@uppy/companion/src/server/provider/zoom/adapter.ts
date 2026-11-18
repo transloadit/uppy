@@ -60,7 +60,6 @@ type ZoomRecordingFile = ZoomItem & {
 
 type ZoomMeeting = ZoomItem & {
   uuid: string
-  meeting_id: string
   topic: string
   recording_files?: ZoomRecordingFile[]
 }
@@ -183,10 +182,8 @@ function isZoomRecordingFile(value: unknown): value is ZoomRecordingFile {
 function toZoomMeeting(value: unknown): ZoomMeeting | null {
   if (!isRecord(value)) return null
   const uuid = value['uuid']
-  const meetingId = value['meeting_id']
   const topic = value['topic']
   if (typeof uuid !== 'string') return null
-  if (typeof meetingId !== 'string') return null
   if (typeof topic !== 'string') return null
 
   const startTime = value['start_time']
@@ -198,7 +195,6 @@ function toZoomMeeting(value: unknown): ZoomMeeting | null {
 
   const out: ZoomMeeting = {
     uuid,
-    meeting_id: meetingId,
     topic,
     recording_files: recordingFiles,
   }
