@@ -1,5 +1,6 @@
-import type { NextFunction, Request, Response } from 'express'
+import type { NextFunction, Response } from 'express'
 
+import type { Request } from '../../types/express.js'
 import type Provider from '../provider/Provider.js'
 
 import { respondWithError } from '../provider/error.js'

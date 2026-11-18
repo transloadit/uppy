@@ -1,4 +1,4 @@
-import type { Express, RequestHandler } from 'express'
+import type { Express } from 'express'
 
 import type {
   CompanionInitOptions,
@@ -7,6 +7,7 @@ import type {
 import type { EmitterLike } from './server/emitter/index.js'
 import type Provider from './server/provider/Provider.js'
 import type { CompanionRuntimeOptions } from './types/companion-options.js'
+import type { RequestHandler } from './types/express.js'
 
 import { randomUUID } from 'node:crypto'
 
@@ -29,6 +30,7 @@ import s3 from './server/controllers/s3.js'
 import searchController from './server/controllers/search.js'
 import url from './server/controllers/url.js'
 import createEmitter from './server/emitter/index.js'
+import { asRecord } from './server/helpers/type-guards.js'
 import { getURLBuilder } from './server/helpers/utils.js'
 import * as jobs from './server/jobs.js'
 import logger from './server/logger.js'
@@ -176,7 +178,7 @@ export function app(optionsArg: CompanionInitOptions): {
     }
     // same input object Grant reads
     const input: Record<string, unknown> =
-      Object.keys(req.query).length > 0 ? req.query : (req.body ?? {})
+      Object.keys(req.query).length > 0 ? req.query : asRecord(req.body)
     if (input['code'] ? !req.session?.grant?.state : !input['error']) {
       // Also what an expired session looks like: tell the user to retry.
       res

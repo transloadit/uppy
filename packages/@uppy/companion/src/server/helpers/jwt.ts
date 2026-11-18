@@ -1,6 +1,7 @@
-import type { Request, Response } from 'express'
+import type { Response } from 'express'
 
 import type { CompanionRuntimeOptions } from '../../types/companion-options.js'
+import type { Request } from '../../types/express.js'
 
 import jwt from 'jsonwebtoken'
 
