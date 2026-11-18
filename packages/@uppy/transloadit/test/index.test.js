@@ -1,4 +1,5 @@
 import '@uppy-dev/msw-setup'
+
 import { network } from 'virtual:msw'
 import Core from '@uppy/core'
 import { RateLimitedQueue } from '@uppy/core/utils'

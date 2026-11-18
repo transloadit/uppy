@@ -1,5 +1,11 @@
+import 'uppy/dist/uppy.min.css'
+
+import type { Locale } from '@uppy/core/utils'
+
 import BrowserOnly from '@docusaurus/BrowserOnly'
+import Link from '@docusaurus/Link'
 import Admonition from '@theme/Admonition'
+import Heading from '@theme/Heading'
 import Layout from '@theme/Layout'
 import TabItem from '@theme/TabItem'
 import Tabs from '@theme/Tabs'
@@ -26,14 +32,6 @@ import {
 } from 'uppy'
 
 import locales from '../locales.js'
-
-import 'uppy/dist/uppy.min.css'
-
-import type { Locale } from '@uppy/core/utils'
-
-import Link from '@docusaurus/Link'
-import Heading from '@theme/Heading'
-
 import styles from './examples.module.css'
 
 const restrictions = {

@@ -1,15 +1,15 @@
 'use client'
 
+import '@uppy/core/css/style.min.css'
+import '@uppy/dashboard/css/style.min.css'
+import '@uppy/webcam/css/style.min.css'
+
 import Uppy from '@uppy/core'
 import Dashboard from '@uppy/react/dashboard'
 import Transloadit from '@uppy/transloadit'
 import Tus from '@uppy/tus'
 import Xhr from '@uppy/xhr-upload'
 import { useState } from 'react'
-
-import '@uppy/core/css/style.min.css'
-import '@uppy/dashboard/css/style.min.css'
-import '@uppy/webcam/css/style.min.css'
 
 const UppyDashboard = () => {
   const [uppyTus] = useState(() =>

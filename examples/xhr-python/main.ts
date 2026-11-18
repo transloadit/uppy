@@ -1,11 +1,11 @@
+import '@uppy/core/css/style.css'
+import '@uppy/dashboard/css/style.css'
+import '@uppy/webcam/css/style.css'
+
 import Uppy from '@uppy/core'
 import Dashboard from '@uppy/dashboard'
 import Webcam from '@uppy/webcam'
 import XHRUpload from '@uppy/xhr-upload'
-
-import '@uppy/core/css/style.css'
-import '@uppy/webcam/css/style.css'
-import '@uppy/dashboard/css/style.css'
 
 const uppy = new Uppy({
   debug: true,

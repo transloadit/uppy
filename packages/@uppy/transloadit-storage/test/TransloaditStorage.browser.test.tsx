@@ -1,5 +1,13 @@
+import '@uppy/core/css/style.css'
+import '@uppy/core/provider-views/css/style.css'
+import '@uppy/dashboard/css/style.css'
+import '@uppy-dev/msw-setup'
+
 import type { PluginOpts } from '@uppy/core'
 
+import type { TransloaditStorageOptions } from '../lib/TransloaditStorage.js'
+
+import { network } from 'virtual:msw'
 import Uppy, { BasePlugin } from '@uppy/core'
 import Dashboard from '@uppy/dashboard'
 import {
@@ -10,14 +18,6 @@ import {
 import { http } from 'msw'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { page } from 'vitest/browser'
-import '@uppy/core/css/style.css'
-import '@uppy/core/provider-views/css/style.css'
-import '@uppy/dashboard/css/style.css'
-import '@uppy-dev/msw-setup'
-
-import type { TransloaditStorageOptions } from '../lib/TransloaditStorage.js'
-
-import { network } from 'virtual:msw'
 
 import TransloaditStorage from '../lib/TransloaditStorage.js'
 

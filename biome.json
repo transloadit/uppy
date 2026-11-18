@@ -101,7 +101,23 @@
         "organizeImports": {
           "level": "on",
           "options": {
+            "sortBareImports": true,
             "groups": [
+              {
+                "kind": "bare",
+                "source": [":PACKAGE:", "virtual:*"]
+              },
+              ":BLANK_LINE:",
+              {
+                "kind": "bare",
+                "source": [":ALIAS:"]
+              },
+              ":BLANK_LINE:",
+              {
+                "kind": "bare",
+                "source": [":PATH:"]
+              },
+              ":BLANK_LINE:",
               {
                 "type": true,
                 "source": [":NODE:"]

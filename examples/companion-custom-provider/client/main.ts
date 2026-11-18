@@ -1,12 +1,12 @@
+import '@uppy/core/css/style.css'
+import '@uppy/dashboard/css/style.css'
+
 import Uppy from '@uppy/core'
 import Dashboard from '@uppy/dashboard'
 import GoogleDrive from '@uppy/google-drive'
 import Tus from '@uppy/tus'
 
 import MyCustomProvider from './MyCustomProvider.jsx'
-
-import '@uppy/core/css/style.css'
-import '@uppy/dashboard/css/style.css'
 
 const uppy = new Uppy({
   debug: true,

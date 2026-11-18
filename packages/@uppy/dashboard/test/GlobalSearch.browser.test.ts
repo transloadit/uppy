@@ -1,4 +1,7 @@
+import '@uppy/core/css/style.css'
+import '@uppy/dashboard/css/style.css'
 import '@uppy-dev/msw-setup'
+
 import { network } from 'virtual:msw'
 import Uppy from '@uppy/core'
 import { ProviderViews } from '@uppy/core/provider-views'
@@ -10,9 +13,6 @@ import { afterEach, beforeAll, describe, expect, test } from 'vitest'
 import { page, userEvent } from 'vitest/browser'
 
 import { handlers } from './mocks/CompanionHandler.js'
-
-import '@uppy/core/css/style.css'
-import '@uppy/dashboard/css/style.css'
 
 let uppy: Uppy | undefined
 
