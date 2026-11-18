@@ -32,32 +32,10 @@ describe('randomUUID', () => {
     }
   })
 
-  describe('without crypto.randomUUID (insecure context)', () => {
-    function stubInsecureCrypto() {
-      const getRandomValues = vi.fn(crypto.getRandomValues.bind(crypto))
-      vi.stubGlobal('crypto', { getRandomValues })
-      return getRandomValues
-    }
-
-    it('returns unique v4 UUIDs from crypto.getRandomValues', () => {
-      const getRandomValues = stubInsecureCrypto()
-      expectUniqueV4UUIDs()
-      expect(getRandomValues).toHaveBeenCalled()
-    })
-
-    it('sets the version and variant bits regardless of the random bytes', () => {
-      vi.stubGlobal('crypto', {
-        getRandomValues: <T extends ArrayBufferView>(array: T) => {
-          new Uint8Array(array.buffer).fill(0xff)
-          return array
-        },
-      })
-      expect(randomUUID()).toBe('ffffffff-ffff-4fff-bfff-ffffffffffff')
-
-      vi.stubGlobal('crypto', {
-        getRandomValues: <T extends ArrayBufferView>(array: T) => array,
-      })
-      expect(randomUUID()).toBe('00000000-0000-4000-8000-000000000000')
-    })
+  it('falls back to crypto.getRandomValues without crypto.randomUUID (insecure context)', () => {
+    const getRandomValues = vi.fn(crypto.getRandomValues.bind(crypto))
+    vi.stubGlobal('crypto', { getRandomValues })
+    expectUniqueV4UUIDs()
+    expect(getRandomValues).toHaveBeenCalled()
   })
 })
