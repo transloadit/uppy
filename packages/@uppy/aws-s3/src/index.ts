@@ -408,7 +408,9 @@ export interface AwsBody extends Body {
    * proposed. For a multipart upload it is the key S3 reports on complete. So
    * a `PUT` signer that relocates the object without returning a `key` is
    * reported accurately only for multipart uploads; return `key` from
-   * `signRequest` to make both paths agree.
+   * `signRequest` to make both paths agree. If you can't change the signer,
+   * use `location` (also the response's `uploadURL`), the URL the object was
+   * actually uploaded to, and take the key from its path.
    */
   key: string
 }
