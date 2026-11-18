@@ -26,14 +26,11 @@ jobs:
     name: Isolate Uppy packages
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout sources
-        uses: actions/checkout@v7
-      - name: Install Node.js
-        uses: actions/setup-node@v7
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
         with:
           node-version: ${{ env.NODE_VERSION }}
-      - name: Install Corepack
-        run: npm install --global corepack@0.36.0
+      - run: npm install --global corepack@0.36.0
       - name: Get yarn cache directory path
         id: yarn-cache-dir-path
         run:
@@ -45,11 +42,8 @@ jobs:
           key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
           restore-keys: |
             ${{ runner.os }}-yarn-
-      - name: Install dependencies
-        run:
-          corepack yarn install --immutable
-      - name: Build
-        run: corepack yarn run build
+      - run: corepack yarn install --immutable
+      - run: corepack yarn run build
       - name: Make Uppy bundle use local version
         run: |
           node <<'EOF'
@@ -78,9 +72,8 @@ jobs:
           mkdir -p /tmp/uppy-debug
           tar -xzf /tmp/artifacts/uppy-${{ github.sha }}.tgz --strip-components 1 -C /tmp/uppy-debug
           node -e 'const pkg=require("/tmp/uppy-debug/package.json");const fields=["dependencies","peerDependencies","optionalDependencies","devDependencies"];let found=false;for(const f of fields){if(!pkg[f])continue;for(const [k,v] of Object.entries(pkg[f])){if(String(v).startsWith("workspace:")){console.log(`${f}: ${k}=${v}`);found=true;}}}if(found){process.exit(1)}else{console.log("No workspace:* entries in packaged uppy package.json")}'
-      - name: Upload artifact
+      - uses: actions/upload-artifact@v6
         if: success()
-        uses: actions/upload-artifact@v6
         with:
           name: packages
           path: /tmp/artifacts/
@@ -93,22 +86,16 @@ jobs:
       matrix:
         bundler-version: [latest]
     steps:
-      - name: Install Node.js
-        uses: actions/setup-node@v7
+      - uses: actions/setup-node@v7
         with:
           node-version: ${{ env.NODE_VERSION }}
-      - name: Install Corepack
-        run: npm install --global corepack@0.36.0
-      - name: Download uppy tarball
-        uses: actions/download-artifact@v7
+      - run: npm install --global corepack@0.36.0
+      - uses: actions/download-artifact@v7
         with:
           name: packages
           path: /tmp/packages/
-      - name: Extract tarball
-        run:
-          tar -xzf /tmp/packages/uppy-${{ github.sha }}.tgz --strip-components 1
-      - name: Add Rollup as a dev dependency
-        run: >-
+      - run: tar -xzf /tmp/packages/uppy-${{ github.sha }}.tgz --strip-components 1
+      - run: >-
           npm i --save-dev @rollup/plugin-commonjs @rollup/plugin-node-resolve
           @rollup/plugin-json rollup@${{matrix.bundler-version}}
       - run: npx rollup --version
@@ -129,8 +116,7 @@ jobs:
               nodeResolve({ browser: true, exportConditions: ["browser"] }),
             ],
           };' > rollup.config.mjs
-      - name: Bundle
-        run: npx rollup -c
+      - run: npx rollup -c
 
   webpack:
     needs: isolate_uppy
@@ -140,22 +126,16 @@ jobs:
       matrix:
         bundler-version: [latest]
     steps:
-      - name: Install Node.js
-        uses: actions/setup-node@v7
+      - uses: actions/setup-node@v7
         with:
           node-version: ${{ env.NODE_VERSION }}
-      - name: Install Corepack
-        run: npm install --global corepack@0.36.0
-      - name: Download uppy tarball
-        uses: actions/download-artifact@v7
+      - run: npm install --global corepack@0.36.0
+      - uses: actions/download-artifact@v7
         with:
           name: packages
           path: /tmp/packages/
-      - name: Extract tarball
-        run:
-          tar -xzf /tmp/packages/uppy-${{ github.sha }}.tgz --strip-components 1
-      - name: Add Webpack as a dev dependency
-        run: npm i --save-dev webpack-cli webpack@${{matrix.bundler-version}}
+      - run: tar -xzf /tmp/packages/uppy-${{ github.sha }}.tgz --strip-components 1
+      - run: npm i --save-dev webpack-cli webpack@${{matrix.bundler-version}}
       - run: npx webpack --version
       - name: Create Webpack config file
         run: |
@@ -178,8 +158,7 @@ jobs:
               }
             }
           }' > webpack.config.js
-      - name: Bundle
-        run: npx webpack
+      - run: npx webpack
 
   parcel:
     needs: isolate_uppy
@@ -189,20 +168,15 @@ jobs:
       matrix:
         bundler-version: [latest]
     steps:
-      - name: Install Node.js
-        uses: actions/setup-node@v7
+      - uses: actions/setup-node@v7
         with:
           node-version: ${{ env.NODE_VERSION }}
-      - name: Install Corepack
-        run: npm install --global corepack@0.36.0
-      - name: Download uppy tarball
-        uses: actions/download-artifact@v7
+      - run: npm install --global corepack@0.36.0
+      - uses: actions/download-artifact@v7
         with:
           name: packages
           path: /tmp/packages/
-      - name: Extract tarball
-        run:
-          tar -xzf /tmp/packages/uppy-${{ github.sha }}.tgz --strip-components 1
+      - run: tar -xzf /tmp/packages/uppy-${{ github.sha }}.tgz --strip-components 1
       - name: Fix package.json to work with Parcel
         run: |
           node <<'EOF'
@@ -212,11 +186,9 @@ jobs:
             pkg.module = 'output.mjs'
             require('node:fs').writeFileSync('./package.json', JSON.stringify(pkg));
           EOF
-      - name: Add Parcel as a dev dependency
-        run: npm i --save-dev parcel@${{matrix.bundler-version}}
+      - run: npm i --save-dev parcel@${{matrix.bundler-version}}
       - run: npx parcel --version
-      - name: Bundle
-        run: npx parcel build lib/index.js
+      - run: npx parcel build lib/index.js
 
   vite:
     needs: isolate_uppy
@@ -226,29 +198,22 @@ jobs:
       matrix:
         bundler-version: [latest]
     steps:
-      - name: Install Node.js
-        uses: actions/setup-node@v7
+      - uses: actions/setup-node@v7
         with:
           node-version: ${{ env.NODE_VERSION }}
-      - name: Install Corepack
-        run: npm install --global corepack@0.36.0
-      - name: Download uppy tarball
-        uses: actions/download-artifact@v7
+      - run: npm install --global corepack@0.36.0
+      - uses: actions/download-artifact@v7
         with:
           name: packages
           path: /tmp/packages/
-      - name: Extract tarball
-        run:
-          tar -xzf /tmp/packages/uppy-${{ github.sha }}.tgz --strip-components 1
-      - name: Add Vite as a dev dependency
-        run: npm i --save-dev vite@${{matrix.bundler-version}}
+      - run: tar -xzf /tmp/packages/uppy-${{ github.sha }}.tgz --strip-components 1
+      - run: npm i --save-dev vite@${{matrix.bundler-version}}
       - run: npx vite --version
       - name: Create index.html
         run:
           echo '<!doctype html><html><head><script type="module"
           src="./lib/index.js"></script></head></html>' > index.html
-      - name: Bundle
-        run: npx vite build
+      - run: npx vite build
 
   esbuild:
     needs: isolate_uppy
@@ -258,24 +223,17 @@ jobs:
       matrix:
         bundler-version: [latest]
     steps:
-      - name: Install Node.js
-        uses: actions/setup-node@v7
+      - uses: actions/setup-node@v7
         with:
           node-version: ${{ env.NODE_VERSION }}
-      - name: Install Corepack
-        run: npm install --global corepack@0.36.0
-      - name: Download uppy tarball
-        uses: actions/download-artifact@v7
+      - run: npm install --global corepack@0.36.0
+      - uses: actions/download-artifact@v7
         with:
           name: packages
           path: /tmp/packages/
-      - name: Extract tarball
-        run:
-          tar -xzf /tmp/packages/uppy-${{ github.sha }}.tgz --strip-components 1
-      - name: Add ESBuild as a dev dependency
-        run: npm i --save-dev esbuild@${{matrix.bundler-version}}
+      - run: tar -xzf /tmp/packages/uppy-${{ github.sha }}.tgz --strip-components 1
+      - run: npm i --save-dev esbuild@${{matrix.bundler-version}}
       - run: npx esbuild --version
-      - name: Bundle
-        run: npx esbuild lib/index.js --bundle --outfile=/dev/null
+      - run: npx esbuild lib/index.js --bundle --outfile=/dev/null
 
   # Browserify: doesn't support ESM.

@@ -38,12 +38,10 @@ jobs:
         with:
           fetch-depth: 0
       - uses: actions/configure-pages@v6
-      - name: Install Node.js
-        uses: actions/setup-node@v7
+      - uses: actions/setup-node@v7
         with:
           node-version-file: .node-version
-      - name: Install Corepack
-        run: npm install --global corepack@0.36.0
+      - run: npm install --global corepack@0.36.0
       - name: Get yarn cache directory path
         id: yarn-cache-dir-path
         run:
@@ -55,12 +53,9 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-yarn-
 
-      - name: Install dependencies
-        run: corepack yarn install --immutable
-      - name: Build Uppy
-        run: corepack yarn build
-      - name: Build website
-        run: corepack yarn workspace uppy-io build
+      - run: corepack yarn install --immutable
+      - run: corepack yarn build
+      - run: corepack yarn workspace uppy-io build
 
       - name: Restore IndexNow production state
         if:
@@ -86,14 +81,12 @@ jobs:
         working-directory: website
         run: node scripts/indexnow.mjs prepare
 
-      - name: Upload GitHub Pages artifact
-        uses: actions/upload-pages-artifact@v5
+      - uses: actions/upload-pages-artifact@v5
         with:
           path: website/build
 
-      - name: Deploy to GitHub Pages
+      - uses: actions/deploy-pages@v5
         id: deployment
-        uses: actions/deploy-pages@v5
 
       - name: Submit changed URLs to IndexNow
         if:
