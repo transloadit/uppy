@@ -38,6 +38,9 @@
     ".": "./lib/index.js",
     "./package.json": "./package.json"
   },
+  "uppy": {
+    "minCompanionVersion": "7.1.0"
+  },
   "dependencies": {
     "@transloadit/utils": "^4.8.0",
     "preact": "^10.29.2",

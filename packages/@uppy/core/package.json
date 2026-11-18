@@ -49,6 +49,9 @@
     "./provider-views/css/style.scss": "./src/provider-views/style.scss",
     "./package.json": "./package.json"
   },
+  "uppy": {
+    "minCompanionVersion": "7.0.0"
+  },
   "dependencies": {
     "@transloadit/prettier-bytes": "^2.0.0",
     "classnames": "^2.5.1",
