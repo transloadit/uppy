@@ -17,7 +17,8 @@ export const expects = {
   remoteZoomVerificationToken: 'REMOTE-ZOOM-VERIFICATION-TOKEN',
 } as const
 
-export const zoomRecording = {
+/** A meeting as Zoom returns it, built fresh per call so tests can change their copy. */
+export const zoomMeeting = () => ({
   uuid: 'DUMMY-UUID==',
   id: 12345678900,
   account_id: 'DUMMY-ACCOUNT-ID',
@@ -43,13 +44,13 @@ export const zoomRecording = {
       recording_type: 'shared_screen_with_speaker_view',
     },
   ],
-}
+})
 
 export const nockZoomRecordings = ({ times = 1 }: { times?: number } = {}) => {
   nock('https://zoom.us')
     .get('/v2/meetings/DUMMY-UUID%3D%3D/recordings')
     .times(times)
-    .reply(200, zoomRecording)
+    .reply(200, zoomMeeting())
 }
 
 export const nockZoomRevoke = ({
