@@ -264,7 +264,7 @@ export default class ThumbnailGenerator<
     img: HTMLImageElement,
     width: number | null,
     height: number | null,
-    deg: number,
+    deg?: number | undefined,
   ): { width: number; height: number } {
     let aspect = img.width / img.height
     if (deg === 90 || deg === 270) {
@@ -436,8 +436,15 @@ export default class ThumbnailGenerator<
   }
 
   onRestored = (): void => {
-    const restoredFiles = this.uppy.getFiles().filter((file) => file.isRestored)
-    for (const file of restoredFiles) {
+    for (const file of this.uppy.getFiles()) {
+      if (!file.isRestored) {
+        continue
+      }
+
+      if (file.isRemote) {
+        continue
+      }
+
       // Only add blob URLs; they are likely invalid after being restored.
       if (!file.preview || isObjectURL(file.preview)) {
         this.addToQueue(file.id)
