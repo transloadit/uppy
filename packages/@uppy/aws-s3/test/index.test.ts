@@ -844,7 +844,7 @@ describe('AwsS3', () => {
         ),
       )
 
-      const core = createMultipartCore()
+      using core = createMultipartCore()
       const onSuccess = vi.fn()
       core.on('upload-success', onSuccess)
       await core.upload()
@@ -858,7 +858,7 @@ describe('AwsS3', () => {
       const create = vi.fn(() => new HttpResponse(null, { status: 400 }))
       network.use(http.post(`${companion}/s3/multipart`, create))
 
-      const core = createMultipartCore()
+      using core = createMultipartCore()
       const onError = vi.fn()
       core.on('upload-error', onError)
       await core.upload()
