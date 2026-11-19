@@ -38,8 +38,7 @@ jobs:
     runs-on: ${{ matrix.runner }}
     steps:
       - uses: docker/setup-buildx-action@f87e5991a6d7451dcb8d9637bfbc97413f497069 # v4.4.1
-      - name: Build
-        uses: docker/build-push-action@c3c9e263c25d99ce0380d002d59b67737d91b0dc # v7.4.0
+      - uses: docker/build-push-action@c3c9e263c25d99ce0380d002d59b67737d91b0dc # v7.4.0
         with:
           platforms: ${{ matrix.platform }}
           load: true
@@ -90,14 +89,11 @@ jobs:
           - '24.22.1'
           - '26.12.1'
     steps:
-      - name: Checkout sources
-        uses: actions/checkout@v7
-      - name: Install Node.js
-        uses: actions/setup-node@v7
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
         with:
           node-version: ${{matrix.node-version}}
-      - name: Install Corepack
-        run: npm install --global corepack@0.36.0
+      - run: npm install --global corepack@0.36.0
       - name: Get yarn cache directory path
         id: yarn-cache-dir-path
         run:
@@ -110,15 +106,10 @@ jobs:
           key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
           restore-keys: |
             ${{ runner.os }}-yarn-
-      - name: Install dependencies
-        run:
-          corepack yarn install --immutable
-      - name: Install Playwright Browsers
-        run: corepack yarn workspace @uppy/dashboard playwright install --with-deps chromium
-      - name: Build
-        run: corepack yarn run build
-      - name: Run tests
-        run: corepack yarn run test
+      - run: corepack yarn install --immutable
+      - run: corepack yarn workspace @uppy/dashboard playwright install --with-deps chromium
+      - run: corepack yarn run build
+      - run: corepack yarn run test
         env:
           COMPANION_DATADIR: ./output
           COMPANION_DOMAIN: localhost:3020
@@ -150,14 +141,11 @@ jobs:
           --health-timeout 5s
           --health-retries 5
     steps:
-      - name: Checkout sources
-        uses: actions/checkout@v7
-      - name: Install Node.js
-        uses: actions/setup-node@v7
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
         with:
           node-version-file: .node-version
-      - name: Install Corepack
-        run: npm install --global corepack@0.36.0
+      - run: npm install --global corepack@0.36.0
       - name: Get yarn cache directory path
         id: yarn-cache-dir-path
         run:
@@ -168,15 +156,11 @@ jobs:
           key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
           restore-keys: |
             ${{ runner.os }}-yarn-
-      - name: Install dependencies
-        run: corepack yarn install --immutable
-      - name: Install Playwright Browsers
-        run: corepack yarn workspace @uppy/dashboard playwright install --with-deps chromium
-      - name: Build
-        run: corepack yarn run build
+      - run: corepack yarn install --immutable
+      - run: corepack yarn workspace @uppy/dashboard playwright install --with-deps chromium
+      - run: corepack yarn run build
       # This uncached task needs the Companion fixture environment in Turbo.
-      - name: Run end-to-end tests
-        run: corepack yarn run test:e2e
+      - run: corepack yarn run test:e2e
         env:
           TURBO_ENV_MODE: loose
           COMPANION_PROTOCOL: http
@@ -186,14 +170,11 @@ jobs:
     name: Types
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout sources
-        uses: actions/checkout@v7
-      - name: Install Node.js
-        uses: actions/setup-node@v7
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
         with:
           node-version-file: .node-version
-      - name: Install Corepack
-        run: npm install --global corepack@0.36.0
+      - run: npm install --global corepack@0.36.0
       - name: Get yarn cache directory path
         id: yarn-cache-dir-path
         run:
@@ -206,76 +187,59 @@ jobs:
           key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
           restore-keys: |
             ${{ runner.os }}-yarn-
-      - name: Install dependencies
-        run:
-          corepack yarn install --immutable
+      - run: corepack yarn install --immutable
       - run: corepack yarn run typecheck
 
   lint_js:
     name: Lint
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout sources
-        uses: actions/checkout@v7
+      - uses: actions/checkout@v7
 
-      - name: Install Node.js
-        uses: actions/setup-node@v7
+      - uses: actions/setup-node@v7
         with:
           node-version-file: .node-version
-      - name: Install Corepack
-        run: npm install --global corepack@0.36.0
+      - run: npm install --global corepack@0.36.0
       - name: Install dependencies
         run:
           corepack yarn workspaces focus @uppy-dev/build
-      - name: Run linter
-        run: corepack yarn run check:ci
+      - run: corepack yarn run check:ci
 
   lint_mdx:
     name: Lint (MDX)
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout sources
-        uses: actions/checkout@v7
-      - name: Install Node.js
-        uses: actions/setup-node@v7
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
         with:
           node-version-file: .node-version
-      - name: Install Corepack
-        run: npm install --global corepack@0.36.0
+      - run: npm install --global corepack@0.36.0
       - name: Install dependencies
         run: corepack yarn workspaces focus @uppy-dev/build
-      - name: Run linter
-        run: corepack yarn run check:mdx
+      - run: corepack yarn run check:mdx
 
   lint_md:
     name: Lint (Markdown)
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout sources
-        uses: actions/checkout@v7
-      - name: Install Node.js
-        uses: actions/setup-node@v7
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
         with:
           node-version-file: .node-version
-      - name: Install Corepack
-        run: npm install --global corepack@0.36.0
+      - run: npm install --global corepack@0.36.0
       - name: Install dependencies
         run: corepack yarn workspaces focus @uppy-dev/build
-      - name: Run linter
-        run: corepack yarn run check:md
+      - run: corepack yarn run check:md
 
   lint_lockfile:
     name: Lint yarn.lock
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout sources
-        uses: actions/checkout@v7
-      - name: Install Node.js
-        uses: actions/setup-node@v7
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
         with:
           node-version-file: .node-version
-      - name: Install Corepack
-        run: npm install --global corepack@0.36.0
+      - run: npm install --global corepack@0.36.0
       - name: Get yarn cache directory path
         id: yarn-cache-dir-path
         run:
@@ -286,8 +250,7 @@ jobs:
           key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
           restore-keys: |
             ${{ runner.os }}-yarn-
-      - name: Install dependencies
-        run: corepack yarn install --immutable --mode=skip-build
+      - run: corepack yarn install --immutable --mode=skip-build
       - name: Check for duplicate dependencies
         run: corepack yarn dedupe --check
 
@@ -296,14 +259,11 @@ jobs:
     name: Build and test (uppy.io)
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout sources
-        uses: actions/checkout@v7
-      - name: Install Node.js
-        uses: actions/setup-node@v7
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
         with:
           node-version-file: .node-version
-      - name: Install Corepack
-        run: npm install --global corepack@0.36.0
+      - run: npm install --global corepack@0.36.0
       - name: Get yarn cache directory path
         id: yarn-cache-dir-path
         run:
@@ -314,11 +274,7 @@ jobs:
           key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
           restore-keys: |
             ${{ runner.os }}-yarn-
-      - name: Install dependencies
-        run: corepack yarn install --immutable
-      - name: Build Uppy
-        run: corepack yarn run build
-      - name: Build website
-        run: corepack yarn workspace uppy-io build
-      - name: Test website
-        run: corepack yarn workspace uppy-io test
+      - run: corepack yarn install --immutable
+      - run: corepack yarn run build
+      - run: corepack yarn workspace uppy-io build
+      - run: corepack yarn workspace uppy-io test
