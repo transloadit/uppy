@@ -24,6 +24,7 @@ import {
   nockZoomRecordings,
   nockZoomRevoke,
   expects as zoomExpects,
+  zoomMeeting,
 } from './fixtures/zoom.js'
 import { getServer } from './mockserver.js'
 
@@ -445,6 +446,84 @@ describe('list provider files', () => {
 
     const { username, items, providerFixture } = await runTest('zoom')
     expect1({ username, items, providerFixture })
+  })
+
+  /** Answers each month of a year listing with the meetings that start inside its date window. */
+  function nockZoomYear(meetings: Array<ReturnType<typeof zoomMeeting>>) {
+    nock('https://zoom.us')
+      .get('/v2/users/me/recordings')
+      .query(true)
+      .reply((uri) => {
+        const params = new URL(uri, 'https://zoom.us').searchParams
+        const from = params.get('from') ?? ''
+        const to = params.get('to') ?? ''
+        const inWindow = meetings.filter((meeting) => {
+          const day = meeting.start_time.slice(0, 10)
+          return day >= from && day <= to
+        })
+        return [200, { meetings: inWindow }]
+      })
+      .persist()
+  }
+
+  test('zoom lists meetings in a year without a meeting_id on the meeting', async () => {
+    nock('https://zoom.us').get('/v2/users/me').reply(200, {
+      email: defaults.USERNAME,
+      timezone: 'UTC',
+    })
+    nockZoomYear([zoomMeeting()])
+
+    const response = await request(await getServerWithEnv())
+      .get('/zoom/list/')
+      .query({ year: '2020' })
+      .set('uppy-auth-token', token)
+      .expect(200)
+
+    expect(response.body.username).toBe(defaults.USERNAME)
+    expect(response.body.items).toEqual([
+      expect.objectContaining({
+        isFolder: true,
+        name: 'DUMMY TOPIC (2020-05-29, 13:19)',
+        id: 'DUMMY-UUID%3D%3D',
+        requestPath: 'DUMMY-UUID%253D%253D',
+        mimeType: null,
+        size: 723389,
+      }),
+    ])
+  })
+
+  test('zoom lists each meeting of a year once, outside UTC too', async () => {
+    nock('https://zoom.us').get('/v2/users/me').reply(200, {
+      email: defaults.USERNAME,
+      timezone: 'Asia/Tokyo',
+    })
+    nockZoomYear([
+      // 1 May 2020, 05:00 in Tokyo, inside both the April and the May window.
+      {
+        ...zoomMeeting(),
+        uuid: 'MAY-FIRST==',
+        start_time: '2020-04-30T20:00:00Z',
+      },
+      // 31 December 2019, 19:00 in Tokyo, inside the January 2020 window.
+      {
+        ...zoomMeeting(),
+        uuid: 'NEW-YEARS-EVE==',
+        start_time: '2019-12-31T10:00:00Z',
+      },
+    ])
+
+    const response = await request(await getServerWithEnv())
+      .get('/zoom/list/')
+      .query({ year: '2020' })
+      .set('uppy-auth-token', token)
+      .expect(200)
+
+    expect(response.body.items).toEqual([
+      expect.objectContaining({
+        id: 'MAY-FIRST%3D%3D',
+        name: 'DUMMY TOPIC (2020-05-01, 05:00)',
+      }),
+    ])
   })
 })
 
