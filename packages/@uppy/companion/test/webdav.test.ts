@@ -92,18 +92,37 @@ describe('webdav response bounds', () => {
     await expect(simpleAuth(true)).rejects.toThrow(/max-size|over limit/)
   })
 
-  test('rejects encoded responses without creating a decompressor', async () => {
+  test('rejects a compressed PROPFIND body that decompresses to over 5 MiB', async () => {
+    const padding = ' '.repeat(6 * 1024 * 1024)
+    handler = (_req, res) => {
+      res.writeHead(207, {
+        'content-type': 'application/xml',
+        'content-encoding': 'gzip',
+      })
+      res.end(
+        gzipSync(
+          `<?xml version="1.0"?><d:multistatus xmlns:d="DAV:">${padding}</d:multistatus>`,
+        ),
+      )
+    }
+    await expect(simpleAuth(true)).rejects.toThrow(/max-size|over limit/)
+  })
+
+  test('asks for an uncompressed listing, but still reads a compressed one', async () => {
     handler = (req, res) => {
       expect(req.headers['accept-encoding']).toBe('identity')
       res.writeHead(207, {
         'content-type': 'application/xml',
         'content-encoding': 'gzip',
       })
-      res.end(gzipSync(emptyListing))
+      res.end(gzipSync(multistatus(fileResponse('/a.txt'))))
     }
-    await expect(simpleAuth(true)).rejects.toThrow(
-      'Encoded WebDAV responses are not supported',
-    )
+    const { items } = await provider().list({
+      providerUserSession: { webdavUrl },
+      directory: '/',
+      query: {},
+    } as never)
+    expect(items).toHaveLength(1)
   })
 
   test('rejects a deeply nested base URL before requesting a listing', async () => {

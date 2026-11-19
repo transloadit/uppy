@@ -1,4 +1,4 @@
-import { Readable } from 'node:stream'
+import type { Readable } from 'node:stream'
 import fetch, {
   Headers,
   type RequestInfo,
@@ -7,7 +7,6 @@ import fetch, {
 } from 'node-fetch'
 import type { WebDAVClientOptions } from 'webdav'
 import { AuthType, createClient, getPatcher } from 'webdav'
-import { isCompressed } from '../../helpers/content-encoding.js'
 import { getProtectedHttpAgent, validateURL } from '../../helpers/request.js'
 import { isRecord } from '../../helpers/type-guards.js'
 import logger from '../../logger.js'
@@ -28,10 +27,9 @@ const defaultDirectory = '/'
 /**
  * Upper bound on a WebDAV response that Companion buffers in memory
  * (PROPFIND listings and stat calls). The `webdav` package reads those with
- * `response.text()` and parses them synchronously, so an
+ * `response.text()` after decompression and parses them synchronously, so an
  * anonymous caller pointing simple-auth at a hostile server could inflate a
- * large response into hundreds of megabytes and abort the process.
- * Compression is disabled separately, before any response decoder is allocated.
+ * small gzip body into hundreds of megabytes and abort the process.
  * node-fetch enforces `size` only when a body is consumed whole, so file
  * downloads (which stream `response.body`) are not limited by this.
  *
@@ -45,17 +43,15 @@ getPatcher().patch('fetch', async (url: unknown, options: unknown) => {
   // webdav's hot-patcher has no typed fetch boundary.
   const requestOptions = options as RequestInit
   const headers = new Headers(requestOptions.headers)
+  // Avoids a decompressor where the server honours it (a server that ignores
+  // it gets one, as on main). A compressed body is still capped by `size`,
+  // which node-fetch counts after decompression.
   headers.set('accept-encoding', 'identity')
   const response = await fetch(url as RequestInfo, {
     ...requestOptions,
     headers,
-    compress: false,
     size: MAX_WEBDAV_RESPONSE_BYTES,
   })
-  if (response.ok && isCompressed(response.headers.get('content-encoding'))) {
-    if (response.body instanceof Readable) response.body.destroy()
-    throw new Error('Encoded WebDAV responses are not supported')
-  }
   if (response.ok && requestOptions.method?.toUpperCase() === 'PROPFIND') {
     const xml = await response.text()
     validateResponseXml(xml)
@@ -227,17 +223,12 @@ export default class WebdavProvider extends Provider<WebdavUserSession> {
         { signal: AbortSignal.timeout(this.requestTimeoutMs) },
       )
 
-      let pathBytes = 0
       for (const item of dir) {
         const isFolder = item.type === 'directory'
         // The server's own path for the item. Prefixing the client-supplied
         // route id instead let one request allocate (id length × item count)
         // bytes of strings, enough to exhaust the heap.
         const requestPath = encodeURIComponent(item.filename)
-        pathBytes += requestPath.length
-        if (pathBytes > MAX_WEBDAV_RESPONSE_BYTES) {
-          throw new Error('WebDAV listing paths exceed the response limit')
-        }
 
         let modifiedDate: string | undefined
         try {
