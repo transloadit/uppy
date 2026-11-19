@@ -9,6 +9,7 @@ import contentDisposition from 'content-disposition'
 import got, { type Response } from 'got'
 import ipaddr from 'ipaddr.js'
 import validator from 'validator'
+import { isCompressed } from './content-encoding.js'
 
 export const FORBIDDEN_IP_ADDRESS = 'Forbidden IP address'
 
@@ -295,21 +296,6 @@ function stripCredentialHeaders(headers: unknown): Record<string, unknown> {
   )
 }
 
-// The IANA content-coding registry, apart from `identity`
-const COMPRESSION_ENCODINGS = new Set([
-  'aes128gcm',
-  'br',
-  'compress',
-  'dcb',
-  'dcz',
-  'deflate',
-  'exi',
-  'gzip',
-  'pack200-gzip',
-  'x-compress',
-  'x-gzip',
-  'zstd',
-])
 /**
  * Opens a got stream to a client-chosen URL and resolves once response headers
  * are in, following redirects here rather than in got.
@@ -351,16 +337,10 @@ export async function openProtectedStream(
         reject(error)
       })
     })
-    // Only real compression: misconfigured servers also send values like
-    // `binary` or `UTF-8`, whose bytes are the original file.
-    const encodings = (response.headers['content-encoding'] ?? '')
-      .toLowerCase()
-      .split(',')
-      .map((encoding) => encoding.trim())
     if (
       response.statusCode >= 200 &&
       response.statusCode < 300 &&
-      encodings.some((encoding) => COMPRESSION_ENCODINGS.has(encoding))
+      isCompressed(response.headers['content-encoding'])
     ) {
       stream.destroy()
       throw new Error('Encoded upstream responses are not supported')
