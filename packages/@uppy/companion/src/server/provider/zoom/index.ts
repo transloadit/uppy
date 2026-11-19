@@ -210,7 +210,22 @@ export default class Zoom extends Provider<ZoomUserSession> {
         ).flat() // this is effectively a flatMap
         // concurrency 3 seems like a sensible number...
 
-        const finalResult = { meetings: allMeetingsInYear }
+        // Zoom filters by whole UTC dates, so outside UTC neighboring month windows share a day, and
+        // January and December reach into the years around this one.
+        const seenUuids = new Set<string>()
+        const meetingsInYear = allMeetingsInYear.filter((meeting) => {
+          if (!isRecord(meeting)) return false
+          const uuid = meeting['uuid']
+          const startTime = meeting['start_time']
+          if (typeof uuid === 'string') {
+            if (seenUuids.has(uuid)) return false
+            seenUuids.add(uuid)
+          }
+          if (typeof startTime !== 'string') return true
+          return moment.tz(startTime, userTz).year() === requestedYear
+        })
+
+        const finalResult = { meetings: meetingsInYear }
         return adaptData(user, finalResult)
       }
 
