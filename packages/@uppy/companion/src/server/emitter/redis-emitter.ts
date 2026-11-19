@@ -1,6 +1,7 @@
 import { EventEmitter } from 'node:events'
 import safeStringify from 'fast-safe-stringify'
 import type { Redis } from 'ioredis'
+import { isRecord } from '../helpers/type-guards.js'
 import * as logger from '../logger.js'
 import type { EmitterLike } from './index.js'
 
@@ -38,9 +39,28 @@ export default function redisEmitter(
 
   const errorEmitter = new EventEmitter()
   function handleError(err: unknown) {
-    // Redis command errors can contain credentials and private channel names.
-    logger.error('Redis emitter operation failed', 'emitter.redis.error')
+    // Redis command errors can contain credentials and private channel names,
+    // so log only what kind of error it was.
+    const kind = isRecord(err)
+      ? [err['name'], err['code']]
+          .filter((v) => typeof v === 'string')
+          .join(' ')
+      : ''
+    logger.error(
+      `Redis emitter operation failed${kind ? ` (${kind})` : ''}`,
+      'emitter.redis.error',
+    )
     if (errorEmitter.listenerCount('error') > 0) errorEmitter.emit('error', err)
+  }
+
+  /**
+   * Callers that await see a failed Redis command as a rejection (a login must
+   * not wait forever for a message that was never published), but one that
+   * doesn't await must not crash the process with an unhandled rejection.
+   */
+  function handled<T>(promise: Promise<T>): Promise<T> {
+    promise.catch(() => {})
+    return promise
   }
 
   type Handler = (...args: unknown[]) => unknown
@@ -58,7 +78,7 @@ export default function redisEmitter(
       return
     }
     for (const [handler, once] of [...handlers]) {
-      if (once) void removeListenerByPattern(pattern, handler)
+      if (once) handled(removeListenerByPattern(pattern, handler))
       try {
         Promise.resolve(handler(...args)).catch(handleError)
       } catch (err) {
@@ -97,6 +117,7 @@ export default function redisEmitter(
       await fn(await redisPromise)
     } catch (err) {
       handleError(err)
+      throw err
     }
   }
 
@@ -162,8 +183,8 @@ export default function redisEmitter(
    * @param eventName name of the event
    * @param handler the handler of the event
    */
-  async function on(eventName: string, handler: Handler) {
-    await addListener(eventName, handler)
+  function on(eventName: string, handler: Handler) {
+    return handled(addListener(eventName, handler))
   }
 
   /**
@@ -172,8 +193,8 @@ export default function redisEmitter(
    * @param eventName name of the event
    * @param handler the handler of the event
    */
-  async function off(eventName: string, handler: Handler) {
-    await removeListener(eventName, handler)
+  function off(eventName: string, handler: Handler) {
+    return handled(removeListener(eventName, handler))
   }
 
   /**
@@ -182,8 +203,8 @@ export default function redisEmitter(
    * @param eventName name of the event
    * @param handler the handler of the event
    */
-  async function once(eventName: string, handler: Handler) {
-    await addListener(eventName, handler, true)
+  function once(eventName: string, handler: Handler) {
+    return handled(addListener(eventName, handler, true))
   }
 
   /**
@@ -191,11 +212,13 @@ export default function redisEmitter(
    *
    * @param eventName name of the event
    */
-  async function emit(eventName: string, ...args: unknown[]) {
-    await runWhenConnected(async ({ publisher }) =>
-      publisher.publish(
-        getChannelName(eventName),
-        safeStringify.default(args, replacer),
+  function emit(eventName: string, ...args: unknown[]) {
+    return handled(
+      runWhenConnected(async ({ publisher }) =>
+        publisher.publish(
+          getChannelName(eventName),
+          safeStringify.default(args, replacer),
+        ),
       ),
     )
   }
@@ -224,7 +247,9 @@ export default function redisEmitter(
     off,
     once,
     emit,
-    removeListener,
-    removeAllListeners,
+    removeListener: (eventName: string, handler: Handler) =>
+      handled(removeListener(eventName, handler)),
+    removeAllListeners: (eventName: string) =>
+      handled(removeAllListeners(eventName)),
   }
 }

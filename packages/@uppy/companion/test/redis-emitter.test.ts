@@ -1,6 +1,6 @@
 import { EventEmitter } from 'node:events'
 import type { Redis } from 'ioredis'
-import { expect, test, vi } from 'vitest'
+import { expect, onTestFinished, test, vi } from 'vitest'
 import redisEmitter, {
   escapeGlob,
 } from '../dist/server/emitter/redis-emitter.js'
@@ -49,13 +49,41 @@ test('one dispatcher serves unrelated subscriptions and removes once handlers be
   ).toHaveLength(1)
 })
 
-test('failed commands and malformed payloads do not create unhandled rejections', async () => {
+function expectNoUnhandledRejections() {
+  const unhandled = vi.fn()
+  process.on('unhandledRejection', unhandled)
+  onTestFinished(() => {
+    process.off('unhandledRejection', unhandled)
+  })
+  return async () => {
+    await new Promise((resolve) => setTimeout(resolve, 0))
+    expect(unhandled).not.toHaveBeenCalled()
+  }
+}
+
+test('failed commands reject for callers that wait, without unhandled rejections for those that do not', async () => {
+  const settled = expectNoUnhandledRejections()
+  const redis = fakeRedis()
+  const events = redisEmitter(asRedis(redis))
+  await events.on('active', vi.fn())
+  // A login waits on these: a lost publish or subscribe must not look like success
+  redis.publish.mockRejectedValueOnce(new Error('Redis unavailable'))
+  await expect(events.emit('active')).rejects.toThrow('Redis unavailable')
+  redis.psubscribe.mockRejectedValueOnce(new Error('Redis unavailable'))
+  await expect(events.on('other', vi.fn())).rejects.toThrow('Redis unavailable')
+  // The uploader doesn't wait on its calls
+  redis.publish.mockRejectedValueOnce(new Error('Redis unavailable'))
+  void events.emit('active')
+  redis.psubscribe.mockRejectedValueOnce(new Error('Redis unavailable'))
+  void events.on('third', vi.fn())
+  await settled()
+})
+
+test('malformed payloads are dropped', async () => {
   const redis = fakeRedis()
   const events = redisEmitter(asRedis(redis))
   const handler = vi.fn()
   await events.on('active', handler)
-  redis.publish.mockRejectedValueOnce(new Error('Redis unavailable'))
-  await expect(events.emit('active')).resolves.toBeUndefined()
   redis.emit('pmessage', 'active', 'active', '{')
   redis.emit('pmessage', 'active', 'active', '{}')
   expect(handler).not.toHaveBeenCalled()
@@ -63,11 +91,13 @@ test('failed commands and malformed payloads do not create unhandled rejections'
   expect(handler).toHaveBeenCalledWith(1)
 })
 
-test('failed connection initialization is handled without an error listener', async () => {
+test('failed connection initialization rejects, without an error listener', async () => {
+  const settled = expectNoUnhandledRejections()
   const redis = fakeRedis()
   redis.connect.mockRejectedValueOnce(new Error('Redis unavailable'))
   const events = redisEmitter(asRedis(redis))
-  await expect(events.emit('active')).resolves.toBeUndefined()
+  await expect(events.emit('active')).rejects.toThrow('Redis unavailable')
+  await settled()
 })
 
 test('subscribes with an escaped pattern but publishes to the literal channel', async () => {
