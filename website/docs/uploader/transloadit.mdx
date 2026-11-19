@@ -192,11 +192,15 @@ The waits total 86 seconds without upload progress, giving a server or load
 balancer time to recover during a restart lasting up to about a minute and a
 half. Early retries handle brief interruptions quickly; later retries are spaced
 out to reduce load. Request time adds to this window, and rate limiting or an
-offline browser can extend it further. HTTP 429 responses also pause the shared
-request queue using this schedule.
+offline browser can extend it further.
+
+For HTTP 429 responses, Tus also uses these delays to pause the shared request
+queue. Those queue pauses consume one iterator over the array per plugin
+instance, shared across all files and uploads. Once it is exhausted, a later
+HTTP 429 can fail immediately.
 
 Set `retryDelays` to your own array to override the default, or to `[]` to disable
-retries. This option does not change Assembly API retries or Companion uploads.
+retries. This option does not configure Assembly API retries or Companion uploads.
 
 #### `assemblyOptions`
 

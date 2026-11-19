@@ -6,7 +6,7 @@ import Assembly from '../lib/Assembly.js'
 
 // Keep Assembly monitoring and HTTP responses off the network, but exercise
 // the real Transloadit, Tus, tus-js-client and shared queue retry logic.
-function setup(uppy, options, respond) {
+function setup(uppy, options, respond, names = ['test.txt']) {
   uppy.use(Transloadit, {
     errorReporting: false,
     limit: 1,
@@ -22,40 +22,43 @@ function setup(uppy, options, respond) {
     ok: 'ASSEMBLY_UPLOADING',
   })
   vi.spyOn(client, 'cancelAssembly').mockResolvedValue(undefined)
+  vi.spyOn(client, 'submitError').mockResolvedValue({})
 
   const attempts = []
-  const fileID = uppy.addFile({ name: 'test.txt', data: new Blob(['a']) })
-  uppy.setFileState(fileID, {
-    tus: {
-      httpStack: {
-        createRequest(method, url) {
-          return {
-            getMethod: () => method,
-            getURL: () => url,
-            setHeader() {},
-            getHeader: () => null,
-            setProgressHandler() {},
-            getUnderlyingObject: () => null,
-            abort: () => Promise.resolve(),
-            send() {
-              attempts.push({ method, time: Date.now() })
-              const status = respond(method)
-              return Promise.resolve({
-                getStatus: () => status,
-                getHeader: (name) =>
-                  ({
-                    Location: 'https://tus.test/files/1',
-                    'Upload-Offset': '1',
-                  })[name] ?? null,
-                getBody: () => '',
-                getUnderlyingObject: () => null,
-              })
-            },
-          }
+  for (const name of names) {
+    const fileID = uppy.addFile({ name, data: new Blob(['a']) })
+    uppy.setFileState(fileID, {
+      tus: {
+        httpStack: {
+          createRequest(method, url) {
+            return {
+              getMethod: () => method,
+              getURL: () => url,
+              setHeader() {},
+              getHeader: () => null,
+              setProgressHandler() {},
+              getUnderlyingObject: () => null,
+              abort: () => Promise.resolve(),
+              send() {
+                attempts.push({ name, method, time: Date.now() })
+                const status = respond(method)
+                return Promise.resolve({
+                  getStatus: () => status,
+                  getHeader: (name) =>
+                    ({
+                      Location: 'https://tus.test/files/1',
+                      'Upload-Offset': '1',
+                    })[name] ?? null,
+                  getBody: () => '',
+                  getUnderlyingObject: () => null,
+                })
+              },
+            }
+          },
         },
       },
-    },
-  })
+    })
+  }
   return attempts
 }
 
@@ -63,13 +66,18 @@ describe('Transloadit retry delays', () => {
   beforeEach(() => {
     vi.useFakeTimers()
     vi.setSystemTime(0)
+    vi.spyOn(globalThis, 'fetch').mockRejectedValue(
+      new Error('Unexpected network request'),
+    )
     vi.spyOn(Assembly.prototype, 'connect').mockImplementation(() => {})
   })
 
   afterEach(() => {
+    const fetch = globalThis.fetch
     vi.clearAllTimers()
     vi.useRealTimers()
     vi.restoreAllMocks()
+    expect(fetch).not.toHaveBeenCalled()
   })
 
   const defaultTimes = [
@@ -112,7 +120,7 @@ describe('Transloadit retry delays', () => {
       uppy.on('complete', complete)
       const upload = uppy.upload()
       await vi.advanceTimersByTimeAsync(0)
-      expect(attempts).toEqual([{ method: 'POST', time: 0 }])
+      expect(attempts).toEqual([{ name: 'test.txt', method: 'POST', time: 0 }])
 
       for (let i = 1; i < times.length; i++) {
         await vi.advanceTimersByTimeAsync(times[i] - times[i - 1] - 1)
@@ -129,6 +137,25 @@ describe('Transloadit retry delays', () => {
       expect(attempts).toHaveLength(times.length)
     },
   )
+
+  it('holds another queued file until the shared 429 pause ends', async () => {
+    using uppy = new Core()
+    const attempts = setup(uppy, {}, () => 429, ['first.txt', 'second.txt'])
+    const upload = uppy.upload()
+    await vi.advanceTimersByTimeAsync(0)
+    expect(attempts).toEqual([{ name: 'first.txt', method: 'POST', time: 0 }])
+
+    await vi.advanceTimersByTimeAsync(999)
+    expect(attempts).toHaveLength(1)
+    await vi.advanceTimersByTimeAsync(1)
+    expect(attempts).toEqual([
+      { name: 'first.txt', method: 'POST', time: 0 },
+      { name: 'second.txt', method: 'POST', time: 1_000 },
+    ])
+
+    uppy.cancelAll()
+    await upload
+  })
 
   it('recovers when a server returns after 80 seconds', async () => {
     using uppy = new Core()
@@ -147,6 +174,10 @@ describe('Transloadit retry delays', () => {
         .filter(({ method }) => method === 'POST')
         .map(({ time }) => time),
     ).toEqual(defaultTimes)
-    expect(attempts.at(-1)).toEqual({ method: 'PATCH', time: 86_000 })
+    expect(attempts.at(-1)).toEqual({
+      name: 'test.txt',
+      method: 'PATCH',
+      time: 86_000,
+    })
   })
 })
