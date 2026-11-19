@@ -83,6 +83,8 @@ describe('Transloadit retry delays', () => {
   const defaultTimes = [
     0, 1_000, 3_000, 6_000, 11_000, 21_000, 36_000, 56_000, 86_000,
   ]
+  // Each case uses one file and a fresh plugin, so the shared 429 pause
+  // iterator and the individual Tus retry counter advance together.
   it.each([
     { name: 'default on 503', status: 503, options: {}, times: defaultTimes },
     { name: 'default on 429', status: 429, options: {}, times: defaultTimes },
@@ -140,7 +142,19 @@ describe('Transloadit retry delays', () => {
 
   it('holds another queued file until the shared 429 pause ends', async () => {
     using uppy = new Core()
-    const attempts = setup(uppy, {}, () => 429, ['first.txt', 'second.txt'])
+    let firstRequest = true
+    const attempts = setup(
+      uppy,
+      {},
+      (method) => {
+        if (firstRequest) {
+          firstRequest = false
+          return 429
+        }
+        return method === 'POST' ? 201 : 204
+      },
+      ['first.txt', 'second.txt'],
+    )
     const upload = uppy.upload()
     await vi.advanceTimersByTimeAsync(0)
     expect(attempts).toEqual([{ name: 'first.txt', method: 'POST', time: 0 }])
@@ -148,13 +162,15 @@ describe('Transloadit retry delays', () => {
     await vi.advanceTimersByTimeAsync(999)
     expect(attempts).toHaveLength(1)
     await vi.advanceTimersByTimeAsync(1)
-    expect(attempts).toEqual([
-      { name: 'first.txt', method: 'POST', time: 0 },
-      { name: 'second.txt', method: 'POST', time: 1_000 },
-    ])
+    expect(
+      attempts.filter(
+        ({ name, method }) => name === 'second.txt' && method === 'POST',
+      ),
+    ).toEqual([{ name: 'second.txt', method: 'POST', time: 1_000 }])
 
-    uppy.cancelAll()
-    await upload
+    const result = await upload
+    expect(result.successful).toHaveLength(2)
+    expect(result.failed).toHaveLength(0)
   })
 
   it('recovers when a server returns after 80 seconds', async () => {
