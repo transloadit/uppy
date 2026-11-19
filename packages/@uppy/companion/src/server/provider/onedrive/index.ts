@@ -1,19 +1,22 @@
+import type {
+  ProviderDownloadOptions,
+  ProviderDownloadResponse,
+  ProviderListOptions,
+  ProviderListResponse,
+  ProviderLogoutResponse,
+  ProviderRefreshTokenOptions,
+  ProviderRefreshTokenResponse,
+  ProviderSizeOptions,
+  ProviderThumbnailResponse,
+  Query,
+} from '../Provider.js'
+
 import got from 'got'
+
 import { isRecord } from '../../helpers/type-guards.js'
 import { pathSegment, prepareStream } from '../../helpers/utils.js'
 import logger from '../../logger.js'
-import Provider, {
-  type ProviderDownloadOptions,
-  type ProviderDownloadResponse,
-  type ProviderListOptions,
-  type ProviderListResponse,
-  type ProviderLogoutResponse,
-  type ProviderRefreshTokenOptions,
-  type ProviderRefreshTokenResponse,
-  type ProviderSizeOptions,
-  type ProviderThumbnailResponse,
-  type Query,
-} from '../Provider.js'
+import Provider from '../Provider.js'
 import { withProviderErrorHandling } from '../providerErrors.js'
 import adaptData from './adapter.js'
 

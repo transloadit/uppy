@@ -1,10 +1,21 @@
-import { randomUUID } from 'node:crypto'
-import cookieParser from 'cookie-parser'
 import type { Express, RequestHandler } from 'express'
+
+import type {
+  CompanionInitOptions,
+  CredentialsFetchResponse,
+} from './schemas/index.js'
+import type { EmitterLike } from './server/emitter/index.js'
+import type Provider from './server/provider/Provider.js'
+import type { CompanionRuntimeOptions } from './types/companion-options.js'
+
+import { randomUUID } from 'node:crypto'
+
+import cookieParser from 'cookie-parser'
 import express from 'express'
 import interceptor from 'express-interceptor'
 import grant from 'grant'
 import merge from 'lodash/merge.js'
+
 import packageJson from '../package.json' with { type: 'json' }
 import {
   defaultOptions,
@@ -12,16 +23,11 @@ import {
   validateConfig,
 } from './config/companion.js'
 import grantConfigFn from './config/grant.js'
-import type {
-  CompanionInitOptions,
-  CredentialsFetchResponse,
-} from './schemas/index.js'
 import googlePicker from './server/controllers/googlePicker.js'
 import * as controllers from './server/controllers/index.js'
 import s3 from './server/controllers/s3.js'
 import searchController from './server/controllers/search.js'
 import url from './server/controllers/url.js'
-import type { EmitterLike } from './server/emitter/index.js'
 import createEmitter from './server/emitter/index.js'
 import { getURLBuilder } from './server/helpers/utils.js'
 import * as jobs from './server/jobs.js'
@@ -34,15 +40,13 @@ import {
   ProviderUserError,
 } from './server/provider/error.js'
 import * as providerManager from './server/provider/index.js'
-import type Provider from './server/provider/Provider.js'
 import { isOAuthProvider } from './server/provider/Provider.js'
 import * as redis from './server/redis.js'
 import socket from './server/socket.js'
-import type { CompanionRuntimeOptions } from './types/companion-options.js'
 
 export type { ProviderListResponse } from './server/provider/Provider.js'
-export type { CompanionInitOptions }
 
+export type { CompanionInitOptions }
 export { socket }
 
 const grantConfig = grantConfigFn()

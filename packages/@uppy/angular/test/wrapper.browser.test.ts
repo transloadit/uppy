@@ -1,10 +1,8 @@
 import '@angular/compiler'
-import {
-  type ApplicationRef,
-  type ComponentRef,
-  createComponent,
-  provideZonelessChangeDetection,
-} from '@angular/core'
+
+import type { ApplicationRef, ComponentRef } from '@angular/core'
+
+import { createComponent, provideZonelessChangeDetection } from '@angular/core'
 import { createApplication } from '@angular/platform-browser'
 import Uppy from '@uppy/core'
 import {
@@ -16,6 +14,7 @@ import {
   it,
   vi,
 } from 'vitest'
+
 import {
   DashboardComponent,
   DashboardModalComponent,

@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest'
+
 import supportsMediaRecorder from '../lib/supportsMediaRecorder.js'
 
 describe('supportsMediaRecorder', () => {

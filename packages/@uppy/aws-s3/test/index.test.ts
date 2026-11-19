@@ -1,9 +1,15 @@
 import '@uppy-dev/msw-setup'
+
+import type { Meta, UppyFile } from '@uppy/core'
+
+import type { AwsBody, AwsS3Options } from '../lib/index.js'
+
 import { network } from 'virtual:msw'
-import Core, { type Meta, type UppyFile } from '@uppy/core'
+import Core from '@uppy/core'
 import { HttpResponse, http } from 'msw'
 import { describe, expect, test, vi } from 'vitest'
-import AwsS3, { type AwsBody, type AwsS3Options } from '../lib/index.js'
+
+import AwsS3 from '../lib/index.js'
 
 const KB = 1024
 const MB = KB * KB
@@ -445,37 +451,37 @@ describe('AwsS3', () => {
       expect(keys.every((k: string) => k === 'client-big.dat')).toBe(true)
     })
 
-    test.for([
-      '',
-      '   ',
-    ])('ignores a blank key from the signer (%j)', async (key) => {
-      const { signRequest, registerHandlers } = createMultipartMocks()
-      registerHandlers()
-      signRequest.mockImplementation(async (req: any) => ({
-        url: `${bucketUrl}/${req.key}?method=${req.method}`,
-        key,
-      }))
+    test.for(['', '   '])(
+      'ignores a blank key from the signer (%j)',
+      async (key) => {
+        const { signRequest, registerHandlers } = createMultipartMocks()
+        registerHandlers()
+        signRequest.mockImplementation(async (req: any) => ({
+          url: `${bucketUrl}/${req.key}?method=${req.method}`,
+          key,
+        }))
 
-      using core = new Core().use(AwsS3, {
-        s3Endpoint: bucketUrl,
-        region: 'us-east-1',
-        signRequest,
-        shouldUseMultipart: false,
-        generateObjectKey: () => 'client-photo.jpg',
-      })
-      core.addFile({
-        source: 'test',
-        name: 'photo.jpg',
-        type: 'image/jpeg',
-        data: new File([new Uint8Array(KB)], 'photo.jpg'),
-      })
+        using core = new Core().use(AwsS3, {
+          s3Endpoint: bucketUrl,
+          region: 'us-east-1',
+          signRequest,
+          shouldUseMultipart: false,
+          generateObjectKey: () => 'client-photo.jpg',
+        })
+        core.addFile({
+          source: 'test',
+          name: 'photo.jpg',
+          type: 'image/jpeg',
+          data: new File([new Uint8Array(KB)], 'photo.jpg'),
+        })
 
-      const onSuccess = vi.fn()
-      core.on('upload-success', onSuccess)
-      await core.upload()
+        const onSuccess = vi.fn()
+        core.on('upload-success', onSuccess)
+        await core.upload()
 
-      expect(onSuccess.mock.calls[0][1].body.key).toBe('client-photo.jpg')
-    })
+        expect(onSuccess.mock.calls[0][1].body.key).toBe('client-photo.jpg')
+      },
+    )
   })
 
   describe('signed headers (#6548)', () => {

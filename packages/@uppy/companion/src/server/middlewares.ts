@@ -1,11 +1,13 @@
 import type { S3Client } from '@aws-sdk/client-s3'
-import corsImport from 'cors'
 import type { NextFunction, Request, RequestHandler, Response } from 'express'
+
+import type { CompanionRuntimeOptions } from '../types/companion-options.js'
+import type { ProviderUserSession } from '../types/express.js'
+
+import corsImport from 'cors'
 import promBundle from 'express-prom-bundle'
 
 import packageJson from '../../package.json' with { type: 'json' }
-import type { CompanionRuntimeOptions } from '../types/companion-options.js'
-import type { ProviderUserSession } from '../types/express.js'
 import * as tokenService from './helpers/jwt.js'
 import { getCookieName } from './helpers/jwt.js'
 import { getURLBuilder } from './helpers/utils.js'

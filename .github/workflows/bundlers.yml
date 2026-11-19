@@ -16,6 +16,9 @@ on:
       - '!.github/workflows/bundlers.yml'
 
 env:
+  # Keep in sync with .node-version: most jobs here work on downloaded
+  # artifacts without a checkout, so they can't use `node-version-file`.
+  NODE_VERSION: '26.12.1'
   YARN_ENABLE_GLOBAL_CACHE: false
 
 jobs:
@@ -28,7 +31,7 @@ jobs:
       - name: Install Node.js
         uses: actions/setup-node@v7
         with:
-          node-version: '26.12.1'
+          node-version: ${{ env.NODE_VERSION }}
       - name: Install Corepack
         run: npm install --global corepack@0.36.0
       - name: Get yarn cache directory path
@@ -93,7 +96,7 @@ jobs:
       - name: Install Node.js
         uses: actions/setup-node@v7
         with:
-          node-version: '26.12.1'
+          node-version: ${{ env.NODE_VERSION }}
       - name: Install Corepack
         run: npm install --global corepack@0.36.0
       - name: Download uppy tarball
@@ -140,7 +143,7 @@ jobs:
       - name: Install Node.js
         uses: actions/setup-node@v7
         with:
-          node-version: '26.12.1'
+          node-version: ${{ env.NODE_VERSION }}
       - name: Install Corepack
         run: npm install --global corepack@0.36.0
       - name: Download uppy tarball
@@ -189,7 +192,7 @@ jobs:
       - name: Install Node.js
         uses: actions/setup-node@v7
         with:
-          node-version: '26.12.1'
+          node-version: ${{ env.NODE_VERSION }}
       - name: Install Corepack
         run: npm install --global corepack@0.36.0
       - name: Download uppy tarball
@@ -226,7 +229,7 @@ jobs:
       - name: Install Node.js
         uses: actions/setup-node@v7
         with:
-          node-version: '26.12.1'
+          node-version: ${{ env.NODE_VERSION }}
       - name: Install Corepack
         run: npm install --global corepack@0.36.0
       - name: Download uppy tarball
@@ -258,7 +261,7 @@ jobs:
       - name: Install Node.js
         uses: actions/setup-node@v7
         with:
-          node-version: '26.12.1'
+          node-version: ${{ env.NODE_VERSION }}
       - name: Install Corepack
         run: npm install --global corepack@0.36.0
       - name: Download uppy tarball

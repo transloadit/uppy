@@ -4,10 +4,12 @@
  */
 
 import type { Promisable } from 'type-fest'
+
+import type * as IT from './types.js'
+
 import * as C from './consts.js'
 import S3Client from './S3Client.js'
 import { createSigV4Signer } from './signer.js'
-import type * as IT from './types.js'
 import * as U from './utils.js'
 
 /**

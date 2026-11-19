@@ -3,27 +3,30 @@
 // This function is simple and has OK performance compared to more
 // complicated ones: http://jsperf.com/json-escape-unicode/4
 
+import type {
+  ProviderDownloadOptions,
+  ProviderDownloadResponse,
+  ProviderListOptions,
+  ProviderListResponse,
+  ProviderLogoutOptions,
+  ProviderLogoutResponse,
+  ProviderRefreshTokenOptions,
+  ProviderRefreshTokenResponse,
+  ProviderSearchOptions,
+  ProviderSearchResponse,
+  ProviderSizeOptions,
+  ProviderThumbnailOptions,
+  ProviderThumbnailResponse,
+  Query,
+} from '../Provider.js'
+
 import got from 'got'
+
 import { MAX_AGE_REFRESH_TOKEN } from '../../helpers/jwt.js'
 import { isRecord } from '../../helpers/type-guards.js'
 import { prepareStream } from '../../helpers/utils.js'
 import logger from '../../logger.js'
-import Provider, {
-  type ProviderDownloadOptions,
-  type ProviderDownloadResponse,
-  type ProviderListOptions,
-  type ProviderListResponse,
-  type ProviderLogoutOptions,
-  type ProviderLogoutResponse,
-  type ProviderRefreshTokenOptions,
-  type ProviderRefreshTokenResponse,
-  type ProviderSearchOptions,
-  type ProviderSearchResponse,
-  type ProviderSizeOptions,
-  type ProviderThumbnailOptions,
-  type ProviderThumbnailResponse,
-  type Query,
-} from '../Provider.js'
+import Provider from '../Provider.js'
 import { withProviderErrorHandling } from '../providerErrors.js'
 import adaptData from './adapter.js'
 

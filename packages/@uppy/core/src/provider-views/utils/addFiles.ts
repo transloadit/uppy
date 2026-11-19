@@ -9,6 +9,7 @@ import type {
   Meta,
   UppyFileNonGhost,
 } from '../../utils/index.js'
+
 import { getSafeFileId } from '../../utils/index.js'
 import companionFileToUppyFile from './companionFileToUppyFile.js'
 
@@ -25,7 +26,7 @@ const addFiles = <M extends Meta, B extends Body>(
 
   const filesToAdd: UppyFileNonGhost<M, B>[] = []
   const filesAlreadyAdded: UppyFileNonGhost<M, B>[] = []
-  uppyFiles.forEach((file) => {
+  for (const file of uppyFiles) {
     if (
       plugin.uppy.checkIfFileAlreadyExists(
         getSafeFileId(file, plugin.uppy.getID()),
@@ -35,7 +36,7 @@ const addFiles = <M extends Meta, B extends Body>(
     } else {
       filesToAdd.push(file)
     }
-  })
+  }
 
   if (filesToAdd.length > 0) {
     plugin.uppy.info(

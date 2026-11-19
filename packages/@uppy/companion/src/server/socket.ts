@@ -1,7 +1,12 @@
 import type { Server as HttpServer } from 'node:http'
 import type { Server as HttpsServer } from 'node:https'
-import { type WebSocket, WebSocketServer } from 'ws'
+
+import type { WebSocket } from 'ws'
+
 import type { CompanionInitOptions } from '../schemas/companion.js'
+
+import { WebSocketServer } from 'ws'
+
 import { takeAuthCallback } from './auth-callback.js'
 import emitter from './emitter/index.js'
 import { isRecord } from './helpers/type-guards.js'

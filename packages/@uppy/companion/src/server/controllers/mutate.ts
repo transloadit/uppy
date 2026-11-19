@@ -1,9 +1,12 @@
 import type { NextFunction, Request, Response } from 'express'
 import type { Promisable } from 'type-fest'
-import { z } from 'zod'
+
 import type { CompanionContext } from '../../types/express.js'
-import { respondWithError } from '../provider/error.js'
 import type Provider from '../provider/Provider.js'
+
+import { z } from 'zod'
+
+import { respondWithError } from '../provider/error.js'
 
 /** Present and non-empty; not trimmed, like the wire format the client sends. */
 const requiredString = z.string().min(1)
