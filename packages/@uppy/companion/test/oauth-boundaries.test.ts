@@ -10,6 +10,7 @@ import {
   generateEncryptedAuthToken,
   generateEncryptedToken,
 } from '../dist/server/helpers/jwt.js'
+import { guardGrantInput } from '../dist/server/helpers/oauth-boundaries.js'
 import { encodeState } from '../dist/server/helpers/oauth-state.js'
 import Provider from '../dist/server/provider/Provider.js'
 import standalone from '../dist/standalone/index.js'
@@ -126,6 +127,46 @@ describe('OAuth request boundaries', () => {
     await request(app).get('/connect/dropbox').expect(302)
   })
 
+  test('accepts provider-specific callback parameters, bounded by type and size', () => {
+    const guard = guardGrantInput(() => [])
+    const run = (query: Record<string, unknown>) => {
+      let status: number | undefined
+      const next = vi.fn()
+      guard(
+        {
+          params: { oauthProvider: 'google', override: 'callback' },
+          query,
+        } as never,
+        { sendStatus: (code: number) => (status = code) } as never,
+        next,
+      )
+      return status ?? (next.mock.calls.length === 1 ? 'next' : undefined)
+    }
+    // Google adds `iss` (RFC 9207)
+    expect(
+      run({
+        code: 'code',
+        state: 'state',
+        scope: 'drive.readonly',
+        authuser: '0',
+        prompt: 'consent',
+        iss: 'https://accounts.google.com',
+      }),
+    ).toBe('next')
+    // Facebook's error callback
+    expect(
+      run({
+        error: 'access_denied',
+        error_code: '200',
+        error_description: 'Permissions error',
+        error_reason: 'user_denied',
+        state: 'state',
+      }),
+    ).toBe('next')
+    expect(run({ state: { nested: 'value' } })).toBe(400)
+    expect(run({ code: 'a'.repeat(8193) })).toBe(413)
+  })
+
   test('uses the pending provider rather than an OAuth 1 URL exemption', async () => {
     const app = embedded({
       customProviders: {
@@ -221,7 +262,7 @@ describe('OAuth request boundaries', () => {
     expect(endpoint.isDone()).toBe(true)
   })
 
-  test('uses a secure host-only session cookie on HTTPS, with no anonymous health sessions', async () => {
+  test('uses a secure session cookie on HTTPS, keeping the cookie domain, with no anonymous health sessions', async () => {
     setDefaultEnv()
     vi.stubEnv('COMPANION_PROTOCOL', 'https')
     vi.stubEnv('COMPANION_COOKIE_DOMAIN', '.example.test')
@@ -232,16 +273,21 @@ describe('OAuth request boundaries', () => {
     })
     const health = await request(app).get('/health').expect(200)
     expect(health.header['set-cookie']).toBeUndefined()
-    const login = await request(app)
-      .get('/connect/dropbox')
-      .set('X-Forwarded-Proto', 'https')
-      .expect(302)
-    const cookies = login.header['set-cookie']
-    expect(cookies).toEqual([expect.stringContaining('__Host-companion.sid=')])
-    if (!cookies?.[0]) throw new Error('Expected session cookie')
-    expect(cookies[0]).toContain('Path=/')
-    expect(cookies[0]).toContain('Secure')
-    expect(cookies[0]).toContain('SameSite=Lax')
-    expect(cookies[0]).not.toContain('Domain=')
+    const sessionCookie = async (forwardedProto?: string) => {
+      const req = request(app).get('/connect/dropbox')
+      if (forwardedProto) req.set('X-Forwarded-Proto', forwardedProto)
+      const cookies = (await req.expect(302)).header['set-cookie']
+      expect(cookies).toHaveLength(1)
+      return cookies?.[0] ?? ''
+    }
+    const secure = await sessionCookie('https')
+    expect(secure).toContain('Secure')
+    expect(secure).toContain('SameSite=Lax')
+    // COMPANION_OAUTH_DOMAIN setups read the session on another subdomain
+    expect(secure).toContain('Domain=.example.test')
+    // Behind a proxy that doesn't send X-Forwarded-Proto, the session still works
+    const plain = await sessionCookie()
+    expect(plain).not.toContain('Secure')
+    expect(plain).toContain('Domain=.example.test')
   })
 })

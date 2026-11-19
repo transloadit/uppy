@@ -179,13 +179,17 @@ export default function server(
     maxAge: 10 * 60 * 1000,
   }
 
+  // COMPANION_OAUTH_DOMAIN setups read the session on another subdomain.
+  if (process.env['COMPANION_COOKIE_DOMAIN']) {
+    cookieOptions.domain = process.env['COMPANION_COOKIE_DOMAIN']
+  }
+
   if (companionOptions.server.protocol === 'https') {
-    // Host-prefixed cookies cannot be planted by a sibling subdomain, even
-    // when the operator shares thumbnail cookies through cookieDomain.
-    sessionOptions.name = '__Host-companion.sid'
+    // Secure whenever the request is seen as HTTPS (directly or through
+    // X-Forwarded-Proto). An unconditional Secure flag would make express-session
+    // silently drop the cookie behind a proxy that doesn't send that header.
     sessionOptions.proxy = true
-    cookieOptions.secure = true
-    cookieOptions.path = '/'
+    cookieOptions.secure = 'auto'
     cookieOptions.sameSite = 'lax'
   }
 
