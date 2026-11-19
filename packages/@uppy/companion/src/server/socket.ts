@@ -117,10 +117,13 @@ async function handleAuthCallbackSocketConnection({
   options: CompanionInitOptions
 }) {
   const events = emitter()
-  let closed = false
+  // The socket leaves OPEN as soon as the client's close frame arrives. Its 'close' event only
+  // fires once the connection has ended, which can be after a pending subscription completes,
+  // and a replay then would consume a result that can no longer be sent.
+  const isClosed = () => ws.readyState !== ws.OPEN
   let sent = false
   function send(data: unknown) {
-    if (closed || sent) return
+    if (isClosed() || sent) return
     sent = true
     ws.send(jsonStringify(data), (err) => {
       if (err)
@@ -133,7 +136,7 @@ async function handleAuthCallbackSocketConnection({
   }
 
   async function replay() {
-    if (closed || sent) return
+    if (isClosed() || sent) return
     const data = await takeAuthCallback(token, options)
     // Consumption is final if the socket closes during this read. Clients
     // already reject closed login sockets instead of reconnecting them.
@@ -154,7 +157,6 @@ async function handleAuthCallbackSocketConnection({
   }
 
   ws.on('close', () => {
-    closed = true
     events.removeListener(token, onMessage)
   })
 
@@ -162,7 +164,7 @@ async function handleAuthCallbackSocketConnection({
     // HTTP 101 precedes Redis subscription readiness. Subscribe first, then
     // consume storage, covering callbacks both before and during subscription.
     await events.on(token, onMessage)
-    if (closed) {
+    if (isClosed()) {
       events.removeListener(token, onMessage)
       return
     }
