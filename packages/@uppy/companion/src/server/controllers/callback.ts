@@ -83,16 +83,10 @@ export default function callback(req: Request, res: Response): void {
     undefined,
     req.id,
   )
-  const uppyAuthToken = tokenService.generateEncryptedAuthToken(
-    { [providerName]: req.companion.providerUserSession },
-    secret,
-    providerClass.authStateExpiry,
-  )
-
-  tokenService.addToCookiesIfNeeded(
+  const uppyAuthToken = tokenService.issueAuthToken(
     req,
     res,
-    uppyAuthToken,
+    providerName,
     providerClass.authStateExpiry,
   )
 

@@ -6,7 +6,7 @@ import type Provider from '../provider/Provider.js'
 
 import { z } from 'zod'
 
-import { respondWithError } from '../provider/error.js'
+import withProvider from './with-provider.js'
 
 /** Present and non-empty; not trimmed, like the wire format the client sends. */
 const requiredString = z.string().min(1)
@@ -21,7 +21,7 @@ const parentIdField = z
  * mutation and maps provider errors to HTTP responses. That a provider is
  * attached and supports mutations is guaranteed by the middleware chain
  * (`hasSessionAndProvider`, `hasMutationProvider`); provider errors are turned
- * into responses by `respondWithError`, and logged by the provider itself.
+ * into responses by `withProvider`, and logged by the provider itself.
  */
 function mutation<S extends z.ZodType>(
   schema: S,
@@ -34,35 +34,21 @@ function mutation<S extends z.ZodType>(
     input: z.infer<S>,
   ) => Promisable<unknown>,
 ) {
-  return async (
-    req: Request,
-    res: Response,
-    next: NextFunction,
-  ): Promise<void> => {
-    const { provider } = req.companion
-    if (!provider) {
-      res.sendStatus(400)
-      return
-    }
+  return withProvider(async (req, res, provider) => {
     const parsed = schema.safeParse(req.body)
     if (!parsed.success) {
       res.sendStatus(400)
       return
     }
-    try {
-      const { companion } = req
-      const context = {
-        companion,
-        providerUserSession: companion.providerUserSession,
-      }
-      const result = await run(provider, context, parsed.data)
-      if (result === undefined) res.sendStatus(204)
-      else res.json(result)
-    } catch (err) {
-      if (respondWithError(err, res)) return
-      next(err)
+    const { companion } = req
+    const context = {
+      companion,
+      providerUserSession: companion.providerUserSession,
     }
-  }
+    const result = await run(provider, context, parsed.data)
+    if (result === undefined) res.sendStatus(204)
+    else res.json(result)
+  })
 }
 
 const operations = {

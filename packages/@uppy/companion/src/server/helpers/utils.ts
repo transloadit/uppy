@@ -7,6 +7,7 @@ import type {
 } from '../../schemas/companion.js'
 
 import crypto from 'node:crypto'
+import querystring from 'node:querystring'
 
 const authTagLength = 16
 const nonceLength = 16
@@ -364,6 +365,23 @@ export function s3WriteParams({
     ...(awsSseKmsKeyId != null && { SSEKMSKeyId: awsSseKmsKeyId }),
   }
 }
+
+/** A file size from a provider response (a number or numeric string), else undefined. */
+export const parseSize = (value: unknown): number | undefined => {
+  const size = typeof value === 'string' ? Number.parseInt(value, 10) : value
+  return typeof size === 'number' && Number.isFinite(size) ? size : undefined
+}
+
+/**
+ * The `nextPagePath` of a list response: `path` with the current query and the
+ * provider's cursor for the next page.
+ */
+export const getNextPagePath = (
+  path: string,
+  query: object,
+  cursor: string | number | undefined,
+): string =>
+  `${path}?${querystring.stringify({ ...query, cursor } as querystring.ParsedUrlQueryInput)}`
 
 export const truncateFilename = (
   filename: string,

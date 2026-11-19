@@ -5,7 +5,6 @@ import type {
   ProviderListResponse,
   ProviderLogoutOptions,
   ProviderLogoutResponse,
-  ProviderThumbnailResponse,
 } from '../Provider.js'
 import type { FacebookListResponse } from './adapter.js'
 
@@ -15,9 +14,8 @@ import got from 'got'
 
 import { isRecord } from '../../helpers/type-guards.js'
 import { HttpError, pathSegment, prepareStream } from '../../helpers/utils.js'
-import logger from '../../logger.js'
 import Provider from '../Provider.js'
-import { withProviderErrorHandling } from '../providerErrors.js'
+import { jsonStringAt, withProviderErrorHandling } from '../providerErrors.js'
 import { adaptData, sortImages } from './adapter.js'
 
 type FacebookBatchRequest = {
@@ -205,15 +203,6 @@ export default class Facebook extends Provider<FacebookUserSession> {
     )
   }
 
-  override thumbnail(): Promise<ProviderThumbnailResponse> {
-    // not implementing this because a public thumbnail from facebook will be used instead
-    logger.error(
-      'call to thumbnail is not implemented',
-      'provider.facebook.thumbnail.error',
-    )
-    throw new Error('call to thumbnail is not implemented')
-  }
-
   override logout({
     companion,
     providerUserSession: { accessToken: token },
@@ -246,13 +235,7 @@ export default class Facebook extends Provider<FacebookUserSession> {
         isRecord(response.body) &&
         isRecord(response.body['error']) &&
         response.body['error']['code'] === 190, // Invalid OAuth 2.0 Access Token
-      getJsonErrorMessage: (body) => {
-        if (!isRecord(body)) return undefined
-        const error = body['error']
-        if (!isRecord(error)) return undefined
-        const message = error['message']
-        return typeof message === 'string' ? message : undefined
-      },
+      getJsonErrorMessage: jsonStringAt('error', 'message'),
     })
   }
 }
