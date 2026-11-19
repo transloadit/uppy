@@ -524,10 +524,10 @@ export default class Uploader {
   #rejectUpload: ((err: Error) => void) | undefined
 
   /** A tus request has been sent and its response has not arrived yet. */
-  #tusRequestPending = false
+  #requestPending = false
 
   /** When the tus transfer last moved: a request, a response, or progress. */
-  #tusActivityAt = 0
+  #activityAt = 0
 
   /**
    * Abandons a tus transfer that has been paused for PAUSED_TIMEOUT_MS, or that
@@ -540,10 +540,13 @@ export default class Uploader {
    * the stream with read(chunkSize): bytes wait in this stream's buffer until a
    * whole chunk is there, instead of being copied out as they arrive.
    *
-   * Once a chunk is sent, neither number moves until the server has stored it,
-   * which can take minutes, so a request waiting for its response gets
-   * PAUSED_TIMEOUT_MS instead. tus-js-client has no request timeout, so this
-   * is also what ends a request the server never answers.
+   * Once a chunk or body is sent, neither number moves until the server has
+   * stored it, which can take minutes, so while an upload request is in flight
+   * (any protocol) the limit is PAUSED_TIMEOUT_MS instead. Neither
+   * tus-js-client nor our multipart and S3 uploads have a request timeout, so
+   * this is also what ends a request the server never answers. A multipart or
+   * S3 upload is one request from start to finish, so it always gets
+   * PAUSED_TIMEOUT_MS: the shorter limit only applies to tus.
    */
   #watchTransfer(): () => void {
     let last: string | undefined
@@ -557,13 +560,11 @@ export default class Uploader {
       const now = `${this.downloadedBytes}:${this.#lastBytesUploaded}:${this.readStream?.readableLength}`
       if (now !== last) {
         last = now
-        this.#tusActivityAt = Date.now()
+        this.#activityAt = Date.now()
         return
       }
-      const limit = this.#tusRequestPending
-        ? PAUSED_TIMEOUT_MS
-        : STALL_TIMEOUT_MS
-      if (Date.now() - this.#tusActivityAt < limit) return
+      const limit = this.#requestPending ? PAUSED_TIMEOUT_MS : STALL_TIMEOUT_MS
+      if (Date.now() - this.#activityAt < limit) return
       this.tus?.abort().catch(() => {})
       this.abortReadStream(new Error('Upload stalled'))
     }, STALL_TIMEOUT_MS)
@@ -1053,15 +1054,15 @@ export default class Uploader {
             throw new RefusedRequestError('Upload is not running')
           }
           this.#assertAllowedDestination(req.getURL())
-          this.#tusRequestPending = true
-          this.#tusActivityAt = Date.now()
+          this.#requestPending = true
+          this.#activityAt = Date.now()
         },
         // Check where the server sends the upload as soon as it says, before
         // tus reads any of the file for it: refused in onBeforeRequest, that
         // read would be left to fail on a temp file we have deleted.
         onAfterResponse: (req, res) => {
-          this.#tusRequestPending = false
-          this.#tusActivityAt = Date.now()
+          this.#requestPending = false
+          this.#activityAt = Date.now()
           if (
             req.getMethod() === 'HEAD' &&
             res.getStatus() >= 200 &&
@@ -1070,15 +1071,16 @@ export default class Uploader {
             this.size != null
           ) {
             const offset = Number(res.getHeader('Upload-Offset'))
-            const length = Number(res.getHeader('Upload-Length'))
+            // Upload-Length is absent while an upload defers its length.
+            const length = res.getHeader('Upload-Length')
             if (
               !Number.isSafeInteger(offset) ||
               offset < 0 ||
               offset > this.size ||
-              (offset === this.size && length !== this.size)
+              (length != null && Number(length) !== this.size)
             ) {
               const error = new RefusedRequestError(
-                'Tus resume offset exceeds the source file',
+                'Tus resume offset or length does not match the source file',
               )
               this.tus?.abort().catch(() => {})
               this.#rejectUpload?.(error)
@@ -1086,9 +1088,12 @@ export default class Uploader {
             }
           }
           const location = res.getHeader('Location')
+          // tus-js-client follows the Location of any 2xx creation response.
+          const status = res.getStatus()
           if (
             req.getMethod() !== 'POST' ||
-            res.getStatus() !== 201 ||
+            status < 200 ||
+            status >= 300 ||
             !location
           )
             return
@@ -1262,7 +1267,11 @@ export default class Uploader {
     try {
       const httpMethod =
         (this.options.httpMethod ?? '').toUpperCase() === 'PUT' ? 'put' : 'post'
-      const response = await got[httpMethod](url, reqOptions)
+      this.#requestPending = true
+      const response = await got[httpMethod](url, reqOptions).finally(() => {
+        this.#requestPending = false
+        this.#activityAt = Date.now()
+      })
 
       if (this.size != null && bytesUploaded !== this.size) {
         const errMsg = `uploaded only ${bytesUploaded} of ${this.size} with status: ${response.statusCode}`
@@ -1363,7 +1372,11 @@ export default class Uploader {
       this.onProgress(loaded, total)
     })
 
-    const data = await upload.done()
+    this.#requestPending = true
+    const data = await upload.done().finally(() => {
+      this.#requestPending = false
+      this.#activityAt = Date.now()
+    })
     return {
       url: data?.Location || null,
       extraData: {

@@ -295,6 +295,21 @@ function stripCredentialHeaders(headers: unknown): Record<string, unknown> {
   )
 }
 
+// The IANA content-coding registry, apart from `identity`
+const COMPRESSION_ENCODINGS = new Set([
+  'aes128gcm',
+  'br',
+  'compress',
+  'dcb',
+  'dcz',
+  'deflate',
+  'exi',
+  'gzip',
+  'pack200-gzip',
+  'x-compress',
+  'x-gzip',
+  'zstd',
+])
 /**
  * Opens a got stream to a client-chosen URL and resolves once response headers
  * are in, following redirects here rather than in got.
@@ -336,12 +351,16 @@ export async function openProtectedStream(
         reject(error)
       })
     })
-    const encoding = response.headers['content-encoding']
+    // Only real compression: misconfigured servers also send values like
+    // `binary` or `UTF-8`, whose bytes are the original file.
+    const encodings = (response.headers['content-encoding'] ?? '')
+      .toLowerCase()
+      .split(',')
+      .map((encoding) => encoding.trim())
     if (
       response.statusCode >= 200 &&
       response.statusCode < 300 &&
-      encoding != null &&
-      encoding.toLowerCase() !== 'identity'
+      encodings.some((encoding) => COMPRESSION_ENCODINGS.has(encoding))
     ) {
       stream.destroy()
       throw new Error('Encoded upstream responses are not supported')

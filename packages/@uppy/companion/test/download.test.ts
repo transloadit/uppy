@@ -100,6 +100,16 @@ describe('downloadURL', () => {
     await settle()
     expect(streaming.chunksWritten).toBeLessThan(TOTAL_CHUNKS)
   })
+  test('downloads a Content-Encoding that is no compression as is', async () => {
+    // misconfigured servers send values like `binary` for plain bytes
+    handler = (_req, res) => {
+      res.writeHead(200, { 'content-encoding': 'binary', 'content-length': 5 })
+      res.end('hello')
+    }
+    const { stream } = await downloadURL(`${baseUrl}/binary`, true)
+    expect(Buffer.concat(await stream.toArray()).toString()).toBe('hello')
+  })
+
   test('does not read the body of an error response', async () => {
     handler = (req, res) => streamGzipBody(req, res, 500)
     await expect(downloadURL(`${baseUrl}/err`, true)).rejects.toMatchObject({

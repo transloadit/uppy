@@ -15,9 +15,20 @@ let hang = false
 let sentRequests: string[] = []
 let startGate: Promise<void> | undefined
 let resumeOffset = 0
+let resumeLength: string | undefined = '100'
+let creationStatus = 201
 
 export function __setResumeOffset(value: number): void {
   resumeOffset = value
+}
+
+/** The HEAD response's Upload-Length; undefined leaves the header out. */
+export function __setResumeLength(value: string | undefined): void {
+  resumeLength = value
+}
+
+export function __setCreationStatus(value: number): void {
+  creationStatus = value
 }
 
 export function __getLastUploadFile(): unknown {
@@ -55,6 +66,8 @@ export function __resetTusMockState(): void {
   sentRequests = []
   startGate = undefined
   resumeOffset = 0
+  resumeLength = '100'
+  creationStatus = 201
 }
 
 export class Upload {
@@ -125,11 +138,12 @@ export class Upload {
             if (method === 'POST' && name === 'Location') return url
             if (method === 'HEAD' && name === 'Upload-Offset')
               return String(resumeOffset)
-            if (method === 'HEAD' && name === 'Upload-Length') return '100'
+            if (method === 'HEAD' && name === 'Upload-Length')
+              return resumeLength
             return undefined
           },
           getStatus: () =>
-            method === 'POST' ? 201 : method === 'HEAD' ? 200 : 204,
+            method === 'POST' ? creationStatus : method === 'HEAD' ? 200 : 204,
         },
       )
     }
