@@ -89,6 +89,14 @@ function setNextTusRequestUrl(url: string | undefined): void {
   setter(url)
 }
 
+function callTusMock(name: string, ...args: unknown[]): unknown {
+  const control = Reflect.get(tusClient, name)
+  if (typeof control !== 'function') {
+    throw new Error(`Expected tus mock to expose ${name}()`)
+  }
+  return control(...args)
+}
+
 afterEach(() => {
   nock.cleanAll()
   resetTusMockState()
@@ -148,6 +156,33 @@ describe('uploader', () => {
       uploader.uploadStream(stream, requireMockReq()),
     ).rejects.toThrow('idle state')
     expect(stream.destroyed).toBe(true)
+    uploader.removeEmitterListeners()
+  })
+
+  test.each([
+    { offset: 5, length: undefined, ok: true }, // deferred length: no header
+    { offset: 5, length: '5', ok: true },
+    { offset: 2, length: '100', ok: false }, // a different upload
+  ])('resuming at $offset with Upload-Length $length: ok=$ok', async ({
+    offset,
+    length,
+    ok,
+  }) => {
+    callTusMock('__setResumeOffset', offset)
+    callTusMock('__setResumeLength', length)
+    const uploader = new Uploader({
+      companionOptions: { ...companionOptions, streamingUpload: false },
+      protocol: 'tus',
+      uploadUrl: 'http://localhost/files/existing',
+      pathPrefix,
+      metadata: {},
+    })
+    const upload = uploader.uploadStream(
+      Readable.from(['small']),
+      requireMockReq(),
+    )
+    if (ok) await expect(upload).resolves.toBeDefined()
+    else await expect(upload).rejects.toThrow('Tus resume offset')
     uploader.removeEmitterListeners()
   })
 
@@ -532,6 +567,16 @@ describe('uploader', () => {
       uploader.removeEmitterListeners()
     })
 
+    test('cancel also terminates an upload whose creation answered 200', async () => {
+      // tus-js-client accepts any 2xx creation response
+      callTusMock('__setCreationStatus', 200)
+      const { uploader, upload } = await startTusUpload(true)
+      await deliver('cancel', uploader.token)
+      await expect(upload).rejects.toThrow('Canceled')
+      expect(getTusSentRequests()).toEqual(['POST', 'DELETE'])
+      uploader.removeEmitterListeners()
+    })
+
     test('a paused upload resumes', async () => {
       const { uploader, upload } = await startTusUpload(true)
       await deliver('pause', uploader.token)
@@ -873,6 +918,53 @@ describe('uploader', () => {
       await expect(upload).rejects.toThrow('Upload stalled')
       expect(stream.destroyed).toBe(true)
       uploader.removeEmitterListeners()
+    })
+
+    test('a multipart destination that takes minutes to answer still succeeds', async () => {
+      nock.enableNetConnect('127.0.0.1')
+      const received = Promise.withResolvers<void>()
+      const respond = Promise.withResolvers<void>()
+      const endpoint = http.createServer((req, res) => {
+        req.resume()
+        req.on('end', () => {
+          received.resolve()
+          respond.promise.then(() => res.end('{"url":"http://127.0.0.1/done"}'))
+        })
+      })
+      await new Promise<void>((resolve) =>
+        endpoint.listen(0, '127.0.0.1', resolve),
+      )
+      const { port } = endpoint.address() as AddressInfo
+      try {
+        const uploader = new Uploader({
+          companionOptions: {
+            ...companionOptions,
+            streamingUpload: true,
+            uploadUrls: [`http://127.0.0.1:${port}/`],
+          },
+          endpoint: `http://127.0.0.1:${port}/`,
+          protocol: 'multipart',
+          size: 5,
+          metadata: {},
+          pathPrefix,
+        })
+        const upload = uploader.uploadStream(
+          Readable.from([Buffer.from('hello')]),
+          requireMockReq(),
+        )
+        upload.catch(() => {})
+        await received.promise
+        // Longer than a stall, shorter than PAUSED_TIMEOUT_MS
+        await vi.advanceTimersByTimeAsync(3 * STALL_TIMEOUT_MS)
+        respond.resolve()
+        await expect(upload).resolves.toMatchObject({
+          url: 'http://127.0.0.1/done',
+        })
+        uploader.removeEmitterListeners()
+      } finally {
+        endpoint.close()
+        nock.enableNetConnect()
+      }
     })
 
     test('a stalled download-first phase is abandoned and its file removed', async () => {
