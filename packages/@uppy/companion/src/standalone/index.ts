@@ -1,16 +1,20 @@
+import type { Express, NextFunction, Request, Response } from 'express'
+import type { SessionOptions } from 'express-session'
+
+import type { CompanionInitOptions } from '../schemas/index.js'
+import type { EmitterLike } from '../server/emitter/index.js'
+
 import { randomUUID } from 'node:crypto'
 import qs from 'node:querystring'
 import { URL } from 'node:url'
+
 import RedisStore from 'connect-redis'
-import type { Express, NextFunction, Request, Response } from 'express'
 import express from 'express'
-import type { SessionOptions } from 'express-session'
 import session from 'express-session'
 import helmet from 'helmet'
 import morgan from 'morgan'
+
 import * as companion from '../companion.js'
-import type { CompanionInitOptions } from '../schemas/index.js'
-import type { EmitterLike } from '../server/emitter/index.js'
 import { isRecord, toError } from '../server/helpers/type-guards.js'
 import logger from '../server/logger.js'
 import * as redis from '../server/redis.js'
@@ -44,7 +48,7 @@ function censorQuery(rawQuery: Record<string, unknown>): {
 } {
   const query: Record<string, string> = {}
   let censored = false
-  Object.keys(rawQuery).forEach((key) => {
+  for (const key of Object.keys(rawQuery)) {
     const value = rawQuery[key]
     if (typeof value !== 'string') {
       // A repeated sensitive key parses to an array; still hide it.
@@ -52,7 +56,7 @@ function censorQuery(rawQuery: Record<string, unknown>): {
         query[key] = '********'
         censored = true
       }
-      return
+      continue
     }
     if (sensitiveKeys.has(key)) {
       // replace logged access token
@@ -61,7 +65,7 @@ function censorQuery(rawQuery: Record<string, unknown>): {
     } else {
       query[key] = value
     }
-  })
+  }
   return { query, censored }
 }
 

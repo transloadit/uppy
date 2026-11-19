@@ -7,8 +7,9 @@ import type {
   UIPluginOptions,
   Uppy,
 } from '@uppy/core'
-import { UIPlugin } from '@uppy/core'
 import type { LocaleStrings, LocalUppyFileNonGhost } from '@uppy/core/utils'
+
+import { UIPlugin } from '@uppy/core'
 import {
   canvasToBlob,
   getErrorMessage,
@@ -19,6 +20,7 @@ import {
 // biome-ignore lint/style/useImportType: h is not a type
 import { type ComponentChild, h } from '@uppy/core/utils/preact'
 import { isMobile } from 'is-mobile'
+
 import packageJson from '../package.json' with { type: 'json' }
 import CameraIcon from './CameraIcon.js'
 import CameraScreen from './CameraScreen.js'
@@ -316,11 +318,11 @@ export default class Webcam<M extends Meta, B extends Body> extends UIPlugin<
           if (!options?.deviceId) {
             currentDeviceId = tracks[0].getSettings().deviceId
           } else {
-            tracks.forEach((track) => {
+            for (const track of tracks) {
               if (track.getSettings().deviceId === options.deviceId) {
                 currentDeviceId = track.getSettings().deviceId
               }
-            })
+            }
           }
 
           // Update the sources now, so we can access the names.
@@ -521,9 +523,12 @@ export default class Webcam<M extends Meta, B extends Body> extends UIPlugin<
       const audioTracks = this.stream.getAudioTracks()
       const videoTracks = this.stream.getVideoTracks()
 
-      audioTracks.concat(videoTracks).forEach((track) => {
+      for (const track of audioTracks) {
         track.stop()
-      })
+      }
+      for (const track of videoTracks) {
+        track.stop()
+      }
     }
 
     if (this.recorder) {
@@ -768,15 +773,10 @@ export default class Webcam<M extends Meta, B extends Body> extends UIPlugin<
         this.updateVideoSources()
 
         if (this.stream) {
-          let restartStream = true
-
           const { videoSources, currentDeviceId } = this.getPluginState()
-
-          videoSources.forEach((videoSource) => {
-            if (currentDeviceId === videoSource.deviceId) {
-              restartStream = false
-            }
-          })
+          const restartStream = !videoSources.some(
+            (videoSource) => currentDeviceId === videoSource.deviceId,
+          )
 
           if (restartStream) {
             this.stop()

@@ -1,14 +1,18 @@
+import type { TransloaditStorageProviderOptions } from '../src/schemas/companion.js'
+import type { CompanionLike } from '../src/server/provider/Provider.js'
+import type { GrantClaims } from './fixtures/s3.js'
+
 import { createHmac } from 'node:crypto'
 import { createServer } from 'node:http'
+
 import { expect, onTestFinished, test, vi } from 'vitest'
+
 import { defaultOptions } from '../src/config/companion.js'
-import type { TransloaditStorageProviderOptions } from '../src/schemas/companion.js'
 import logger from '../src/server/logger.js'
 import { userError } from '../src/server/provider/errorCodes.js'
-import type { CompanionLike } from '../src/server/provider/Provider.js'
 import { parseTransloaditStorageProviderOptions } from '../src/server/provider/s3/config.js'
 import TransloaditStorageProvider from '../src/server/provider/s3/transloadit-storage.js'
-import { claims, type GrantClaims, mint } from './fixtures/s3.js'
+import { claims, mint } from './fixtures/s3.js'
 
 const secret = 'local-test-server-key-not-a-browser-capability'
 const workspace = 'a'.repeat(32)
@@ -166,14 +170,17 @@ test.each([
   [{ status: 500 }, outage],
   [{ body: { workspace } }, outage],
   [{ apiEndpoint: 'http://127.0.0.1:1' }, outage],
-])('refuses credential-service denials, bad answers and outages without S3 fallback (%j)', async (options, expected) => {
-  const { provider, companion, s3Keys, grantSession } = await fixture(options)
-  const session = await grantSession()
-  await expect(
-    provider.list({ companion, providerUserSession: session }),
-  ).rejects.toMatchObject(expected)
-  expect(s3Keys).toEqual([])
-})
+])(
+  'refuses credential-service denials, bad answers and outages without S3 fallback (%j)',
+  async (options, expected) => {
+    const { provider, companion, s3Keys, grantSession } = await fixture(options)
+    const session = await grantSession()
+    await expect(
+      provider.list({ companion, providerUserSession: session }),
+    ).rejects.toMatchObject(expected)
+    expect(s3Keys).toEqual([])
+  },
+)
 
 test('warns operators when the resolver rejects the server proof', async () => {
   const warn = vi.spyOn(logger, 'warn').mockImplementation(() => {})
@@ -228,28 +235,34 @@ test.each([
     credentialsSecret: secret,
   },
   {},
-])('takes exactly one of workspaces or credentialsSecret (%j)', (credentials) => {
-  expect(() =>
-    parseTransloaditStorageProviderOptions({
-      grantSecret: secret,
-      apiEndpoint: 'https://api2.transloadit.com',
-      ...credentials,
-    }),
-  ).toThrow('set exactly one of workspaces or credentialsSecret')
-})
+])(
+  'takes exactly one of workspaces or credentialsSecret (%j)',
+  (credentials) => {
+    expect(() =>
+      parseTransloaditStorageProviderOptions({
+        grantSecret: secret,
+        apiEndpoint: 'https://api2.transloadit.com',
+        ...credentials,
+      }),
+    ).toThrow('set exactly one of workspaces or credentialsSecret')
+  },
+)
 
 test.each([
   ['http://api2.transloadit.com', false],
   ['https://api2.transloadit.com', true],
   ['http://localhost:3000', true],
   ['http://127.0.0.1:3000', true],
-])('credentialsSecret with apiEndpoint %s is accepted: %s', (apiEndpoint, ok) => {
-  const parse = () =>
-    parseTransloaditStorageProviderOptions({
-      grantSecret: secret,
-      credentialsSecret: secret,
-      apiEndpoint,
-    })
-  if (ok) expect(parse).not.toThrow()
-  else expect(parse).toThrow('credentialsSecret needs an https apiEndpoint')
-})
+])(
+  'credentialsSecret with apiEndpoint %s is accepted: %s',
+  (apiEndpoint, ok) => {
+    const parse = () =>
+      parseTransloaditStorageProviderOptions({
+        grantSecret: secret,
+        credentialsSecret: secret,
+        apiEndpoint,
+      })
+    if (ok) expect(parse).not.toThrow()
+    else expect(parse).toThrow('credentialsSecret needs an https apiEndpoint')
+  },
+)

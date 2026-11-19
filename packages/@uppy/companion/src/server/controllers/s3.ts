@@ -1,5 +1,11 @@
 import type { Socket } from 'node:net'
+
 import type { Part, S3Client } from '@aws-sdk/client-s3'
+import type { PresignedPostOptions } from '@aws-sdk/s3-presigned-post'
+import type { NextFunction, Request, Response, Router } from 'express'
+
+import type { CompanionRuntimeOptions } from '../../types/companion-options.js'
+
 import {
   AbortMultipartUploadCommand,
   CompleteMultipartUploadCommand,
@@ -8,14 +14,10 @@ import {
   UploadPartCommand,
 } from '@aws-sdk/client-s3'
 import { GetFederationTokenCommand, STSClient } from '@aws-sdk/client-sts'
-import {
-  createPresignedPost,
-  type PresignedPostOptions,
-} from '@aws-sdk/s3-presigned-post'
+import { createPresignedPost } from '@aws-sdk/s3-presigned-post'
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner'
-import type { NextFunction, Request, Response, Router } from 'express'
 import express from 'express'
-import type { CompanionRuntimeOptions } from '../../types/companion-options.js'
+
 import { isRecord } from '../helpers/type-guards.js'
 import {
   getBucket,
@@ -403,10 +405,10 @@ export default function s3(
         config.awsSseKmsKeyId
     }
 
-    Object.entries(metadata).forEach(([metadataKey, value]) => {
-      if (typeof value !== 'string') return
+    for (const [metadataKey, value] of Object.entries(metadata)) {
+      if (typeof value !== 'string') continue
       fields[`x-amz-meta-${metadataKey}`] = value
-    })
+    }
 
     // `createPresignedPost` sometimes pulls in a nested copy of `@aws-sdk/client-s3`,
     // which makes the `S3Client` type nominally incompatible. The instance is still

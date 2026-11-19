@@ -46,9 +46,9 @@ class DefaultStore<T extends GenericState = GenericState> implements Store<T> {
   }
 
   #publish(...args: Parameters<Listener<T>>): void {
-    this.#callbacks.forEach((listener) => {
+    for (const listener of this.#callbacks) {
       listener(...args)
-    })
+    }
   }
 }
 

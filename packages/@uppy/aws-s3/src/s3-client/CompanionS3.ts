@@ -1,6 +1,7 @@
+import type * as IT from './types.js'
+
 import * as C from './consts.js'
 import S3Client from './S3Client.js'
-import type * as IT from './types.js'
 import * as U from './utils.js'
 
 /**

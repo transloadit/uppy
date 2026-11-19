@@ -5,10 +5,12 @@ import type {
   UIPluginOptions,
   Uppy,
 } from '@uppy/core'
-import { UIPlugin } from '@uppy/core'
 import type { LocaleStrings } from '@uppy/core/utils'
-import { getFileTypeExtension, isRestrictionError } from '@uppy/core/utils'
 import type { ComponentChild } from '@uppy/core/utils/preact'
+
+import { UIPlugin } from '@uppy/core'
+import { getFileTypeExtension, isRestrictionError } from '@uppy/core/utils'
+
 import packageJson from '../package.json' with { type: 'json' }
 import locale from './locale.js'
 import RecorderScreen from './RecorderScreen.js'
@@ -449,34 +451,34 @@ export default class ScreenCapture<
   stop(): void {
     // flush video stream
     if (this.videoStream) {
-      this.videoStream.getVideoTracks().forEach((track) => {
+      for (const track of this.videoStream.getVideoTracks()) {
         track.stop()
-      })
-      this.videoStream.getAudioTracks().forEach((track) => {
+      }
+      for (const track of this.videoStream.getAudioTracks()) {
         track.stop()
-      })
+      }
       this.videoStream = null
     }
 
     // flush audio stream
     if (this.audioStream) {
-      this.audioStream.getAudioTracks().forEach((track) => {
+      for (const track of this.audioStream.getAudioTracks()) {
         track.stop()
-      })
-      this.audioStream.getVideoTracks().forEach((track) => {
+      }
+      for (const track of this.audioStream.getVideoTracks()) {
         track.stop()
-      })
+      }
       this.audioStream = null
     }
 
     // flush output stream
     if (this.outputStream) {
-      this.outputStream.getAudioTracks().forEach((track) => {
+      for (const track of this.outputStream.getAudioTracks()) {
         track.stop()
-      })
-      this.outputStream.getVideoTracks().forEach((track) => {
+      }
+      for (const track of this.outputStream.getVideoTracks()) {
         track.stop()
-      })
+      }
       this.outputStream = null
     }
 

@@ -1,5 +1,6 @@
 import type { CorsOptions } from 'cors'
 import type { NextFunction, Request, Response } from 'express'
+
 import * as oAuthState from '../helpers/oauth-state.js'
 import { isRecord } from '../helpers/type-guards.js'
 import { SOCKET_TOKEN_RE } from '../helpers/utils.js'

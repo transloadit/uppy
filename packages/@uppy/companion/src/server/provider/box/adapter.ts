@@ -1,6 +1,8 @@
-import querystring from 'node:querystring'
-import mime from 'mime-types'
 import type { BuildUrl } from '../../../types/express.js'
+
+import querystring from 'node:querystring'
+
+import mime from 'mime-types'
 
 type BoxItem = {
   type?: string

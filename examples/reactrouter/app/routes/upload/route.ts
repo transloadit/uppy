@@ -1,6 +1,8 @@
-import { LocalFileStorage } from '@mjackson/file-storage/local'
-import { type FileUpload, parseFormData } from '@mjackson/form-data-parser'
+import type { FileUpload } from '@mjackson/form-data-parser'
 import type { ActionFunctionArgs } from 'react-router'
+
+import { LocalFileStorage } from '@mjackson/file-storage/local'
+import { parseFormData } from '@mjackson/form-data-parser'
 
 const fileStorage = new LocalFileStorage('./uploads')
 

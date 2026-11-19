@@ -1,6 +1,6 @@
 // p-queue does not have a `"main"` field in its `package.json`, and that makes `import/no-unresolved` freak out.
 // We can safely ignore it because bundlers will happily use the `"exports"` field instead.
-import PQueue from 'p-queue'
+
 import type {
   PartialTree,
   PartialTreeFile,
@@ -8,6 +8,9 @@ import type {
   PartialTreeId,
 } from '../../../index.js'
 import type { CompanionFile } from '../../../utils/index.js'
+
+import PQueue from 'p-queue'
+
 import shallowClone from './shallowClone.js'
 
 export type ApiList = (
