@@ -65,9 +65,19 @@ const userSessionSchema = z.object({
   write: z.boolean(),
   /** Unix seconds; only grant sessions carry it, to size the session token. */
   exp: z.number().optional(),
+  /** Opaque native Storage authorization, independently verified by its credential broker. */
+  nativeContext: z
+    .object({
+      grant: z.string().min(1).max(16384),
+      context: z.string().min(1).max(8192),
+    })
+    .optional(),
 })
 
 export type S3UserSession = z.infer<typeof userSessionSchema>
+
+// Context credentials must not accumulate after their browser grants expire.
+const clientExpirations = new WeakMap<S3Client, number>()
 
 /** The parsed provider options plus what every request needs from them. */
 export type ResolvedConfig<P extends ParsedS3ProviderOptions> = P & {
@@ -223,6 +233,7 @@ export default class S3Provider<
   protected clientOptionsFor(
     config: ResolvedConfig<P>,
     _bucket: string,
+    _session: S3UserSession,
   ): { cacheKey: string; clientOptions: S3ClientOptions } {
     return { cacheKey: '', clientOptions: config.clientOptions }
   }
@@ -289,14 +300,29 @@ export default class S3Provider<
     companion: CompanionLike,
     config: ResolvedConfig<P>,
     bucket: string,
+    session: S3UserSession,
   ): S3Client {
-    const { cacheKey, clientOptions } = this.clientOptionsFor(config, bucket)
+    const { cacheKey, clientOptions } = this.clientOptionsFor(
+      config,
+      bucket,
+      session,
+    )
     // Provider names and bucket names cannot contain `/`, so the two cannot collide.
     const key = `${this.optionsKey}/${cacheKey}`
     let client = companion.s3ProviderClients.get(key)
     if (client == null) {
+      for (const [cachedKey, cachedClient] of companion.s3ProviderClients) {
+        const expiresAt = clientExpirations.get(cachedClient)
+        if (expiresAt !== undefined && expiresAt <= Date.now()) {
+          cachedClient.destroy()
+          companion.s3ProviderClients.delete(cachedKey)
+        }
+      }
       client = this.getClient(clientOptions)
       companion.s3ProviderClients.set(key, client)
+      if (session.nativeContext && session.exp !== undefined) {
+        clientExpirations.set(client, session.exp * 1000)
+      }
     }
     return client
   }
@@ -323,7 +349,13 @@ export default class S3Provider<
       config.mode === 'bucket'
         ? bucket !== config.bucket || prefix !== config.prefix
         : exp == null
-    if (stale) throw new ProviderAuthError()
+    if (
+      stale ||
+      (providerUserSession.nativeContext &&
+        exp !== undefined &&
+        exp * 1000 <= Date.now())
+    )
+      throw new ProviderAuthError()
     if (requireWrite && !write) {
       // A user error, not an auth error: a fresh session would not help.
       throw userError('S3_READ_ONLY_SESSION')
@@ -332,7 +364,7 @@ export default class S3Provider<
     return {
       bucket,
       prefix,
-      client: this.#client(companion, config, bucket),
+      client: this.#client(companion, config, bucket, providerUserSession),
       config,
     }
   }
