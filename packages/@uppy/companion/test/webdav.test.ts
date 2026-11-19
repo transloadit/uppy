@@ -116,16 +116,59 @@ describe('webdav response bounds', () => {
     expect(requestCount).toBe(0)
   })
 
-  test('rejects an attribute-heavy listing within the byte limit', async () => {
+  test('lists a large folder from a server that declares namespaces on every entry', async () => {
+    // As Apache mod_dav and IIS do: well within the byte limit, but with
+    // more elements and attributes than the original structural limits allowed
+    const entries = Array.from({ length: 8000 }, (_, index) =>
+      fileResponse(`/f${index}.txt`).replace(
+        '<d:response>',
+        '<d:response xmlns:lp1="DAV:" xmlns:lp2="http://apache.org/dav/props/">',
+      ),
+    )
+    handler = (_req, res) => {
+      res.writeHead(207, { 'content-type': 'application/xml' })
+      res.end(multistatus(...entries))
+    }
+    const { items } = await provider().list({
+      providerUserSession: { webdavUrl },
+      directory: '/',
+      query: {},
+    } as never)
+    expect(items.length).toBeGreaterThanOrEqual(7999)
+  })
+
+  test('rejects a listing of tiny elements within the byte limit', async () => {
+    handler = (_req, res) => {
+      res.writeHead(207, { 'content-type': 'application/xml' })
+      res.end(multistatus('<a/>'.repeat(250_001)))
+    }
+    await expect(simpleAuth(true)).rejects.toThrow('structural limits')
+  })
+
+  test('rejects an element with too many attributes', async () => {
     handler = (_req, res) => {
       const attributes = Array.from(
-        { length: 1000 },
+        { length: 65 },
         (_, index) => `a${index}="x"`,
       ).join(' ')
       res.writeHead(207, { 'content-type': 'application/xml' })
-      res.end(`<d:multistatus xmlns:d="DAV:" ${attributes}></d:multistatus>`)
+      res.end(
+        `<d:multistatus xmlns:d="DAV:"><d:response ${attributes}/></d:multistatus>`,
+      )
     }
     await expect(simpleAuth(true)).rejects.toThrow('structural limits')
+  })
+
+  test('accepts a Content-Encoding that is no compression', async () => {
+    // misconfigured servers send values like `binary` for plain bytes
+    handler = (_req, res) => {
+      res.writeHead(207, {
+        'content-type': 'application/xml',
+        'content-encoding': 'binary',
+      })
+      res.end(emptyListing)
+    }
+    await expect(simpleAuth(true)).resolves.toBeDefined()
   })
 
   test('rejects recursive XML and DTDs before tree parsing', async () => {

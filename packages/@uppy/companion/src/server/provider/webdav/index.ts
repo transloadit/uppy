@@ -40,6 +40,22 @@ const defaultDirectory = '/'
  */
 export const MAX_WEBDAV_RESPONSE_BYTES = 5 * 1024 * 1024
 
+// The IANA content-coding registry, apart from `identity`
+const COMPRESSION_ENCODINGS = new Set([
+  'aes128gcm',
+  'br',
+  'compress',
+  'dcb',
+  'dcz',
+  'deflate',
+  'exi',
+  'gzip',
+  'pack200-gzip',
+  'x-compress',
+  'x-gzip',
+  'zstd',
+])
+
 getPatcher().patch('fetch', async (url: unknown, options: unknown) => {
   // webdav's hot-patcher has no typed fetch boundary.
   const requestOptions = options as RequestInit
@@ -51,8 +67,16 @@ getPatcher().patch('fetch', async (url: unknown, options: unknown) => {
     compress: false,
     size: MAX_WEBDAV_RESPONSE_BYTES,
   })
-  const encoding = response.headers.get('content-encoding')
-  if (response.ok && encoding && encoding.toLowerCase() !== 'identity') {
+  // Only real compression: misconfigured servers also send values like
+  // `binary` or `UTF-8`, whose bytes are the original response.
+  const encodings = (response.headers.get('content-encoding') ?? '')
+    .toLowerCase()
+    .split(',')
+    .map((encoding) => encoding.trim())
+  if (
+    response.ok &&
+    encodings.some((encoding) => COMPRESSION_ENCODINGS.has(encoding))
+  ) {
     if (response.body instanceof Readable) response.body.destroy()
     throw new Error('Encoded WebDAV responses are not supported')
   }
