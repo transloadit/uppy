@@ -156,7 +156,8 @@ export function app(optionsArg: CompanionInitOptions): {
   // A host app may already have inflated and parsed the body. Checking the
   // encoding here is independent of whether our own parser consumes it.
   app.use((req, res, next) => {
-    if (req.get('content-encoding')) {
+    const encoding = req.get('content-encoding')
+    if (encoding && encoding.trim().toLowerCase() !== 'identity') {
       res.sendStatus(415)
       return
     }

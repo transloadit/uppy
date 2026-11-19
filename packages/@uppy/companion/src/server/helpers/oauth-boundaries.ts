@@ -1,22 +1,6 @@
 import type { RequestHandler } from 'express'
 import { isRecord } from './type-guards.js'
 
-const callbackFields = new Set([
-  'authuser',
-  'code',
-  'denied',
-  'error',
-  'error_description',
-  'error_uri',
-  'hd',
-  'oauth_token',
-  'oauth_verifier',
-  'prompt',
-  'scope',
-  'session_state',
-  'state',
-])
-
 /** Prevent Grant from copying arbitrary or recursive input into the session. */
 export function guardGrantInput(
   getDynamicFields: (provider: string) => readonly string[] | undefined,
@@ -29,9 +13,11 @@ export function guardGrantInput(
       res.sendStatus(400)
       return
     }
+    // Providers add their own callback parameters (Google's `iss`, Facebook's
+    // `error_reason`, ...), so callbacks are bounded by type and size only.
     const allowedFields =
       req.params['override'] === 'callback'
-        ? callbackFields
+        ? undefined
         : new Set(['state', ...dynamicFields])
     let bytes = 0
     let fields = 0
@@ -48,7 +34,7 @@ export function guardGrantInput(
         const value = input[key]
         if (
           fields > 32 ||
-          !allowedFields.has(key) ||
+          (allowedFields && !allowedFields.has(key)) ||
           typeof value !== 'string'
         ) {
           res.sendStatus(400)
