@@ -777,6 +777,14 @@ describe('uploader', () => {
       return { uploader, stream, upload }
     }
 
+    // The uploader doesn't wait for its subscriptions, and the Redis emitter only delivers to
+    // subscriptions that are in place, so an early cancel can be lost. Once a later subscription
+    // on the same connection is in place, the uploader's is too.
+    const cancel = async (uploader: Uploader) => {
+      await Emitter().on(`cancel:${uploader.token}`, () => {})
+      Emitter().emit(`cancel:${uploader.token}`)
+    }
+
     beforeEach(() => {
       vi.useFakeTimers({ toFake: ['setInterval', 'clearInterval', 'Date'] })
     })
@@ -807,7 +815,7 @@ describe('uploader', () => {
           await vi.advanceTimersByTimeAsync(STALL_TIMEOUT_MS)
         }
         expect(settled).not.toHaveBeenCalled()
-        Emitter().emit(`cancel:${uploader.token}`)
+        await cancel(uploader)
         await expect(upload).rejects.toThrow('Canceled')
         uploader.removeEmitterListeners()
       },
@@ -835,10 +843,7 @@ describe('uploader', () => {
       const { uploader, stream, upload } = startHangingUpload()
       await vi.advanceTimersByTimeAsync(0)
       stream.destroy()
-      // The Redis emitter subscribes asynchronously; once a later subscription
-      // on the same connection is in place, the uploader's is too.
-      await Emitter().on(`cancel:${uploader.token}`, () => {})
-      Emitter().emit(`cancel:${uploader.token}`)
+      await cancel(uploader)
       await expect(upload).rejects.toThrow('Canceled')
       uploader.removeEmitterListeners()
     })
