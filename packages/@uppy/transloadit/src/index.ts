@@ -74,7 +74,7 @@ const defaultOptions = {
   alwaysRunAssembly: false,
   importFromUploadURLs: false,
   limit: 20,
-  retryDelays: [7_000, 10_000, 15_000, 20_000],
+  retryDelays: [1_000, 2_000, 3_000, 5_000, 10_000, 15_000, 20_000, 30_000],
   clientName: null,
 } satisfies TransloaditOptions<any, any>
 

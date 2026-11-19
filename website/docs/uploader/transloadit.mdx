@@ -183,6 +183,21 @@ Setting this to `0` means no limit on concurrent uploads, but we recommend a
 value between `5` and `20`. This option is passed through to the
 [`@uppy/tus`](/docs/tus) plugin, which this plugin uses internally.
 
+#### `retryDelays`
+
+Delays in milliseconds before retrying a local Tus upload (`number[]`, default:
+`[1000, 2000, 3000, 5000, 10000, 15000, 20000, 30000]`).
+
+The waits total 86 seconds without upload progress, giving a server or load
+balancer time to recover during a restart lasting up to about a minute and a
+half. Early retries handle brief interruptions quickly; later retries are spaced
+out to reduce load. Request time adds to this window, and rate limiting or an
+offline browser can extend it further. HTTP 429 responses also pause the shared
+request queue using this schedule.
+
+Set `retryDelays` to your own array to override the default, or to `[]` to disable
+retries. This option does not change Assembly API retries or Companion uploads.
+
 #### `assemblyOptions`
 
 Configure the
