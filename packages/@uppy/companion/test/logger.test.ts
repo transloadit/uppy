@@ -7,15 +7,16 @@ import logger, { MAX_LOG_MESSAGE_LENGTH } from '../dist/server/logger.js'
 
 const maskables = ['ToBeMasked1', 'toBeMasked2', 'toBeMasked(And)?Escaped']
 
+/** The logged message; a multi-line one is logged one line per record. */
 function captureConsoleLog(log: () => void): string {
-  let loggedMessage: string | null = null
+  const lines: string[] = []
 
   // override the default console.log to capture the logged message
   const defaultConsoleLog = console.log
 
   try {
     console.log = (logPrefix: unknown, message: unknown) => {
-      loggedMessage = String(message)
+      lines.push(String(message))
       defaultConsoleLog(logPrefix, message)
     }
   } finally {
@@ -23,10 +24,10 @@ function captureConsoleLog(log: () => void): string {
     // restore the default console.log before using "expect" to avoid weird log behaviors
     console.log = defaultConsoleLog
   }
-  if (loggedMessage == null) {
+  if (lines.length === 0) {
     throw new Error('Expected logger to write a console message')
   }
-  return loggedMessage
+  return lines.join('\n')
 }
 
 describe('Test Logger secret mask', () => {
@@ -124,17 +125,60 @@ describe('Test Logger secret mask', () => {
 })
 
 describe('log message bounds and error formatting', () => {
-  test('escapes line breaks and terminal controls while retaining ordinary Unicode', () => {
-    const message = captureConsoleLog(() => {
-      logger.info('é\nsecond\r\u001b[31m\u2028third')
+  /** The [prefix, message] pairs that one log call prints, one per line. */
+  function captureRecords(log: () => void): Array<[string, string]> {
+    using logged = vi.spyOn(console, 'log').mockImplementation(() => {})
+    log()
+    return logged.mock.calls.map(([prefix, message]) => [
+      String(prefix),
+      String(message),
+    ])
+  }
+
+  test('logs each line of a message as its own record, with the prefix', () => {
+    const records = captureRecords(() => {
+      logger.info('é\nsecond\r\nthird\u2028fourth', 'tag', 'id')
     })
-    expect(message).toBe('é\\u000asecond\\u000d\\u001b[31m\\u2028third')
+    expect(records.map(([, message]) => message)).toEqual([
+      'é',
+      'second',
+      'third',
+      'fourth',
+    ])
+    for (const [prefix] of records) expect(prefix).toContain('id tag')
   })
 
-  test('escapes controls in the tag and request id too', () => {
-    using logged = vi.spyOn(console, 'log').mockImplementation(() => {})
-    logger.info('message', 'tag\rnext', 'id\u001b[0m')
-    expect(logged.mock.calls[0]?.[0]).toContain('id\\u001b[0m tag\\u000dnext')
+  test('keeps tabs, and escapes other terminal controls, colour codes too', () => {
+    const [record] = captureRecords(() => {
+      logger.info('a\tb \u001b[8mhidden \u001b]52;c;eA==\u0007 \u009b \u0000')
+    })
+    expect(record?.[1]).toBe(
+      'a\tb \\u001b[8mhidden \\u001b]52;c;eA==\\u0007 \\u009b \\u0000',
+    )
+  })
+
+  test('caps the records one message takes', () => {
+    const records = captureRecords(() => {
+      logger.info('\n'.repeat(1000))
+    })
+    expect(records).toHaveLength(201)
+    expect(records.at(-1)?.[1]).toBe('… [801 more lines]')
+  })
+
+  test('masks a secret split by a carriage return', () => {
+    logger.setMaskables(maskables)
+    const message = captureConsoleLog(() => {
+      logger.info('ToBe\rMasked1')
+    })
+    expect(message).not.toContain('ToBeMasked1')
+  })
+
+  test('escapes controls and line breaks in the tag and request id', () => {
+    const records = captureRecords(() => {
+      logger.info('message', 'tag\nnext', 'id\u0007')
+    })
+    expect(records).toHaveLength(1)
+    expect(records[0]?.[0]).toContain('id\\u0007 tag\\u000anext')
   })
 
   test('caps a log line at MAX_LOG_MESSAGE_LENGTH', () => {

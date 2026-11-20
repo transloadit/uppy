@@ -54,14 +54,21 @@ function maskMessage(msg: string): string {
   return out
 }
 
-// Keep terminal controls and embedded line breaks in one visible log record.
-function escapeLogControls(message: string): string {
-  return message.replace(
-    /[\p{Cc}\u2028\u2029]/gu,
+/**
+ * Show control characters escaped (tabs aside), so logged data can't drive the
+ * terminal: e.g. OSC 52 writes the clipboard, and colour codes can hide the
+ * records that follow. The logger's own colours are applied outside this.
+ */
+function escapeControls(text: string): string {
+  return text.replace(
+    /[^\P{Cc}\t]/gu,
     (character) =>
       `\\u${character.charCodeAt(0).toString(16).padStart(4, '0')}`,
   )
 }
+
+/** Records one message may take, on top of its MAX_LOG_MESSAGE_LENGTH characters. */
+const MAX_LOG_LINES = 200
 
 let processName = 'companion'
 
@@ -109,22 +116,31 @@ function log(params: {
   }
 
   const msgString = msgToString()
-  const maskedFull = escapeLogControls(maskMessage(msgString))
+  const maskedFull = maskMessage(msgString.replaceAll('\r', ''))
   const masked =
     maskedFull.length > MAX_LOG_MESSAGE_LENGTH
       ? `${maskedFull.slice(0, MAX_LOG_MESSAGE_LENGTH)}… [truncated ${
           maskedFull.length - MAX_LOG_MESSAGE_LENGTH
         } chars]`
       : maskedFull
-  console.log(
-    styleText(
-      color,
-      escapeLogControls(
-        `${processName}: ${time} [${level}] ${traceId}${whitespace}${tag}`,
-      ),
+  const prefix = styleText(
+    color,
+    escapeControls(
+      `${processName}: ${time} [${level}] ${traceId}${whitespace}${tag}`,
     ),
-    styleText(color, masked),
   )
+  // One record per line, each with the prefix, so that a line break in logged
+  // data can't pass for a separate record.
+  const lines = masked.split(/[\n\u2028\u2029]/)
+  for (const line of lines.slice(0, MAX_LOG_LINES)) {
+    console.log(prefix, styleText(color, escapeControls(line)))
+  }
+  if (lines.length > MAX_LOG_LINES) {
+    console.log(
+      prefix,
+      styleText(color, `… [${lines.length - MAX_LOG_LINES} more lines]`),
+    )
+  }
 }
 
 /**
