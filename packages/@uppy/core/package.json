@@ -72,7 +72,7 @@
     "@types/namespace-emitter": "^2.0.0",
     "@types/node": "^22.20.1",
     "@uppy-dev/tsconfig": "workspace:^",
-    "@vitest/browser-playwright": "^5.0.5",
+    "@vitest/browser-playwright": "^5.1.0",
     "cssnano": "^8.0.1",
     "deep-freeze": "^0.0.1",
     "msw": "^3.0.3",
@@ -82,6 +82,6 @@
     "sass": "^1.89.2",
     "typescript": "^6.0.3",
     "vite": "^8.3.5",
-    "vitest": "^5.0.5"
+    "vitest": "^5.1.0"
   }
 }
