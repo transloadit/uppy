@@ -14,6 +14,22 @@ let nextRequestUrl: string | undefined
 let hang = false
 let sentRequests: string[] = []
 let startGate: Promise<void> | undefined
+let resumeOffset = 0
+let resumeLength: string | undefined = '100'
+let creationStatus = 201
+
+export function __setResumeOffset(value: number): void {
+  resumeOffset = value
+}
+
+/** The HEAD response's Upload-Length; undefined leaves the header out. */
+export function __setResumeLength(value: string | undefined): void {
+  resumeLength = value
+}
+
+export function __setCreationStatus(value: number): void {
+  creationStatus = value
+}
 
 export function __getLastUploadFile(): unknown {
   return lastUploadFile
@@ -49,6 +65,9 @@ export function __resetTusMockState(): void {
   hang = false
   sentRequests = []
   startGate = undefined
+  resumeOffset = 0
+  resumeLength = '100'
+  creationStatus = 201
 }
 
 export class Upload {
@@ -63,7 +82,10 @@ export class Upload {
   constructor(file: unknown, options: UploadOptions) {
     lastUploadFile = file
     this.file = file
-    this.url = 'https://tus.endpoint/files/foo-bar'
+    this.url =
+      typeof options['uploadUrl'] === 'string'
+        ? options['uploadUrl']
+        : 'https://tus.endpoint/files/foo-bar'
     this.options = options
   }
 
@@ -111,7 +133,18 @@ export class Upload {
     if (typeof onAfterResponse === 'function') {
       await onAfterResponse(
         { getURL: () => url, getMethod: () => method },
-        { getHeader: () => undefined, getStatus: () => 204 },
+        {
+          getHeader: (name: string) => {
+            if (method === 'POST' && name === 'Location') return url
+            if (method === 'HEAD' && name === 'Upload-Offset')
+              return String(resumeOffset)
+            if (method === 'HEAD' && name === 'Upload-Length')
+              return resumeLength
+            return undefined
+          },
+          getStatus: () =>
+            method === 'POST' ? creationStatus : method === 'HEAD' ? 200 : 204,
+        },
       )
     }
   }
@@ -125,7 +158,10 @@ export class Upload {
     await startGate
     this._aborted = false
     try {
-      await this._send('POST', nextRequestUrl ?? this.url)
+      await this._send(
+        this.options['uploadUrl'] ? 'HEAD' : 'POST',
+        nextRequestUrl ?? this.url,
+      )
     } catch (err) {
       const onError = this.options['onError']
       if (!this._aborted && typeof onError === 'function') onError(err)
