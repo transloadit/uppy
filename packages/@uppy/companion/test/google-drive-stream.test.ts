@@ -1,10 +1,14 @@
 import nock from 'nock'
 import { afterEach, describe, expect, test, vi } from 'vitest'
+
 import {
   getProtectedGot,
   UPSTREAM_TIMEOUTS,
 } from '../src/server/helpers/request.js'
-import { streamGoogleFile } from '../src/server/provider/google/drive/index.js'
+import {
+  DRIVE_EXPORT_RESPONSE_TIMEOUT_MS,
+  streamGoogleFile,
+} from '../src/server/provider/google/drive/index.js'
 import * as defaults from './fixtures/constants.js'
 
 vi.mock(import('../src/server/helpers/request.js'), async (importOriginal) => {
@@ -103,7 +107,7 @@ describe('streamGoogleFile', () => {
     expect(getProtectedGot).toHaveBeenCalledWith({ allowLocalIPs: false })
     // large exports may take long before Google answers; connecting stays bounded
     expect(timeout).toMatchObject({
-      response: undefined,
+      response: DRIVE_EXPORT_RESPONSE_TIMEOUT_MS,
       connect: UPSTREAM_TIMEOUTS.connect,
     })
   })

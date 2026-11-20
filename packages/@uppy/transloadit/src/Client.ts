@@ -5,12 +5,15 @@ import type {
   UppyFile,
   WrapPromiseFunctionType,
 } from '@uppy/core/utils'
-import { fetchWithNetworkError } from '@uppy/core/utils'
-import {
-  type AssemblyResponse,
-  getAssemblyUrlSsl,
-  type OptionsWithRestructuredFields,
+
+import type {
+  AssemblyResponse,
+  OptionsWithRestructuredFields,
 } from './index.js'
+
+import { fetchWithNetworkError } from '@uppy/core/utils'
+
+import { getAssemblyUrlSsl } from './index.js'
 
 const ASSEMBLIES_ENDPOINT = '/assemblies'
 
@@ -119,9 +122,9 @@ export default class Client<M extends Meta, B extends Body> {
       data.append('signature', signature)
     }
 
-    Object.keys(fields).forEach((key) => {
-      data.append(key, String(fields[key]))
-    })
+    for (const [key, value] of Object.entries(fields)) {
+      data.append(key, String(value))
+    }
     data.append('num_expected_upload_files', String(expectedFiles))
 
     const url = new URL(ASSEMBLIES_ENDPOINT, `${this.opts.service}`).href

@@ -1,17 +1,16 @@
 import type { I18n } from '@uppy/core/utils'
-import {
-  Component,
-  type ComponentChild,
-  type ComponentProps,
-} from '@uppy/core/utils/preact'
+import type { ComponentChild, ComponentProps } from '@uppy/core/utils/preact'
+
+import type { VideoSourceSelectProps } from './VideoSourceSelect.js'
+
+import { Component } from '@uppy/core/utils/preact'
+
 import DiscardButton from './DiscardButton.js'
 import RecordButton from './RecordButton.js'
 import RecordingLength from './RecordingLength.js'
 import SnapshotButton from './SnapshotButton.js'
 import SubmitButton from './SubmitButton.js'
-import VideoSourceSelect, {
-  type VideoSourceSelectProps,
-} from './VideoSourceSelect.js'
+import VideoSourceSelect from './VideoSourceSelect.js'
 
 function isModeAvailable<T>(modes: T[], mode: any): mode is T {
   return modes.includes(mode)

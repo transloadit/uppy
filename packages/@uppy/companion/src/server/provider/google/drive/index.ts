@@ -1,28 +1,35 @@
 import type { Readable } from 'node:stream'
+
+import type {
+  ProviderDownloadOptions,
+  ProviderDownloadResponse,
+  ProviderListOptions,
+  ProviderListResponse,
+  ProviderLogoutOptions,
+  ProviderLogoutResponse,
+  ProviderRefreshTokenOptions,
+  ProviderRefreshTokenResponse,
+} from '../../Provider.js'
+import type { GoogleUserSession } from '../index.js'
+import type {
+  DriveAbout,
+  DriveListResponse,
+  DriveSharedDrivesResponse,
+} from './adapter.js'
+
 import got from 'got'
+
 import { MAX_AGE_REFRESH_TOKEN } from '../../../helpers/jwt.js'
 import { getProtectedGot } from '../../../helpers/request.js'
 import { isRecord } from '../../../helpers/type-guards.js'
 import { pathSegment, prepareStream } from '../../../helpers/utils.js'
 import logger from '../../../logger.js'
 import { ProviderAuthError } from '../../error.js'
-import Provider, {
-  type ProviderDownloadOptions,
-  type ProviderDownloadResponse,
-  type ProviderListOptions,
-  type ProviderListResponse,
-  type ProviderLogoutOptions,
-  type ProviderLogoutResponse,
-  type ProviderRefreshTokenOptions,
-  type ProviderRefreshTokenResponse,
-} from '../../Provider.js'
+import Provider from '../../Provider.js'
 import { withGoogleErrorHandling } from '../../providerErrors.js'
-import { type GoogleUserSession, logout, refreshToken } from '../index.js'
+import { logout, refreshToken } from '../index.js'
 import {
   adaptData,
-  type DriveAbout,
-  type DriveListResponse,
-  type DriveSharedDrivesResponse,
   getGsuiteExportType,
   isGsuiteFile,
   isShortcut,
@@ -86,6 +93,8 @@ async function getStats({ id, token }: { id: string; token: string }) {
   return stats
 }
 
+export const DRIVE_EXPORT_RESPONSE_TIMEOUT_MS = 10 * 60 * 1000
+
 export async function streamGoogleFile({
   token,
   id: idIn,
@@ -131,10 +140,10 @@ export async function streamGoogleFile({
             authorization: `Bearer ${token}`,
           },
           responseType: 'json',
-          // Large exports are converted before Google answers, so drop the
-          // protected client's 30 s response timeout; lookup/connect stay bounded.
-          // @ts-expect-error got clears an inherited timeout with undefined
-          timeout: { response: undefined },
+          // Large exports are converted before Google answers, so allow much
+          // longer than the protected client's 30 s for the response to start;
+          // lookup/connect stay bounded.
+          timeout: { response: DRIVE_EXPORT_RESPONSE_TIMEOUT_MS },
         },
       )
     } else {
