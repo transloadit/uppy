@@ -44,6 +44,19 @@ describe('RequestClient', () => {
 })
 
 describe('Companion self-identification', () => {
+  /** Answers each request, at whichever instance, with the next `i-am` value. */
+  function serveIAm(...values: Array<string | undefined>) {
+    network.use(
+      http.get('*/test', () => {
+        const value = values.shift()
+        return HttpResponse.json(
+          {},
+          value === undefined ? {} : { headers: { 'i-am': value } },
+        )
+      }),
+    )
+  }
+
   it.each([
     'javascript:alert(document.domain)',
     'data:text/html,<script>alert(1)</script>',
@@ -51,32 +64,27 @@ describe('Companion self-identification', () => {
     '//relative.example',
     'not a URL',
     'https://user:password@instance.test',
-  ])('ignores unsafe i-am value %s and retains the last valid instance', (value) => {
+  ])('ignores unsafe i-am value %s and retains the last valid instance', async (value) => {
     using uppy = new Uppy()
     const client = new RequestClient(uppy, {
       companionUrl: 'https://companion.test',
     })
-    client.onReceiveResponse(
-      new Response(null, {
-        headers: { 'i-am': 'https://instance.test/companion' },
-      }),
-    )
-    client.onReceiveResponse(new Response(null, { headers: { 'i-am': value } }))
+    serveIAm('https://instance.test/companion', value)
+    await client.get('test')
+    expect(client.hostname).toBe('https://instance.test/companion')
+    await client.get('test')
     expect(client.hostname).toBe('https://instance.test/companion')
   })
 
-  it('keeps sticky HTTP(S) instances and path prefixes', () => {
+  it('keeps sticky HTTP(S) instances and path prefixes', async () => {
     using uppy = new Uppy()
     const client = new RequestClient(uppy, {
       companionUrl: 'https://companion.test',
     })
-    client.onReceiveResponse(
-      new Response(null, {
-        headers: { 'i-am': 'http://instance.test:3020/companion/' },
-      }),
-    )
+    serveIAm('http://instance.test:3020/companion/', undefined)
+    await client.get('test')
     expect(client.hostname).toBe('http://instance.test:3020/companion')
-    client.onReceiveResponse(new Response(null))
+    await client.get('test')
     expect(client.hostname).toBe('http://instance.test:3020/companion')
   })
 })

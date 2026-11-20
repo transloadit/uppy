@@ -12,6 +12,8 @@ export type ThumbnailProps = {
   ctx?: UppyContext
 }
 
+const RASTER_IMAGE = /^image\/(jpe?g|gif|png|bmp|webp|avif)$/i
+
 export default function Thumbnail(props: ThumbnailProps) {
   const width = props.width || '100%'
   const height = props.height || '100%'
@@ -39,14 +41,16 @@ export default function Thumbnail(props: ThumbnailProps) {
       return props.file.preview
     }
     if (props.file.data == null) throw new Error('File data is empty')
-    // Opening an SVG blob in another tab executes its document scripts with
-    // the app's origin. Check the Blob's MIME, not mutable file metadata.
-    if (!/^image\/(jpe?g|gif|png|bmp|webp|avif)$/.test(props.file.data.type)) {
-      return undefined
-    }
-    return URL.createObjectURL(props.file.data)
+    // A blob URL opened as a document (e.g. in a new tab) is rendered as its
+    // type, so an SVG or HTML one would run scripts with the app's origin. Only
+    // raster types get a URL, and it gets that type whatever the bytes or the
+    // Blob's own type are (which may also be missing).
+    if (!RASTER_IMAGE.test(props.file.type)) return undefined
+    const { data } = props.file
+    return URL.createObjectURL(data.slice(0, data.size, props.file.type))
   }, [
     props.file.data,
+    props.file.type,
     props.images,
     props.file.isRemote,
     props.file.preview,
