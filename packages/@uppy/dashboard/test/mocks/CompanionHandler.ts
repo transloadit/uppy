@@ -294,6 +294,40 @@ export const handlers = [
       })
     }
 
+    // Search for "shared" also returns an unmounted Dropbox shared item: Dropbox omits
+    // `path_lower` for it, so Companion's adapter yields encodeURIComponent(undefined)
+    if (query.toLowerCase() === 'shared') {
+      return HttpResponse.json({
+        username: 'test-user@example.com',
+        items: [
+          {
+            isFolder: false,
+            icon: 'file',
+            name: 'unmounted-shared.pdf',
+            mimeType: 'application/pdf',
+            id: 'file-unmounted-shared',
+            thumbnail: null,
+            requestPath: 'undefined',
+            modifiedDate: '2024-01-10T00:00:00Z',
+            size: 1024,
+          },
+          {
+            isFolder: false,
+            icon: 'file',
+            name: 'shared-readme.md',
+            mimeType: 'text/markdown',
+            id: 'file-shared-readme',
+            thumbnail: null,
+            requestPath: encodeURIComponent('/shared-readme.md'),
+            modifiedDate: '2024-01-10T00:00:00Z',
+            size: 512,
+          },
+        ],
+        nextPagePath: null,
+        searchedFor: query,
+      })
+    }
+
     // Search for "target" file (global search from root)
     if (query.toLowerCase() === 'target' && !searchPath) {
       return HttpResponse.json({
