@@ -133,16 +133,25 @@ describe('request input', () => {
     )
   })
 
-  test('refuses malformed parts on complete', async () => {
-    const res = await request(makeApp())
-      .post('/s3/multipart/upload-1/complete')
-      .query({ key: 'a.jpg' })
-      .send({ parts: [{ PartNumber: '1', ETag: 'x' }] })
-      .expect(400)
-    expect(res.body.error).toBe(
-      's3: `parts` must be an array of {ETag, PartNumber} objects.',
-    )
-  })
+  test.each([
+    ['1', 'x'],
+    [0, 'x'],
+    [1.5, 'x'],
+    [10001, 'x'],
+    [1, 2],
+  ])(
+    'refuses malformed part {PartNumber: %j, ETag: %j} on complete',
+    async (PartNumber, ETag) => {
+      const res = await request(makeApp())
+        .post('/s3/multipart/upload-1/complete')
+        .query({ key: 'a.jpg' })
+        .send({ parts: [{ PartNumber, ETag }] })
+        .expect(400)
+      expect(res.body.error).toBe(
+        's3: `parts` must be an array of {ETag, PartNumber} objects.',
+      )
+    },
+  )
 
   test('passes extra part fields such as checksums on to S3', async () => {
     const { send } = fakeS3()

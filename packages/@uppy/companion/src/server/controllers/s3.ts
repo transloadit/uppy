@@ -20,6 +20,7 @@ import { getSignedUrl } from '@aws-sdk/s3-request-presigner'
 import express from 'express'
 import { z } from 'zod'
 
+import { requiredString } from '../helpers/schemas.js'
 import { asRecord } from '../helpers/type-guards.js'
 import {
   getBucket,
@@ -35,17 +36,22 @@ const maxBatchPartNumbers = 100
 const isPartNumber = (value: string) =>
   /^[1-9]\d{0,4}$/.test(value) && Number(value) <= 10000
 
-const requiredString = z.string().min(1)
-const partNumberSchema = z.string().refine(isPartNumber)
+const partNumberSchema = z.string().refine(isPartNumber).transform(Number)
 // Non-string values are left out when the metadata becomes S3 fields.
 const metadataSchema = z.record(z.string(), z.unknown()).catch({})
 // Parts are passed on to S3 as they are, so keep any other fields (checksums).
 const partsSchema = z.array(
-  z.looseObject({ PartNumber: z.number(), ETag: z.string() }),
+  z.looseObject({
+    PartNumber: z.int().min(1).max(10000),
+    ETag: z.string(),
+  }),
 )
 
-/** `value` parsed with `schema`, or undefined after answering 400 with `error`. */
-function parseInput<T>(
+/**
+ * `value` parsed with `schema`, or undefined after answering 400 with `error`.
+ * `T` excludes null and undefined, so callers can tell failure apart with `== null`.
+ */
+function parseInput<T extends {}>(
   schema: z.ZodType<T>,
   value: unknown,
   res: Response,
@@ -592,7 +598,7 @@ export default function s3(
         Bucket: bucket,
         Key: key,
         UploadId: uploadId,
-        PartNumber: Number(partNumber),
+        PartNumber: partNumber,
         Body: '',
       }),
       { expiresIn: config.expires },
