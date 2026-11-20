@@ -1,8 +1,12 @@
 import type { S3Client } from '@aws-sdk/client-s3'
-import type { NextFunction, Request, RequestHandler, Response } from 'express'
+import type { NextFunction, Response } from 'express'
 
 import type { CompanionRuntimeOptions } from '../types/companion-options.js'
-import type { ProviderUserSession } from '../types/express.js'
+import type {
+  ProviderUserSession,
+  Request,
+  RequestHandler,
+} from '../types/express.js'
 
 import corsImport from 'cors'
 import promBundle from 'express-prom-bundle'

@@ -1,6 +1,7 @@
-import type { NextFunction, Request, Response } from 'express'
+import type { NextFunction, Response } from 'express'
 
 import type { GrantProviderStaticConfig } from '../../config/grant.js'
+import type { Request } from '../../types/express.js'
 import type { ProviderCtor } from './Provider.js'
 
 import { getRedirectPath, getURLBuilder } from '../helpers/utils.js'

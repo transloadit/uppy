@@ -1,5 +1,5 @@
 import type { OnChanges, OnDestroy, SimpleChanges } from '@angular/core'
-import type { Body, Meta } from '@uppy/core'
+import type { Body, Meta, Uppy } from '@uppy/core'
 import type { DashboardOptions } from '@uppy/dashboard'
 
 import {
@@ -9,7 +9,6 @@ import {
   Input,
   inject,
 } from '@angular/core'
-import { Uppy } from '@uppy/core'
 import Dashboard from '@uppy/dashboard'
 
 import { UppyAngularWrapper } from '../../utils/wrapper'
@@ -26,9 +25,18 @@ export class DashboardModalComponent<M extends Meta, B extends Body>
 {
   el = inject(ElementRef)
 
-  @Input() uppy: Uppy<M, B> = new Uppy()
+  // Left unset on purpose: the wrapper creates (and destroys) its own instance in
+  // `onMount` when nothing is passed in, so we never build one just to throw it away.
+  @Input() uppy!: Uppy<M, B>
   @Input() props: DashboardOptions<M, B> = {}
   @Input() open: boolean = false
+
+  /** Inserted by Angular inject() migration for backwards compatibility */
+  constructor(...args: unknown[])
+
+  constructor() {
+    super()
+  }
 
   ngOnInit() {
     this.onMount(
@@ -61,11 +69,11 @@ export class DashboardModalComponent<M extends Meta, B extends Body>
       if (this.open) {
         this.plugin!.openModal()
       }
-    } else if (changes.open && this.open !== changes.open.previousValue) {
-      if (this.open && !changes.open.previousValue) {
+    } else if (changes['open'] && this.open !== changes['open'].previousValue) {
+      if (this.open && !changes['open'].previousValue) {
         this.plugin!.openModal()
       }
-      if (!this.open && changes.open.previousValue) {
+      if (!this.open && changes['open'].previousValue) {
         this.plugin!.closeModal()
       }
     }

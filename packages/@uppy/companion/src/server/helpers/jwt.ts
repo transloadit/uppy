@@ -1,6 +1,7 @@
-import type { Request, Response } from 'express'
+import type { Response } from 'express'
 
 import type { CompanionRuntimeOptions } from '../../types/companion-options.js'
+import type { Request } from '../../types/express.js'
 
 import jwt from 'jsonwebtoken'
 
@@ -136,25 +137,32 @@ const addToCookies = ({
   res.cookie(getCookieName(oauthProvider), token, cookieOptions)
 }
 
-export const addToCookiesIfNeeded = (
+/**
+ * Encrypt the request's provider session into an Uppy auth token, and also set
+ * it as a cookie for providers that need one for thumbnail/image requests.
+ */
+export const issueAuthToken = (
   req: Request,
   res: Response,
-  uppyAuthToken: string,
+  providerName: string,
   maxAge?: number,
-): void => {
-  // some providers need the token in cookies for thumbnail/image requests
-  if (req.companion.provider?.needsCookieAuth) {
-    const oauthProvider = req.companion.providerClass?.oauthProvider
-    if (oauthProvider == null) return
-    const args = {
+): string => {
+  const uppyAuthToken = generateEncryptedAuthToken(
+    { [providerName]: req.companion.providerUserSession },
+    req.companion.options.secret,
+    maxAge,
+  )
+  const oauthProvider = req.companion.providerClass?.oauthProvider
+  if (req.companion.provider?.needsCookieAuth && oauthProvider != null) {
+    addToCookies({
       res,
       token: uppyAuthToken,
       companionOptions: req.companion.options,
       oauthProvider,
       ...(maxAge != null && { maxAge }),
-    }
-    addToCookies(args)
+    })
   }
+  return uppyAuthToken
 }
 
 export const removeFromCookies = (

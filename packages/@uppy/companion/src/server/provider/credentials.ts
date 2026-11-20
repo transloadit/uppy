@@ -1,9 +1,9 @@
-import type { NextFunction, Request, Response } from 'express'
+import type { NextFunction, Response } from 'express'
 import type { Promisable } from 'type-fest'
 
 import type { CredentialsFetchResponse } from '../../schemas/companion.js'
 import type { CompanionRuntimeOptions } from '../../types/companion-options.js'
-import type { CompanionExpressLocals } from '../../types/express.js'
+import type { CompanionExpressLocals, Request } from '../../types/express.js'
 import type Provider from './Provider.js'
 
 import { htmlEscape } from 'escape-goat'

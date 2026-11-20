@@ -42,6 +42,8 @@
     "./utils": "./lib/utils/index.js",
     "./utils/preact": "./lib/utils/preact/index.js",
     "./utils/preact/hooks": "./lib/utils/preact/hooks.js",
+    "./utils/preact/jsx-dev-runtime": "./lib/utils/preact/jsx-dev-runtime.js",
+    "./utils/preact/jsx-runtime": "./lib/utils/preact/jsx-runtime.js",
     "./companion-client": "./lib/companion-client/index.js",
     "./provider-views": "./lib/provider-views/index.js",
     "./provider-views/css/style.min.css": "./dist/provider-views.min.css",
