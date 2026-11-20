@@ -1,24 +1,27 @@
+import type {
+  ProviderDeauthorizationCallbackOptions,
+  ProviderDeauthorizationCallbackResponse,
+  ProviderDownloadOptions,
+  ProviderDownloadResponse,
+  ProviderListOptions,
+  ProviderListResponse,
+  ProviderLogoutOptions,
+  ProviderLogoutResponse,
+  ProviderSizeOptions,
+} from '../Provider.js'
+
 import got from 'got'
 import moment from 'moment-timezone'
 import pMap from 'p-map'
+
 import { isRecord } from '../../helpers/type-guards.js'
 import {
   getBasicAuthHeader,
   pathSegment,
   prepareStream,
 } from '../../helpers/utils.js'
-import Provider, {
-  type ProviderDeauthorizationCallbackOptions,
-  type ProviderDeauthorizationCallbackResponse,
-  type ProviderDownloadOptions,
-  type ProviderDownloadResponse,
-  type ProviderListOptions,
-  type ProviderListResponse,
-  type ProviderLogoutOptions,
-  type ProviderLogoutResponse,
-  type ProviderSizeOptions,
-} from '../Provider.js'
-import { withProviderErrorHandling } from '../providerErrors.js'
+import Provider from '../Provider.js'
+import { jsonStringAt, withProviderErrorHandling } from '../providerErrors.js'
 import adaptData from './adapter.js'
 
 const BASE_URL = 'https://zoom.us/v2'
@@ -207,7 +210,22 @@ export default class Zoom extends Provider<ZoomUserSession> {
         ).flat() // this is effectively a flatMap
         // concurrency 3 seems like a sensible number...
 
-        const finalResult = { meetings: allMeetingsInYear }
+        // Zoom filters by whole UTC dates, so outside UTC neighboring month windows share a day, and
+        // January and December reach into the years around this one.
+        const seenUuids = new Set<string>()
+        const meetingsInYear = allMeetingsInYear.filter((meeting) => {
+          if (!isRecord(meeting)) return false
+          const uuid = meeting['uuid']
+          const startTime = meeting['start_time']
+          if (typeof uuid === 'string') {
+            if (seenUuids.has(uuid)) return false
+            seenUuids.add(uuid)
+          }
+          if (typeof startTime !== 'string') return true
+          return moment.tz(startTime, userTz).year() === requestedYear
+        })
+
+        const finalResult = { meetings: meetingsInYear }
         return adaptData(user, finalResult)
       }
 
@@ -401,10 +419,7 @@ export default class Zoom extends Provider<ZoomUserSession> {
       isAuthError: (response) =>
         typeof response.statusCode === 'number' &&
         authErrorCodes.includes(response.statusCode),
-      getJsonErrorMessage: (body) =>
-        isRecord(body) && typeof body['message'] === 'string'
-          ? body['message']
-          : undefined,
+      getJsonErrorMessage: jsonStringAt('message'),
     })
   }
 }

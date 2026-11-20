@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest'
+
 import stripTrailingSlash from '../../lib/utils/stripTrailingSlash.js'
 
 describe('stripTrailingSlash', () => {

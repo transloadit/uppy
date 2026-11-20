@@ -1,5 +1,6 @@
 {
   "name": "example-companion",
+  "type": "module",
   "version": "0.0.0",
   "dependencies": {
     "@uppy/companion": "workspace:*",
@@ -13,7 +14,7 @@
   "private": true,
   "scripts": {
     "client": "vite --port 3000 client",
-    "server": "node ./server/index.js",
+    "server": "node ./server/index.ts",
     "start": "yarn run server & yarn run client"
   }
 }

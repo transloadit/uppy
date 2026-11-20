@@ -1,8 +1,11 @@
+import type { AddressInfo } from 'node:net'
+
+import type { Request } from 'express'
+
 import fs from 'node:fs'
 import http from 'node:http'
-import type { AddressInfo } from 'node:net'
 import { PassThrough, Readable } from 'node:stream'
-import type { Request } from 'express'
+
 import express from 'express'
 import nock from 'nock'
 import request from 'supertest'
@@ -17,6 +20,7 @@ import {
   test,
   vi,
 } from 'vitest'
+
 import { defaultOptions } from '../dist/config/companion.js'
 import Emitter from '../dist/server/emitter/index.js'
 import { isRecord } from '../dist/server/helpers/type-guards.js'
@@ -194,25 +198,28 @@ describe('uploader', () => {
     'https://evil.com/https://uploads.myendpoint.com/files/',
     'https://uploads.myendpoint.com/filesomething',
     'http://uploads.myendpoint.com/files/',
-  ])('uploader rejects string uploadUrls that only contain an allowed URL: %s', (endpoint) => {
-    const opts = {
-      companionOptions: {
-        ...companionOptions,
-        uploadUrls: ['https://uploads.myendpoint.com/files/'],
-      },
-      endpoint,
-      protocol: 'multipart',
-      size: 1,
-      pathPrefix,
-      metadata: { name: 'file.txt', type: 'text/plain' },
-    } satisfies ConstructorParameters<typeof Uploader>[0]
+  ])(
+    'uploader rejects string uploadUrls that only contain an allowed URL: %s',
+    (endpoint) => {
+      const opts = {
+        companionOptions: {
+          ...companionOptions,
+          uploadUrls: ['https://uploads.myendpoint.com/files/'],
+        },
+        endpoint,
+        protocol: 'multipart',
+        size: 1,
+        pathPrefix,
+        metadata: { name: 'file.txt', type: 'text/plain' },
+      } satisfies ConstructorParameters<typeof Uploader>[0]
 
-    expect(() => new Uploader(opts)).toThrow(
-      new ValidationError(
-        'upload destination does not match any allowed destinations',
-      ),
-    )
-  })
+      expect(() => new Uploader(opts)).toThrow(
+        new ValidationError(
+          'upload destination does not match any allowed destinations',
+        ),
+      )
+    },
+  )
 
   test.each([
     'https://uploads.myendpoint.com/files/',
@@ -271,26 +278,29 @@ describe('uploader', () => {
   test.each([
     'https://uploads.myendpoint.com/files/../admin',
     'https://uploads.myendpoint.com/files/%2e%2e/admin',
-  ])('uploader resolves dot segments before matching uploadUrls: %s', (endpoint) => {
-    expect(
-      () =>
-        new Uploader({
-          companionOptions: {
-            ...companionOptions,
-            uploadUrls: [/^https:\/\/uploads\.myendpoint\.com\/files\//],
-          },
-          endpoint,
-          protocol: 'tus',
-          size: 1,
-          pathPrefix,
-          metadata: {},
-        }),
-    ).toThrow(
-      new ValidationError(
-        'upload destination does not match any allowed destinations',
-      ),
-    )
-  })
+  ])(
+    'uploader resolves dot segments before matching uploadUrls: %s',
+    (endpoint) => {
+      expect(
+        () =>
+          new Uploader({
+            companionOptions: {
+              ...companionOptions,
+              uploadUrls: [/^https:\/\/uploads\.myendpoint\.com\/files\//],
+            },
+            endpoint,
+            protocol: 'tus',
+            size: 1,
+            pathPrefix,
+            metadata: {},
+          }),
+      ).toThrow(
+        new ValidationError(
+          'upload destination does not match any allowed destinations',
+        ),
+      )
+    },
+  )
 
   test('uploader validates uploadUrl in addition to endpoint', () => {
     const opts = {
@@ -464,24 +474,24 @@ describe('uploader', () => {
       return { uploader, upload }
     }
 
-    test.each([
-      true,
-      false,
-    ])('a resume pending at cancel sends nothing after the DELETE (streamingUpload: %s)', async (streamingUpload) => {
-      const { uploader, upload } = await startTusUpload(streamingUpload)
-      await deliver('pause', uploader.token)
-      // The start() that resume issues is still on its way to a request
-      // (the real client stats the file first) when the cancel lands.
-      const pending = Promise.withResolvers<void>()
-      setTusStartGate(pending.promise)
-      await deliver('resume', uploader.token)
-      await deliver('cancel', uploader.token)
-      await expect(upload).rejects.toThrow('Canceled')
-      pending.resolve()
-      await new Promise((resolve) => setTimeout(resolve, 50))
-      expect(getTusSentRequests()).toEqual(['POST', 'DELETE'])
-      uploader.removeEmitterListeners()
-    })
+    test.each([true, false])(
+      'a resume pending at cancel sends nothing after the DELETE (streamingUpload: %s)',
+      async (streamingUpload) => {
+        const { uploader, upload } = await startTusUpload(streamingUpload)
+        await deliver('pause', uploader.token)
+        // The start() that resume issues is still on its way to a request
+        // (the real client stats the file first) when the cancel lands.
+        const pending = Promise.withResolvers<void>()
+        setTusStartGate(pending.promise)
+        await deliver('resume', uploader.token)
+        await deliver('cancel', uploader.token)
+        await expect(upload).rejects.toThrow('Canceled')
+        pending.resolve()
+        await new Promise((resolve) => setTimeout(resolve, 50))
+        expect(getTusSentRequests()).toEqual(['POST', 'DELETE'])
+        uploader.removeEmitterListeners()
+      },
+    )
 
     test('a paused upload can still be canceled and terminated', async () => {
       const { uploader, upload } = await startTusUpload(true)
@@ -642,7 +652,7 @@ describe('uploader', () => {
     } finally {
       req.body = undefined
     }
-    const token = (json.mock.calls[0]?.[0] as { token: string }).token
+    const token = json.mock.calls[0]![0].token
 
     stream.destroy(new Error('boom'))
     // Let the 'error' event fire before anything else happens, as it would
@@ -734,7 +744,7 @@ describe('uploader', () => {
         getSize: undefined,
         download: async () => ({ stream, size: 1 }),
       })
-      const { token } = json.mock.calls[0]?.[0] as { token: string }
+      const token = json.mock.calls[0]![0].token
       await new Promise((resolve) => setTimeout(resolve, 100))
       for (const event of ['cancel', 'pause', 'resume']) {
         expect(removeAll).toHaveBeenCalledWith(`${event}:${token}`)
@@ -767,6 +777,14 @@ describe('uploader', () => {
       return { uploader, stream, upload }
     }
 
+    // The uploader doesn't wait for its subscriptions, and the Redis emitter only delivers to
+    // subscriptions that are in place, so an early cancel can be lost. Once a later subscription
+    // on the same connection is in place, the uploader's is too.
+    const cancel = async (uploader: Uploader) => {
+      await Emitter().on(`cancel:${uploader.token}`, () => {})
+      Emitter().emit(`cancel:${uploader.token}`)
+    }
+
     beforeEach(() => {
       vi.useFakeTimers({ toFake: ['setInterval', 'clearInterval', 'Date'] })
     })
@@ -785,20 +803,23 @@ describe('uploader', () => {
       {},
       // maxFileSize puts a byte counter between the source and tus.
       { maxFileSize: 1e6 },
-    ])('a transfer whose source keeps sending is left alone: %o', async (extraCompanionOpts) => {
-      const { uploader, stream, upload } =
-        startHangingUpload(extraCompanionOpts)
-      const settled = vi.fn()
-      upload.then(settled, settled)
-      for (let i = 0; i < 4; i++) {
-        stream.write(Buffer.alloc(10))
-        await vi.advanceTimersByTimeAsync(STALL_TIMEOUT_MS)
-      }
-      expect(settled).not.toHaveBeenCalled()
-      Emitter().emit(`cancel:${uploader.token}`)
-      await expect(upload).rejects.toThrow('Canceled')
-      uploader.removeEmitterListeners()
-    })
+    ])(
+      'a transfer whose source keeps sending is left alone: %o',
+      async (extraCompanionOpts) => {
+        const { uploader, stream, upload } =
+          startHangingUpload(extraCompanionOpts)
+        const settled = vi.fn()
+        upload.then(settled, settled)
+        for (let i = 0; i < 4; i++) {
+          stream.write(Buffer.alloc(10))
+          await vi.advanceTimersByTimeAsync(STALL_TIMEOUT_MS)
+        }
+        expect(settled).not.toHaveBeenCalled()
+        await cancel(uploader)
+        await expect(upload).rejects.toThrow('Canceled')
+        uploader.removeEmitterListeners()
+      },
+    )
 
     test('a transfer paused and never resumed is abandoned', async () => {
       const { uploader, upload } = startHangingUpload()
@@ -822,10 +843,7 @@ describe('uploader', () => {
       const { uploader, stream, upload } = startHangingUpload()
       await vi.advanceTimersByTimeAsync(0)
       stream.destroy()
-      // The Redis emitter subscribes asynchronously; once a later subscription
-      // on the same connection is in place, the uploader's is too.
-      await Emitter().on(`cancel:${uploader.token}`, () => {})
-      Emitter().emit(`cancel:${uploader.token}`)
+      await cancel(uploader)
       await expect(upload).rejects.toThrow('Canceled')
       uploader.removeEmitterListeners()
     })
@@ -942,47 +960,47 @@ describe('uploader', () => {
       { useFormData: false, size: undefined },
       { useFormData: true, size: undefined },
       { useFormData: true, size: 100 },
-    ])('a source sending more than maxFileSize fails the upload: %o', async ({
-      useFormData,
-      size,
-    }) => {
-      let received = 0
-      const server = http.createServer((req, res) => {
-        req.on('data', (chunk: Buffer) => {
-          received += chunk.length
+    ])(
+      'a source sending more than maxFileSize fails the upload: %o',
+      async ({ useFormData, size }) => {
+        let received = 0
+        const server = http.createServer((req, res) => {
+          req.on('data', (chunk: Buffer) => {
+            received += chunk.length
+          })
+          req.on('end', () => res.end('ok'))
         })
-        req.on('end', () => res.end('ok'))
-      })
-      await new Promise<void>((r) => server.listen(0, '127.0.0.1', r))
-      try {
-        const total = 10 * 1000
-        const stream = Readable.from(
-          Array.from({ length: 10 }, () => Buffer.alloc(1000)),
-        )
-        stream.pause()
-        const uploader = new Uploader({
-          companionOptions: {
-            ...companionOptions,
-            streamingUpload: true,
-            maxFileSize: 2500,
-          },
-          endpoint: `http://127.0.0.1:${(server.address() as AddressInfo).port}/`,
-          protocol: 'multipart',
-          useFormData,
-          ...(size != null && { size }),
-          metadata: {},
-          pathPrefix,
-        })
-        await expect(
-          uploader.uploadStream(stream, requireMockReq()),
-        ).rejects.toThrow('maxFileSize exceeded')
-        await new Promise((r) => setTimeout(r, 200))
-        expect(received).toBeLessThan(total)
-        expect(stream.destroyed).toBe(true)
-      } finally {
-        server.close()
-      }
-    })
+        await new Promise<void>((r) => server.listen(0, '127.0.0.1', r))
+        try {
+          const total = 10 * 1000
+          const stream = Readable.from(
+            Array.from({ length: 10 }, () => Buffer.alloc(1000)),
+          )
+          stream.pause()
+          const uploader = new Uploader({
+            companionOptions: {
+              ...companionOptions,
+              streamingUpload: true,
+              maxFileSize: 2500,
+            },
+            endpoint: `http://127.0.0.1:${(server.address() as AddressInfo).port}/`,
+            protocol: 'multipart',
+            useFormData,
+            ...(size != null && { size }),
+            metadata: {},
+            pathPrefix,
+          })
+          await expect(
+            uploader.uploadStream(stream, requireMockReq()),
+          ).rejects.toThrow('maxFileSize exceeded')
+          await new Promise((r) => setTimeout(r, 200))
+          expect(received).toBeLessThan(total)
+          expect(stream.destroyed).toBe(true)
+        } finally {
+          server.close()
+        }
+      },
+    )
   })
 
   describe('server-supplied upload URLs', () => {
@@ -1338,23 +1356,23 @@ describe('uploader', () => {
       }
     }
 
-    test.each([
-      undefined,
-      100,
-    ])('tus upload of an oversized stream with declared size %s is aborted', async (size) => {
-      const totalBytes = 1e6
-      const { message, source } = await runStreamingUpload({
-        protocol: 'tus',
-        totalBytes,
-        ...(size != null && { size }),
-      })
-      expect(message).toMatchObject({
-        action: 'error',
-        payload: { error: { message: 'maxFileSize exceeded' } },
-      })
-      // the source must not have been read until the end
-      expect(source.bytesRead).toBeLessThan(totalBytes)
-    })
+    test.each([undefined, 100])(
+      'tus upload of an oversized stream with declared size %s is aborted',
+      async (size) => {
+        const totalBytes = 1e6
+        const { message, source } = await runStreamingUpload({
+          protocol: 'tus',
+          totalBytes,
+          ...(size != null && { size }),
+        })
+        expect(message).toMatchObject({
+          action: 'error',
+          payload: { error: { message: 'maxFileSize exceeded' } },
+        })
+        // the source must not have been read until the end
+        expect(source.bytesRead).toBeLessThan(totalBytes)
+      },
+    )
 
     test('tus upload of a stream without declared size requires tusDeferredUploadLength', async () => {
       const { message } = await runStreamingUpload({
@@ -1397,36 +1415,39 @@ describe('uploader', () => {
       ['tus', true, undefined],
       ['tus', false, maxFileSize],
       ['multipart', true, undefined],
-    ] as const)('%s upload (tusDeferredUploadLength %s) of a stream within maxFileSize with declared size %s succeeds', async (protocol, tusDeferredUploadLength, size) => {
-      const { message, source } = await runStreamingUpload({
-        protocol,
-        totalBytes: maxFileSize,
-        tusDeferredUploadLength,
-        ...(size != null && { size }),
-      })
-      expect(message).toMatchObject({ action: 'success' })
-      expect(source.bytesRead).toBe(maxFileSize)
-      if (protocol === 'tus')
-        expect(getTusMockLastUploadedBytes()).toBe(maxFileSize)
-    })
+    ] as const)(
+      '%s upload (tusDeferredUploadLength %s) of a stream within maxFileSize with declared size %s succeeds',
+      async (protocol, tusDeferredUploadLength, size) => {
+        const { message, source } = await runStreamingUpload({
+          protocol,
+          totalBytes: maxFileSize,
+          tusDeferredUploadLength,
+          ...(size != null && { size }),
+        })
+        expect(message).toMatchObject({ action: 'success' })
+        expect(source.bytesRead).toBe(maxFileSize)
+        if (protocol === 'tus')
+          expect(getTusMockLastUploadedBytes()).toBe(maxFileSize)
+      },
+    )
 
     // FormData reads the file stream lazily, after the progress listener is attached
-    test.each([
-      undefined,
-      maxFileSize,
-    ])('multipart form-data upload of a stream within maxFileSize with declared size %s sends the whole file', async (size) => {
-      const { message, getRequestBody } = await runStreamingUpload({
-        protocol: 'multipart',
-        totalBytes: maxFileSize,
-        useFormData: true,
-        ...(size != null && { size }),
-      })
-      expect(message).toMatchObject({ action: 'success' })
-      const body = getRequestBody()
-      expect(typeof body).toBe('string')
-      // the file consists of zero bytes only, the rest of the form-data body is text
-      expect(String(body).match(/\0/g)).toHaveLength(maxFileSize)
-    })
+    test.each([undefined, maxFileSize])(
+      'multipart form-data upload of a stream within maxFileSize with declared size %s sends the whole file',
+      async (size) => {
+        const { message, getRequestBody } = await runStreamingUpload({
+          protocol: 'multipart',
+          totalBytes: maxFileSize,
+          useFormData: true,
+          ...(size != null && { size }),
+        })
+        expect(message).toMatchObject({ action: 'success' })
+        const body = getRequestBody()
+        expect(typeof body).toBe('string')
+        // the file consists of zero bytes only, the rest of the form-data body is text
+        expect(String(body).match(/\0/g)).toHaveLength(maxFileSize)
+      },
+    )
   })
 })
 

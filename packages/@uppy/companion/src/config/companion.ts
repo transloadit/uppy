@@ -1,8 +1,12 @@
-import fs from 'node:fs'
 import type { PresignedPostOptions } from '@aws-sdk/s3-presigned-post'
+
+import type { CompanionInitOptions } from '../schemas/companion.js'
+
+import fs from 'node:fs'
+
 import validator from 'validator'
 import z from 'zod'
-import type { CompanionInitOptions } from '../schemas/companion.js'
+
 import { isRecord } from '../server/helpers/type-guards.js'
 import { defaultGetKey } from '../server/helpers/utils.js'
 import logger from '../server/logger.js'

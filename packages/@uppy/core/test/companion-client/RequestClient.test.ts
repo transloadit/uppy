@@ -1,6 +1,7 @@
 import { network } from 'virtual:msw'
 import { HttpResponse, http } from 'msw'
 import { afterEach, describe, expect, it, vi } from 'vitest'
+
 import RequestClient from '../../lib/companion-client/RequestClient.js'
 import Uppy from '../../lib/index.js'
 

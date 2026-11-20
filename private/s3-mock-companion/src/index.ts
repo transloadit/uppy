@@ -8,12 +8,14 @@
  * Keys follow the S3 provider's addressing: folders end with `/`, ids in
  * responses are `encodeURIComponent(key)`.
  */
+
+import type { StorageGrantClaims } from '@transloadit/utils'
+import type { CompanionErrorCode } from '@uppy/core'
+
 import {
   decodeStorageGrant,
   normalizeStorageGrantPrefix,
-  type StorageGrantClaims,
 } from '@transloadit/utils'
-import type { CompanionErrorCode } from '@uppy/core'
 
 /**
  * `docs/a.txt` → parent `docs/`, name `a.txt`. Its own copy, not `@uppy/s3`'s:
