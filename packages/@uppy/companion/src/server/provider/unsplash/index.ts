@@ -1,14 +1,17 @@
+import type {
+  ProviderDownloadOptions,
+  ProviderDownloadResponse,
+  ProviderListOptions,
+  ProviderListResponse,
+} from '../Provider.js'
+
 import got from 'got'
+
 import { getProtectedGot } from '../../helpers/request.js'
 import { isRecord } from '../../helpers/type-guards.js'
 import { pathSegment, prepareStream } from '../../helpers/utils.js'
 import { ProviderApiError } from '../error.js'
-import Provider, {
-  type ProviderDownloadOptions,
-  type ProviderDownloadResponse,
-  type ProviderListOptions,
-  type ProviderListResponse,
-} from '../Provider.js'
+import Provider from '../Provider.js'
 import { withProviderErrorHandling } from '../providerErrors.js'
 import adaptData from './adapter.js'
 

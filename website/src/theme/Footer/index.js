@@ -1,6 +1,6 @@
-import React from 'react'
 import Link from '@docusaurus/Link'
 import Heading from '@theme/Heading'
+import React from 'react'
 
 import styles from './index.module.css'
 

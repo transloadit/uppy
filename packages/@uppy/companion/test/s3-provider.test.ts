@@ -1,5 +1,9 @@
+import type { Query } from '../src/server/provider/Provider.js'
+import type { GrantClaims } from './fixtures/s3.js'
+
 import { createServer } from 'node:http'
 import { Readable } from 'node:stream'
+
 import {
   CopyObjectCommand,
   DeleteObjectCommand,
@@ -10,20 +14,14 @@ import {
   S3ServiceException,
 } from '@aws-sdk/client-s3'
 import { describe, expect, onTestFinished, test, vi } from 'vitest'
+
 import {
   ProviderAuthError,
   ProviderUserError,
 } from '../src/server/provider/error.js'
-import type { Query } from '../src/server/provider/Provider.js'
 import S3Provider from '../src/server/provider/s3/index.js'
 import TransloaditStorageProvider from '../src/server/provider/s3/transloadit-storage.js'
-import {
-  claims,
-  GRANT_SECRET,
-  type GrantClaims,
-  mint,
-  nowSeconds,
-} from './fixtures/s3.js'
+import { claims, GRANT_SECRET, mint, nowSeconds } from './fixtures/s3.js'
 
 const makeProvider = (send: (cmd: unknown) => Promise<unknown> = vi.fn()) => {
   const provider = new S3Provider({ allowLocalUrls: false })
@@ -913,7 +911,7 @@ describe('S3 provider', () => {
       ])
       const params = requests[0]?.body.get('params') ?? ''
       expect(JSON.parse(params)).toMatchObject({
-        auth: { key: 'ws-key' },
+        auth: { key: 'ws-key', method: 'POST', path: '/dam/entries/move' },
         source: 'tenant/photo.jpg',
         destination: 'tenant/renamed.jpg',
       })

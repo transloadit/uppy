@@ -2,7 +2,10 @@
  * oAuth callback.  Encrypts the access token and sends the new token with the response,
  */
 
-import type { Request, Response } from 'express'
+import type { Response } from 'express'
+
+import type { Request } from '../../types/express.js'
+
 import emitter from '../emitter/index.js'
 import {
   authCallbackErrorHtml,
@@ -82,16 +85,10 @@ export default function callback(req: Request, res: Response): void {
     undefined,
     req.id,
   )
-  const uppyAuthToken = tokenService.generateEncryptedAuthToken(
-    { [providerName]: req.companion.providerUserSession },
-    secret,
-    providerClass.authStateExpiry,
-  )
-
-  tokenService.addToCookiesIfNeeded(
+  const uppyAuthToken = tokenService.issueAuthToken(
     req,
     res,
-    uppyAuthToken,
+    providerName,
     providerClass.authStateExpiry,
   )
 

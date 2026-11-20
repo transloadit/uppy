@@ -8,10 +8,9 @@ import {
 	type OnDestroy,
 	type SimpleChanges,
 } from "@angular/core";
-import { Uppy } from "@uppy/core";
+import type { Body, Meta, Uppy } from "@uppy/core";
 import type { DashboardOptions } from "@uppy/dashboard";
 import Dashboard from "@uppy/dashboard";
-import type { Body, Meta } from "@uppy/core";
 import { UppyAngularWrapper } from "../../utils/wrapper";
 
 @Component({
@@ -26,7 +25,9 @@ export class DashboardModalComponent<M extends Meta, B extends Body>
 {
 	el = inject(ElementRef);
 
-	@Input() uppy: Uppy<M, B> = new Uppy();
+	// Left unset on purpose: the wrapper creates (and destroys) its own instance in
+	// `onMount` when nothing is passed in, so we never build one just to throw it away.
+	@Input() uppy!: Uppy<M, B>;
 	@Input() props: DashboardOptions<M, B> = {};
 	@Input() open: boolean = false;
 
@@ -46,12 +47,29 @@ export class DashboardModalComponent<M extends Meta, B extends Body>
 			},
 			Dashboard,
 		);
+		// Angular runs `ngOnChanges` before `ngOnInit`, so the initial value of
+		// `open` — which only ever shows up in that first `SimpleChanges` — has to
+		// be applied here, once the plugin actually exists.
+		if (this.open) {
+			this.plugin!.openModal();
+		}
 	}
 
 	ngOnChanges(changes: SimpleChanges): void {
+		// The first `ngOnChanges` runs before `ngOnInit`, when there is no plugin
+		// to talk to yet. Every input still carries `previousValue: undefined` at
+		// that point, so nothing is lost by skipping it: `ngOnInit` mounts the
+		// plugin with the current `props` and applies the current `open` value.
+		const previousPlugin = this.plugin;
+		if (previousPlugin === undefined) return;
+
 		this.handleChanges(changes, Dashboard);
-		// Handle dashboard-modal specific changes
-		if (changes["open"] && this.open !== changes["open"].previousValue) {
+		if (this.plugin !== previousPlugin) {
+			// A new `uppy` got a freshly installed plugin, which starts out closed.
+			if (this.open) {
+				this.plugin!.openModal();
+			}
+		} else if (changes["open"] && this.open !== changes["open"].previousValue) {
 			if (this.open && !changes["open"].previousValue) {
 				this.plugin!.openModal();
 			}

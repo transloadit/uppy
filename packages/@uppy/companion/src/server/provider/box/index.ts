@@ -1,19 +1,25 @@
-import got from 'got'
-import { isRecord } from '../../helpers/type-guards.js'
-import { pathSegment, prepareStream } from '../../helpers/utils.js'
-import Provider, {
-  type ProviderDownloadOptions,
-  type ProviderDownloadResponse,
-  type ProviderListOptions,
-  type ProviderListResponse,
-  type ProviderLogoutOptions,
-  type ProviderLogoutResponse,
-  type ProviderSizeOptions,
-  type ProviderThumbnailOptions,
-  type ProviderThumbnailResponse,
-  type Query,
+import type {
+  ProviderDownloadOptions,
+  ProviderDownloadResponse,
+  ProviderListOptions,
+  ProviderListResponse,
+  ProviderLogoutOptions,
+  ProviderLogoutResponse,
+  ProviderSizeOptions,
+  ProviderThumbnailOptions,
+  ProviderThumbnailResponse,
+  Query,
 } from '../Provider.js'
-import { withProviderErrorHandling } from '../providerErrors.js'
+
+import got from 'got'
+
+import { parseSize, pathSegment, prepareStream } from '../../helpers/utils.js'
+import Provider from '../Provider.js'
+import {
+  isUnauthorized,
+  jsonStringAt,
+  withProviderErrorHandling,
+} from '../providerErrors.js'
 import adaptData from './adapter.js'
 
 const BOX_FILES_FIELDS = 'id,modified_at,name,permissions,size,type'
@@ -154,19 +160,12 @@ export default class Box extends Provider<BoxUserSession> {
   override size({
     id,
     providerUserSession: { accessToken: token },
-  }: ProviderSizeOptions<BoxUserSession>): Promise<number> {
+  }: ProviderSizeOptions<BoxUserSession>): Promise<number | undefined> {
     return this.#withErrorHandling('provider.box.size.error', async () => {
       const file = await getClient({ token })
         .get(`files/${pathSegment(id)}`, { responseType: 'json' })
         .json<Record<string, unknown>>()
-      const sizeValue = file['size']
-      const sizeStr =
-        typeof sizeValue === 'string'
-          ? sizeValue
-          : typeof sizeValue === 'number'
-            ? `${sizeValue}`
-            : '0'
-      return parseInt(sizeStr, 10)
+      return parseSize(file['size'])
     })
   }
 
@@ -195,12 +194,8 @@ export default class Box extends Provider<BoxUserSession> {
       fn,
       tag,
       providerName: Box.oauthProvider,
-      isAuthError: (response) => response.statusCode === 401,
-      getJsonErrorMessage: (body) => {
-        if (!isRecord(body)) return undefined
-        const msg = body['message']
-        return typeof msg === 'string' ? msg : undefined
-      },
+      isAuthError: isUnauthorized,
+      getJsonErrorMessage: jsonStringAt('message'),
     })
   }
 }

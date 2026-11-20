@@ -1,5 +1,6 @@
 import nock from 'nock'
 import { afterEach, describe, expect, test, vi } from 'vitest'
+
 import {
   getProtectedGot,
   UPSTREAM_TIMEOUTS,

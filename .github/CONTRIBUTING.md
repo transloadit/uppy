@@ -138,11 +138,10 @@ Start a development server (most changes are reflected live):
 corepack yarn workspace uppy-io dev
 ```
 
-Format, lint, test and build:
+Format and lint (Biome, from the repository root, like the rest of the repo), then test and build:
 
 ```sh
-corepack yarn workspace uppy-io format
-corepack yarn workspace uppy-io lint
+corepack yarn check
 corepack yarn workspace uppy-io build
 corepack yarn workspace uppy-io test # needs a build
 ```

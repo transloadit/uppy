@@ -12,13 +12,13 @@
     "typecheck": "tsc --build"
   },
   "peerDependencies": {
-    "msw": "^3.0.2",
+    "msw": "^3.0.3",
     "vitest": "^5.0.3"
   },
   "devDependencies": {
     "@uppy-dev/tsconfig": "workspace:^",
-    "msw": "^3.0.2",
+    "msw": "^3.0.3",
     "typescript": "^6.0.3",
-    "vitest": "^5.0.3"
+    "vitest": "^5.0.5"
   }
 }

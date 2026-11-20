@@ -4,6 +4,7 @@ import type {
   RemoteUppyFile,
   UppyFileId,
 } from '@uppy/core/utils'
+
 import throttle from 'lodash/throttle.js'
 
 // we don't want to store blobs in localStorage
@@ -53,15 +54,15 @@ function expireOldState(): void {
   }
 
   const now = Date.now()
-  existingKeys.forEach((key) => {
+  for (const key of existingKeys) {
     const data = localStorage.getItem(key)
-    if (!data) return
+    if (!data) continue
     const obj = maybeParse(data)
 
     if (obj?.expires && obj.expires < now) {
       localStorage.removeItem(key)
     }
-  })
+  }
 }
 
 export default class MetaDataStore<M extends Meta, B extends Body> {

@@ -1,5 +1,5 @@
 {
-  "$schema": "https://biomejs.dev/schemas/2.4.15/schema.json",
+  "$schema": "https://biomejs.dev/schemas/2.6.6/schema.json",
   "vcs": {
     "enabled": true,
     "clientKind": "git",
@@ -12,6 +12,9 @@
       "examples/**",
       "scripts/**",
       "private/**",
+      "website/**",
+      "!**/*.md",
+      "!website/static",
       "!packages/**/{angular/src,dist,lib}",
       "!node_modules",
       "!.svelte-kit",
@@ -30,10 +33,16 @@
   "linter": {
     "enabled": true,
     "rules": {
-      "recommended": true,
+      "preset": "recommended",
       "suspicious": {
+        "noDuplicateProperties": "off",
         "noExplicitAny": "off",
-        "useAwait": "error"
+        "useAwait": "error",
+        "useScopedStyles": "off"
+      },
+      "complexity": {
+        "noForEach": "error",
+        "noImportantStyles": "off"
       },
       "correctness": {
         "useExhaustiveDependencies": "error",
@@ -48,15 +57,30 @@
           }
         },
         "noNestedComponentDefinitions": "error",
-        "noReactPropAssignments": "error"
+        "noReactPropAssignments": "error",
+        "noVueVIfWithVFor": "off"
       },
       "style": {
-        "noNonNullAssertion": "off"
+        "noDescendingSpecificity": "off",
+        "noNonNullAssertion": "off",
+        "useImportType": {
+          "level": "error",
+          "options": {
+            "style": "separatedType"
+          }
+        },
+        "useNodejsImportProtocol": "error",
+        "useVueMultiWordComponentNames": "off"
       },
       "a11y": {
         "noSvgWithoutTitle": "off",
         "useSemanticElements": "off"
       }
+    }
+  },
+  "css": {
+    "formatter": {
+      "quoteStyle": "single"
     }
   },
   "javascript": {
@@ -65,11 +89,77 @@
       "semicolons": "asNeeded"
     }
   },
+  "yaml": {
+    "formatter": {
+      "quoteStyle": "single"
+    }
+  },
   "assist": {
     "enabled": true,
     "actions": {
       "source": {
-        "organizeImports": "on"
+        "organizeImports": {
+          "level": "on",
+          "options": {
+            "sortBareImports": true,
+            "groups": [
+              {
+                "kind": "bare",
+                "source": [":PACKAGE:", "virtual:*"]
+              },
+              ":BLANK_LINE:",
+              {
+                "kind": "bare",
+                "source": [":ALIAS:"]
+              },
+              ":BLANK_LINE:",
+              {
+                "kind": "bare",
+                "source": [":PATH:"]
+              },
+              ":BLANK_LINE:",
+              {
+                "type": true,
+                "source": [":NODE:"]
+              },
+              ":BLANK_LINE:",
+              {
+                "type": true,
+                "source": [":PACKAGE:", "virtual:*"]
+              },
+              ":BLANK_LINE:",
+              {
+                "type": true,
+                "source": [":ALIAS:"]
+              },
+              ":BLANK_LINE:",
+              {
+                "type": true,
+                "source": [":PATH:"]
+              },
+              ":BLANK_LINE:",
+              {
+                "type": false,
+                "source": [":NODE:"]
+              },
+              ":BLANK_LINE:",
+              {
+                "type": false,
+                "source": [":PACKAGE:", "virtual:*"]
+              },
+              ":BLANK_LINE:",
+              {
+                "type": false,
+                "source": [":ALIAS:"]
+              },
+              ":BLANK_LINE:",
+              {
+                "type": false,
+                "source": [":PATH:"]
+              }
+            ]
+          }
+        }
       }
     }
   },
@@ -85,12 +175,58 @@
       }
     },
     {
+      "includes": ["**/*.test.*"],
+      "linter": {
+        "rules": {
+          "correctness": {
+            "noComponentHookFactories": "off"
+          }
+        }
+      }
+    },
+    {
+      "includes": [
+        "packages/@uppy/companion/src/**",
+        "!packages/@uppy/companion/src/types/express.ts"
+      ],
+      "linter": {
+        "rules": {
+          "style": {
+            "noRestrictedImports": {
+              "level": "error",
+              "options": {
+                "paths": {
+                  "express": {
+                    "importNames": ["Request", "RequestHandler"],
+                    "message": "Import Request/RequestHandler from src/types/express.ts, which types req.body as unknown."
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    {
       "includes": ["**/*.vue", "**/*.svelte", "packages/@uppy/vue/**/*.ts"],
       "linter": {
         "rules": {
           "correctness": {
             "useHookAtTopLevel": "off",
             "useExhaustiveDependencies": "off"
+          }
+        }
+      }
+    },
+    {
+      "includes": ["website/**/*.css"],
+      "linter": {
+        "rules": {
+          "complexity": {
+            "noImportantStyles": "off"
+          },
+          "style": {
+            "noDescendingSpecificity": "off"
           }
         }
       }

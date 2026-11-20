@@ -1,17 +1,17 @@
-import type { Body, Meta } from '@uppy/core'
-import { UIPlugin, type Uppy } from '@uppy/core'
-import {
-  type CompanionPluginOptions,
-  RequestClient,
-} from '@uppy/core/companion-client'
+import type { Body, Meta, Uppy } from '@uppy/core'
+import type { CompanionPluginOptions } from '@uppy/core/companion-client'
 import type {
   LocaleStrings,
   MinimalRequiredUppyFile,
   RemoteUppyFile,
 } from '@uppy/core/utils'
-import { getErrorMessage, isRestrictionError, toArray } from '@uppy/core/utils'
+
+import { UIPlugin } from '@uppy/core'
+import { RequestClient } from '@uppy/core/companion-client'
+import { getErrorMessage, isRestrictionError } from '@uppy/core/utils'
 // biome-ignore lint/style/useImportType: h is not a type
 import { type ComponentChild, h } from '@uppy/core/utils/preact'
+
 import packageJson from '../package.json' with { type: 'json' }
 import locale from './locale.js'
 import UrlUI from './UrlUI.js'
@@ -52,7 +52,7 @@ function addProtocolToURL(url: string) {
 }
 
 function canHandleRootDrop(e: DragEvent) {
-  const items = toArray(e.dataTransfer!.items)
+  const items = Array.from(e.dataTransfer!.items)
   const urls = items.filter(
     (item) => item.kind === 'string' && item.type === 'text/uri-list',
   )

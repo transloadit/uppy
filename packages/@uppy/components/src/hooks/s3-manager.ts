@@ -15,7 +15,9 @@ import type {
   ProviderToolbarAction,
   ProviderViews,
 } from '@uppy/core/provider-views'
+
 import { dequal } from 'dequal/lite'
+
 import { Subscribers } from './utils.js'
 
 /** @experimental A file or folder row of the manager. */

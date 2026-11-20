@@ -1,11 +1,10 @@
-import React, { useState } from 'react'
-import { UppyContextProvider, ProviderIcon } from '@uppy/react'
+import '@uppy/react/css/style.css'
+
+import { ProviderIcon, UppyContextProvider } from '@uppy/react'
+import { useState } from 'react'
 import { Uppy } from 'uppy'
 
 import { BrowserWindow } from './BrowserWindow'
-
-import '@uppy/react/css/style.css'
-
 import styles from './provider-icon.module.css'
 
 export default function ProviderIconDemo() {
