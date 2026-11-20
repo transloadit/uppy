@@ -1,4 +1,7 @@
-import type { NextFunction, Request, Response } from 'express'
+import type { NextFunction, Response } from 'express'
+
+import type { Request } from '../../types/express.js'
+
 import * as tokenService from '../helpers/jwt.js'
 import logger from '../logger.js'
 import { respondWithError } from '../provider/error.js'
@@ -16,7 +19,6 @@ export default async function refreshToken(
     res.sendStatus(400)
     return
   }
-  const { secret } = req.companion.options
 
   const providerConfig = req.companion.options.providerOptions?.[providerName]
   const clientId = providerConfig?.key
@@ -55,16 +57,10 @@ export default async function refreshToken(
       undefined,
       req.id,
     )
-    const uppyAuthToken = tokenService.generateEncryptedAuthToken(
-      { [providerName]: req.companion.providerUserSession },
-      secret,
-      providerClass.authStateExpiry,
-    )
-
-    tokenService.addToCookiesIfNeeded(
+    const uppyAuthToken = tokenService.issueAuthToken(
       req,
       res,
-      uppyAuthToken,
+      providerName,
       providerClass.authStateExpiry,
     )
 

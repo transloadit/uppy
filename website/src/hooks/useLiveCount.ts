@@ -39,7 +39,7 @@ export default function useLiveCount<T>({
     const cached = readCache(key)
     if (cached) {
       setCount(cached)
-      return
+      return undefined
     }
 
     const controller = new AbortController()

@@ -1,4 +1,5 @@
 import type { I18n } from '../utils/index.js'
+
 import { useSearchForm } from './useSearchForm.js'
 
 interface FilterInputProps {

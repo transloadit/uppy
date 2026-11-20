@@ -1,6 +1,8 @@
-import http from 'node:http'
 import type { AddressInfo } from 'node:net'
+
+import http from 'node:http'
 import { createGzip } from 'node:zlib'
+
 import got from 'got'
 import {
   afterAll,
@@ -11,6 +13,7 @@ import {
   test,
   vi,
 } from 'vitest'
+
 import { downloadURL } from '../dist/server/download.js'
 import {
   getProtectedGot,
@@ -74,23 +77,23 @@ beforeEach(() => {
 const settle = () => new Promise((r) => setTimeout(r, 100))
 
 describe('downloadURL', () => {
-  test.each([
-    'protected',
-    'provider',
-  ])('rejects and closes an unexpected %s protocol upgrade', async (kind) => {
-    const closed = vi.fn()
-    handler = (req, res) => {
-      req.socket.once('close', closed)
-      res.writeHead(101, { connection: 'Upgrade', upgrade: 'unexpected' })
-      res.end()
-    }
-    const opened =
-      kind === 'protected'
-        ? openProtectedStream(`${baseUrl}/upgrade`, true)
-        : prepareStream(got.stream(`${baseUrl}/upgrade`))
-    await expect(opened).rejects.toThrow('protocol upgrades')
-    await vi.waitFor(() => expect(closed).toHaveBeenCalledTimes(1))
-  })
+  test.each(['protected', 'provider'])(
+    'rejects and closes an unexpected %s protocol upgrade',
+    async (kind) => {
+      const closed = vi.fn()
+      handler = (req, res) => {
+        req.socket.once('close', closed)
+        res.writeHead(101, { connection: 'Upgrade', upgrade: 'unexpected' })
+        res.end()
+      }
+      const opened =
+        kind === 'protected'
+          ? openProtectedStream(`${baseUrl}/upgrade`, true)
+          : prepareStream(got.stream(`${baseUrl}/upgrade`))
+      await expect(opened).rejects.toThrow('protocol upgrades')
+      await vi.waitFor(() => expect(closed).toHaveBeenCalledTimes(1))
+    },
+  )
 
   test('refuses compressed source responses without retaining a decoder', async () => {
     handler = (req, res) => streamGzipBody(req, res, 200)
@@ -121,15 +124,15 @@ describe('downloadURL', () => {
 
   // One Location got rejects outright (scheme), one that fails at connect
   // time; both used to make got buffer the whole redirect body.
-  test.each([
-    'ftp://example.invalid/',
-    'http://127.0.0.1:1/',
-  ])('does not read a redirect body it cannot follow (%s)', async (location) => {
-    handler = (req, res) => streamGzipBody(req, res, 302, { location })
-    await expect(downloadURL(`${baseUrl}/redir`, true)).rejects.toThrow()
-    await settle()
-    expect(streaming.chunksWritten).toBeLessThan(TOTAL_CHUNKS)
-  })
+  test.each(['ftp://example.invalid/', 'http://127.0.0.1:1/'])(
+    'does not read a redirect body it cannot follow (%s)',
+    async (location) => {
+      handler = (req, res) => streamGzipBody(req, res, 302, { location })
+      await expect(downloadURL(`${baseUrl}/redir`, true)).rejects.toThrow()
+      await settle()
+      expect(streaming.chunksWritten).toBeLessThan(TOTAL_CHUNKS)
+    },
+  )
 
   test('a redirect without a Location is an error, not the file', async () => {
     handler = (_req, res) => {

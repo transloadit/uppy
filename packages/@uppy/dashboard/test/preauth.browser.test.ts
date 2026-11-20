@@ -41,58 +41,60 @@ describe('Provider preauthorization', () => {
   test.for([
     { firstResponse: 'list', authenticatedAfterFirst: false },
     { firstResponse: 'preauth', authenticatedAfterFirst: undefined },
-  ] as const)('keeps the login button when $firstResponse responds first', async ({
-    firstResponse,
-    authenticatedAfterFirst,
-  }) => {
-    const preauth = Promise.withResolvers<Response>()
-    const list = Promise.withResolvers<Response>()
-    const onPreauth = vi.fn(() => preauth.promise)
-    const onList = vi.fn(() => list.promise)
-    network.use(
-      http.post(`${COMPANION}/dropbox/preauth/`, onPreauth),
-      http.get(`${COMPANION}/dropbox/list/`, onList),
-    )
-    using uppy = initializeUppy()
-    const plugin = uppy.getPlugin('Dropbox')!
-    using fetchPreauth = vi.spyOn(plugin.provider, 'fetchPreAuthToken')
-    using openFolder = vi.spyOn(plugin.view, 'openFolder')
-    await page.getByRole('tab', { name: 'Dropbox' }).click()
-    await expect
-      .poll(() => [onPreauth.mock.calls.length, onList.mock.calls.length])
-      .toEqual([1, 1])
+  ] as const)(
+    'keeps the login button when $firstResponse responds first',
+    async ({ firstResponse, authenticatedAfterFirst }) => {
+      const preauth = Promise.withResolvers<Response>()
+      const list = Promise.withResolvers<Response>()
+      const onPreauth = vi.fn(() => preauth.promise)
+      const onList = vi.fn(() => list.promise)
+      network.use(
+        http.post(`${COMPANION}/dropbox/preauth/`, onPreauth),
+        http.get(`${COMPANION}/dropbox/list/`, onList),
+      )
+      using uppy = initializeUppy()
+      const plugin = uppy.getPlugin('Dropbox')!
+      using fetchPreauth = vi.spyOn(plugin.provider, 'fetchPreAuthToken')
+      using openFolder = vi.spyOn(plugin.view, 'openFolder')
+      await page.getByRole('tab', { name: 'Dropbox' }).click()
+      await expect
+        .poll(() => [onPreauth.mock.calls.length, onList.mock.calls.length])
+        .toEqual([1, 1])
 
-    const replies = {
-      preauth: () => {
-        preauth.resolve(
-          HttpResponse.json(
-            { token: 'test-preauth-token' },
-            { headers: { 'i-am': DISCOVERED_COMPANION } },
-          ),
-        )
-        return fetchPreauth.mock.results[0]!.value
-      },
-      list: () => {
-        list.resolve(new HttpResponse(null, { status: 401 }))
-        return openFolder.mock.results[0]!.value
-      },
-    }
-    await replies[firstResponse]()
-    expect(plugin.getPluginState().authenticated).toBe(authenticatedAfterFirst)
-    await replies[firstResponse === 'list' ? 'preauth' : 'list']()
+      const replies = {
+        preauth: () => {
+          preauth.resolve(
+            HttpResponse.json(
+              { token: 'test-preauth-token' },
+              { headers: { 'i-am': DISCOVERED_COMPANION } },
+            ),
+          )
+          return fetchPreauth.mock.results[0]!.value
+        },
+        list: () => {
+          list.resolve(new HttpResponse(null, { status: 401 }))
+          return openFolder.mock.results[0]!.value
+        },
+      }
+      await replies[firstResponse]()
+      expect(plugin.getPluginState().authenticated).toBe(
+        authenticatedAfterFirst,
+      )
+      await replies[firstResponse === 'list' ? 'preauth' : 'list']()
 
-    expect(plugin.getPluginState().authenticated).toBe(false)
-    await expect.element(loginButton()).toBeVisible()
-    expect(plugin.provider.preAuthToken).toBe('test-preauth-token')
-    expect(plugin.provider.hostname).toBe(DISCOVERED_COMPANION)
-    const authUrl = new URL(
-      plugin.provider.authUrl({ authFormData: undefined, query: {} }),
-    )
-    expect(authUrl.origin).toBe(DISCOVERED_COMPANION)
-    expect(authUrl.searchParams.get('uppyPreAuthToken')).toBe(
-      'test-preauth-token',
-    )
-  })
+      expect(plugin.getPluginState().authenticated).toBe(false)
+      await expect.element(loginButton()).toBeVisible()
+      expect(plugin.provider.preAuthToken).toBe('test-preauth-token')
+      expect(plugin.provider.hostname).toBe(DISCOVERED_COMPANION)
+      const authUrl = new URL(
+        plugin.provider.authUrl({ authFormData: undefined, query: {} }),
+      )
+      expect(authUrl.origin).toBe(DISCOVERED_COMPANION)
+      expect(authUrl.searchParams.get('uppyPreAuthToken')).toBe(
+        'test-preauth-token',
+      )
+    },
+  )
 
   test('authenticates on a successful listing and shows login on session expiry', async () => {
     const preauthHeaders = Promise.withResolvers<Headers>()
