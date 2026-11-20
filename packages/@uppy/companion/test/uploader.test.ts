@@ -1171,7 +1171,7 @@ describe('uploader', () => {
     backing.fill(0x41, 100)
     const fileContent = backing.subarray(100)
     let received = Buffer.alloc(0)
-    const server = http.createServer((req, res) => {
+    await using server = http.createServer((req, res) => {
       const chunks: Buffer[] = []
       req.on('data', (chunk: Buffer) => chunks.push(chunk))
       req.on('end', () => {
@@ -1180,29 +1180,25 @@ describe('uploader', () => {
       })
     })
     await new Promise<void>((resolve) => server.listen(0, '127.0.0.1', resolve))
-    try {
-      const stream = Readable.from([fileContent])
-      stream.pause()
-      const uploader = new Uploader({
-        companionOptions: { ...companionOptions, streamingUpload: true },
-        endpoint: `http://127.0.0.1:${(server.address() as AddressInfo).port}/`,
-        protocol: 'multipart',
-        useFormData: true,
-        size: fileContent.length,
-        metadata: {},
-        pathPrefix,
-      })
-      await uploader.uploadStream(stream, requireMockReq())
-      const bodyStart = received.indexOf('\r\n\r\n') + 4
-      expect(bodyStart).toBeGreaterThan(3)
-      expect(
-        received
-          .subarray(bodyStart, bodyStart + fileContent.length)
-          .equals(fileContent),
-      ).toBe(true)
-    } finally {
-      await new Promise<void>((resolve) => server.close(() => resolve()))
-    }
+    const stream = Readable.from([fileContent])
+    stream.pause()
+    const uploader = new Uploader({
+      companionOptions: { ...companionOptions, streamingUpload: true },
+      endpoint: `http://127.0.0.1:${(server.address() as AddressInfo).port}/`,
+      protocol: 'multipart',
+      useFormData: true,
+      size: fileContent.length,
+      metadata: {},
+      pathPrefix,
+    })
+    await uploader.uploadStream(stream, requireMockReq())
+    const bodyStart = received.indexOf('\r\n\r\n') + 4
+    expect(bodyStart).toBeGreaterThan(3)
+    expect(
+      received
+        .subarray(bodyStart, bodyStart + fileContent.length)
+        .equals(fileContent),
+    ).toBe(true)
   })
 
   const formDataNoMetaMatch =
