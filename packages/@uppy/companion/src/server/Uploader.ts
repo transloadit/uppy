@@ -1206,7 +1206,6 @@ export default class Uploader {
       // A body that did not match the announced size is our own error; surface
       // it rather than got's generic request failure.
       if (framingError) throw framingError
-      logger.error(err, 'upload.multipart.error')
       const errObj = isRecord(err) ? err : null
       const response =
         errObj && isRecord(errObj['response']) ? errObj['response'] : null
@@ -1214,6 +1213,14 @@ export default class Uploader {
         response && typeof response['statusCode'] === 'number'
           ? response['statusCode']
           : undefined
+      // Got's HTTPError message names the full URL, so a presigned query
+      // (signature included) would end up in the log.
+      logger.error(
+        statusCode != null
+          ? `Upload destination answered with status ${statusCode}`
+          : err,
+        'upload.multipart.error',
+      )
 
       if (statusCode != null) {
         const statusMessage =

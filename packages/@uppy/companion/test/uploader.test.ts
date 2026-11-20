@@ -1140,6 +1140,32 @@ describe('uploader', () => {
     ).resolves.toMatchObject({ extraData: { bytesUploaded: 17 } })
   })
 
+  test('does not log the query of a failed multipart upload URL', async () => {
+    nock('http://localhost')
+      .put('/upload')
+      .query({ 'X-Amz-Signature': 'secret-signature' })
+      .reply(403, 'Forbidden')
+    using logged = vi.spyOn(console, 'log').mockImplementation(() => {})
+    const fileContent = Buffer.from('Some file content')
+    const stream = Readable.from([fileContent])
+    stream.pause()
+    const uploader = new Uploader({
+      companionOptions: { ...companionOptions, streamingUpload: true },
+      endpoint: 'http://localhost/upload?X-Amz-Signature=secret-signature',
+      protocol: 'multipart',
+      httpMethod: 'PUT',
+      size: fileContent.length,
+      metadata: {},
+      pathPrefix,
+    })
+    await expect(
+      uploader.uploadStream(stream, requireMockReq()),
+    ).rejects.toThrow()
+    const output = logged.mock.calls.flat().join(' ')
+    expect(output).not.toContain('secret-signature')
+    expect(output).toContain('status 403')
+  })
+
   test('multipart uploads preserve large buffer views with a byte offset', async () => {
     const backing = Buffer.alloc(100_100, 0x58)
     backing.fill(0x41, 100)
