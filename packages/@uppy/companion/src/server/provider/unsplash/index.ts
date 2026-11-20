@@ -88,17 +88,23 @@ export default class Unsplash extends Provider<UnsplashUserSession> {
         // because that points at `unsplash.com`, which is behind bot protection
         // and would make us stream a challenge page instead of the image.
         // https://help.unsplash.com/en/articles/2511258-guideline-triggering-a-download
-        const { url } = await client
-          .get(attributionUrl, { prefixUrl: '', responseType: 'json' })
+        // Both URLs come from Unsplash's responses, so they get the same
+        // local-address protection as any other download.
+        const protectedGot = getProtectedGot({
+          allowLocalIPs: this.allowLocalUrls,
+        })
+        const { url } = await protectedGot
+          .get(attributionUrl, {
+            headers: { authorization: `Client-ID ${token}` },
+            responseType: 'json',
+          })
           .json<{ url?: string }>()
 
         if (!url) {
           throw new Error('Unexpected Unsplash response: missing download url')
         }
 
-        const stream = getProtectedGot({
-          allowLocalIPs: this.allowLocalUrls,
-        }).stream.get(url)
+        const stream = protectedGot.stream.get(url)
         const { size } = await prepareStream(stream)
 
         // finally, stream on!
