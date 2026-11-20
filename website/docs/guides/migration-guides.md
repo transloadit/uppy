@@ -699,10 +699,6 @@ TypeScript complains.
 
 One important thing to note are the new generics on `@uppy/core`.
 
-<!-- eslint-disable @typescript-eslint/no-unused-vars -->
-
-<!-- eslint-disable @typescript-eslint/no-non-null-assertion -->
-
 ```ts
 import Uppy from '@uppy/core'
 // xhr-upload is for uploading to your own backend.
@@ -1343,8 +1339,6 @@ uppy.use(Tus, {
 
 Uppy types are now individual exports and should be imported separately.
 
-<!-- eslint-disable @typescript-eslint/no-unused-vars -->
-
 ```ts
 import type { PluginOptions, UIPlugin, PluginTarget } from '@uppy/core'
 ```
@@ -1355,8 +1349,6 @@ import type { PluginOptions, UIPlugin, PluginTarget } from '@uppy/core'
 listen to [events](/docs/uppy/#events). The types for these events were loose
 and allowed for invalid events to be passed, such as
 `uppy.on('upload-errrOOOoooOOOOOrrrr')`.
-
-<!-- eslint-disable @typescript-eslint/no-unused-vars -->
 
 ```ts
 // Before:
@@ -1389,8 +1381,6 @@ Plugins that add their own events can merge with existing ones in `@uppy/core`
 with `declare module '@uppy/core' { ... }`. This is a TypeScript pattern called
 [module augmentation](https://www.typescriptlang.org/docs/handbook/declaration-merging.html#module-augmentation).
 For instance, when using [`@uppy/dashboard`][dashboard]:
-
-<!-- eslint-disable @typescript-eslint/no-unused-vars -->
 
 ```ts
 uppy.on('dashboard:file-edit-start', (file) => {

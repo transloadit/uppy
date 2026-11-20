@@ -1,5 +1,7 @@
-import http from 'node:http'
 import type { AddressInfo } from 'node:net'
+
+import http from 'node:http'
+
 import nock from 'nock'
 import request from 'supertest'
 import {
@@ -11,6 +13,7 @@ import {
   test,
   vi,
 } from 'vitest'
+
 import * as tokenService from '../dist/server/helpers/jwt.js'
 import { isRecord } from '../dist/server/helpers/type-guards.js'
 import * as providerModule from '../dist/server/provider/index.js'
@@ -21,6 +24,7 @@ import {
   nockZoomRecordings,
   nockZoomRevoke,
   expects as zoomExpects,
+  zoomMeeting,
 } from './fixtures/zoom.js'
 import { getServer } from './mockserver.js'
 
@@ -50,9 +54,9 @@ const oauthProviders: Record<string, string> = Object.fromEntries(
   ),
 )
 const authData: Record<string, { accessToken: string }> = {}
-providerNames.forEach((provider) => {
+for (const provider of providerNames) {
   authData[provider] = { accessToken: 'token value' }
-})
+}
 const token = tokenService.generateEncryptedAuthToken(authData, secret)
 
 const thisOrThat = <T>(value1: T | undefined, value2: T): T => {
@@ -237,43 +241,44 @@ describe('list provider files', () => {
 
   // sent as raw paths: an HTTP client like supertest would resolve the dots
   // itself, a hand-written request does not
-  test.each([
-    '..',
-    '.',
-    '%2E%2E',
-  ])('box: the id %j is refused, not resolved as a path step', async (id) => {
-    nock('https://api.box.com').get('/2.0/users/me').reply(200, {
-      login: defaults.USERNAME,
-    })
-    // as /2.0/folders/../items, this would list /2.0/items
-    const scope = nock('https://api.box.com').get(/.*/).reply(200, {})
-    const server = http.createServer(await getServerWithEnv())
-    await new Promise<void>((resolve) => server.listen(0, '127.0.0.1', resolve))
-    try {
-      const status = await new Promise<number | undefined>(
-        (resolve, reject) => {
-          http
-            .get(
-              {
-                host: '127.0.0.1',
-                port: (server.address() as AddressInfo).port,
-                path: `/box/list/${id}`,
-                headers: { 'uppy-auth-token': token },
-              },
-              (res) => {
-                res.resume()
-                resolve(res.statusCode)
-              },
-            )
-            .on('error', reject)
-        },
+  test.each(['..', '.', '%2E%2E'])(
+    'box: the id %j is refused, not resolved as a path step',
+    async (id) => {
+      nock('https://api.box.com').get('/2.0/users/me').reply(200, {
+        login: defaults.USERNAME,
+      })
+      // as /2.0/folders/../items, this would list /2.0/items
+      const scope = nock('https://api.box.com').get(/.*/).reply(200, {})
+      const server = http.createServer(await getServerWithEnv())
+      await new Promise<void>((resolve) =>
+        server.listen(0, '127.0.0.1', resolve),
       )
-      expect(status).toBe(400)
-      expect(scope.isDone()).toBe(false)
-    } finally {
-      server.close()
-    }
-  })
+      try {
+        const status = await new Promise<number | undefined>(
+          (resolve, reject) => {
+            http
+              .get(
+                {
+                  host: '127.0.0.1',
+                  port: (server.address() as AddressInfo).port,
+                  path: `/box/list/${id}`,
+                  headers: { 'uppy-auth-token': token },
+                },
+                (res) => {
+                  res.resume()
+                  resolve(res.statusCode)
+                },
+              )
+              .on('error', reject)
+          },
+        )
+        expect(status).toBe(400)
+        expect(scope.isDone()).toBe(false)
+      } finally {
+        server.close()
+      }
+    },
+  )
 
   test('drive', async () => {
     nock('https://www.googleapis.com')
@@ -442,6 +447,84 @@ describe('list provider files', () => {
     const { username, items, providerFixture } = await runTest('zoom')
     expect1({ username, items, providerFixture })
   })
+
+  /** Answers each month of a year listing with the meetings that start inside its date window. */
+  function nockZoomYear(meetings: Array<ReturnType<typeof zoomMeeting>>) {
+    nock('https://zoom.us')
+      .get('/v2/users/me/recordings')
+      .query(true)
+      .reply((uri) => {
+        const params = new URL(uri, 'https://zoom.us').searchParams
+        const from = params.get('from') ?? ''
+        const to = params.get('to') ?? ''
+        const inWindow = meetings.filter((meeting) => {
+          const day = meeting.start_time.slice(0, 10)
+          return day >= from && day <= to
+        })
+        return [200, { meetings: inWindow }]
+      })
+      .persist()
+  }
+
+  test('zoom lists meetings in a year without a meeting_id on the meeting', async () => {
+    nock('https://zoom.us').get('/v2/users/me').reply(200, {
+      email: defaults.USERNAME,
+      timezone: 'UTC',
+    })
+    nockZoomYear([zoomMeeting()])
+
+    const response = await request(await getServerWithEnv())
+      .get('/zoom/list/')
+      .query({ year: '2020' })
+      .set('uppy-auth-token', token)
+      .expect(200)
+
+    expect(response.body.username).toBe(defaults.USERNAME)
+    expect(response.body.items).toEqual([
+      expect.objectContaining({
+        isFolder: true,
+        name: 'DUMMY TOPIC (2020-05-29, 13:19)',
+        id: 'DUMMY-UUID%3D%3D',
+        requestPath: 'DUMMY-UUID%253D%253D',
+        mimeType: null,
+        size: 723389,
+      }),
+    ])
+  })
+
+  test('zoom lists each meeting of a year once, outside UTC too', async () => {
+    nock('https://zoom.us').get('/v2/users/me').reply(200, {
+      email: defaults.USERNAME,
+      timezone: 'Asia/Tokyo',
+    })
+    nockZoomYear([
+      // 1 May 2020, 05:00 in Tokyo, inside both the April and the May window.
+      {
+        ...zoomMeeting(),
+        uuid: 'MAY-FIRST==',
+        start_time: '2020-04-30T20:00:00Z',
+      },
+      // 31 December 2019, 19:00 in Tokyo, inside the January 2020 window.
+      {
+        ...zoomMeeting(),
+        uuid: 'NEW-YEARS-EVE==',
+        start_time: '2019-12-31T10:00:00Z',
+      },
+    ])
+
+    const response = await request(await getServerWithEnv())
+      .get('/zoom/list/')
+      .query({ year: '2020' })
+      .set('uppy-auth-token', token)
+      .expect(200)
+
+    expect(response.body.items).toEqual([
+      expect.objectContaining({
+        id: 'MAY-FIRST%3D%3D',
+        name: 'DUMMY TOPIC (2020-05-01, 05:00)',
+      }),
+    ])
+  })
 })
 
 describe('provider file gets downloaded from', () => {
@@ -544,22 +627,23 @@ describe('provider file gets downloaded from', () => {
 })
 
 describe('connect to provider', () => {
-  test.each(
-    providerNames,
-  )('connect to %s via grant.js endpoint', async (providerName: string) => {
-    const oauthProvider = oauthProviders[providerName]
+  test.each(providerNames)(
+    'connect to %s via grant.js endpoint',
+    async (providerName: string) => {
+      const oauthProvider = oauthProviders[providerName]
 
-    if (oauthProvider == null) return
+      if (oauthProvider == null) return
 
-    await request(await getServerWithEnv())
-      .get(`/${providerName}/connect?foo=bar`)
-      .set('uppy-auth-token', token)
-      .expect(302)
-      .expect(
-        'Location',
-        `http://localhost:3020/connect/${oauthProvider}?state=${OAUTH_STATE}`,
-      )
-  })
+      await request(await getServerWithEnv())
+        .get(`/${providerName}/connect?foo=bar`)
+        .set('uppy-auth-token', token)
+        .expect(302)
+        .expect(
+          'Location',
+          `http://localhost:3020/connect/${oauthProvider}?state=${OAUTH_STATE}`,
+        )
+    },
+  )
 })
 
 describe('logout of provider', () => {

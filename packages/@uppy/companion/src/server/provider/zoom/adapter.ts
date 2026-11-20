@@ -1,4 +1,6 @@
 import moment from 'moment-timezone'
+import { z } from 'zod'
+
 import { isRecord } from '../../helpers/type-guards.js'
 
 const MIMETYPES = {
@@ -34,34 +36,52 @@ type ZoomUserResponse = {
   timezone?: string
 }
 
+// Zoom leaves out fields depending on the file type and the recording's state, and a field we
+// don't need should never hide a recording. So every field is optional, and a value of the wrong
+// type reads as missing instead of rejecting the whole item.
+const optionalString = z.string().optional().catch(undefined)
+const optionalNumber = z.number().optional().catch(undefined)
+
+const zoomRecordingFileSchema = z.object({
+  id: optionalString,
+  meeting_id: optionalString,
+  recording_start: optionalString,
+  recording_type: optionalString,
+  file_type: optionalString,
+  file_size: optionalNumber,
+  status: optionalString,
+  deleted_time: optionalString,
+  download_url: optionalString,
+})
+
+// Used for both a meeting in `GET /users/me/recordings` and the body of
+// `GET /meetings/{meetingId}/recordings`, which describe the meeting the same way.
+const zoomMeetingSchema = z.object({
+  uuid: z.string(),
+  topic: z.string(),
+  start_time: optionalString,
+  total_size: optionalNumber,
+  recording_files: z.array(z.unknown()).catch([]),
+})
+
+type ZoomMeeting = z.infer<typeof zoomMeetingSchema>
+
 type ZoomItem = {
   topic: string
-  uuid?: string
-  meeting_id?: string
-  start_time?: string
+  uuid?: string | undefined
+  meeting_id?: string | undefined
+  start_time?: string | undefined
   file_type?: ZoomFileType
-  id?: string
-  recording_start?: string
-  recording_type?: string
-  file_size?: number
-  total_size?: number
-  deleted_time?: string
-  status?: string
-  download_url?: string
+  id?: string | undefined
+  recording_start?: string | undefined
+  recording_type?: string | undefined
+  file_size?: number | undefined
+  total_size?: number | undefined
 }
 
 type ZoomRecordingFile = ZoomItem & {
   file_type: ZoomFileType
-  id: string
   meeting_id: string
-  recording_start: string
-}
-
-type ZoomMeeting = ZoomItem & {
-  uuid: string
-  meeting_id: string
-  topic: string
-  recording_files?: ZoomRecordingFile[]
 }
 
 type ZoomAdaptedItem = {
@@ -123,9 +143,14 @@ const getMimeType = (item: ZoomItem) => {
   return null
 }
 
+// Zoom sends CC files, and some other files, without an `id`. Those are found again by their type
+// and start time instead, which `findFile()` in ./index.ts matches on.
+const isFoundByStart = (item: ZoomItem): boolean =>
+  item.file_type === 'CC' || item.id == null
+
 const getId = (item: ZoomItem): string => {
-  if (item.file_type && item.file_type === 'CC') {
-    return `${encodeURIComponent(String(item.meeting_id))}__CC__${encodeURIComponent(String(item.recording_start))}`
+  if (item.file_type && isFoundByStart(item)) {
+    return `${encodeURIComponent(String(item.meeting_id))}__${item.file_type}__${encodeURIComponent(String(item.recording_start))}`
   }
   if (item.file_type) {
     return `${encodeURIComponent(String(item.meeting_id))}__${encodeURIComponent(String(item.id))}`
@@ -134,8 +159,8 @@ const getId = (item: ZoomItem): string => {
 }
 
 const getRequestPath = (item: ZoomItem): string => {
-  if (item.file_type && item.file_type === 'CC') {
-    return `${encodeURIComponent(String(item.meeting_id))}?recordingId=CC&recordingStart=${encodeURIComponent(String(item.recording_start))}`
+  if (item.file_type && isFoundByStart(item)) {
+    return `${encodeURIComponent(String(item.meeting_id))}?recordingId=${item.file_type}&recordingStart=${encodeURIComponent(String(item.recording_start))}`
   }
   if (item.file_type) {
     return `${encodeURIComponent(String(item.meeting_id))}?recordingId=${encodeURIComponent(String(item.id))}`
@@ -167,44 +192,50 @@ const getItemTopic = (item: ZoomItem): string => {
   return item.topic
 }
 
-function isZoomRecordingFile(value: unknown): value is ZoomRecordingFile {
-  if (!isRecord(value)) return false
-  const fileType = value['file_type']
-  if (typeof fileType !== 'string') return false
-  if (!Object.hasOwn(MIMETYPES, fileType)) return false
-  return (
-    typeof value['id'] === 'string' &&
-    typeof value['meeting_id'] === 'string' &&
-    typeof value['recording_start'] === 'string'
-  )
-}
+const isZoomFileType = (value: string | undefined): value is ZoomFileType =>
+  value != null && Object.hasOwn(MIMETYPES, value)
 
 function toZoomMeeting(value: unknown): ZoomMeeting | null {
-  if (!isRecord(value)) return null
-  const uuid = value['uuid']
-  const meetingId = value['meeting_id']
-  const topic = value['topic']
-  if (typeof uuid !== 'string') return null
-  if (typeof meetingId !== 'string') return null
-  if (typeof topic !== 'string') return null
-
-  const startTime = value['start_time']
-  const totalSize = value['total_size']
-  const recordingFilesValue = value['recording_files']
-  const recordingFiles: ZoomRecordingFile[] = Array.isArray(recordingFilesValue)
-    ? recordingFilesValue.filter(isZoomRecordingFile)
-    : []
-
-  const out: ZoomMeeting = {
-    uuid,
-    meeting_id: meetingId,
-    topic,
-    recording_files: recordingFiles,
-  }
-  if (typeof startTime === 'string') out.start_time = startTime
-  if (typeof totalSize === 'number') out.total_size = totalSize
-  return out
+  const parsed = zoomMeetingSchema.safeParse(value)
+  return parsed.success ? parsed.data : null
 }
+
+/**
+ * Returns the file as it is listed inside its meeting, or null when there is nothing to download.
+ * The year listing uses this too, so it only shows meetings that have files to open.
+ */
+function toListedFile(
+  value: unknown,
+  meeting: ZoomMeeting,
+): ZoomRecordingFile | null {
+  const parsed = zoomRecordingFileSchema.safeParse(value)
+  if (!parsed.success) return null
+  const file = parsed.data
+  const fileType = file.file_type
+  if (!isZoomFileType(fileType) || fileType === 'TIMELINE') return null
+  if (file.deleted_time || file.status !== 'completed' || !file.download_url) {
+    return null
+  }
+
+  const listed: ZoomRecordingFile = {
+    ...file,
+    file_type: fileType,
+    topic: meeting.topic,
+    // The meeting's UUID is what Zoom puts in `meeting_id`.
+    meeting_id: file.meeting_id ?? meeting.uuid,
+  }
+  if (isFoundByStart(listed)) {
+    return listed.recording_start == null ? null : listed
+  }
+  // Only the name uses the start time of a file found by its `id`.
+  listed.recording_start ??= meeting.start_time
+  return listed
+}
+
+const listFiles = (meeting: ZoomMeeting): ZoomRecordingFile[] =>
+  meeting.recording_files
+    .map((file) => toListedFile(file, meeting))
+    .filter((file) => file != null)
 
 const adaptData = (
   userResponse: ZoomUserResponse,
@@ -232,40 +263,18 @@ const adaptData = (
 
   let itemsToProcess: ZoomItem[] = []
   const meetingsValue = results['meetings']
-  const recordingFilesValue = results['recording_files']
 
   if (Array.isArray(meetingsValue)) {
     itemsToProcess = meetingsValue
       .map(toZoomMeeting)
-      .filter((meeting): meeting is ZoomMeeting => meeting != null)
-      .filter((meeting) =>
-        meeting.recording_files?.some(
-          (file) =>
-            !file.deleted_time &&
-            file.status === 'completed' &&
-            typeof file.download_url === 'string' &&
-            file.download_url.length > 0,
-        ),
-      )
-  } else if (
-    Array.isArray(recordingFilesValue) &&
-    typeof results['topic'] === 'string'
-  ) {
-    const topic = results['topic']
-    itemsToProcess = recordingFilesValue
-      .filter(isZoomRecordingFile)
-      .map((item) => ({ ...item, topic }))
-      .filter(
-        (file) =>
-          file.file_type !== 'TIMELINE' &&
-          !file.deleted_time &&
-          file.status === 'completed' &&
-          file.download_url != null &&
-          file.download_url.length > 0,
-      )
+      .filter((meeting) => meeting != null)
+      .filter((meeting) => listFiles(meeting).length > 0)
+  } else {
+    const meeting = toZoomMeeting(results)
+    itemsToProcess = meeting ? listFiles(meeting) : []
   }
 
-  itemsToProcess.forEach((item) => {
+  for (const item of itemsToProcess) {
     data.items.push({
       isFolder: getIsFolder(item),
       icon: getIcon(item),
@@ -280,7 +289,7 @@ const adaptData = (
         topic: getItemTopic(item),
       },
     })
-  })
+  }
   return data
 }
 

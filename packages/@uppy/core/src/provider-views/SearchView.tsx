@@ -1,4 +1,5 @@
 import type { ComponentChild } from 'preact'
+
 import { useSearchForm } from './useSearchForm.js'
 
 interface SearchViewProps {

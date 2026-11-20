@@ -1,13 +1,14 @@
-import type { Request, Response } from 'express'
+import type { Response } from 'express'
+
+import type { Request } from '../../types/express.js'
+
 import * as tokenService from '../helpers/jwt.js'
 import { isRecord } from '../helpers/type-guards.js'
 import logger from '../logger.js'
 
 export default function preauth(req: Request, res: Response): void {
-  const body = isRecord(req.body) ? req.body : undefined
-  const params =
-    body && Object.hasOwn(body, 'params') ? body['params'] : undefined
-  if (!params) {
+  const { body } = req
+  if (!isRecord(body) || !Object.hasOwn(body, 'params') || !body['params']) {
     logger.info('invalid request data received', 'preauth.bad')
     res.sendStatus(400)
     return
@@ -32,7 +33,7 @@ export default function preauth(req: Request, res: Response): void {
     return
   }
   const preAuthToken = tokenService.generateEncryptedToken(
-    params,
+    body['params'],
     preAuthSecret,
   )
   res.json({ token: preAuthToken })

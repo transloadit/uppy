@@ -1,8 +1,6 @@
-import {
-  Component,
-  type ComponentChild,
-  createRef,
-} from '@uppy/core/utils/preact'
+import type { ComponentChild } from '@uppy/core/utils/preact'
+
+import { Component, createRef } from '@uppy/core/utils/preact'
 
 const TRANSITION_MS = 300
 

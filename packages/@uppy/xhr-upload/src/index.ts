@@ -7,22 +7,26 @@ import type {
   Uppy,
   UppyFile,
 } from '@uppy/core'
-import { BasePlugin, EventManager } from '@uppy/core'
 import type { RequestClient } from '@uppy/core/companion-client'
+import type {
+  FetcherOptions,
+  LocalUppyFile,
+  RemoteUppyFile,
+} from '@uppy/core/utils'
+
+import { BasePlugin, EventManager } from '@uppy/core'
 import {
-  type FetcherOptions,
   fetcher,
   filterFilesToEmitUploadStarted,
   filterFilesToUpload,
   getAllowedMetaFields,
   isAbortError,
   isNetworkError,
-  type LocalUppyFile,
   NetworkError,
-  type RemoteUppyFile,
   TaskQueue,
   toError,
 } from '@uppy/core/utils'
+
 import packageJson from '../package.json' with { type: 'json' }
 import locale from './locale.js'
 
@@ -332,18 +336,18 @@ export default class XHRUpload<
   ): void {
     const allowedMetaFields = getAllowedMetaFields(opts.allowedMetaFields, meta)
 
-    allowedMetaFields.forEach((item) => {
+    for (const item of allowedMetaFields) {
       const value = meta[item]
       if (Array.isArray(value)) {
         // In this case we don't transform `item` to add brackets, it's up to
         // the user to add the brackets so it won't be overridden.
-        value.forEach((subItem) => {
+        for (const subItem of value) {
           formData.append(item, subItem)
-        })
+        }
       } else {
         formData.append(item, value as string)
       }
-    })
+    }
   }
 
   createFormDataUpload(file: LocalUppyFile<M, B>, opts: Opts<M, B>): FormData {
@@ -371,7 +375,7 @@ export default class XHRUpload<
     const { meta } = this.uppy.getState()
     this.addMetadata(formPost, meta, opts)
 
-    files.forEach((file) => {
+    for (const file of files) {
       const options = this.getOptions(file)
 
       const dataWithUpdatedType = setTypeInBlob(file)
@@ -381,7 +385,7 @@ export default class XHRUpload<
       } else {
         formPost.append(options.fieldName, dataWithUpdatedType)
       }
-    })
+    }
 
     return formPost
   }

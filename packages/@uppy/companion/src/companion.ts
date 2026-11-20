@@ -1,10 +1,22 @@
+import type { Express } from 'express'
+
+import type {
+  CompanionInitOptions,
+  CredentialsFetchResponse,
+} from './schemas/companion.js'
+import type { EmitterLike } from './server/emitter/index.js'
+import type Provider from './server/provider/Provider.js'
+import type { CompanionRuntimeOptions } from './types/companion-options.js'
+import type { RequestHandler } from './types/express.js'
+
 import { randomUUID } from 'node:crypto'
+
 import cookieParser from 'cookie-parser'
-import type { Express, RequestHandler } from 'express'
 import express from 'express'
 import interceptor from 'express-interceptor'
 import grant from 'grant'
 import merge from 'lodash/merge.js'
+
 import packageJson from '../package.json' with { type: 'json' }
 import {
   defaultOptions,
@@ -12,17 +24,13 @@ import {
   validateConfig,
 } from './config/companion.js'
 import grantConfigFn from './config/grant.js'
-import type {
-  CompanionInitOptions,
-  CredentialsFetchResponse,
-} from './schemas/index.js'
 import googlePicker from './server/controllers/googlePicker.js'
 import * as controllers from './server/controllers/index.js'
 import s3 from './server/controllers/s3.js'
 import searchController from './server/controllers/search.js'
 import url from './server/controllers/url.js'
-import type { EmitterLike } from './server/emitter/index.js'
 import createEmitter from './server/emitter/index.js'
+import { asRecord } from './server/helpers/type-guards.js'
 import { getURLBuilder } from './server/helpers/utils.js'
 import * as jobs from './server/jobs.js'
 import logger from './server/logger.js'
@@ -34,15 +42,13 @@ import {
   ProviderUserError,
 } from './server/provider/error.js'
 import * as providerManager from './server/provider/index.js'
-import type Provider from './server/provider/Provider.js'
 import { isOAuthProvider } from './server/provider/Provider.js'
 import * as redis from './server/redis.js'
 import socket from './server/socket.js'
-import type { CompanionRuntimeOptions } from './types/companion-options.js'
 
 export type { ProviderListResponse } from './server/provider/Provider.js'
-export type { CompanionInitOptions }
 
+export type { CompanionInitOptions }
 export { socket }
 
 const grantConfig = grantConfigFn()
@@ -172,7 +178,7 @@ export function app(optionsArg: CompanionInitOptions): {
     }
     // same input object Grant reads
     const input: Record<string, unknown> =
-      Object.keys(req.query).length > 0 ? req.query : (req.body ?? {})
+      Object.keys(req.query).length > 0 ? req.query : asRecord(req.body)
     if (input['code'] ? !req.session?.grant?.state : !input['error']) {
       // Also what an expired session looks like: tell the user to retry.
       res

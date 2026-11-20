@@ -1,8 +1,10 @@
-import { render } from 'preact'
 import type { PluginOpts } from './BasePlugin.js'
-import BasePlugin from './BasePlugin.js'
 import type { State } from './Uppy.js'
 import type { Body, Meta } from './utils/index.js'
+
+import { render } from 'preact'
+
+import BasePlugin from './BasePlugin.js'
 import { findDOMElement, getTextDirection } from './utils/index.js'
 
 /**

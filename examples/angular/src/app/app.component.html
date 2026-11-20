@@ -8,10 +8,7 @@
     <!-- Inline Dashboard (always visible) -->
     <section class="dashboard-section">
       <h2>📁 File Upload Dashboard</h2>
-      <uppy-dashboard
-        [uppy]="uppy"
-        [props]="dashboardProps"
-      ></uppy-dashboard>
+      <uppy-dashboard [uppy]="uppy" [props]="dashboardProps"></uppy-dashboard>
     </section>
 
     <!-- Toggle Button for Modal -->
@@ -21,9 +18,11 @@
 
       <button
         class="toggle-button"
+        type="button"
         (click)="toggleModal()"
-        [class.active]="showModal">
-        {{ showModal ? '✕ Close Modal Dashboard' : '📤 Open Modal Dashboard' }}
+        [class.active]="showModal"
+      >
+        {{ showModal ? "✕ Close Modal Dashboard" : "📤 Open Modal Dashboard" }}
       </button>
 
       <!-- Dashboard Modal -->

@@ -34,11 +34,12 @@ export default function useLiveCount<T>({
 }: Options<T>): number {
   const [count, setCount] = useState(fallback)
 
+  // biome-ignore lint/correctness/useExhaustiveDependencies: `select` is usually an inline function; re-fetching on every render is not wanted
   useEffect(() => {
     const cached = readCache(key)
     if (cached) {
       setCount(cached)
-      return
+      return undefined
     }
 
     const controller = new AbortController()

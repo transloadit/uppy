@@ -1,9 +1,10 @@
+import '@uppy/core/css/style.css'
+import '@uppy/dashboard/css/style.css'
+
 import Uppy from '@uppy/core'
 import Dashboard from '@uppy/dashboard'
 import { expect, test } from 'vitest'
 import { page, userEvent } from 'vitest/browser'
-import '@uppy/core/css/style.css'
-import '@uppy/dashboard/css/style.css'
 
 // Normally you would use one of vitest's framework renderers, such as vitest-browser-react,
 // but that's overkill for us so we write our own plain HTML renderer.
@@ -65,7 +66,7 @@ test('Upload, pause, and resume functionality', async () => {
     uppy.emit('upload-start', files)
 
     // Set initial progress state for all files
-    fileIDs.forEach((fileID) => {
+    for (const fileID of fileIDs) {
       const file = uppy.getFile(fileID)
       if (file) {
         uppy.setFileState(fileID, {
@@ -79,21 +80,21 @@ test('Upload, pause, and resume functionality', async () => {
           },
         })
       }
-    })
+    }
 
     // Simulate upload progress with pause/resume support
     const progressInterval = setInterval(() => {
-      fileIDs.forEach((fileID) => {
+      for (const fileID of fileIDs) {
         const file = uppy.getFile(fileID)
         if (!file) {
           clearInterval(progressInterval)
-          return
+          continue
         }
 
         // Check if file is paused
         if (file.isPaused) {
           isPaused = true
-          return
+          continue
         } else if (isPaused) {
           // Resuming from pause
           isPaused = false
@@ -147,7 +148,7 @@ test('Upload, pause, and resume functionality', async () => {
             uploadResolve?.()
           }
         }
-      })
+      }
     }, 200) // 200ms intervals for controlled testing
 
     return uploadPromise
