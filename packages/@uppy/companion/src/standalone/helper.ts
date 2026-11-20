@@ -1,7 +1,7 @@
 import type {
   CompanionInitOptions,
   S3ProviderOptions,
-} from '../schemas/index.js'
+} from '../schemas/companion.js'
 
 import crypto from 'node:crypto'
 import fs from 'node:fs'

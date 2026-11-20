@@ -1,11 +1,11 @@
 import type { EventEmitter, Readable as NodeReadableStream } from 'node:stream'
 
 import type { PutObjectCommandInput, S3Client } from '@aws-sdk/client-s3'
-import type { Request } from 'express'
 import type { OptionsOfTextResponseBody, Response } from 'got'
 import type { Redis } from 'ioredis'
 
 import type { CompanionRuntimeOptions } from '../types/companion-options.js'
+import type { Request } from '../types/express.js'
 
 import { randomUUID } from 'node:crypto'
 import { once } from 'node:events'
@@ -24,12 +24,13 @@ import validator from 'validator'
 
 import emitter from './emitter/index.js'
 import headerSanitize from './header-blacklist.js'
-import { isRecord, toError } from './helpers/type-guards.js'
+import { asRecord, isRecord, toError } from './helpers/type-guards.js'
 import {
   getBucket,
   hasUploadUrlMatch,
   jsonStringify,
   rfc2047EncodeMetadata,
+  s3WriteParams,
   truncateFilename,
 } from './helpers/utils.js'
 import * as logger from './logger.js'
@@ -754,7 +755,7 @@ export default class Uploader {
   }
 
   static reqToOptions(req: Request, size: number | undefined): UploaderOptions {
-    const body: Record<string, unknown> = isRecord(req.body) ? req.body : {}
+    const body = asRecord(req.body)
 
     const useFormDataValue = body['useFormData']
     const useFormData =
@@ -1253,15 +1254,7 @@ export default class Uploader {
       ContentType: metadata.type,
       Metadata: rfc2047EncodeMetadata(metadata),
       Body: stream,
-      ...(options['acl'] != null && {
-        ACL: options['acl'],
-      }),
-      ...(options['awsSse'] != null && {
-        ServerSideEncryption: options['awsSse'],
-      }),
-      ...(options['awsSseKmsKeyId'] != null && {
-        SSEKMSKeyId: options['awsSseKmsKeyId'],
-      }),
+      ...s3WriteParams(options),
     }
 
     const upload = new Upload({

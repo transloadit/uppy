@@ -1,4 +1,6 @@
-import type { Request, Response } from 'express'
+import type { Response } from 'express'
+
+import type { Request } from '../../types/express.js'
 
 import express from 'express'
 import { z } from 'zod'
