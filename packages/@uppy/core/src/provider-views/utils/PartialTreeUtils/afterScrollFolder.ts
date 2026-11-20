@@ -4,6 +4,7 @@ import type {
   PartialTreeId,
 } from '../../../index.js'
 import type { CompanionFile } from '../../../utils/index.js'
+
 import addListedItems from './addListedItems.js'
 
 const afterScrollFolder = (
