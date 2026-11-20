@@ -1,10 +1,14 @@
+import type { CompanionInitOptions } from '../src/schemas/companion.js'
+
 import { createServer, request as httpRequest } from 'node:http'
 import { gzipSync } from 'node:zlib'
+
 import express from 'express'
 import session from 'express-session'
 import nock from 'nock'
 import request from 'supertest'
 import { afterEach, describe, expect, onTestFinished, test, vi } from 'vitest'
+
 import { app as companionApp } from '../dist/companion.js'
 import {
   generateEncryptedAuthToken,
@@ -14,7 +18,6 @@ import { guardGrantInput } from '../dist/server/helpers/oauth-boundaries.js'
 import { encodeState } from '../dist/server/helpers/oauth-state.js'
 import Provider from '../dist/server/provider/Provider.js'
 import standalone from '../dist/standalone/index.js'
-import type { CompanionInitOptions } from '../src/schemas/companion.js'
 import { setDefaultEnv } from './mockserver.js'
 
 vi.mock('express-prom-bundle')

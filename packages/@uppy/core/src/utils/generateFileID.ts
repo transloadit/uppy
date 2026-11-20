@@ -1,4 +1,3 @@
-import getFileType from './getFileType.js'
 import type {
   Body,
   LocalUppyFile,
@@ -6,6 +5,8 @@ import type {
   RemoteUppyFile,
   UppyFile,
 } from './UppyFile.js'
+
+import getFileType from './getFileType.js'
 
 function encodeCharacter(character: string): string {
   return character.charCodeAt(0).toString(32)

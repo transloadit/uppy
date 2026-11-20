@@ -1,9 +1,5 @@
-import classNames from 'classnames'
-import debounce from 'lodash/debounce.js'
 import type { h } from 'preact'
-import packageJson from '../../../package.json' with { type: 'json' }
-import { isAuthError } from '../../companion-client/AuthError.js'
-import { describeCompanionError } from '../../companion-client/errorCodes.js'
+
 import type {
   Body,
   Meta,
@@ -17,8 +13,19 @@ import type {
   Uppy,
   ValidateableFile,
 } from '../../index.js'
-import ErrorWithCause from '../../utils/ErrorWithCause.js'
 import type { CompanionFile, I18n } from '../../utils/index.js'
+import type {
+  ConfirmOptions,
+  PromptOptions,
+} from '../ProviderDialogController.js'
+
+import classNames from 'classnames'
+import debounce from 'lodash/debounce.js'
+
+import packageJson from '../../../package.json' with { type: 'json' }
+import { isAuthError } from '../../companion-client/AuthError.js'
+import { describeCompanionError } from '../../companion-client/errorCodes.js'
+import ErrorWithCause from '../../utils/ErrorWithCause.js'
 import {
   getErrorMessage,
   isAbortError,
@@ -28,10 +35,7 @@ import Browser from '../Browser.js'
 import FilterInput from '../FilterInput.js'
 import FooterActions from '../FooterActions.js'
 import ProviderDialog from '../ProviderDialog.js'
-import ProviderDialogController, {
-  type ConfirmOptions,
-  type PromptOptions,
-} from '../ProviderDialogController.js'
+import ProviderDialogController from '../ProviderDialogController.js'
 import addFiles from '../utils/addFiles.js'
 import getClickedRange from '../utils/getClickedRange.js'
 import handleError from '../utils/handleError.js'

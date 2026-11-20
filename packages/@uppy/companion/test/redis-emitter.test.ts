@@ -1,5 +1,7 @@
 import type { Redis } from 'ioredis'
+
 import { expect, test, vi } from 'vitest'
+
 import redisEmitter, {
   escapeGlob,
 } from '../dist/server/emitter/redis-emitter.js'

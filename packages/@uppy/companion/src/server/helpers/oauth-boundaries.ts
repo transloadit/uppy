@@ -1,4 +1,5 @@
-import type { RequestHandler } from 'express'
+import type { RequestHandler } from '../../types/express.js'
+
 import { isRecord } from './type-guards.js'
 
 /** Prevent Grant from copying arbitrary or recursive input into the session. */

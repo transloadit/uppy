@@ -1,4 +1,9 @@
 /**
  * Converts list into array
+ *
+ * @deprecated
+ *   Use `Array.from` directly.
  */
-export default Array.from
+const toArray = Array.from
+
+export default toArray

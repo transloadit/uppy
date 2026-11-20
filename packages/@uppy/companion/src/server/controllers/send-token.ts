@@ -1,5 +1,9 @@
+import type { NextFunction, Response } from 'express'
+
+import type { Request } from '../../types/express.js'
+
 import { timingSafeEqual } from 'node:crypto'
-import type { NextFunction, Request, Response } from 'express'
+
 import { publishAuthCallback } from '../auth-callback.js'
 import {
   authCallbackSuccessHtml,
