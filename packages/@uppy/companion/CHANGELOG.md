@@ -1,5 +1,15 @@
 # @uppy/companion
 
+## 7.2.5
+
+### Patch Changes
+
+- 84e6a16: Keep the login result when the login socket closes while Companion is still subscribing to it, instead of consuming the result and failing to send it.
+- 9c267e3: Box: the next page of a folder listing now stays in that folder, instead of listing the root folder, and a folder whose size is an exact multiple of the page size no longer asks for an extra, empty page. Google Drive exports downloaded through their export link, and Facebook, Unsplash (including its download-attribution request) and Zoom downloads, now honour `allowLocalUrls` like every other download. These downloads now also use the protected client's timeouts (30 s until the response starts; up to 10 minutes for Google Drive exports, which Google converts before answering) and, when `allowLocalUrls` is off, resolve hostnames through DNS servers instead of `dns.lookup`.
+- cafed78: Upgrade Got to version 16 while preserving streamed multipart uploads and Google Drive pagination. A failed multipart upload now logs the destination's status code instead of Got's error message, which names the full URL including any presigned query.
+- eaa3b7b: Return 400 instead of 500 when `/url/meta`, `/url/get` or the S3 multipart endpoints receive a request without a JSON body (Express 5 leaves `req.body` undefined).
+- da42c64: Box and Dropbox: report an unknown file size as unknown instead of `0` (Box) or `NaN` (Dropbox).
+
 ## 7.2.4
 
 ### Patch Changes

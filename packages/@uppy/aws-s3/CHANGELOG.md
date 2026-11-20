@@ -1,5 +1,16 @@
 # @uppy/aws-s3
 
+## 6.3.2
+
+### Patch Changes
+
+- dd31610: Document that `signRequest` should return `key` whenever the signing server
+  stores the object under a different key, even when you don't read the key back.
+  Without it, `upload-success` reports the requested key for a single-part `PUT`
+  but the key S3 echoes in `CompleteMultipartUploadResult` for a multipart upload,
+  so the same signer reports a different key depending on the file's size.
+- 6d5a1f5: Retry transient failures (network errors, 5xx, 429) of Companion requests in `companionEndpoint` mode, and expose the response status on the error via `error.request.status`.
+
 ## 6.3.1
 
 ### Patch Changes

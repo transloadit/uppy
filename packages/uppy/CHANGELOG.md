@@ -1,5 +1,19 @@
 # uppy
 
+## 6.0.9
+
+### Patch Changes
+
+- Updated dependencies [dd31610]
+- Updated dependencies [b2bb6f5]
+- Updated dependencies [6d5a1f5]
+- Updated dependencies [4c7fed6]
+- Updated dependencies [c520e83]
+- Updated dependencies [20d0e51]
+  - @uppy/aws-s3@6.3.2
+  - @uppy/core@6.4.0
+  - @uppy/screen-capture@6.0.4
+
 ## 6.0.8
 
 ### Patch Changes
