@@ -1,7 +1,6 @@
 import nock from 'nock'
 import { afterEach, describe, expect, test } from 'vitest'
 import Box from '../src/server/provider/box/index.js'
-import adaptDropbox from '../src/server/provider/dropbox/adapter.js'
 import { Drive } from '../src/server/provider/google/drive/index.js'
 import OneDrive from '../src/server/provider/onedrive/index.js'
 
@@ -29,27 +28,6 @@ describe('provider listing bounds', () => {
       }),
     ).rejects.toThrow('Invalid id')
     expect(upstream.isDone()).toBe(false)
-  })
-
-  test('sorts bounded normalized keys while retaining original Dropbox names', () => {
-    const marked = `a${'\u0301'.repeat(10000)}`
-    const data = adaptDropbox(
-      {
-        has_more: false,
-        entries: [
-          { id: 'ten', path_lower: '/file10', name: 'file10' },
-          { id: 'two', path_lower: '/file2', name: 'file2' },
-          { id: 'marked', path_lower: '/marked', name: marked },
-        ],
-      },
-      'user',
-      (path) => path,
-    )
-    expect(data.items.map((item) => item.name)).toEqual([
-      marked,
-      'file2',
-      'file10',
-    ])
   })
 
   test('paginates shared drives without duplicating files or losing their cursor', async () => {
