@@ -503,9 +503,96 @@ describe('afterOpenFolder()', () => {
     expect(getFile(newTree, '777').status).toEqual('unchecked')
     expect(getFile(newTree, '888').status).toEqual('unchecked')
   })
+
+  it('moves a child added before the listing into its listed position, keeping its state', () => {
+    const oldPartialTree: PartialTree = [
+      _root('ourRoot'),
+      _folder('2', { parentId: 'ourRoot', cached: false }),
+      // Added for breadcrumbs or a search result before '2' was listed.
+      _folder('2_2', {
+        parentId: '2',
+        cached: true,
+        status: 'checked',
+        data: { name: '2_2', icon: 'folder', isFolder: true },
+      }),
+      _file('elsewhere', { parentId: 'ourRoot' }),
+    ]
+
+    const newTree = afterOpenFolder(
+      oldPartialTree,
+      [_cFolder('2_1'), _cFolder('2_2'), _cFolder('2_3'), _cFile('elsewhere')],
+      getFolder(oldPartialTree, '2'),
+      null,
+      () => null,
+    )
+
+    expect(newTree.map((node) => node.id)).toEqual([
+      'ourRoot',
+      '2',
+      'elsewhere',
+      '2_1',
+      '2_2',
+      '2_3',
+    ])
+    expect(getFolder(newTree, '2_2')).toMatchObject({
+      cached: true,
+      status: 'checked',
+      data: _cFolder('2_2'),
+    })
+    expect(getFile(newTree, 'elsewhere').parentId).toEqual('ourRoot')
+  })
+
+  it('shows a child added before the listing after it when it is on a later page', () => {
+    const oldPartialTree: PartialTree = [
+      _root('ourRoot'),
+      _folder('2', { parentId: 'ourRoot', cached: false }),
+      _folder('2_3', { parentId: '2', cached: false }),
+    ]
+
+    const newTree = afterOpenFolder(
+      oldPartialTree,
+      [_cFolder('2_1'), _cFile('2_2')],
+      getFolder(oldPartialTree, '2'),
+      'page2',
+      () => null,
+    )
+
+    expect(newTree.map((node) => node.id)).toEqual([
+      'ourRoot',
+      '2',
+      '2_1',
+      '2_2',
+      '2_3',
+    ])
+  })
 })
 
 describe('afterScrollFolder()', () => {
+  it('does not duplicate a child that was added before its page loaded', () => {
+    const oldPartialTree: PartialTree = [
+      _root('ourRoot'),
+      _folder('2', { parentId: 'ourRoot', cached: true }),
+      _folder('2_2', { parentId: '2', cached: false }),
+      _folder('2_1', { parentId: '2', cached: false }),
+    ]
+
+    const newTree = afterScrollFolder(
+      oldPartialTree,
+      '2',
+      [_cFolder('2_2'), _cFolder('2_3')],
+      null,
+      () => null,
+    )
+
+    expect(newTree.map((node) => node.id)).toEqual([
+      'ourRoot',
+      '2',
+      '2_1',
+      '2_2',
+      '2_3',
+    ])
+  })
+
   it('scroll "checked" folder - all discovered files are marked as "checked"', () => {
     const oldPartialTree: PartialTree = [
       _root('ourRoot'),
