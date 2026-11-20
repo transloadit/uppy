@@ -158,8 +158,8 @@ export default function server(
 
   const sessionOptions: SessionOptions = {
     secret: companionOptions.secret,
-    resave: true,
-    saveUninitialized: true,
+    resave: false,
+    saveUninitialized: false,
   }
 
   const redisClient = redis.client({
@@ -184,8 +184,18 @@ export default function server(
     maxAge: 10 * 60 * 1000,
   }
 
+  // COMPANION_OAUTH_DOMAIN setups read the session on another subdomain.
   if (process.env['COMPANION_COOKIE_DOMAIN']) {
     cookieOptions.domain = process.env['COMPANION_COOKIE_DOMAIN']
+  }
+
+  if (companionOptions.server.protocol === 'https') {
+    // Secure whenever the request is seen as HTTPS (directly or through
+    // X-Forwarded-Proto). An unconditional Secure flag would make express-session
+    // silently drop the cookie behind a proxy that doesn't send that header.
+    sessionOptions.proxy = true
+    cookieOptions.secure = 'auto'
+    cookieOptions.sameSite = 'lax'
   }
 
   sessionOptions.cookie = cookieOptions

@@ -30,6 +30,10 @@ import s3 from './server/controllers/s3.js'
 import searchController from './server/controllers/search.js'
 import url from './server/controllers/url.js'
 import createEmitter from './server/emitter/index.js'
+import {
+  guardGrantInput,
+  requireOAuthNavigation,
+} from './server/helpers/oauth-boundaries.js'
 import { asRecord } from './server/helpers/type-guards.js'
 import { getURLBuilder } from './server/helpers/utils.js'
 import * as jobs from './server/jobs.js'
@@ -155,6 +159,17 @@ export function app(optionsArg: CompanionInitOptions): {
 
   app.get('/health', (_req, res) => res.end())
 
+  // A host app may already have inflated and parsed the body. Checking the
+  // encoding here is independent of whether our own parser consumes it.
+  app.use((req, res, next) => {
+    const encoding = req.get('content-encoding')
+    if (encoding && encoding.trim().toLowerCase() !== 'identity') {
+      res.sendStatus(415)
+      return
+    }
+    next()
+  })
+
   app.use(cookieParser()) // server tokens are added to cookies
 
   app.use((req, res, next) =>
@@ -172,7 +187,16 @@ export function app(optionsArg: CompanionInitOptions): {
   }> = (req, res, next) => {
     const { oauthProvider, override } = req.params
     // override === 'callback' is Grant's own callback URL, matched the way Grant matches it
-    if (override !== 'callback' || grantConfig[oauthProvider]?.oauth === 1) {
+    if (override !== 'callback') {
+      next()
+      return
+    }
+    const pendingProvider = req.session?.grant?.provider
+    if (pendingProvider && pendingProvider !== oauthProvider) {
+      res.sendStatus(400)
+      return
+    }
+    if (pendingProvider && grantConfig[pendingProvider]?.oauth === 1) {
       next()
       return
     }
@@ -194,7 +218,17 @@ export function app(optionsArg: CompanionInitOptions): {
   // See https://github.com/simov/grant#dynamic-http
   app.use(
     '/connect/:oauthProvider{/:override}',
-    express.urlencoded({ extended: false, inflate: false }),
+    express.urlencoded({
+      extended: false,
+      inflate: false,
+      limit: '8kb',
+      parameterLimit: 32,
+    }),
+    guardGrantInput((provider) =>
+      Object.hasOwn(grantConfig, provider) && provider !== 'defaults'
+        ? (grantConfig[provider]?.dynamic ?? [])
+        : undefined,
+    ),
     // before the credentials middleware, which fetches provider keys
     rejectUnstartedOAuthCallback,
     getCredentialsOverrideMiddleware(
@@ -244,6 +278,7 @@ export function app(optionsArg: CompanionInitOptions): {
   )
   app.get(
     '/:providerName/callback',
+    requireOAuthNavigation,
     middlewares.hasSessionAndProvider,
     middlewares.hasOAuthProvider,
     controllers.callback,
@@ -272,6 +307,7 @@ export function app(optionsArg: CompanionInitOptions): {
   )
   app.get(
     '/:providerName/send-token',
+    requireOAuthNavigation,
     middlewares.hasSessionAndProvider,
     middlewares.hasOAuthProvider,
     middlewares.verifyToken,
