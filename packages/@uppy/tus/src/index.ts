@@ -6,18 +6,20 @@ import type {
   Uppy,
   UppyFile,
 } from '@uppy/core'
-import { BasePlugin, EventManager } from '@uppy/core'
 import type { RequestClient } from '@uppy/core/companion-client'
+import type { LocalUppyFile } from '@uppy/core/utils'
+
+import { BasePlugin, EventManager } from '@uppy/core'
 import {
   filterFilesToEmitUploadStarted,
   filterFilesToUpload,
   getAllowedMetaFields,
   isNetworkError,
-  type LocalUppyFile,
   NetworkError,
   RateLimitedQueue,
 } from '@uppy/core/utils'
 import * as tus from 'tus-js-client'
+
 import packageJson from '../package.json' with { type: 'json' }
 import getFingerprint from './getFingerprint.js'
 
