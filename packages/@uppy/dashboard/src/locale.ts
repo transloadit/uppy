@@ -21,6 +21,7 @@ export default {
     back: 'Back',
     // Used as the screen reader label for buttons that remove a file.
     removeFile: 'Remove file',
+    removeFileWithFilename: 'Remove file %{file}',
     // Used as the screen reader label for buttons that open the metadata editor panel for a file.
     editFile: 'Edit file',
     editImage: 'Edit image',
@@ -41,12 +42,15 @@ export default {
     uploadPaused: 'Upload paused',
     // Used as the hover text and screen reader label for the buttons to resume paused uploads.
     resumeUpload: 'Resume upload',
+    resumeUploadWithFilename: 'Resume upload %{file}',
     // Used as the hover text and screen reader label for the buttons to pause uploads.
     pauseUpload: 'Pause upload',
+    pauseUploadWithFilename: 'Pause upload %{file}',
     // Used as the hover text and screen reader label for the buttons to retry failed uploads.
     retryUpload: 'Retry upload',
     // Used as the hover text and screen reader label for the buttons to cancel uploads.
     cancelUpload: 'Cancel upload',
+    cancelUploadWithFilename: 'Cancel upload %{file}',
     // Used in a title, how many files are currently selected
     xFilesSelected: {
       0: '%{smart_count} file selected',
@@ -66,6 +70,7 @@ export default {
     editFileWithFilename: 'Edit file %{file}',
     save: 'Save',
     cancel: 'Cancel',
+    cancelAllUploads: 'Cancel all uploads',
     dropPasteFiles: 'Drop files here or %{browseFiles}',
     dropPasteFolders: 'Drop files here or %{browseFolders}',
     dropPasteBoth: 'Drop files here, %{browseFiles} or %{browseFolders}',
@@ -104,8 +109,10 @@ export default {
     retry: 'Retry',
     // Used as the label for the button that pauses an upload.
     pause: 'Pause',
+    pauseAllUploads: 'Pause all uploads',
     // Used as the label for the button that resumes an upload.
     resume: 'Resume',
+    resumeAllUploads: 'Resume all uploads',
     // Used as the label for the button that resets the upload state after an upload
     done: 'Done',
     // When `hideProgressDetails` is set to false, shows the number of files that have been fully uploaded so far.
