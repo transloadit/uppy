@@ -10,7 +10,7 @@ import type {
 import type { CompanionPluginOptions } from './index.js'
 import type { RequestOptions } from './RequestClient.js'
 
-import { getErrorMessage, getSocketHost, randomUUID } from '../utils/index.js'
+import { getErrorMessage, getSocketHost } from '../utils/index.js'
 import { isAuthError } from './AuthError.js'
 import RequestClient, { authErrorStatusCode } from './RequestClient.js'
 
@@ -201,7 +201,7 @@ export default class Provider<
     // (We cannot wait until the websocket connection is established).
     // This opens up a race condtition if the websocket is not connected before the user
     // completes(or cancels) authentication, but that’s a small compromose we gotta make.
-    const authCallbackToken = randomUUID()
+    const authCallbackToken = crypto.randomUUID()
 
     const link = this.authUrl({
       query: { uppyVersions },
