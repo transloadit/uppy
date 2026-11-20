@@ -65,17 +65,20 @@ describe('Companion self-identification', () => {
     '//relative.example',
     'not a URL',
     'https://user:password@instance.test',
-  ])('ignores unsafe i-am value %s and retains the last valid instance', async (value) => {
-    using uppy = new Uppy()
-    const client = new RequestClient(uppy, {
-      companionUrl: 'https://companion.test',
-    })
-    serveIAm('https://instance.test/companion', value)
-    await client.get('test')
-    expect(client.hostname).toBe('https://instance.test/companion')
-    await client.get('test')
-    expect(client.hostname).toBe('https://instance.test/companion')
-  })
+  ])(
+    'ignores unsafe i-am value %s and retains the last valid instance',
+    async (value) => {
+      using uppy = new Uppy()
+      const client = new RequestClient(uppy, {
+        companionUrl: 'https://companion.test',
+      })
+      serveIAm('https://instance.test/companion', value)
+      await client.get('test')
+      expect(client.hostname).toBe('https://instance.test/companion')
+      await client.get('test')
+      expect(client.hostname).toBe('https://instance.test/companion')
+    },
+  )
 
   it('keeps sticky HTTP(S) instances and path prefixes', async () => {
     using uppy = new Uppy()
