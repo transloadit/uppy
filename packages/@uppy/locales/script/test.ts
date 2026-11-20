@@ -1,30 +1,50 @@
+import type { Locale } from '@uppy/core/utils'
+
 import fs from 'node:fs'
 import { glob } from 'node:fs/promises'
 import path from 'node:path'
 import process from 'node:process'
 import { fileURLToPath } from 'node:url'
 import { styleText } from 'node:util'
-import type { Locale } from '@uppy/core/utils'
+
 import { getLocales, localeNameFromLocalePath, omit } from './helpers.ts'
 
 const root = fileURLToPath(new URL('../../../../', import.meta.url))
 const leadingLocaleName = 'en_US'
 // Node strips types when importing `.ts`, so the modes that compare language
 // packs read `src/` and stay independent of `yarn build`. (`unused` still needs
-// `lib/`, but of the *plugin* packages, to scan their compiled code for i18n calls.)
+// `lib/`, but of the *plugin* packages, to look for each key in their compiled code.)
 const localePackGlob = `${root}/packages/@uppy/locales/src/*.ts`
 const mode = process.argv[2]
 const verbose = process.argv.includes('--verbose')
+// Locale keys of the package on the left that code in the listed packages uses.
 const pluginLocaleDependencies: Record<string, string[]> = {
-  core: ['provider-views', 'companion-client'],
+  'status-bar': ['core'],
+}
+// Keys no code uses today. Removing them changes the public `Locale` types, so
+// they are listed here until that is done; an entry that becomes used fails.
+const knownUnusedKeys: Record<string, string[]> = {
+  audio: ['recordingLength'],
+  core: [
+    'emptyFolderAdded',
+    'folderAdded',
+    'folderAlreadyAdded',
+    'logIn',
+    'resetSearch',
+  ],
+  transloadit: ['creatingAssembly'],
+  webcam: ['recordingLength'],
 }
 
 function getAllFilesPerPlugin(pluginNames: string[]) {
   const filesPerPlugin: Record<string, string[]> = {}
 
   function getFiles(name: string) {
-    return fs
-      .globSync(`${root}/packages/@uppy/${name}/lib/**/*.js`)
+    const files = fs.globSync(`${root}/packages/@uppy/${name}/lib/**/*.js`)
+    if (files.length === 0) {
+      throw new Error(`@uppy/${name} has no lib/: run \`yarn build\` first`)
+    }
+    return files
       .filter((filePath) => !filePath.includes('locale.js'))
       .map((filePath) => fs.readFileSync(filePath, 'utf-8'))
   }
@@ -43,6 +63,7 @@ function getAllFilesPerPlugin(pluginNames: string[]) {
 }
 
 async function unused(filesPerPlugin: Record<string, string[]>) {
+  const problems: string[] = []
   for (const [name, fileStrings] of Object.entries(filesPerPlugin)) {
     const fileString = fileStrings.join('\n')
     const localePath = path.join(
@@ -51,21 +72,29 @@ async function unused(filesPerPlugin: Record<string, string[]>) {
       '@uppy',
       name,
       'src',
-      'locale.js',
+      'locale.ts',
     )
     const locale = (await import(localePath)).default
+    const allowed = knownUnusedKeys[name] ?? []
 
     for (const key of Object.keys(locale.strings)) {
-      const regPat = new RegExp(
-        `(i18n|i18nArray)\\([^\\)]*['\`"]${key}['\`"]`,
-        'g',
-      )
-      if (!fileString.match(regPat)) {
-        return Promise.reject(
-          new Error(`Unused locale key "${key}" in @uppy/${name}`),
+      // Keys are also passed through variables and error-code maps, not only
+      // to i18n() directly, so any string literal naming the key counts.
+      const used = new RegExp(`['\`"]${key}['\`"]`).test(fileString)
+      if (!used && !allowed.includes(key)) {
+        problems.push(`Unused locale key "${key}" in @uppy/${name}`)
+      } else if (used && allowed.includes(key)) {
+        problems.push(
+          `Locale key "${key}" in @uppy/${name} is used: remove it from knownUnusedKeys`,
         )
       }
     }
+  }
+
+  if (problems.length) {
+    throw new Error(
+      `\n${problems.join('\n')}\n\n${problems.length} problem(s): remove unused keys from the package's locale.ts, or list them in knownUnusedKeys`,
+    )
   }
 }
 
@@ -286,7 +315,7 @@ function placeholders({ leadingLocale, followerLocales }: LocaleWithLeading) {
 async function test() {
   switch (mode) {
     case 'unused': {
-      const paths = glob(`${root}/packages/@uppy/**/src/locale.js`)
+      const paths = glob(`${root}/packages/@uppy/**/src/locale.ts`)
 
       await unused(
         getAllFilesPerPlugin(

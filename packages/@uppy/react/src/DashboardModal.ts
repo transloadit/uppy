@@ -1,7 +1,10 @@
 import type { Body, Meta, Uppy } from '@uppy/core'
-import DashboardPlugin, { type DashboardOptions } from '@uppy/dashboard'
+import type { DashboardOptions } from '@uppy/dashboard'
 import type React from 'react'
+
+import DashboardPlugin from '@uppy/dashboard'
 import { Component, createElement as h } from 'react'
+
 import getHTMLProps from './getHTMLProps.js'
 import nonHtmlPropsHaveChanged from './nonHtmlPropsHaveChanged.js'
 

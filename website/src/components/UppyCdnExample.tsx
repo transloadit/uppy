@@ -1,7 +1,8 @@
+import type { ReactNode } from 'react'
+
 import Admonition from '@theme/Admonition'
 import CodeBlock from '@theme/CodeBlock'
 import dedent from 'dedent'
-import type { ReactNode } from 'react'
 import packageJson from 'uppy/package.json'
 
 const { version: uppyVersion } = packageJson

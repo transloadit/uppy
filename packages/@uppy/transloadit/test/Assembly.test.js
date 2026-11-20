@@ -1,5 +1,6 @@
 import { RateLimitedQueue } from '@uppy/core/utils'
 import { afterEach, describe, expect, it, vi } from 'vitest'
+
 import Assembly from '../lib/Assembly.js'
 
 describe('Transloadit/Assembly', () => {
