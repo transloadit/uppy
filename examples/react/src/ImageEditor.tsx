@@ -1,4 +1,5 @@
 import type { UppyFile } from '@uppy/core'
+
 import { useImageEditor } from '@uppy/react'
 
 interface ImageEditorProps {

@@ -1,5 +1,6 @@
 import fs from 'node:fs'
 import path from 'node:path'
+
 import * as companion from '@uppy/companion'
 import bodyParser from 'body-parser'
 import cors from 'cors'

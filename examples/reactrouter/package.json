@@ -24,7 +24,7 @@
     "isbot": "^5.1.40",
     "react": "^19.3.0",
     "react-dom": "^19.3.0",
-    "react-router": "^8.4.0"
+    "react-router": "^8.5.1"
   },
   "devDependencies": {
     "@react-router/dev": "^8.4.0",
