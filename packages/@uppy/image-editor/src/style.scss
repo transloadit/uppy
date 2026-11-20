@@ -2,14 +2,12 @@
 @use 'inputrange' with (
   $track-color: rgba(#fff, 0.2),
   $thumb-color: #fff,
-
   $thumb-radius: 9px,
   $thumb-height: 16px,
   $thumb-width: 16px,
   $thumb-shadow-size: 0,
   $thumb-border-width: 0,
   $thumb-border-color: transparent,
-
   // If you change this `$track-height`, also change `::-moz-range-track` way below
   $track-height: 4px,
   $track-shadow-size: 0,
@@ -122,7 +120,7 @@
     50% / 16px 16px;
   [data-uppy-theme='dark'] & {
     background: repeating-conic-gradient(rgb(43, 42, 42) 0% 25%, black 0% 50%)
-      50%/16px 16px;
+      50% / 16px 16px;
   }
 }
 

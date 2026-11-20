@@ -1,6 +1,10 @@
-import { type Mock, vi } from 'vitest'
-import UIPlugin from '../../lib/UIPlugin.js'
+import type { Mock } from 'vitest'
+
 import type Uppy from '../../lib/Uppy.js'
+
+import { vi } from 'vitest'
+
+import UIPlugin from '../../lib/UIPlugin.js'
 
 type mock = Mock<(...args: any[]) => any>
 
