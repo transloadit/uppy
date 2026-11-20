@@ -1,7 +1,7 @@
 {
   "name": "@uppy/angular",
   "description": "Angular component wrappers around Uppy's official UI plugins.",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "license": "MIT",
   "homepage": "https://uppy.io",
   "keywords": [
@@ -46,14 +46,14 @@
     }
   },
   "devDependencies": {
-    "@angular/common": "^22.2.3",
-    "@angular/compiler": "^22.2.3",
-    "@angular/compiler-cli": "^22.2.3",
-    "@angular/core": "^22.2.3",
-    "@angular/platform-browser": "^22.2.3",
+    "@angular/common": "^22.2.6",
+    "@angular/compiler": "^22.2.6",
+    "@angular/compiler-cli": "^22.2.6",
+    "@angular/core": "^22.2.6",
+    "@angular/platform-browser": "^22.2.6",
     "@uppy-dev/tsconfig": "workspace:^",
     "@vitest/browser-playwright": "^5.0.5",
-    "ng-packagr": "^22.2.5",
+    "ng-packagr": "^22.2.6",
     "playwright": "1.64.1",
     "rxjs": "~7.8.0",
     "typescript": "^6.0.3",

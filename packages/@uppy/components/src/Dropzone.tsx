@@ -1,7 +1,9 @@
+import type { NonNullableUppyContext, UppyContext } from './types.js'
+
 import { useMemo } from '@uppy/core/utils/preact/hooks'
 import { clsx } from 'clsx'
+
 import { createDropzone } from './hooks/dropzone.js'
-import type { NonNullableUppyContext, UppyContext } from './types.js'
 
 export type DropzoneProps = {
   width?: string

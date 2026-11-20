@@ -1,13 +1,12 @@
-import {
-  createDropzone,
-  type DropzoneOptions,
-  type DropzoneReturn,
-} from '@uppy/components'
+import type { DropzoneOptions, DropzoneReturn } from '@uppy/components'
 import type {
   ChangeEvent as ReactChangeEvent,
   DragEvent as ReactDragEvent,
 } from 'react'
+
+import { createDropzone } from '@uppy/components'
 import { useMemo } from 'react'
+
 import { useUppyContext } from './headless/UppyContextProvider.js'
 
 type TDragEvent = DragEvent & ReactDragEvent<HTMLDivElement>
