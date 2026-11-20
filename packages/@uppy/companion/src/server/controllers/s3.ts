@@ -18,8 +18,9 @@ import { GetFederationTokenCommand, STSClient } from '@aws-sdk/client-sts'
 import { createPresignedPost } from '@aws-sdk/s3-presigned-post'
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner'
 import express from 'express'
+import { z } from 'zod'
 
-import { asRecord, isRecord } from '../helpers/type-guards.js'
+import { asRecord } from '../helpers/type-guards.js'
 import {
   getBucket,
   rfc2047EncodeMetadata,
@@ -33,6 +34,28 @@ const maxBatchPartNumbers = 100
 /** An integer from 1 to 10000, the part numbers S3 accepts. */
 const isPartNumber = (value: string) =>
   /^[1-9]\d{0,4}$/.test(value) && Number(value) <= 10000
+
+const requiredString = z.string().min(1)
+const partNumberSchema = z.string().refine(isPartNumber)
+// Non-string values are left out when the metadata becomes S3 fields.
+const metadataSchema = z.record(z.string(), z.unknown()).catch({})
+// Parts are passed on to S3 as they are, so keep any other fields (checksums).
+const partsSchema = z.array(
+  z.looseObject({ PartNumber: z.number(), ETag: z.string() }),
+)
+
+/** `value` parsed with `schema`, or undefined after answering 400 with `error`. */
+function parseInput<T>(
+  schema: z.ZodType<T>,
+  value: unknown,
+  res: Response,
+  error: string,
+): T | undefined {
+  const parsed = schema.safeParse(value)
+  if (parsed.success) return parsed.data
+  res.status(400).json({ error })
+  return undefined
+}
 
 // Listings that need more than one ListParts page (over 1000 parts) take one
 // of these process-wide slots for their remaining pages, so at most this many
@@ -315,19 +338,20 @@ export default function s3(
   ): { client: S3Client; uploadId: string; key: string } | undefined {
     const client = getS3Client(req, res)
     if (!client) return undefined
-    const uploadId = req.params['uploadId']
-    const key = req.query['key']
-    if (typeof uploadId !== 'string' || uploadId.length === 0) {
-      res.status(400).json({ error: 's3: uploadId must be provided.' })
-      return undefined
-    }
-    if (typeof key !== 'string') {
-      res.status(400).json({
-        error:
-          's3: the object key must be passed as a query parameter. For example: "?key=abc.jpg"',
-      })
-      return undefined
-    }
+    const uploadId = parseInput(
+      requiredString,
+      req.params['uploadId'],
+      res,
+      's3: uploadId must be provided.',
+    )
+    if (uploadId == null) return undefined
+    const key = parseInput(
+      z.string(),
+      req.query['key'],
+      res,
+      's3: the object key must be passed as a query parameter. For example: "?key=abc.jpg"',
+    )
+    if (key == null) return undefined
     return { client, uploadId, key }
   }
 
@@ -354,19 +378,14 @@ export default function s3(
     const client = getS3Client(req, res, true)
     if (!client) return
 
-    const filename = req.query['filename']
-    const metadata = isRecord(req.query['metadata'])
-      ? req.query['metadata']
-      : {}
-
-    // Validate filename is provided and non-empty
-    if (typeof filename !== 'string' || filename === '') {
-      res.status(400).json({
-        error:
-          's3: the "filename" query parameter is required and must be a non-empty string',
-      })
-      return
-    }
+    const filename = parseInput(
+      requiredString,
+      req.query['filename'],
+      res,
+      's3: the "filename" query parameter is required and must be a non-empty string',
+    )
+    if (filename == null) return
+    const metadata = metadataSchema.parse(req.query['metadata'])
 
     const truncatedFilename = truncateFilename(
       filename,
@@ -389,11 +408,10 @@ export default function s3(
       return
     }
 
+    const type = req.query['type']
     const fields: Record<string, string> = {
       success_action_status: '201',
-      ...(typeof req.query['type'] === 'string' && {
-        'content-type': req.query['type'],
-      }),
+      ...(typeof type === 'string' && { 'content-type': type }),
     }
 
     if (config.acl != null) fields['acl'] = config.acl
@@ -452,18 +470,15 @@ export default function s3(
     const client = getS3Client(req, res)
     if (!client) return
 
-    const { type, filename, metadata: maybeMetadata } = asRecord(req.body)
-
-    const metadata = isRecord(maybeMetadata) ? maybeMetadata : {}
-
-    // Validate filename is provided and non-empty
-    if (typeof filename !== 'string' || filename === '') {
-      res.status(400).json({
-        error:
-          's3: the "filename" field is required and must be a non-empty string',
-      })
-      return
-    }
+    const body = asRecord(req.body)
+    const filename = parseInput(
+      requiredString,
+      body['filename'],
+      res,
+      's3: the "filename" field is required and must be a non-empty string',
+    )
+    if (filename == null) return
+    const metadata = metadataSchema.parse(body['metadata'])
 
     const truncatedFilename = truncateFilename(
       filename,
@@ -485,10 +500,13 @@ export default function s3(
       })
       return
     }
-    if (typeof type !== 'string') {
-      res.status(400).json({ error: 's3: content type must be a string' })
-      return
-    }
+    const type = parseInput(
+      z.string(),
+      body['type'],
+      res,
+      's3: content type must be a string',
+    )
+    if (type == null) return
     // S3 applies `conditions` to /s3/params uploads only, so check what we can.
     if (!contentTypeAllowed(config.conditions, type)) {
       res.status(400).json({ error: 's3: this content type is not allowed' })
@@ -558,13 +576,13 @@ export default function s3(
     if (!target) return
     const { client, uploadId, key } = target
 
-    const partNumber = req.params['partNumber']
-    if (typeof partNumber !== 'string' || !parseInt(partNumber, 10)) {
-      res.status(400).json({
-        error: 's3: the part number must be a number between 1 and 10000.',
-      })
-      return
-    }
+    const partNumber = parseInput(
+      partNumberSchema,
+      req.params['partNumber'],
+      res,
+      's3: the part number must be a number between 1 and 10000.',
+    )
+    if (partNumber == null) return
 
     const bucket = getBucket({ bucketOrFn: config.bucket, req })
 
@@ -605,14 +623,13 @@ export default function s3(
     if (!target) return
     const { client, uploadId, key } = target
 
-    const partNumbers = req.query['partNumbers']
-    if (typeof partNumbers !== 'string') {
-      res.status(400).json({
-        error:
-          's3: the part numbers must be passed as a comma separated query parameter. For example: "?partNumbers=4,6,7,21"',
-      })
-      return
-    }
+    const partNumbers = parseInput(
+      z.string(),
+      req.query['partNumbers'],
+      res,
+      's3: the part numbers must be passed as a comma separated query parameter. For example: "?partNumbers=4,6,7,21"',
+    )
+    if (partNumbers == null) return
 
     const partNumbersArray = partNumbers.split(',')
     // Signing is synchronous CPU work, so a long list would block the event loop.
@@ -756,21 +773,13 @@ export default function s3(
     if (!target) return
     const { client, uploadId, key } = target
 
-    const { parts } = asRecord(req.body)
-    if (
-      !Array.isArray(parts) ||
-      !parts.every(
-        (part) =>
-          typeof part === 'object' &&
-          typeof part?.PartNumber === 'number' &&
-          typeof part.ETag === 'string',
-      )
-    ) {
-      res.status(400).json({
-        error: 's3: `parts` must be an array of {ETag, PartNumber} objects.',
-      })
-      return
-    }
+    const parts = parseInput(
+      partsSchema,
+      asRecord(req.body)['parts'],
+      res,
+      's3: `parts` must be an array of {ETag, PartNumber} objects.',
+    )
+    if (parts == null) return
 
     const bucket = getBucket({ bucketOrFn: config.bucket, req })
     const input = { Bucket: bucket, Key: key, UploadId: uploadId }

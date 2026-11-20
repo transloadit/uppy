@@ -101,6 +101,77 @@ describe('batchSignPartsUpload', () => {
   )
 })
 
+describe('signPartUpload', () => {
+  const sign = (partNumber: string) =>
+    request(makeApp())
+      .get(`/s3/multipart/upload-1/${partNumber}`)
+      .query({ key: 'a.jpg' })
+
+  test('signs a part number', async () => {
+    const res = await sign('10000').expect(200)
+    expect(res.body.url).toEqual(expect.any(String))
+  })
+
+  test.each(['0', '10001', '20000', '5abc', '01'])(
+    'refuses part number %j',
+    async (partNumber) => {
+      const res = await sign(partNumber).expect(400)
+      expect(res.body.error).toBe(
+        's3: the part number must be a number between 1 and 10000.',
+      )
+    },
+  )
+})
+
+describe('request input', () => {
+  test('refuses a missing object key with the same message as before', async () => {
+    const res = await request(makeApp())
+      .get('/s3/multipart/upload-1/1')
+      .expect(400)
+    expect(res.body.error).toBe(
+      's3: the object key must be passed as a query parameter. For example: "?key=abc.jpg"',
+    )
+  })
+
+  test('refuses malformed parts on complete', async () => {
+    const res = await request(makeApp())
+      .post('/s3/multipart/upload-1/complete')
+      .query({ key: 'a.jpg' })
+      .send({ parts: [{ PartNumber: '1', ETag: 'x' }] })
+      .expect(400)
+    expect(res.body.error).toBe(
+      's3: `parts` must be an array of {ETag, PartNumber} objects.',
+    )
+  })
+
+  test('passes extra part fields such as checksums on to S3', async () => {
+    const { send } = fakeS3()
+    await request(makeApp(send))
+      .post('/s3/multipart/upload-1/complete')
+      .query({ key: 'a.jpg' })
+      .send({
+        parts: [{ PartNumber: 1, ETag: 'x', ChecksumCRC32: 'AAAAAA==' }],
+      })
+      .expect(200)
+    const complete = send.mock.calls
+      .map(([cmd]) => cmd)
+      .find((cmd) => cmd instanceof CompleteMultipartUploadCommand)
+    expect(complete?.input['MultipartUpload']).toEqual({
+      Parts: [{ PartNumber: 1, ETag: 'x', ChecksumCRC32: 'AAAAAA==' }],
+    })
+  })
+
+  test('refuses a create request without a filename', async () => {
+    const res = await request(makeApp())
+      .post('/s3/multipart')
+      .send({ type: 'image/jpeg' })
+      .expect(400)
+    expect(res.body.error).toBe(
+      's3: the "filename" field is required and must be a non-empty string',
+    )
+  })
+})
+
 /**
  * ListParts for uploads with ids ending in `-<pages>`, one part per page. With
  * `hold`, pages from `holdFrom` on wait until `release(uploadId)`, or reject
