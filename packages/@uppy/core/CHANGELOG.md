@@ -1,5 +1,18 @@
 # @uppy/core
 
+## 6.4.0
+
+### Minor Changes
+
+- 20d0e51: Expose the Preact automatic runtime.
+
+### Patch Changes
+
+- b2bb6f5: Ignore a Companion `i-am` header that isn't an absolute HTTP(S) URL without credentials, since it becomes the base URL of the OAuth popup.
+- 4c7fed6: S3: opening a granted deep folder such as `tenant/photos/2026/` now lists only that folder instead of the root and every folder above it. Empty or missing folders are still checked against their parent's listing, so a stale link still stops at the nearest existing folder. A path outside the grant shows the root.
+  
+  Remote providers: a folder that was added to the tree before its parent was listed (for its breadcrumbs or as a search result) now appears in the parent's listing order once the parent is opened, and no longer appears twice when it is on a later page.
+
 ## 6.3.2
 
 ### Patch Changes
