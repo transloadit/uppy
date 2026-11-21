@@ -615,9 +615,23 @@ describe('Transloadit', () => {
       'https://api2-us-east-1.transloadit.com/companion/',
       'https://api2-us-east-1.transloadit.com/companion',
     ],
+    [
+      'https://api2-eu-west-1.transloadit.com/companion',
+      'https://api2-eu-west-1.transloadit.com/companion',
+      'https://api2-us-east-1.transloadit.com/companion',
+    ],
+    [
+      'https://api2-eu-west-1.transloadit.com/companion/',
+      'https://api2-eu-west-1.transloadit.com/companion',
+      'https://api2-us-east-1.transloadit.com/companion/',
+    ],
   ])(
     "reroutes remote files to companion_url %s only if it is Transloadit's",
-    async (companionUrl, expected) => {
+    async (companionUrl, expected, startUrl = 'https://api2.transloadit.com/companion') => {
+      // Keep the Assembly offline: no EventSource, status polling or error beacon
+      using _connect = vi
+        .spyOn(Assembly.prototype, 'connect')
+        .mockImplementation(() => {})
       using uppy = new Core()
       uppy.use(Transloadit, {
         assemblyOptions: {
@@ -635,6 +649,8 @@ describe('Transloadit', () => {
           tus_url: 'https://api2.transloadit.com/resumable/files/',
           companion_url: companionUrl,
         })
+      uppy.getPlugin('Transloadit').client.cancelAssembly = () =>
+        Promise.resolve()
       const id = uppy.addFile({
         source: 'Dropbox',
         name: 'remote.txt',
@@ -642,18 +658,22 @@ describe('Transloadit', () => {
         isRemote: true,
         remote: {
           requestClientId: 'companion',
-          companionUrl: 'https://api2.transloadit.com/companion',
-          url: 'https://api2.transloadit.com/companion/dropbox/get/x',
+          companionUrl: startUrl,
+          url: `${startUrl.replace(/\/$/, '')}/dropbox/get/x`,
         },
       })
 
-      const created = new Promise((resolve) =>
-        uppy.once('transloadit:assembly-created', resolve),
+      // Fires right before #prepareUpload stores and connects the Assembly, so
+      // cancelAll() below sees it.
+      const prepared = new Promise((resolve) =>
+        uppy.once('preprocess-complete', resolve),
       )
       uppy.upload().catch(() => {})
-      await created
+      await prepared
 
-      expect(uppy.getFile(id).remote.companionUrl).toBe(expected)
+      const { remote } = uppy.getFile(id)
+      expect(remote.companionUrl).toBe(expected)
+      expect(remote.url).toBe(`${expected}/dropbox/get/x`)
       uppy.cancelAll()
     },
   )
