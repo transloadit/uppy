@@ -15,6 +15,7 @@ test('keeps the successful callback popup open for token delivery and closes fai
   )
   function load(html: string) {
     const ready: (() => void)[] = []
+    const timers: { handler: () => void; delay: number }[] = []
     const close = vi.fn()
     for (const [, script] of html.matchAll(/<script>([\s\S]*?)<\/script>/g)) {
       if (script == null) throw new Error('Missing inline script')
@@ -24,13 +25,23 @@ test('keeps the successful callback popup open for token delivery and closes fai
           addEventListener: (_name: string, handler: () => void) =>
             ready.push(handler),
         },
+        setTimeout: (handler: () => void, delay: number) =>
+          timers.push({ handler, delay }),
       })
     }
     for (const handler of ready) handler()
-    return close
+    return { close, timers }
   }
-  expect(load(authCallbackSuccessHtml())).not.toHaveBeenCalled()
-  expect(load(authCallbackErrorHtml())).toHaveBeenCalledOnce()
+  const success = load(authCallbackSuccessHtml())
+  expect(success.close).not.toHaveBeenCalled()
+  const error = load(authCallbackErrorHtml())
+  expect(error.close).toHaveBeenCalledOnce()
+  expect(error.timers).toEqual([])
+
+  // Falls back to closing itself after a minute, in case the opener is gone.
+  expect(success.timers.map(({ delay }) => delay)).toEqual([60_000])
+  for (const { handler } of success.timers) handler()
+  expect(success.close).toHaveBeenCalledOnce()
 })
 
 describe('test authentication callback', () => {
