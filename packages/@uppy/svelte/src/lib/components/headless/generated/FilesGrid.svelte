@@ -29,6 +29,11 @@
       )
     }
   })
+
+  $effect(() => {
+    const node = container
+    return () => preactRender(null, node)
+  })
 </script>
 
 <div bind:this={container}></div>

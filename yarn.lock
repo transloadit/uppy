@@ -257,21 +257,21 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@angular-devkit/architect@npm:0.2202.6":
-  version: 0.2202.6
-  resolution: "@angular-devkit/architect@npm:0.2202.6"
+"@angular-devkit/architect@npm:0.2202.7":
+  version: 0.2202.7
+  resolution: "@angular-devkit/architect@npm:0.2202.7"
   dependencies:
-    "@angular-devkit/core": "npm:22.2.6"
+    "@angular-devkit/core": "npm:22.2.7"
     rxjs: "npm:7.8.2"
   bin:
     architect: bin/cli.js
-  checksum: 10/4134c2bcfc5ce0c29663414205afa58e7661e44d2167a0209b46122356ffcf7459d70beb9bdfc97c9453733eab398c5d2a458c0631b17e377050fdabc1d2bbfb
+  checksum: 10/c07677f9f01878aece5a13a83549f8251b20f34e502d85087f024841b4f59fa1e5323ab117ee6ce5e640d65e97c4285e6dfaf2276269d63435f5332a44f2d597
   languageName: node
   linkType: hard
 
-"@angular-devkit/core@npm:22.2.6":
-  version: 22.2.6
-  resolution: "@angular-devkit/core@npm:22.2.6"
+"@angular-devkit/core@npm:22.2.7":
+  version: 22.2.7
+  resolution: "@angular-devkit/core@npm:22.2.7"
   dependencies:
     ajv: "npm:8.20.0"
     ajv-formats: "npm:3.0.1"
@@ -284,29 +284,29 @@ __metadata:
   peerDependenciesMeta:
     chokidar:
       optional: true
-  checksum: 10/a86f109b90a362a39f158f4e98e9e7b2c37eb9cb030aa77201740aafa8d6b9cd2188bb9dc020585e01e9af65c4dbdfa9ebd2d2d3f19e53c68c3d096b20ded943
+  checksum: 10/f22ad850dd75d641e879ef9b9211552bea7b1dfb052db17bd0fe4f4dbbba7a45581e30ae46f335d20dd51b4058fc46300122927b6f66764d4efccfa4d5bf1361
   languageName: node
   linkType: hard
 
-"@angular-devkit/schematics@npm:22.2.6":
-  version: 22.2.6
-  resolution: "@angular-devkit/schematics@npm:22.2.6"
+"@angular-devkit/schematics@npm:22.2.7":
+  version: 22.2.7
+  resolution: "@angular-devkit/schematics@npm:22.2.7"
   dependencies:
-    "@angular-devkit/core": "npm:22.2.6"
+    "@angular-devkit/core": "npm:22.2.7"
     jsonc-parser: "npm:3.3.1"
     magic-string: "npm:1.4.1"
     ora: "npm:9.4.1"
     rxjs: "npm:7.8.2"
-  checksum: 10/2d1a2d21ffcb5a7f3d38bd7f91a6bf4be01e6d3696a5dcf35dc699522ecf1dc49a89ab549d6aac05537cc30dfb7cae52247c31206424a18cab53679bce0301cd
+  checksum: 10/5c0e7af44afd467331d9d796f9a469631bb60f8dcafea3a2b9d0b6693ae4a3328f199ced4315c94463e6d9ed68168d768c32438b2b8393d2622185f023517370
   languageName: node
   linkType: hard
 
-"@angular/build@npm:^22.2.6":
-  version: 22.2.6
-  resolution: "@angular/build@npm:22.2.6"
+"@angular/build@npm:^22.2.7":
+  version: 22.2.7
+  resolution: "@angular/build@npm:22.2.7"
   dependencies:
     "@ampproject/remapping": "npm:2.3.0"
-    "@angular-devkit/architect": "npm:0.2202.6"
+    "@angular-devkit/architect": "npm:0.2202.7"
     "@babel/core": "npm:8.0.5"
     "@inquirer/confirm": "npm:6.3.2"
     "@oxc-parser/binding-wasm32-wasi": "npm:0.156.0"
@@ -342,7 +342,7 @@ __metadata:
     "@angular/platform-browser": ^22.0.0
     "@angular/platform-server": ^22.0.0
     "@angular/service-worker": ^22.0.0
-    "@angular/ssr": ^22.2.6
+    "@angular/ssr": ^22.2.7
     istanbul-lib-instrument: ^6.0.0
     karma: ^6.4.0
     less: ^4.2.0
@@ -387,21 +387,21 @@ __metadata:
       optional: true
     vitest:
       optional: true
-  checksum: 10/da00f6724868cc721112be6a109221d85ed393b870c4ede30a579882fa7e8272735a55332bce7010139b58c903b9653ad80a999b0e6a1ea4674c9d73f3809bf3
+  checksum: 10/65ed28907dfca301866f0de77c59385822e5d159f8a61ea032d16c6f4b7baaec885bbef2ee544b40da98aad1822d96c10d3831deca055798c93bb673145cc620
   languageName: node
   linkType: hard
 
-"@angular/cli@npm:^22.2.6":
-  version: 22.2.6
-  resolution: "@angular/cli@npm:22.2.6"
+"@angular/cli@npm:^22.2.7":
+  version: 22.2.7
+  resolution: "@angular/cli@npm:22.2.7"
   dependencies:
-    "@angular-devkit/architect": "npm:0.2202.6"
-    "@angular-devkit/core": "npm:22.2.6"
-    "@angular-devkit/schematics": "npm:22.2.6"
+    "@angular-devkit/architect": "npm:0.2202.7"
+    "@angular-devkit/core": "npm:22.2.7"
+    "@angular-devkit/schematics": "npm:22.2.7"
     "@inquirer/prompts": "npm:8.7.2"
     "@listr2/prompt-adapter-inquirer": "npm:4.2.7"
     "@modelcontextprotocol/server": "npm:2.3.1"
-    "@schematics/angular": "npm:22.2.6"
+    "@schematics/angular": "npm:22.2.7"
     jsonc-parser: "npm:3.3.1"
     listr2: "npm:11.1.0"
     npm-package-arg: "npm:14.0.0"
@@ -411,7 +411,7 @@ __metadata:
     zod: "npm:4.6.6"
   bin:
     ng: bin/ng.js
-  checksum: 10/314a8527386e03aead4b6e6ba308dfb8ea248893c98620b5bd3bc9e8573d9216a966ddca1db5631c1ed2a2835480bf50466d685ab6670ed23937b5acf88248d6
+  checksum: 10/2a9635c589842ebb0daf4ba14366140e1848e48e2ac353a7388bad98d6cb93a2c1244f29915277a494fe001b28a6d7d7d8da7c05355ca336a5d5254d41daaa31
   languageName: node
   linkType: hard
 
@@ -508,9 +508,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@aws-sdk/client-s3@npm:3.1167.0, @aws-sdk/client-s3@npm:^3.1167.0":
-  version: 3.1167.0
-  resolution: "@aws-sdk/client-s3@npm:3.1167.0"
+"@aws-sdk/client-s3@npm:3.1168.0, @aws-sdk/client-s3@npm:^3.1168.0":
+  version: 3.1168.0
+  resolution: "@aws-sdk/client-s3@npm:3.1168.0"
   dependencies:
     "@aws-sdk/checksums": "npm:^3.1002.5"
     "@aws-sdk/core": "npm:^3.981.0"
@@ -523,13 +523,13 @@ __metadata:
     "@smithy/node-http-handler": "npm:^4.14.2"
     "@smithy/types": "npm:^4.20.0"
     tslib: "npm:^2.6.2"
-  checksum: 10/e95b53eb78d3d006c335444b5df4894871d47cbb532d077b435efe98ec4810e393deedafec5a0ba1099a62f84ac3541f437d6ac624cb04d21f23906471bb0d58
+  checksum: 10/7ed5d683a0eecd10b095efef5fe18d5941f0e5d86658765fc979f42571fff8dedea512cf773fdea3ee87f71451fdb09070d6aaac2ef676a30d77b9195347bc47
   languageName: node
   linkType: hard
 
-"@aws-sdk/client-sts@npm:^3.1167.0":
-  version: 3.1167.0
-  resolution: "@aws-sdk/client-sts@npm:3.1167.0"
+"@aws-sdk/client-sts@npm:^3.1168.0":
+  version: 3.1168.0
+  resolution: "@aws-sdk/client-sts@npm:3.1168.0"
   dependencies:
     "@aws-sdk/core": "npm:^3.981.0"
     "@aws-sdk/credential-provider-node": "npm:^3.972.97"
@@ -540,7 +540,7 @@ __metadata:
     "@smithy/node-http-handler": "npm:^4.14.2"
     "@smithy/types": "npm:^4.20.0"
     tslib: "npm:^2.6.2"
-  checksum: 10/a15cae08cb29b6231c7f7633d5205bb21bbe68e1cae1cdda88cca4b422b9179983faac7f2c3ce4ccf8ff35edf659890703e721e2b2adef6659bccd340e1887e3
+  checksum: 10/ec1bd1827851441075fe8f27f1a7d957fdf65b6bf8a0196ed08d974f96e1fb4a812eb83bb4354c8479661c891a319b67f3bff48b96ecf3866b98bd19caa2ab8a
   languageName: node
   linkType: hard
 
@@ -684,9 +684,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@aws-sdk/lib-storage@npm:^3.1167.0":
-  version: 3.1167.0
-  resolution: "@aws-sdk/lib-storage@npm:3.1167.0"
+"@aws-sdk/lib-storage@npm:^3.1168.0":
+  version: 3.1168.0
+  resolution: "@aws-sdk/lib-storage@npm:3.1168.0"
   dependencies:
     "@smithy/core": "npm:^3.40.0"
     "@smithy/types": "npm:^4.20.0"
@@ -695,8 +695,8 @@ __metadata:
     stream-browserify: "npm:3.0.0"
     tslib: "npm:^2.6.2"
   peerDependencies:
-    "@aws-sdk/client-s3": ^3.1167.0
-  checksum: 10/7c815fd693d1e412aab86fff06eddaee7e1d9f9482568a7e0e6de10910a6b55b04760b21835f5980eb5a60d53d7a4ee1670ef12e9dba35389550326f06bf2e57
+    "@aws-sdk/client-s3": ^3.1168.0
+  checksum: 10/125649a7d4d2309810a688b2120a8fd1e17f94026557b91b50be1e935e62bb4dcd396130f02e046ffd92a141d307c8df5fac42c58e62bc286e43146409c0d50b
   languageName: node
   linkType: hard
 
@@ -730,24 +730,24 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@aws-sdk/s3-presigned-post@npm:^3.1167.0":
-  version: 3.1167.0
-  resolution: "@aws-sdk/s3-presigned-post@npm:3.1167.0"
+"@aws-sdk/s3-presigned-post@npm:^3.1168.0":
+  version: 3.1168.0
+  resolution: "@aws-sdk/s3-presigned-post@npm:3.1168.0"
   dependencies:
-    "@aws-sdk/client-s3": "npm:3.1167.0"
+    "@aws-sdk/client-s3": "npm:3.1168.0"
     "@aws-sdk/core": "npm:^3.981.0"
     "@aws-sdk/types": "npm:^3.975.1"
     "@smithy/core": "npm:^3.40.0"
     "@smithy/signature-v4": "npm:^5.7.5"
     "@smithy/types": "npm:^4.20.0"
     tslib: "npm:^2.6.2"
-  checksum: 10/e17ce17f468e00af6bc6084e503582ed2da5b8c267cf0c7d6fe145963a26de915ef09031f4502f9f30c254248b52eb955e99500db9a407fe3c78369156f8a50d
+  checksum: 10/7a04b852d8068df0bd963b148ca2920beff2c5fef6b6d3811984c330e36b3e9f151a88d2c2861b98ae6b65d2b2fc27075c51fcd3348ef9ccd067bd945d91ee2e
   languageName: node
   linkType: hard
 
-"@aws-sdk/s3-request-presigner@npm:^3.1167.0":
-  version: 3.1167.0
-  resolution: "@aws-sdk/s3-request-presigner@npm:3.1167.0"
+"@aws-sdk/s3-request-presigner@npm:^3.1168.0":
+  version: 3.1168.0
+  resolution: "@aws-sdk/s3-request-presigner@npm:3.1168.0"
   dependencies:
     "@aws-sdk/core": "npm:^3.981.0"
     "@aws-sdk/signature-v4-multi-region": "npm:^3.996.52"
@@ -755,7 +755,7 @@ __metadata:
     "@smithy/core": "npm:^3.40.0"
     "@smithy/types": "npm:^4.20.0"
     tslib: "npm:^2.6.2"
-  checksum: 10/cf2179bb96e46703dac244081e6419b8a47240d0f906e67934c79a897d15f4407f9ae61c023405b0bb82b16923624046439ee1d017e42810fddb9d6615dc30c4
+  checksum: 10/404ffa4c8f59e5acbc24f5447a89febaa2eae376da28364af4398aba73dac5a093264e311dfdd932b68bfa334a8f4c157813db5f36482941bff811ca725272d6
   languageName: node
   linkType: hard
 
@@ -6780,16 +6780,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@schematics/angular@npm:22.2.6":
-  version: 22.2.6
-  resolution: "@schematics/angular@npm:22.2.6"
+"@schematics/angular@npm:22.2.7":
+  version: 22.2.7
+  resolution: "@schematics/angular@npm:22.2.7"
   dependencies:
-    "@angular-devkit/core": "npm:22.2.6"
-    "@angular-devkit/schematics": "npm:22.2.6"
+    "@angular-devkit/core": "npm:22.2.7"
+    "@angular-devkit/schematics": "npm:22.2.7"
     jsonc-parser: "npm:3.3.1"
     oxc-parser: "npm:0.156.0"
     typescript: "npm:6.0.3"
-  checksum: 10/bde73f65110448e9abb3129e8ea4c59bddd5cf1acda22f0ad2b31542913cc0f56d78560ef6ecc6aef863721622e1d7dbe00ea2d91bf781dc483a35dbc6cda2ac
+  checksum: 10/d83dc2efc9ac941aaac23195a79e80fc1206e60a7b02b9d85b27848527f31400169199bb54d3c02c80a6c4bbc6563bf92448060ba873f499c93f6a9b9e84c34e
   languageName: node
   linkType: hard
 
@@ -7455,9 +7455,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@testing-library/dom@npm:^10.4.0":
-  version: 10.4.1
-  resolution: "@testing-library/dom@npm:10.4.1"
+"@testing-library/dom@npm:^10.4.2":
+  version: 10.4.2
+  resolution: "@testing-library/dom@npm:10.4.2"
   dependencies:
     "@babel/code-frame": "npm:^7.10.4"
     "@babel/runtime": "npm:^7.12.5"
@@ -7467,7 +7467,7 @@ __metadata:
     lz-string: "npm:^1.5.0"
     picocolors: "npm:1.1.1"
     pretty-format: "npm:^27.0.2"
-  checksum: 10/7f93e09ea015f151f8b8f42cbab0b2b858999b5445f15239a72a612ef7716e672b14c40c421218194cf191cbecbde0afa6f3dc2cc83dda93ff6a4fb0237df6e6
+  checksum: 10/3ac24b320ae0e59f48a560bbe279f80e75539641e260d5e1c0455413babcb73a23f7090e9d80fca13933c5bc319fe3e48f61b9c89fbe6d4194f8f58e8bab44d4
   languageName: node
   linkType: hard
 
@@ -8044,13 +8044,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/namespace-emitter@npm:^2.0.0":
-  version: 2.0.0
-  resolution: "@types/namespace-emitter@npm:2.0.0"
-  checksum: 10/226c068a055128612f7b623b1fd91e3bb49c81d8988c3d65524a73c9c092515abd8e559734c5defd46cf56e17f97cc73d1d320ef77f0f816490681d76b4ef2b8
-  languageName: node
-  linkType: hard
-
 "@types/nlcst@npm:^2.0.0":
   version: 2.0.3
   resolution: "@types/nlcst@npm:2.0.3"
@@ -8163,7 +8156,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/sax@npm:^1.2.1":
+"@types/sax@npm:^1.2.1, @types/sax@npm:^1.2.7":
   version: 1.2.7
   resolution: "@types/sax@npm:1.2.7"
   dependencies:
@@ -8396,7 +8389,7 @@ __metadata:
     "@uppy-dev/tsconfig": "workspace:^"
     msw: "npm:^3.0.3"
     typescript: "npm:^6.0.3"
-    vitest: "npm:^5.0.5"
+    vitest: "npm:^5.1.0"
   peerDependencies:
     msw: ^3.0.3
     vitest: ^5.0.3
@@ -8418,7 +8411,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@uppy-dev/tsconfig@workspace:private/tsconfig"
   dependencies:
-    vitest: "npm:^5.0.5"
+    vitest: "npm:^5.1.0"
   languageName: unknown
   linkType: soft
 
@@ -8432,13 +8425,13 @@ __metadata:
     "@angular/core": "npm:^22.2.6"
     "@angular/platform-browser": "npm:^22.2.6"
     "@uppy-dev/tsconfig": "workspace:^"
-    "@vitest/browser-playwright": "npm:^5.0.5"
+    "@vitest/browser-playwright": "npm:^5.1.0"
     ng-packagr: "npm:^22.2.6"
-    playwright: "npm:1.64.1"
+    playwright: "npm:1.65.0"
     rxjs: "npm:~7.8.0"
     tslib: "npm:^2.8.1"
     typescript: "npm:^6.0.3"
-    vitest: "npm:^5.0.5"
+    vitest: "npm:^5.1.0"
   peerDependencies:
     "@angular/core": ^17.0.0 || ^18.0.0 || ^19.0.0 || ^20.0.0 || ^21.0.0 || ^22.0.0
     "@uppy/core": "workspace:^"
@@ -8457,15 +8450,15 @@ __metadata:
   resolution: "@uppy/audio@workspace:packages/@uppy/audio"
   dependencies:
     "@uppy-dev/tsconfig": "workspace:^"
-    "@vitest/browser-playwright": "npm:^5.0.5"
+    "@vitest/browser-playwright": "npm:^5.1.0"
     cssnano: "npm:^8.0.1"
-    playwright: "npm:1.64.1"
+    playwright: "npm:1.65.0"
     postcss: "npm:^8.5.32"
     postcss-cli: "npm:^12.0.0"
     preact: "npm:^10.29.2"
     sass: "npm:^1.89.2"
     typescript: "npm:^6.0.3"
-    vitest: "npm:^5.0.5"
+    vitest: "npm:^5.1.0"
   peerDependencies:
     "@uppy/core": "workspace:^"
   languageName: unknown
@@ -8475,17 +8468,17 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@uppy/aws-s3@workspace:packages/@uppy/aws-s3"
   dependencies:
-    "@aws-sdk/client-sts": "npm:^3.1167.0"
+    "@aws-sdk/client-sts": "npm:^3.1168.0"
     "@types/node": "npm:^22.20.1"
     "@uppy-dev/msw-setup": "workspace:^"
     "@uppy-dev/tsconfig": "workspace:^"
     "@uppy/core": "workspace:^"
-    "@vitest/browser-playwright": "npm:^5.0.5"
+    "@vitest/browser-playwright": "npm:^5.1.0"
     msw: "npm:^3.0.3"
-    playwright: "npm:1.64.1"
+    playwright: "npm:1.65.0"
     type-fest: "npm:^5.10.0"
     typescript: "npm:^6.0.3"
-    vitest: "npm:^5.0.5"
+    vitest: "npm:^5.1.0"
   peerDependencies:
     "@uppy/core": "workspace:^"
   languageName: unknown
@@ -8508,11 +8501,11 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@uppy/companion@workspace:packages/@uppy/companion"
   dependencies:
-    "@aws-sdk/client-s3": "npm:^3.1167.0"
-    "@aws-sdk/client-sts": "npm:^3.1167.0"
-    "@aws-sdk/lib-storage": "npm:^3.1167.0"
-    "@aws-sdk/s3-presigned-post": "npm:^3.1167.0"
-    "@aws-sdk/s3-request-presigner": "npm:^3.1167.0"
+    "@aws-sdk/client-s3": "npm:^3.1168.0"
+    "@aws-sdk/client-sts": "npm:^3.1168.0"
+    "@aws-sdk/lib-storage": "npm:^3.1168.0"
+    "@aws-sdk/s3-presigned-post": "npm:^3.1168.0"
+    "@aws-sdk/s3-request-presigner": "npm:^3.1168.0"
     "@types/cookie-parser": "npm:^1.4.10"
     "@types/cors": "npm:^2.8.19"
     "@types/express": "npm:^5.0.6"
@@ -8525,6 +8518,7 @@ __metadata:
     "@types/morgan": "npm:^1.9.10"
     "@types/node": "npm:^22.20.1"
     "@types/node-schedule": "npm:^2.1.8"
+    "@types/sax": "npm:^1.2.7"
     "@types/serialize-javascript": "npm:^5.0.4"
     "@types/supertest": "npm:^7.2.1"
     "@types/validator": "npm:^13.15.10"
@@ -8560,13 +8554,14 @@ __metadata:
     node-schedule: "npm:^2.1.1"
     p-map: "npm:^7.0.5"
     prom-client: "npm:^15.1.3"
+    sax: "npm:1.6.1"
     serialize-javascript: "npm:^7.1.3"
     supertest: "npm:^7.2.2"
     tus-js-client: "npm:^4.3.1"
     type-fest: "npm:^5.10.0"
     typescript: "npm:^6.0.3"
     validator: "npm:^13.15.35"
-    vitest: "npm:^5.0.5"
+    vitest: "npm:^5.1.0"
     webdav: "npm:^5.10.0"
     ws: "npm:^8.21.1"
     zod: "npm:^4.6.6"
@@ -8582,18 +8577,18 @@ __metadata:
     "@tailwindcss/cli": "npm:^4.3.3"
     "@uppy-dev/tsconfig": "workspace:^"
     "@uppy/core": "workspace:^"
-    "@vitest/browser-playwright": "npm:^5.0.5"
+    "@vitest/browser-playwright": "npm:^5.1.0"
     clsx: "npm:^2.1.1"
     cssnano: "npm:^8.0.1"
     dequal: "npm:^2.0.3"
-    playwright: "npm:1.64.1"
+    playwright: "npm:1.65.0"
     postcss: "npm:^8.5.32"
     postcss-cli: "npm:^12.0.0"
     preact: "npm:^10.29.2"
     pretty-bytes: "npm:^7.1.0"
     tailwindcss: "npm:^4.3.3"
     typescript: "npm:^6.0.3"
-    vitest: "npm:^5.0.5"
+    vitest: "npm:^5.1.0"
   peerDependencies:
     "@uppy/core": "workspace:^"
     "@uppy/google-drive-picker": "workspace:^"
@@ -8618,12 +8613,12 @@ __metadata:
     "@transloadit/prettier-bytes": "npm:^2.0.0"
     "@types/node": "npm:^22.20.1"
     "@uppy-dev/tsconfig": "workspace:^"
-    "@vitest/browser-playwright": "npm:^5.0.5"
+    "@vitest/browser-playwright": "npm:^5.1.0"
     compressorjs: "npm:^1.3.0"
-    playwright: "npm:1.64.1"
+    playwright: "npm:1.65.0"
     typescript: "npm:^6.0.3"
     vite: "npm:^8.3.5"
-    vitest: "npm:^5.0.5"
+    vitest: "npm:^5.1.0"
   peerDependencies:
     "@uppy/core": "workspace:^"
   languageName: unknown
@@ -8639,21 +8634,19 @@ __metadata:
     "@types/google.picker": "npm:^0.0.52"
     "@types/lodash": "npm:^4.17.25"
     "@types/mime-match": "npm:^1.0.0"
-    "@types/namespace-emitter": "npm:^2.0.0"
     "@types/node": "npm:^22.20.1"
     "@uppy-dev/tsconfig": "workspace:^"
-    "@vitest/browser-playwright": "npm:^5.0.5"
+    "@vitest/browser-playwright": "npm:^5.1.0"
     classnames: "npm:^2.5.1"
     cssnano: "npm:^8.0.1"
     deep-freeze: "npm:^0.0.1"
     lodash: "npm:^4.18.1"
     mime-match: "npm:^1.0.2"
     msw: "npm:^3.0.3"
-    namespace-emitter: "npm:^2.0.1"
     nanoid: "npm:^6.0.1"
     p-queue: "npm:^9.3.3"
     p-retry: "npm:^8.0.0"
-    playwright: "npm:1.64.1"
+    playwright: "npm:1.65.0"
     postcss: "npm:^8.5.32"
     postcss-cli: "npm:^12.0.0"
     preact: "npm:^10.29.2"
@@ -8661,7 +8654,7 @@ __metadata:
     type-fest: "npm:^5.10.0"
     typescript: "npm:^6.0.3"
     vite: "npm:^8.3.5"
-    vitest: "npm:^5.0.5"
+    vitest: "npm:^5.1.0"
   languageName: unknown
   linkType: soft
 
@@ -8678,20 +8671,20 @@ __metadata:
     "@uppy/thumbnail-generator": "workspace:^"
     "@uppy/url": "workspace:^"
     "@uppy/webcam": "workspace:^"
-    "@vitest/browser-playwright": "npm:^5.0.5"
+    "@vitest/browser-playwright": "npm:^5.1.0"
     classnames: "npm:^2.5.1"
     cssnano: "npm:^8.0.1"
     lodash: "npm:^4.18.1"
     msw: "npm:^3.0.3"
     nanoid: "npm:^6.0.1"
-    playwright: "npm:1.64.1"
+    playwright: "npm:1.65.0"
     postcss: "npm:^8.5.32"
     postcss-cli: "npm:^12.0.0"
     preact: "npm:^10.29.2"
     sass: "npm:^1.89.2"
     shallow-equal: "npm:^3.1.0"
     typescript: "npm:^6.0.3"
-    vitest: "npm:^5.0.5"
+    vitest: "npm:^5.1.0"
   peerDependencies:
     "@uppy/core": "workspace:^"
   languageName: unknown
@@ -8776,11 +8769,11 @@ __metadata:
     "@uppy/core": "workspace:^"
     "@uppy/dashboard": "workspace:^"
     "@uppy/xhr-upload": "workspace:^"
-    "@vitest/browser-playwright": "npm:^5.0.5"
+    "@vitest/browser-playwright": "npm:^5.1.0"
     lodash: "npm:^4.18.1"
-    playwright: "npm:1.64.1"
+    playwright: "npm:1.65.0"
     typescript: "npm:^6.0.3"
-    vitest: "npm:^5.0.5"
+    vitest: "npm:^5.1.0"
   peerDependencies:
     "@uppy/core": "workspace:^"
   languageName: unknown
@@ -8887,20 +8880,20 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@uppy/react@workspace:packages/@uppy/react"
   dependencies:
-    "@testing-library/dom": "npm:^10.4.0"
+    "@testing-library/dom": "npm:^10.4.2"
     "@testing-library/react": "npm:^16.3.3"
     "@types/react": "npm:^19.3.0"
     "@types/use-sync-external-store": "npm:^1.5.0"
     "@uppy-dev/tsconfig": "workspace:^"
     "@uppy/components": "workspace:^"
     "@uppy/core": "workspace:^"
-    "@vitest/browser-playwright": "npm:^5.0.5"
-    playwright: "npm:1.64.1"
+    "@vitest/browser-playwright": "npm:^5.1.0"
+    playwright: "npm:1.65.0"
     react: "npm:^19.3.1"
     react-dom: "npm:^19.3.1"
     typescript: "npm:^6.0.3"
     use-sync-external-store: "npm:^1.6.0"
-    vitest: "npm:^5.0.5"
+    vitest: "npm:^5.1.0"
   peerDependencies:
     "@uppy/core": "workspace:^"
     "@uppy/dashboard": "workspace:^"
@@ -8936,10 +8929,10 @@ __metadata:
     "@uppy/unsplash": "workspace:^"
     "@uppy/url": "workspace:^"
     "@uppy/zoom": "workspace:^"
-    "@vitest/browser-playwright": "npm:^5.0.5"
-    playwright: "npm:1.64.1"
+    "@vitest/browser-playwright": "npm:^5.1.0"
+    playwright: "npm:1.65.0"
     typescript: "npm:^6.0.3"
-    vitest: "npm:^5.0.5"
+    vitest: "npm:^5.1.0"
   peerDependencies:
     "@uppy/core": "workspace:^"
   languageName: unknown
@@ -8956,13 +8949,13 @@ __metadata:
     "@uppy/components": "workspace:^"
     "@uppy/core": "workspace:^"
     "@uppy/dashboard": "workspace:^"
-    "@vitest/browser-playwright": "npm:^5.0.5"
+    "@vitest/browser-playwright": "npm:^5.1.0"
     msw: "npm:^3.0.3"
-    playwright: "npm:1.64.1"
+    playwright: "npm:1.65.0"
     preact: "npm:^10.29.2"
     type-fest: "npm:^5.10.0"
     typescript: "npm:^6.0.3"
-    vitest: "npm:^5.0.5"
+    vitest: "npm:^5.1.0"
   peerDependencies:
     "@uppy/core": "workspace:^"
   languageName: unknown
@@ -9007,11 +9000,16 @@ __metadata:
   resolution: "@uppy/svelte@workspace:packages/@uppy/svelte"
   dependencies:
     "@sveltejs/package": "npm:^2.5.7"
+    "@sveltejs/vite-plugin-svelte": "npm:^7.3.1"
     "@uppy/components": "workspace:^"
     "@uppy/core": "workspace:^"
+    "@vitest/browser-playwright": "npm:^5.1.0"
+    playwright: "npm:1.65.0"
     svelte: "npm:^5.56.5"
     svelte-check: "npm:^4.7.7"
     typescript: "npm:^6.0.3"
+    vitest: "npm:^5.1.0"
+    vitest-browser-svelte: "npm:^3.1.0"
   peerDependencies:
     "@uppy/core": "workspace:^"
     "@uppy/dashboard": "workspace:^"
@@ -9036,12 +9034,10 @@ __metadata:
   resolution: "@uppy/thumbnail-generator@workspace:packages/@uppy/thumbnail-generator"
   dependencies:
     "@uppy-dev/tsconfig": "workspace:^"
-    "@vitest/browser-playwright": "npm:^5.0.5"
-    exifr: "npm:^7.1.3"
-    namespace-emitter: "npm:2.0.1"
-    playwright: "npm:1.64.1"
+    "@vitest/browser-playwright": "npm:^5.1.0"
+    playwright: "npm:1.65.0"
     typescript: "npm:^6.0.3"
-    vitest: "npm:^5.0.5"
+    vitest: "npm:^5.1.0"
   peerDependencies:
     "@uppy/core": "workspace:^"
   languageName: unknown
@@ -9057,12 +9053,12 @@ __metadata:
     "@uppy/core": "workspace:^"
     "@uppy/dashboard": "workspace:^"
     "@uppy/s3": "workspace:^"
-    "@vitest/browser-playwright": "npm:^5.0.5"
+    "@vitest/browser-playwright": "npm:^5.1.0"
     msw: "npm:^3.0.3"
-    playwright: "npm:1.64.1"
+    playwright: "npm:1.65.0"
     preact: "npm:^10.29.2"
     typescript: "npm:^6.0.3"
-    vitest: "npm:^5.0.5"
+    vitest: "npm:^5.1.0"
   peerDependencies:
     "@uppy/core": "workspace:^"
   languageName: unknown
@@ -9077,12 +9073,12 @@ __metadata:
     "@uppy-dev/tsconfig": "workspace:^"
     "@uppy/core": "workspace:^"
     "@uppy/tus": "workspace:^"
-    "@vitest/browser-playwright": "npm:^5.0.5"
+    "@vitest/browser-playwright": "npm:^5.1.0"
     component-emitter: "npm:^2.0.0"
     msw: "npm:^3.0.3"
-    playwright: "npm:1.64.1"
+    playwright: "npm:1.65.0"
     typescript: "npm:^6.0.3"
-    vitest: "npm:^5.0.5"
+    vitest: "npm:^5.1.0"
   peerDependencies:
     "@uppy/core": "workspace:^"
   languageName: unknown
@@ -9094,11 +9090,11 @@ __metadata:
   dependencies:
     "@uppy-dev/tsconfig": "workspace:^"
     "@uppy/core": "workspace:^"
-    "@vitest/browser-playwright": "npm:^5.0.5"
-    playwright: "npm:1.64.1"
+    "@vitest/browser-playwright": "npm:^5.1.0"
+    playwright: "npm:1.65.0"
     tus-js-client: "npm:^4.3.1"
     typescript: "npm:^6.0.3"
-    vitest: "npm:^5.0.5"
+    vitest: "npm:^5.1.0"
   peerDependencies:
     "@uppy/core": "workspace:^"
   languageName: unknown
@@ -9123,16 +9119,16 @@ __metadata:
   dependencies:
     "@uppy-dev/tsconfig": "workspace:^"
     "@uppy/core": "workspace:^"
-    "@vitest/browser-playwright": "npm:^5.0.5"
+    "@vitest/browser-playwright": "npm:^5.1.0"
     cssnano: "npm:^8.0.1"
     nanoid: "npm:^6.0.1"
-    playwright: "npm:1.64.1"
+    playwright: "npm:1.65.0"
     postcss: "npm:^8.5.32"
     postcss-cli: "npm:^12.0.0"
     preact: "npm:^10.29.2"
     sass: "npm:^1.89.2"
     typescript: "npm:^6.0.3"
-    vitest: "npm:^5.0.5"
+    vitest: "npm:^5.1.0"
   peerDependencies:
     "@uppy/core": "workspace:^"
   languageName: unknown
@@ -9145,8 +9141,12 @@ __metadata:
     "@uppy-dev/tsconfig": "workspace:^"
     "@uppy/components": "workspace:^"
     "@uppy/core": "workspace:^"
+    "@vitest/browser-playwright": "npm:^5.1.0"
+    playwright: "npm:1.65.0"
     shallow-equal: "npm:^3.1.0"
     typescript: "npm:^6.0.3"
+    vitest: "npm:^5.1.0"
+    vitest-browser-vue: "npm:^3.1.0"
     vue: "npm:^3.5.43"
   peerDependencies:
     "@uppy/core": "workspace:^"
@@ -9172,16 +9172,16 @@ __metadata:
   resolution: "@uppy/webcam@workspace:packages/@uppy/webcam"
   dependencies:
     "@uppy-dev/tsconfig": "workspace:^"
-    "@vitest/browser-playwright": "npm:^5.0.5"
+    "@vitest/browser-playwright": "npm:^5.1.0"
     cssnano: "npm:^8.0.1"
     is-mobile: "npm:^5.0.0"
-    playwright: "npm:1.64.1"
+    playwright: "npm:1.65.0"
     postcss: "npm:^8.5.32"
     postcss-cli: "npm:^12.0.0"
     preact: "npm:^10.29.2"
     sass: "npm:^1.89.2"
     typescript: "npm:^6.0.3"
-    vitest: "npm:^5.0.5"
+    vitest: "npm:^5.1.0"
   peerDependencies:
     "@uppy/core": "workspace:^"
   languageName: unknown
@@ -9208,11 +9208,11 @@ __metadata:
     "@uppy-dev/tsconfig": "workspace:^"
     "@uppy/core": "workspace:^"
     "@uppy/dashboard": "workspace:^"
-    "@vitest/browser-playwright": "npm:^5.0.5"
+    "@vitest/browser-playwright": "npm:^5.1.0"
     msw: "npm:^3.0.3"
-    playwright: "npm:1.64.1"
+    playwright: "npm:1.65.0"
     typescript: "npm:^6.0.3"
-    vitest: "npm:^5.0.5"
+    vitest: "npm:^5.1.0"
   peerDependencies:
     "@uppy/core": "workspace:^"
   languageName: unknown
@@ -9273,48 +9273,48 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@vitest/browser-playwright@npm:^5.0.5":
-  version: 5.0.5
-  resolution: "@vitest/browser-playwright@npm:5.0.5"
+"@vitest/browser-playwright@npm:^5.1.0":
+  version: 5.1.0
+  resolution: "@vitest/browser-playwright@npm:5.1.0"
   dependencies:
-    "@vitest/browser": "npm:5.0.5"
-    "@vitest/mocker": "npm:5.0.5"
+    "@vitest/browser": "npm:5.1.0"
+    "@vitest/mocker": "npm:5.1.0"
     tinyrainbow: "npm:^3.2.0"
   peerDependencies:
     playwright: "*"
-    vitest: 5.0.5
+    vitest: 5.1.0
   peerDependenciesMeta:
     playwright:
       optional: false
-  checksum: 10/917104d47f35fcb961c21ec9ee1ef89b97e8ebefdd8896b85048b10903364d593c91fe5bf1b1e6d2598fbb23c1620a7d39ab866b0a778c0a257a284383e30651
+  checksum: 10/617bcc7dd81b526fd909bc7264c2b4ca1b49e13da8dbd97ed1a6cca7594f258acd7c4e24debfe31b0af496d742e0b8f8307062a5eb423806b688aad1791417c3
   languageName: node
   linkType: hard
 
-"@vitest/browser@npm:5.0.5":
-  version: 5.0.5
-  resolution: "@vitest/browser@npm:5.0.5"
+"@vitest/browser@npm:5.1.0":
+  version: 5.1.0
+  resolution: "@vitest/browser@npm:5.1.0"
   dependencies:
     "@blazediff/core": "npm:1.10.0"
-    "@vitest/mocker": "npm:5.0.5"
-    "@vitest/ui": "npm:5.0.5"
-    "@vitest/utils": "npm:5.0.5"
+    "@vitest/mocker": "npm:5.1.0"
+    "@vitest/ui": "npm:5.1.0"
+    "@vitest/utils": "npm:5.1.0"
     magic-string: "npm:^1.4.3"
     pngjs: "npm:^7.0.0"
     sirv: "npm:^3.0.2"
     tinyrainbow: "npm:^3.2.0"
     ws: "npm:^8.22.0"
   peerDependencies:
-    vitest: 5.0.5
-  checksum: 10/e76db770c5aa97ec66f4f526da56f4456b0654b1dedd8fb1b5dd445571570ca490a8fd0031784a64b500627b2c8f2f4fe4e042323bf93afe5778617d6b32a95a
+    vitest: 5.1.0
+  checksum: 10/0bb957caffe6d536e5cd464e65e7dcf246b755118b6aa4c247212ef262f2213705c3738858fd2d154b9ee32391312b65172590430bdef67e61a6b2a268ddb8a3
   languageName: node
   linkType: hard
 
-"@vitest/mocker@npm:5.0.5":
-  version: 5.0.5
-  resolution: "@vitest/mocker@npm:5.0.5"
+"@vitest/mocker@npm:5.1.0":
+  version: 5.1.0
+  resolution: "@vitest/mocker@npm:5.1.0"
   dependencies:
     "@jridgewell/trace-mapping": "npm:0.3.31"
-    "@vitest/spy": "npm:5.0.5"
+    "@vitest/spy": "npm:5.1.0"
     estree-walker: "npm:^3.0.3"
     magic-string: "npm:^1.4.3"
   peerDependencies:
@@ -9325,50 +9325,50 @@ __metadata:
       optional: true
     vite:
       optional: true
-  checksum: 10/8e8918921f9acf09eda6de98821f95bdc32743afd5c675e44b1bf26c7798d0b35ababc12b0a243c99ff9f71fc1f199addd27f109ffa46d2559dbaaac79dc0cb2
+  checksum: 10/4160807bae9b4d09bb64df70233e96917f6a35b72d3618dbec807e34f2b17f596b33d540532c61a4e04fe69bd322f5c00594eab20db66121b400bd37128007b5
   languageName: node
   linkType: hard
 
-"@vitest/pretty-format@npm:5.0.5":
-  version: 5.0.5
-  resolution: "@vitest/pretty-format@npm:5.0.5"
+"@vitest/pretty-format@npm:5.1.0":
+  version: 5.1.0
+  resolution: "@vitest/pretty-format@npm:5.1.0"
   dependencies:
     tinyrainbow: "npm:^3.2.0"
-  checksum: 10/78f4e9a12c443e1f60885bc84959e5d4070dfa86d918d005e8d79d6a2350ba903047cd8de02c99fe40b40f97cdc0c1d8fca8440490482f780261791a74ef5803
+  checksum: 10/24ffc6889767fa688d3d1c7d342b3c8398a84edba79e73e2d7bcb3a29ab0a2847583b32de7b2b0a903dafb6a8c210d7f2359d2911e294f897f6a3faf8d847ddf
   languageName: node
   linkType: hard
 
-"@vitest/spy@npm:5.0.5":
-  version: 5.0.5
-  resolution: "@vitest/spy@npm:5.0.5"
-  checksum: 10/f9661bc0312ec3670b83a9221e6d7830eaecae65a985d51cec27dc12177c06b6726b211c0cd8d84e3deddeb8508a770969221b804f93c0df22c7935f584d06e0
+"@vitest/spy@npm:5.1.0":
+  version: 5.1.0
+  resolution: "@vitest/spy@npm:5.1.0"
+  checksum: 10/565fa1393f82598bd9c846e98ab61de3bd1006c2aa95cecfc852999b64e9b1d58783f65ff6491d3ab329e1a97760393f303ca18ae1887e2a56bfe992f7aa57ad
   languageName: node
   linkType: hard
 
-"@vitest/ui@npm:5.0.5":
-  version: 5.0.5
-  resolution: "@vitest/ui@npm:5.0.5"
+"@vitest/ui@npm:5.1.0":
+  version: 5.1.0
+  resolution: "@vitest/ui@npm:5.1.0"
   dependencies:
-    "@vitest/utils": "npm:5.0.5"
+    "@vitest/utils": "npm:5.1.0"
     fflate: "npm:^0.8.3"
     flatted: "npm:^3.4.4"
     pathe: "npm:^2.0.3"
     sirv: "npm:^3.0.2"
     tinyrainbow: "npm:^3.2.0"
   peerDependencies:
-    vitest: 5.0.5
-  checksum: 10/5b3160da02d414c0e26ca828304ced355fc03d6a038d7629585b6cbd17dc1c6c2a35300f7d1772cb17fe2b6702cef10aefe26d9c58b31ce07a587cb8dd446d6b
+    vitest: 5.1.0
+  checksum: 10/c85ff17020c2cc102c2a859771613c1f1141f2b12c40a360ac046214bca54878db2cf879c57854e211573d9b74b5b800c9c6876a4ade143ad33d159b4c51ca91
   languageName: node
   linkType: hard
 
-"@vitest/utils@npm:5.0.5":
-  version: 5.0.5
-  resolution: "@vitest/utils@npm:5.0.5"
+"@vitest/utils@npm:5.1.0":
+  version: 5.1.0
+  resolution: "@vitest/utils@npm:5.1.0"
   dependencies:
-    "@vitest/pretty-format": "npm:5.0.5"
+    "@vitest/pretty-format": "npm:5.1.0"
     convert-source-map: "npm:^2.0.0"
     tinyrainbow: "npm:^3.2.0"
-  checksum: 10/af2c8414729bc1a3dfaddc01ef96e9f2b675e73b395a2370d5d3dcd85355230c9a328a7b8994cf12948d28b0d5b57d5dc9c576e759d2688a1a312ad0e21569fe
+  checksum: 10/d122bc5a795ab8b3d582b355cc52fefc6e55eb2def0f8db3f8930c5ba210a0f706597ec6cdcde7b80fe3a8411ef804a31efcfe3bb44adb2ff99b18e94ee8362e
   languageName: node
   linkType: hard
 
@@ -13074,8 +13074,8 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "example-angular@workspace:examples/angular"
   dependencies:
-    "@angular/build": "npm:^22.2.6"
-    "@angular/cli": "npm:^22.2.6"
+    "@angular/build": "npm:^22.2.7"
+    "@angular/cli": "npm:^22.2.7"
     "@angular/common": "npm:^22.2.6"
     "@angular/compiler": "npm:^22.2.6"
     "@angular/compiler-cli": "npm:^22.2.6"
@@ -13120,9 +13120,9 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "example-aws-nodejs@workspace:examples/aws-nodejs"
   dependencies:
-    "@aws-sdk/client-s3": "npm:^3.1167.0"
-    "@aws-sdk/client-sts": "npm:^3.1167.0"
-    "@aws-sdk/s3-request-presigner": "npm:^3.1167.0"
+    "@aws-sdk/client-s3": "npm:^3.1168.0"
+    "@aws-sdk/client-sts": "npm:^3.1168.0"
+    "@aws-sdk/s3-request-presigner": "npm:^3.1168.0"
     body-parser: "npm:^2.4.0"
     express: "npm:^5.2.1"
   languageName: unknown
@@ -13230,15 +13230,15 @@ __metadata:
     "@uppy/tus": "workspace:*"
     "@uppy/webcam": "workspace:*"
     "@vitejs/plugin-react": "npm:^6.1.2"
-    "@vitest/browser-playwright": "npm:^5.0.5"
+    "@vitest/browser-playwright": "npm:^5.1.0"
     msw: "npm:^3.0.3"
-    playwright: "npm:1.64.1"
+    playwright: "npm:1.65.0"
     react: "npm:^19.3.1"
     react-dom: "npm:^19.3.1"
     tailwindcss: "npm:^4.3.3"
     typescript: "npm:^6.0.3"
     vite: "npm:^8.3.5"
-    vitest: "npm:^5.0.5"
+    vitest: "npm:^5.1.0"
     vitest-browser-react: "npm:^2.3.0"
   languageName: unknown
   linkType: soft
@@ -13288,15 +13288,15 @@ __metadata:
     "@uppy/svelte": "workspace:*"
     "@uppy/tus": "workspace:*"
     "@uppy/webcam": "workspace:*"
-    "@vitest/browser-playwright": "npm:^5.0.5"
+    "@vitest/browser-playwright": "npm:^5.1.0"
     msw: "npm:^3.0.3"
-    playwright: "npm:1.64.1"
+    playwright: "npm:1.65.0"
     svelte: "npm:^5.56.5"
     svelte-check: "npm:^4.7.7"
     tailwindcss: "npm:^4.3.3"
     typescript: "npm:^6.0.3"
     vite: "npm:^8.3.5"
-    vitest: "npm:^5.0.5"
+    vitest: "npm:^5.1.0"
     vitest-browser-svelte: "npm:^3.1.0"
   languageName: unknown
   linkType: soft
@@ -13330,12 +13330,12 @@ __metadata:
     "@uppy/vue": "workspace:*"
     "@uppy/webcam": "workspace:*"
     "@vitejs/plugin-vue": "npm:^6.0.10"
-    "@vitest/browser-playwright": "npm:^5.0.5"
+    "@vitest/browser-playwright": "npm:^5.1.0"
     msw: "npm:^3.0.3"
-    playwright: "npm:1.64.1"
+    playwright: "npm:1.65.0"
     tailwindcss: "npm:^4.3.3"
     vite: "npm:^8.3.5"
-    vitest: "npm:^5.0.5"
+    vitest: "npm:^5.1.0"
     vitest-browser-vue: "npm:^3.1.0"
     vue: "npm:^3.5.43"
   languageName: unknown
@@ -13433,13 +13433,6 @@ __metadata:
     signal-exit: "npm:^3.0.3"
     strip-final-newline: "npm:^2.0.0"
   checksum: 10/8ada91f2d70f7dff702c861c2c64f21dfdc1525628f3c0454fd6f02fce65f7b958616cbd2b99ca7fa4d474e461a3d363824e91b3eb881705231abbf387470597
-  languageName: node
-  linkType: hard
-
-"exifr@npm:^7.1.3":
-  version: 7.1.3
-  resolution: "exifr@npm:7.1.3"
-  checksum: 10/c2f35d7aa317e7957f1a6aec035fd95beb6880547850234528b972c3449d16abc905a837a89390c9b681355dd24ca825043b14a648e3c6ade13c2c7a29ffbbf4
   languageName: node
   linkType: hard
 
@@ -17957,13 +17950,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"namespace-emitter@npm:2.0.1, namespace-emitter@npm:^2.0.1":
-  version: 2.0.1
-  resolution: "namespace-emitter@npm:2.0.1"
-  checksum: 10/996ba4c82a659ca523365e22ffa017a0156439384a3d0f1b8527a4ab6487277be7de6447474b7f77146ef931e8f6829be087352dfdbd586d4b7d0dd905953a18
-  languageName: node
-  linkType: hard
-
 "nanoid@npm:^3.3.16, nanoid@npm:^3.3.20":
   version: 3.3.20
   resolution: "nanoid@npm:3.3.20"
@@ -19314,23 +19300,23 @@ __metadata:
   languageName: node
   linkType: hard
 
-"playwright-core@npm:1.64.1":
-  version: 1.64.1
-  resolution: "playwright-core@npm:1.64.1"
+"playwright-core@npm:1.65.0":
+  version: 1.65.0
+  resolution: "playwright-core@npm:1.65.0"
   bin:
     playwright-core: cli.js
-  checksum: 10/4a173590bc784d8d5bfe2cace53ccc31316dac11475660b59cea24a2e833875d87183d41a957a20355301ac2b339a17940faaf0b42217156fa9c0c3cfdd4633c
+  checksum: 10/77c76725d9c60a8fc67439e9fcb1ef075268aaf81dd5edc5321da777eb0f2103e8569f9efa55dd0adbd9c8c41ef97c956dd7263dc91c4233f29388cfa451dee3
   languageName: node
   linkType: hard
 
-"playwright@npm:1.64.1":
-  version: 1.64.1
-  resolution: "playwright@npm:1.64.1"
+"playwright@npm:1.65.0":
+  version: 1.65.0
+  resolution: "playwright@npm:1.65.0"
   dependencies:
-    playwright-core: "npm:1.64.1"
+    playwright-core: "npm:1.65.0"
   bin:
     playwright: cli.js
-  checksum: 10/1096fa91e433f84c8677433a26052aa4f269bf0811aa793fe667d7053feb1c2852e9f10f9f0cced77fa2678f8580ed47192f29adbc9c027efa5ba87b38e23e50
+  checksum: 10/bda489bad0809f61a874407244f0de7c38cefb8864148c6094f0f9dc2f808bbcbf4a8074cf7366d90890ff7e88786fc93965614dd63de3ab4594e5a6b0a39abd
   languageName: node
   linkType: hard
 
@@ -24570,7 +24556,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "uppy@workspace:packages/uppy"
   dependencies:
-    "@aws-sdk/client-s3": "npm:^3.1167.0"
+    "@aws-sdk/client-s3": "npm:^3.1168.0"
     "@npmcli/arborist": "npm:^10.0.1"
     "@uppy/audio": "workspace:*"
     "@uppy/aws-s3": "workspace:*"
@@ -24969,12 +24955,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"vitest@npm:^5.0.5":
-  version: 5.0.5
-  resolution: "vitest@npm:5.0.5"
+"vitest@npm:^5.1.0":
+  version: 5.1.0
+  resolution: "vitest@npm:5.1.0"
   dependencies:
     "@types/chai": "npm:^5.2.2"
-    "@vitest/mocker": "npm:5.0.5"
+    "@vitest/mocker": "npm:5.1.0"
     chai: "npm:^6.3.0"
     es-module-lexer: "npm:^2.3.2"
     expect-type: "npm:^1.4.0"
@@ -24990,12 +24976,12 @@ __metadata:
     "@edge-runtime/vm": "*"
     "@opentelemetry/api": ^1.9.0
     "@types/node": ^22.0.0 || >=24.0.0
-    "@vitest/browser-playwright": 5.0.5
-    "@vitest/browser-preview": 5.0.5
+    "@vitest/browser-playwright": 5.1.0
+    "@vitest/browser-preview": 5.1.0
     "@vitest/browser-webdriverio": ^5.0.0-beta.5 || >=5.0.0
-    "@vitest/coverage-istanbul": 5.0.5
-    "@vitest/coverage-v8": 5.0.5
-    "@vitest/ui": 5.0.5
+    "@vitest/coverage-istanbul": 5.1.0
+    "@vitest/coverage-v8": 5.1.0
+    "@vitest/ui": 5.1.0
     happy-dom: "*"
     jsdom: "*"
     vite: ^6.4.0 || ^7.0.0 || ^8.0.0
@@ -25026,7 +25012,7 @@ __metadata:
       optional: false
   bin:
     vitest: ./vitest.mjs
-  checksum: 10/1c580bb518134eb5118799cb65f4809055154b12c3109e86a8459582fed8bbc297362333e2e7bc592917f58024f270ce8de0da94d67527f5a896cada103058d4
+  checksum: 10/1e04646b4953e10625794fba01f8393145d617700974b8622ef6966b380bb5271c4e0df79b644d9355b08345cc6d4e5e6ef76004bb5d343fe4cee0f707105cbe
   languageName: node
   linkType: hard
 

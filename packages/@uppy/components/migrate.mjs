@@ -88,6 +88,13 @@ export default function %%ComponentName%%(props: Omit<%%PropsTypeName%%, 'ctx'>)
     }
   }, [ctx, props])
 
+  useEffect(() => {
+    const container = ref.current
+    return () => {
+      if (container) preactRender(null, container)
+    }
+  }, [])
+
   return <div ref={ref} />
 }
 `
@@ -99,7 +106,7 @@ import type {
   %%PropsTypeName%%,
 } from '@uppy/components'
 
-import { defineComponent, h, onMounted, ref, watch } from 'vue'
+import { defineComponent, h, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import {
   %%ComponentName%% as %%PreactComponentName%%,
 } from '@uppy/components'
@@ -128,6 +135,10 @@ export default defineComponent({
 
     onMounted(() => {
       render%%ComponentName%%()
+    })
+
+    onBeforeUnmount(() => {
+      if (containerRef.value) preactRender(null, containerRef.value)
     })
 
     watch(ctx, () => {
@@ -178,6 +189,11 @@ const SVELTE_TEMPLATE = `\
         container,
       )
     }
+  })
+
+  $effect(() => {
+    const node = container
+    return () => preactRender(null, node)
   })
 </script>
 

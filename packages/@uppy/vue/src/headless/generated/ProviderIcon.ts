@@ -4,7 +4,7 @@ import type { ProviderIconProps } from '@uppy/components'
 
 import { ProviderIcon as PreactProviderIcon } from '@uppy/components'
 import { h as preactH, render as preactRender } from '@uppy/core/utils/preact'
-import { defineComponent, h, onMounted, ref, watch } from 'vue'
+import { defineComponent, h, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 
 import { useUppyContext } from '../useUppyContext.js'
 
@@ -29,6 +29,10 @@ export default defineComponent({
 
     onMounted(() => {
       renderProviderIcon()
+    })
+
+    onBeforeUnmount(() => {
+      if (containerRef.value) preactRender(null, containerRef.value)
     })
 
     watch(ctx, () => {
