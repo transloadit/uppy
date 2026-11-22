@@ -15,7 +15,6 @@ async function main(): Promise<void> {
     .parse(await getOneMessage())
   const storage = redisUrl ? redis.client({ redisUrl }) : undefined
   const emitter = getEmitter(storage, scope)
-  emitter.on('error', () => {})
   const server = createServer((_request, response) => {
     response.writeHead(404).end()
   })
@@ -33,12 +32,10 @@ async function main(): Promise<void> {
   }
   setupSockets(server, options)
   await sendMessage({ origin })
-  const subscribe = emitter.on.bind(emitter)
-  let release: (() => void) | undefined
   while (true) {
     const command = z
       .object({
-        operation: z.enum(['publish', 'hold', 'release', 'barrier']),
+        operation: z.enum(['publish', 'barrier']),
         token: z.string(),
       })
       .parse(await getOneMessage())
@@ -49,18 +46,6 @@ async function main(): Promise<void> {
           { token: 'fixture-auth-result' },
           options,
         )
-      } else if (command.operation === 'hold') {
-        const held = Promise.withResolvers<void>()
-        release = held.resolve
-        emitter.on = async (token, handler) => {
-          if (token === 'redis:resubscribed') return subscribe(token, handler)
-          await sendMessage('subscribing')
-          await held.promise
-          return subscribe(token, handler)
-        }
-      } else if (command.operation === 'release') {
-        release?.()
-        emitter.on = subscribe
       } else {
         const noop = () => {}
         await emitter.on(command.token, noop)

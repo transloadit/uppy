@@ -11,7 +11,7 @@ import * as redis from './redis.js'
 
 const expirySeconds = 60
 /** How long a callback result stays retained for its socket to take. */
-export const authCallbackRetentionMs = expirySeconds * 1000
+const authCallbackRetentionMs = expirySeconds * 1000
 const maxPending = 1000
 const maxPayloadBytes = 64 * 1024
 const commandTimeoutMs = 5000

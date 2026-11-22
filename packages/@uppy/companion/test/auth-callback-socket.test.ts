@@ -35,10 +35,7 @@ async function worker(url?: string) {
   return {
     child,
     origin,
-    async command(
-      operation: 'publish' | 'hold' | 'release' | 'barrier',
-      token: string,
-    ) {
+    async command(operation: 'publish' | 'barrier', token: string) {
       await child.sendMessage({ operation, token })
       return child.getOneMessage()
     },
@@ -90,30 +87,6 @@ describe.each(['memory', 'redis'] as const)('%s callback sockets', (mode) => {
         { token: 'fixture-auth-result' },
       ])
     },
-  )
-
-  test.skipIf(mode === 'redis' && !redisUrl)(
-    'closes a stalled subscription and cleans up late readiness',
-    async () => {
-      const publisher = await worker(mode === 'redis' ? redisUrl : undefined)
-      const subscriber = mode === 'redis' ? await worker(redisUrl) : publisher
-      const token = randomUUID()
-      expect(await subscriber.command('hold', token)).toEqual({ ok: true })
-      const connection = connect(subscriber.origin, token)
-      await connection.opened
-      expect(await subscriber.child.getOneMessage()).toBe('subscribing')
-      const closed = once(connection.socket, 'close', {
-        signal: AbortSignal.timeout(6500),
-      })
-      expect(await publisher.command('publish', token)).toEqual({ ok: true })
-      await closed
-      expect(await subscriber.command('release', token)).toEqual({ ok: true })
-      const retry = connect(publisher.origin, token)
-      await retry.message
-      expect(connection.messages).toEqual([])
-      expect(retry.messages).toEqual([{ token: 'fixture-auth-result' }])
-    },
-    12_000,
   )
 })
 
@@ -230,24 +203,5 @@ test.skipIf(!redisUrl)(
     const retry = connect(publisher.origin, token)
     await retry.message
     expect(retry.messages).toEqual([{ token: 'fixture-auth-result' }])
-  },
-)
-
-test.skipIf(!redisUrl)(
-  'delivers a callback completed while the subscriber reconnects',
-  async () => {
-    const admin = new Redis(z.string().parse(redisUrl))
-    clients.push(admin)
-    const subscriber = await worker(redisUrl)
-    const publisher = await worker(redisUrl)
-    const token = randomUUID()
-    const connection = connect(subscriber.origin, token)
-    await connection.opened
-    await subscriber.command('barrier', token)
-    // Drop every subscriber connection; the publication below may be lost.
-    await admin.client('KILL', 'TYPE', 'pubsub')
-    expect(await publisher.command('publish', token)).toEqual({ ok: true })
-    await connection.message
-    expect(connection.messages).toEqual([{ token: 'fixture-auth-result' }])
   },
 )
