@@ -1,7 +1,8 @@
+import type { Locale } from '@uppy/core/utils'
+
 import { glob } from 'node:fs/promises'
 import path from 'node:path'
 import { pathToFileURL } from 'node:url'
-import type { Locale } from '@uppy/core/utils'
 
 export function sortObjectAlphabetically<Obj extends {}>(obj: Obj): Obj {
   return Object.fromEntries(

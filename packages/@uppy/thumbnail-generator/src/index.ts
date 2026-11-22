@@ -1,12 +1,14 @@
 import type { DefinePluginOpts, UIPluginOptions, Uppy } from '@uppy/core'
-import { UIPlugin } from '@uppy/core'
 import type { Body, LocalUppyFile, Meta, UppyFile } from '@uppy/core/utils'
+
+import { UIPlugin } from '@uppy/core'
 import {
   dataURItoBlob,
   isObjectURL,
   isPreviewSupported,
   toError,
 } from '@uppy/core/utils'
+
 import packageJson from '../package.json' with { type: 'json' }
 import locale from './locale.js'
 

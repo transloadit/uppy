@@ -8,6 +8,7 @@ import type {
   Uppy,
   UppyFile,
 } from '@uppy/core'
+
 import { UIPlugin } from '@uppy/core'
 import {
   defaultStorage,

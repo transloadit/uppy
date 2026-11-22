@@ -1,4 +1,5 @@
 import { fileURLToPath } from 'node:url'
+
 import tailwindcss from '@tailwindcss/vite'
 import vue from '@vitejs/plugin-vue'
 import { playwright } from '@vitest/browser-playwright'

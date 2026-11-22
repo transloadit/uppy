@@ -1,9 +1,9 @@
-import {
-  createImageEditorController,
-  type ImageEditorSnapshot,
-} from '@uppy/components'
+import type { ImageEditorSnapshot } from '@uppy/components'
 import type { UppyFile } from '@uppy/core'
+
+import { createImageEditorController } from '@uppy/components'
 import { onDestroy, onMount } from 'svelte'
+
 import { getUppyContext } from './components/headless/uppyContext.js'
 import { useExternalStore } from './useSyncExternalStore.svelte.js'
 

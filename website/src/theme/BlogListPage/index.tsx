@@ -1,3 +1,6 @@
+import type { Props } from '@theme/BlogListPage'
+import type { ReactNode } from 'react'
+
 import {
   HtmlClassNameProvider,
   PageMetadata,
@@ -5,14 +8,12 @@ import {
 } from '@docusaurus/theme-common'
 import useDocusaurusContext from '@docusaurus/useDocusaurusContext'
 import BlogLayout from '@theme/BlogLayout'
-import type { Props } from '@theme/BlogListPage'
 import BlogListPageStructuredData from '@theme/BlogListPage/StructuredData'
 import BlogListPaginator from '@theme/BlogListPaginator'
 import BlogPostItems from '@theme/BlogPostItems'
 import Heading from '@theme/Heading'
 import SearchMetadata from '@theme/SearchMetadata'
 import clsx from 'clsx'
-import type { ReactNode } from 'react'
 
 import styles from './index.module.css'
 
