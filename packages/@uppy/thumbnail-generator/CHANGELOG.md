@@ -1,5 +1,11 @@
 # @uppy/thumbnail-generator
 
+## 6.0.2
+
+### Patch Changes
+
+- bf550b3: Avoid exploding task queue size
+
 ## 6.0.1
 
 ### Patch Changes

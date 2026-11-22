@@ -7,9 +7,11 @@ import type {
   UppyFile,
   UppyFileId,
 } from '@uppy/core/utils'
-import classNames from 'classnames'
 import type { ComponentChildren, MouseEventHandler } from 'preact'
+
 import type { TargetWithRender } from '../Dashboard.js'
+
+import classNames from 'classnames'
 
 declare module '@uppy/core' {
   export interface UppyEventMap<M extends Meta, B extends Body> {

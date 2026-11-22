@@ -4,8 +4,9 @@
  * @see https://docs.aws.amazon.com/AmazonS3/latest/API/sigv4-query-string-auth.html
  */
 
-import * as C from './consts.js'
 import type { PresignableRequest, PresignedResponse } from './types.js'
+
+import * as C from './consts.js'
 import * as U from './utils.js'
 
 export interface SignerConfig {

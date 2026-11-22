@@ -1,7 +1,7 @@
 {
   "name": "@uppy/thumbnail-generator",
   "description": "Uppy plugin that generates small previews of images to show on your upload UI.",
-  "version": "6.0.1",
+  "version": "6.0.2",
   "license": "MIT",
   "type": "module",
   "sideEffects": false,
@@ -41,10 +41,10 @@
   },
   "devDependencies": {
     "@uppy-dev/tsconfig": "workspace:^",
-    "@vitest/browser-playwright": "^5.0.5",
-    "playwright": "1.64.1",
+    "@vitest/browser-playwright": "^5.1.0",
+    "playwright": "1.65.0",
     "typescript": "^6.0.3",
-    "vitest": "^5.0.5"
+    "vitest": "^5.1.0"
   },
   "peerDependencies": {
     "@uppy/core": "workspace:^"

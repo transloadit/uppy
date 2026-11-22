@@ -1,5 +1,7 @@
+import type { Request } from '../../types/express.js'
+
 import crypto from 'node:crypto'
-import type { Request } from 'express'
+
 import { isRecord } from './type-guards.js'
 import { decrypt, encrypt } from './utils.js'
 

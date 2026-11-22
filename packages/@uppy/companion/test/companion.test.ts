@@ -1,6 +1,7 @@
 import nock from 'nock'
 import request from 'supertest'
 import { afterAll, afterEach, describe, expect, it, test, vi } from 'vitest'
+
 import * as tokenService from '../dist/server/helpers/jwt.js'
 import { isRecord } from '../dist/server/helpers/type-guards.js'
 import packageJson from '../package.json' with { type: 'json' }
@@ -381,6 +382,22 @@ describe('S3 controller', () => {
     expect(res.body.error).toBe(
       's3: `parts` must be an array of {ETag, PartNumber} objects.',
     )
+  })
+
+  test.each([
+    [
+      '/s3/multipart',
+      's3: the "filename" field is required and must be a non-empty string',
+    ],
+    [
+      '/s3/multipart/upload-1/complete?key=a.jpg',
+      's3: `parts` must be an array of {ETag, PartNumber} objects.',
+    ],
+  ])('POST %s without a JSON body returns 400', async (path, error) => {
+    const res = await request(await getS3Server())
+      .post(path)
+      .expect(400)
+    expect(res.body.error).toBe(error)
   })
 
   test('createMultipartUpload rejects missing filename', async () => {
