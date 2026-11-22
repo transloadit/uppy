@@ -431,32 +431,35 @@ describe('uploader/ThumbnailGeneratorPlugin', () => {
       [7, [200, 267], ['110', '010', '001', '100']],
       // 8 = rotate 90° counter-clockwise: green, yellow / red, blue
       [8, [200, 267], ['010', '110', '100', '001']],
-    ])('should draw EXIF orientation %i the way the browser displays it', async (orientation, size, colors) => {
-      const plugin = new ThumbnailGeneratorPlugin(new MockCore())
-      const file = await jpegWithOrientation(orientation)
+    ])(
+      'should draw EXIF orientation %i the way the browser displays it',
+      async (orientation, size, colors) => {
+        const plugin = new ThumbnailGeneratorPlugin(new MockCore())
+        const file = await jpegWithOrientation(orientation)
 
-      const thumbnail = new Image()
-      thumbnail.src = await plugin.createThumbnail({ data: file }, 200, null)
-      await thumbnail.decode()
-      const [w, h] = [thumbnail.naturalWidth, thumbnail.naturalHeight]
-      expect([w, h]).toEqual(size)
+        const thumbnail = new Image()
+        thumbnail.src = await plugin.createThumbnail({ data: file }, 200, null)
+        await thumbnail.decode()
+        const [w, h] = [thumbnail.naturalWidth, thumbnail.naturalHeight]
+        expect([w, h]).toEqual(size)
 
-      const canvas = document.createElement('canvas')
-      canvas.width = w
-      canvas.height = h
-      const ctx = canvas.getContext('2d')
-      ctx.drawImage(thumbnail, 0, 0)
-      const bits = (x, y) =>
-        Array.from(ctx.getImageData(x, y, 1, 1).data.slice(0, 3))
-          .map((c) => (c > 127 ? 1 : 0))
-          .join('')
-      expect([
-        bits(w / 4, h / 4),
-        bits((3 * w) / 4, h / 4),
-        bits(w / 4, (3 * h) / 4),
-        bits((3 * w) / 4, (3 * h) / 4),
-      ]).toEqual(colors)
-    })
+        const canvas = document.createElement('canvas')
+        canvas.width = w
+        canvas.height = h
+        const ctx = canvas.getContext('2d')
+        ctx.drawImage(thumbnail, 0, 0)
+        const bits = (x, y) =>
+          Array.from(ctx.getImageData(x, y, 1, 1).data.slice(0, 3))
+            .map((c) => (c > 127 ? 1 : 0))
+            .join('')
+        expect([
+          bits(w / 4, h / 4),
+          bits((3 * w) / 4, h / 4),
+          bits(w / 4, (3 * h) / 4),
+          bits((3 * w) / 4, (3 * h) / 4),
+        ]).toEqual(colors)
+      },
+    )
   })
 
   describe('downScaleInSteps', () => {
