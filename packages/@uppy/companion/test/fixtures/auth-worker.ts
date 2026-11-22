@@ -14,7 +14,7 @@ async function main(): Promise<void> {
     .object({ redisUrl: z.string().optional(), scope: z.string() })
     .parse(await getOneMessage())
   const storage = redisUrl ? redis.client({ redisUrl }) : undefined
-  const emitter = getEmitter(storage, scope)
+  getEmitter(storage, scope)
   const server = createServer((_request, response) => {
     response.writeHead(404).end()
   })
@@ -33,24 +33,15 @@ async function main(): Promise<void> {
   setupSockets(server, options)
   await sendMessage({ origin })
   while (true) {
-    const command = z
-      .object({
-        operation: z.enum(['publish', 'barrier']),
-        token: z.string(),
-      })
+    const { token } = z
+      .object({ operation: z.literal('publish'), token: z.string() })
       .parse(await getOneMessage())
     try {
-      if (command.operation === 'publish') {
-        await publishAuthCallback(
-          command.token,
-          { token: 'fixture-auth-result' },
-          options,
-        )
-      } else {
-        const noop = () => {}
-        await emitter.on(command.token, noop)
-        await emitter.removeListener(command.token, noop)
-      }
+      await publishAuthCallback(
+        token,
+        { token: 'fixture-auth-result' },
+        options,
+      )
       await sendMessage({ ok: true })
     } catch {
       await sendMessage({ ok: false })

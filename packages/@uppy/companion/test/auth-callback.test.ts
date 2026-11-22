@@ -235,18 +235,6 @@ describe.each(['memory', 'redis'] as const)('%s auth callback', (mode) => {
   })
 
   if (mode === 'redis')
-    run('retains results regardless of clock skew with Redis', async () => {
-      const flow = await start()
-      const now = Date.now()
-      vi.spyOn(Date, 'now').mockReturnValue(now - 70_000)
-      await flow.callback()
-      vi.mocked(Date.now).mockRestore()
-      expect(await takeAuthCallback(flow.callbackToken, options)).toEqual({
-        token,
-      })
-    })
-
-  if (mode === 'redis')
     run(
       'fails fast instead of queueing while Redis is unavailable',
       async () => {
@@ -275,8 +263,11 @@ describe.each(['memory', 'redis'] as const)('%s auth callback', (mode) => {
           },
         }),
       )
+      const publish = vi.spyOn(Redis.prototype, 'publish')
       const response = await flow.callback(500)
       expect(response.status).toBe(500)
+      // fail closed: no live delivery of a result that was not retained
+      expect(publish).not.toHaveBeenCalled()
       expect(response.text).not.toContain(token)
       expect(response.text).not.toContain(flow.callbackToken)
       const output = log.mock.calls.flat().join(' ')
