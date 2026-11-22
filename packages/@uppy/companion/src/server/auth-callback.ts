@@ -106,8 +106,6 @@ export async function publishAuthCallback(
   // marks retained results so new workers consume storage instead of replaying
   // the publication after another socket already consumed it.
   try {
-    // The emitter rejects a failed publish only while nothing listens for its
-    // 'error' event; with a listener, the failure would go unnoticed here.
     const publish = async () => emitter().emit(token, data, true)
     await (storage ? bounded(storage, publish) : publish())
   } catch {
