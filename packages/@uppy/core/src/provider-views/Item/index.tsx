@@ -1,5 +1,5 @@
-import classNames from 'classnames'
 import type { h } from 'preact'
+
 import type {
   Body,
   Meta,
@@ -9,6 +9,9 @@ import type {
 } from '../../index.js'
 import type { I18n } from '../../utils/index.js'
 import type { ProviderAction } from '../ProviderView/ProviderView.js'
+
+import classNames from 'classnames'
+
 import GridItem from './components/GridItem.js'
 import ItemActionsMenu from './components/ItemActionsMenu.js'
 import ListItem from './components/ListItem.js'

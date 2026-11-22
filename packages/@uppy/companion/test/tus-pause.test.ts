@@ -1,11 +1,15 @@
+import type { AddressInfo } from 'node:net'
+
+import type { Request } from 'express'
+
 import { mkdtempSync, rmSync } from 'node:fs'
 import { createServer } from 'node:http'
-import type { AddressInfo } from 'node:net'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import { Readable } from 'node:stream'
-import type { Request } from 'express'
+
 import { afterEach, beforeEach, expect, test } from 'vitest'
+
 import { defaultOptions } from '../dist/config/companion.js'
 import Emitter from '../dist/server/emitter/index.js'
 import Uploader from '../dist/server/Uploader.js'

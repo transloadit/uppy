@@ -1,13 +1,13 @@
 import type { Body, Meta } from '@uppy/core'
-import {
-  Component,
-  type ComponentChild,
-  Fragment,
-} from '@uppy/core/utils/preact'
-import DiscardButton from './DiscardButton.js'
-import RecordButton from './RecordButton.js'
+import type { ComponentChild } from '@uppy/core/utils/preact'
+
 import type ScreenCapture from './ScreenCapture.js'
 import type { ScreenCaptureState } from './ScreenCapture.js'
+
+import { Component, Fragment } from '@uppy/core/utils/preact'
+
+import DiscardButton from './DiscardButton.js'
+import RecordButton from './RecordButton.js'
 import ScreenshotButton from './ScreenshotButton.js'
 import StopWatch from './StopWatch.js'
 import StreamStatus from './StreamStatus.js'

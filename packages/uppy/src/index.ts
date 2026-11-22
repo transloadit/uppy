@@ -29,4 +29,5 @@ export type { UrlOptions } from '@uppy/url'
 export type { WebcamOptions } from '@uppy/webcam'
 export type { XHRUploadOptions } from '@uppy/xhr-upload'
 export type { ZoomOptions } from '@uppy/zoom'
+
 export * from './bundle.js'

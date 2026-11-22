@@ -1,7 +1,10 @@
-import http from 'node:http'
 import type { AddressInfo } from 'node:net'
+
+import http from 'node:http'
 import { createGzip } from 'node:zlib'
+
 import { afterAll, beforeAll, beforeEach, describe, expect, test } from 'vitest'
+
 import { downloadURL } from '../dist/server/download.js'
 import {
   getProtectedGot,
@@ -75,15 +78,15 @@ describe('downloadURL', () => {
 
   // One Location got rejects outright (scheme), one that fails at connect
   // time; both used to make got buffer the whole redirect body.
-  test.each([
-    'ftp://example.invalid/',
-    'http://127.0.0.1:1/',
-  ])('does not read a redirect body it cannot follow (%s)', async (location) => {
-    handler = (req, res) => streamGzipBody(req, res, 302, { location })
-    await expect(downloadURL(`${baseUrl}/redir`, true)).rejects.toThrow()
-    await settle()
-    expect(streaming.chunksWritten).toBeLessThan(TOTAL_CHUNKS)
-  })
+  test.each(['ftp://example.invalid/', 'http://127.0.0.1:1/'])(
+    'does not read a redirect body it cannot follow (%s)',
+    async (location) => {
+      handler = (req, res) => streamGzipBody(req, res, 302, { location })
+      await expect(downloadURL(`${baseUrl}/redir`, true)).rejects.toThrow()
+      await settle()
+      expect(streaming.chunksWritten).toBeLessThan(TOTAL_CHUNKS)
+    },
+  )
 
   test('a redirect without a Location is an error, not the file', async () => {
     handler = (_req, res) => {

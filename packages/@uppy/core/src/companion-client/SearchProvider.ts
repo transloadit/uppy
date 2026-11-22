@@ -1,7 +1,7 @@
 import type { Body, Meta, Uppy } from '../index.js'
-import RequestClient, {
-  type Opts as RequestClientOpts,
-} from './RequestClient.js'
+import type { Opts as RequestClientOpts } from './RequestClient.js'
+
+import RequestClient from './RequestClient.js'
 
 export interface Opts extends RequestClientOpts {
   name?: string

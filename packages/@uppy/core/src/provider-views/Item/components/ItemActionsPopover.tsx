@@ -1,12 +1,5 @@
-import classNames from 'classnames'
 import type { h, RefObject } from 'preact'
-import {
-  useCallback,
-  useEffect,
-  useLayoutEffect,
-  useRef,
-  useState,
-} from 'preact/hooks'
+
 import type {
   Body,
   Meta,
@@ -14,9 +7,19 @@ import type {
   PartialTreeFolderNode,
 } from '../../../index.js'
 import type { I18n } from '../../../utils/index.js'
-import { stopEscapePropagation } from '../../ModalDialog.js'
 import type ProviderView from '../../ProviderView/ProviderView.js'
 import type { ProviderAction } from '../../ProviderView/ProviderView.js'
+
+import classNames from 'classnames'
+import {
+  useCallback,
+  useEffect,
+  useLayoutEffect,
+  useRef,
+  useState,
+} from 'preact/hooks'
+
+import { stopEscapePropagation } from '../../ModalDialog.js'
 
 type ItemActionsPopoverProps<M extends Meta, B extends Body> = {
   file: PartialTreeFile | PartialTreeFolderNode

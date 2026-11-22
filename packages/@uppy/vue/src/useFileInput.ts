@@ -1,4 +1,7 @@
-import { createFileInput, type FileInputProps } from '@uppy/components'
+import type { FileInputProps } from '@uppy/components'
+
+import { createFileInput } from '@uppy/components'
+
 import { injectUppyContext } from './headless/context-provider.js'
 
 export type VueFileInputFunctions = {
