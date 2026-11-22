@@ -39,7 +39,6 @@
   "devDependencies": {
     "@uppy-dev/tsconfig": "workspace:^",
     "@vitest/browser-playwright": "^5.1.0",
-    "namespace-emitter": "2.0.1",
     "playwright": "1.65.0",
     "typescript": "^6.0.3",
     "vitest": "^5.1.0"
