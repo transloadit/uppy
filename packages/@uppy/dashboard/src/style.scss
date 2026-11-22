@@ -1,5 +1,5 @@
 // NOTE TO CONSUMERS: The code and variables in these source files are not considered stable and can change at any time, even in minor and patch releases!
-@use "sass:color";
+@use 'sass:color';
 @use '@uppy/core/src/_utils.scss';
 @use '@uppy/core/src/_variables.scss';
 @use '@uppy/core/src/provider-views/style.scss' as style3;
@@ -339,9 +339,7 @@
   }
 
   .uppy-Dashboard-AddFilesPanel & {
-    height: calc(
-      100% - 14px - 40px
-    ); // to accomodate for the 7px margin and 40px topbar height
+    height: calc(100% - 14px - 40px); // to accomodate for the 7px margin and 40px topbar height
     border: none;
   }
 
@@ -768,7 +766,11 @@
   flex-direction: column;
   overflow: hidden;
   background: variables.$gray-50;
-  background: linear-gradient(0deg, variables.$gray-50 35%, rgba(variables.$gray-50, 0.85) 100%);
+  background: linear-gradient(
+    0deg,
+    variables.$gray-50 35%,
+    rgba(variables.$gray-50, 0.85) 100%
+  );
   border-radius: 5px;
   box-shadow: 0 0 10px 5px rgba(variables.$black, 0.15);
 

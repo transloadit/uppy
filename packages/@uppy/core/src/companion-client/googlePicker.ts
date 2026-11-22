@@ -1,7 +1,8 @@
 import type { Uppy, UppyEventMap } from '../index.js'
 import type { Meta } from '../utils/index.js'
-import { defaultStorage } from './defaultStorage.js'
 import type { CompanionPluginOptions, RequestClientOptions } from './index.js'
+
+import { defaultStorage } from './defaultStorage.js'
 
 export type GooglePickerType = 'drive' | 'photos'
 
