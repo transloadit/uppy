@@ -1,4 +1,5 @@
 import { describe, expect, it, vi } from 'vitest'
+
 import createEmitter from '../../lib/utils/createEmitter.js'
 
 describe('createEmitter', () => {
@@ -99,24 +100,22 @@ describe('createEmitter', () => {
     expect(once).toHaveBeenCalledOnce()
   })
 
-  it.each([
-    'constructor',
-    'toString',
-    'hasOwnProperty',
-    '__proto__',
-  ])('treats %s as an ordinary event name', (name) => {
-    const emitter = createEmitter()
-    const fn = vi.fn()
-    emitter.emit(name)
-    emitter.off(name, fn)
-    emitter.on(name, fn)
-    emitter.emit(name, 1)
-    emitter.off(name, fn)
-    emitter.emit(name, 2)
-    expect(fn.mock.calls).toEqual([
-      [1, undefined, undefined, undefined, undefined, undefined],
-    ])
-  })
+  it.each(['constructor', 'toString', 'hasOwnProperty', '__proto__'])(
+    'treats %s as an ordinary event name',
+    (name) => {
+      const emitter = createEmitter()
+      const fn = vi.fn()
+      emitter.emit(name)
+      emitter.off(name, fn)
+      emitter.on(name, fn)
+      emitter.emit(name, 1)
+      emitter.off(name, fn)
+      emitter.emit(name, 2)
+      expect(fn.mock.calls).toEqual([
+        [1, undefined, undefined, undefined, undefined, undefined],
+      ])
+    },
+  )
 
   it('off does not throw when something that is not a function was registered', () => {
     const emitter = createEmitter()
