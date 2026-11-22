@@ -362,6 +362,34 @@ describe('uploader', () => {
     }
   })
 
+  test('a failed temp file delete is logged without the upload token', async () => {
+    const warn = vi.spyOn(logger, 'warn').mockImplementation(() => {})
+    const uploader = new Uploader({
+      companionOptions,
+      endpoint: 'http://url.myendpoint.com/files',
+      protocol: 'tus',
+      size: 1,
+      pathPrefix,
+      metadata: { name: 'file.txt', type: 'text/plain' },
+    })
+    // a directory cannot be unlinked, so the delete fails with something other than ENOENT
+    const tmpPath = `${pathPrefix}/${uploader.fileName}`
+    fs.mkdirSync(tmpPath)
+    try {
+      uploader.tmpPath = tmpPath
+      await uploader.tryDeleteTmpPath()
+      expect(warn).toHaveBeenCalledWith(
+        expect.stringMatching(/^Could not delete the temp file: E[A-Z]+$/),
+        'uploader.cleanup.error',
+        uploader.shortToken,
+      )
+      expect(JSON.stringify(warn.mock.calls)).not.toContain(uploader.token)
+    } finally {
+      fs.rmdirSync(tmpPath)
+      warn.mockRestore()
+    }
+  })
+
   test('upload functions with tus protocol', async () => {
     const fileContent = Buffer.from('Some file content')
     const stream = Readable.from([fileContent])

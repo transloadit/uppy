@@ -704,7 +704,15 @@ export default class Uploader {
     } catch (err) {
       // The file may never have been created (e.g. canceled before download)
       if (!(isRecord(err) && err['code'] === 'ENOENT')) {
-        logger.warn(err, 'uploader.cleanup.error', this.shortToken)
+        // Not the error itself: its message and stack name the path, which
+        // holds the full upload token.
+        const code = isRecord(err) ? err['code'] : undefined
+        const kind = typeof code === 'string' ? code : toError(err).name
+        logger.warn(
+          `Could not delete the temp file: ${kind}`,
+          'uploader.cleanup.error',
+          this.shortToken,
+        )
       }
     }
     Uploader.#tmpFilesInUse.delete(this.fileName)
