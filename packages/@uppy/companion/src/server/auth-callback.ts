@@ -72,6 +72,14 @@ export async function publishAuthCallback(
   const key = storageKey(token, options)
   const storage = redis.client()
   const serialized = jsonStringify(data)
+  // Do not leave a result behind a failure page. Best effort: Redis may be gone.
+  const discard = async () => {
+    if (storage) await bounded(storage, () => storage.del(key)).catch(() => {})
+    else {
+      clearTimeout(pending.get(key)?.timer)
+      pending.delete(key)
+    }
+  }
   try {
     if (Buffer.byteLength(serialized) > maxPayloadBytes)
       throw new Error('OAuth result too large')
@@ -99,6 +107,8 @@ export async function publishAuthCallback(
       pending.set(key, { data: serialized, timer, expiresAt })
     }
   } catch {
+    // A SET that timed out here can still land later.
+    await discard()
     // Redis errors include SET arguments, so never log the error or token.
     logger.error('OAuth retention failed', 'auth.callback.retain.error')
     throw new Error('OAuth callback retention failed')
@@ -108,15 +118,12 @@ export async function publishAuthCallback(
   // marks retained results so new workers consume storage instead of replaying
   // the publication after another socket already consumed it.
   try {
+    // The emitter rejects a failed publish only while nothing listens for its
+    // 'error' event; with a listener, the failure would go unnoticed here.
     const publish = async () => emitter().emit(token, data, true)
     await (storage ? bounded(storage, publish) : publish())
   } catch {
-    // Do not leave a result behind a failure page. Best effort: Redis may be gone.
-    if (storage) await bounded(storage, () => storage.del(key)).catch(() => {})
-    else {
-      clearTimeout(pending.get(key)?.timer)
-      pending.delete(key)
-    }
+    await discard()
     // Keep command arguments out of the request error handler and response.
     logger.error('OAuth publication failed', 'auth.callback.publish.error')
     throw new Error('OAuth callback publication failed')
