@@ -1,5 +1,6 @@
 import type { CompanionInitOptions } from '../src/schemas/companion.js'
 
+import { randomUUID } from 'node:crypto'
 import { createServer, request as httpRequest } from 'node:http'
 import { gzipSync } from 'node:zlib'
 
@@ -10,6 +11,7 @@ import request from 'supertest'
 import { afterEach, describe, expect, onTestFinished, test, vi } from 'vitest'
 
 import { app as companionApp } from '../dist/companion.js'
+import emitter from '../dist/server/emitter/index.js'
 import {
   generateEncryptedAuthToken,
   generateEncryptedToken,
@@ -47,7 +49,13 @@ function embedded(options: Partial<CompanionInitOptions> = {}) {
       state: 'csrf-state',
       dynamic: {
         state: encodeState(
-          { id: 'flow', origin: req.params['origin'] },
+          {
+            id: 'flow',
+            origin: req.params['origin'],
+            ...(typeof req.query['authCallbackToken'] === 'string' && {
+              authCallbackToken: req.query['authCallbackToken'],
+            }),
+          },
           secret,
         ),
       },
@@ -168,6 +176,30 @@ describe('OAuth request boundaries', () => {
     ).toBe('next')
     expect(run({ state: { nested: 'value' } })).toBe(400)
     expect(run({ code: 'a'.repeat(8193) })).toBe(413)
+  })
+
+  test('tells the waiting Uppy client when a callback is rejected', async () => {
+    const agent = request.agent(embedded())
+    const authCallbackToken = randomUUID()
+    await agent
+      .post(`/seed/${encodeURIComponent(tenantA)}`)
+      .query({ authCallbackToken })
+      .expect(200)
+    const messages: unknown[] = []
+    await emitter().on(authCallbackToken, (message) => messages.push(message))
+    // rejected by the input guard
+    await agent.get('/connect/dropbox/callback?code=a&code=b').expect(400)
+    // a callback with neither a code nor an error
+    await agent.get('/connect/dropbox/callback').expect(400)
+    expect(messages).toEqual([{ error: true }, { error: true }])
+  })
+
+  test('still answers 400 to a rejected callback when the session state is not ours', async () => {
+    const agent = request.agent(embedded())
+    // Grant stores a `state` given to /connect in the session as is
+    await agent.get('/connect/dropbox?state=garbage').expect(302)
+    await agent.get('/connect/dropbox/callback?code=a&code=b').expect(400)
+    await agent.get('/connect/dropbox/callback').expect(400)
   })
 
   test('uses the pending provider rather than an OAuth 1 URL exemption', async () => {

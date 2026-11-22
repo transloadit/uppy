@@ -5,7 +5,7 @@
 Tighten the OAuth flow:
 
 - Requests with a `Content-Encoding` other than `identity` are rejected with 415.
-- Grant input is limited to 32 flat string fields and 8 KiB. Requests to start a login accept only `state` and the provider's configured `dynamic` fields.
+- Grant input is limited to 32 flat string fields and 8 KiB. Requests to start a login accept only `state` and the provider's configured `dynamic` fields. When a callback is rejected, the waiting Uppy client is told right away and closes the login window.
 - OAuth app credentials fetched through `credentialsURL` can no longer be overridden through the query string.
 - The OAuth callback and `send-token` pages only answer browser navigations, not `fetch()`.
 - `send-token` checks the origin saved at login against the current `corsOrigins`.
