@@ -12,6 +12,7 @@ import crypto from 'node:crypto'
 
 import got from 'got'
 
+import { getProtectedGot } from '../../helpers/request.js'
 import { isRecord } from '../../helpers/type-guards.js'
 import { HttpError, pathSegment, prepareStream } from '../../helpers/utils.js'
 import Provider from '../Provider.js'
@@ -196,7 +197,9 @@ export default class Facebook extends Provider<FacebookUserSession> {
           throw new Error('Facebook provider secret is not configured')
         }
         const url = await getMediaUrl({ secret, token, id })
-        const stream = got.stream.get(url, { responseType: 'json' })
+        const stream = getProtectedGot({
+          allowLocalIPs: this.allowLocalUrls,
+        }).stream.get(url, { responseType: 'json' })
         const { size } = await prepareStream(stream)
         return { stream, size }
       },

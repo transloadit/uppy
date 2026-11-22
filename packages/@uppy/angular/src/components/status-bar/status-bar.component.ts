@@ -1,54 +1,54 @@
+import type { OnChanges, OnDestroy, SimpleChanges } from '@angular/core'
+import type { Body, Meta, Uppy } from '@uppy/core'
+import type { StatusBarOptions } from '@uppy/status-bar'
+
 import {
-	ChangeDetectionStrategy,
-	Component,
-	ElementRef,
-	Input,
-	inject,
-	type OnChanges,
-	type OnDestroy,
-	type SimpleChanges,
-} from "@angular/core";
-import type { Body, Meta, Uppy } from "@uppy/core";
-import type { StatusBarOptions } from "@uppy/status-bar";
-import StatusBar from "@uppy/status-bar";
-import { UppyAngularWrapper } from "../../utils/wrapper";
+  ChangeDetectionStrategy,
+  Component,
+  ElementRef,
+  Input,
+  inject,
+} from '@angular/core'
+import StatusBar from '@uppy/status-bar'
+
+import { UppyAngularWrapper } from '../../utils/wrapper'
 
 @Component({
-	selector: "uppy-status-bar",
-	template: "",
-	changeDetection: ChangeDetectionStrategy.OnPush,
-	standalone: true,
+  selector: 'uppy-status-bar',
+  template: '',
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
 })
 export class StatusBarComponent<M extends Meta, B extends Body>
-	extends UppyAngularWrapper<M, B, StatusBarOptions>
-	implements OnDestroy, OnChanges
+  extends UppyAngularWrapper<M, B, StatusBarOptions>
+  implements OnDestroy, OnChanges
 {
-	el = inject(ElementRef);
+  el = inject(ElementRef)
 
-	// Left unset on purpose: the wrapper creates (and destroys) its own instance in
-	// `onMount` when nothing is passed in, so we never build one just to throw it away.
-	@Input() uppy!: Uppy<M, B>;
-	@Input() props: StatusBarOptions = {};
+  // Left unset on purpose: the wrapper creates (and destroys) its own instance in
+  // `onMount` when nothing is passed in, so we never build one just to throw it away.
+  @Input() uppy!: Uppy<M, B>
+  @Input() props: StatusBarOptions = {}
 
-	/** Inserted by Angular inject() migration for backwards compatibility */
-	constructor(...args: unknown[]);
+  /** Inserted by Angular inject() migration for backwards compatibility */
+  constructor(...args: unknown[])
 
-	constructor() {
-		super();
-	}
+  constructor() {
+    super()
+  }
 
-	ngOnInit() {
-		this.onMount(
-			{ id: "angular:StatusBar", target: this.el.nativeElement },
-			StatusBar,
-		);
-	}
+  ngOnInit() {
+    this.onMount(
+      { id: 'angular:StatusBar', target: this.el.nativeElement },
+      StatusBar,
+    )
+  }
 
-	ngOnChanges(changes: SimpleChanges): void {
-		this.handleChanges(changes, StatusBar);
-	}
+  ngOnChanges(changes: SimpleChanges): void {
+    this.handleChanges(changes, StatusBar)
+  }
 
-	ngOnDestroy(): void {
-		this.uninstall();
-	}
+  ngOnDestroy(): void {
+    this.uninstall()
+  }
 }

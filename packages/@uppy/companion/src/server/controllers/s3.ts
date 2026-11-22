@@ -219,7 +219,17 @@ async function fetchAllParts(
 
     holdsSlot = await takePagedListingSlot(res)
     if (!holdsSlot) return undefined
+    let previousMarker = 0
     while (page.IsTruncated) {
+      const marker = Number(page.NextPartNumberMarker)
+      if (
+        !Number.isInteger(marker) ||
+        marker <= previousMarker ||
+        marker > 10000
+      ) {
+        throw new Error('S3 returned an invalid part listing cursor')
+      }
+      previousMarker = marker
       page = await listPage(page.NextPartNumberMarker)
       if (clientGone(res)) return undefined
       if (page.Parts) parts.push(...page.Parts)
@@ -345,14 +355,14 @@ export default function s3(
     const client = getS3Client(req, res)
     if (!client) return undefined
     const uploadId = parseInput(
-      requiredString,
+      requiredString.max(2048),
       req.params['uploadId'],
       res,
       's3: uploadId must be provided.',
     )
     if (uploadId == null) return undefined
     const key = parseInput(
-      z.string(),
+      requiredString.refine((value) => Buffer.byteLength(value) <= 1024),
       req.query['key'],
       res,
       's3: the object key must be passed as a query parameter. For example: "?key=abc.jpg"',

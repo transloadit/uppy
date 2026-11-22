@@ -24,5 +24,12 @@ export default function Dropzone(props: Omit<DropzoneProps, 'ctx'>) {
     }
   }, [ctx, props])
 
+  useEffect(() => {
+    const container = ref.current
+    return () => {
+      if (container) preactRender(null, container)
+    }
+  }, [])
+
   return <div ref={ref} />
 }

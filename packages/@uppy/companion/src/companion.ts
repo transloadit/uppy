@@ -3,7 +3,7 @@ import type { Express } from 'express'
 import type {
   CompanionInitOptions,
   CredentialsFetchResponse,
-} from './schemas/index.js'
+} from './schemas/companion.js'
 import type { EmitterLike } from './server/emitter/index.js'
 import type Provider from './server/provider/Provider.js'
 import type { CompanionRuntimeOptions } from './types/companion-options.js'

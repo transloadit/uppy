@@ -56,6 +56,7 @@ const get = async (req: Request, res: Response): Promise<void> => {
         return streamGoogleFile({
           token: accessToken,
           id: parsedBody.data.fileId,
+          allowLocalUrls,
         })
       }
       return downloadURL(parsedBody.data.url, allowLocalUrls, req.id, {
