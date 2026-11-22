@@ -1,4 +1,4 @@
-import type { Meta } from '@uppy/core/utils'
+import type { LocalUppyFile, Meta } from '@uppy/core/utils'
 
 import Uppy, { UIPlugin } from '@uppy/core'
 import { delay } from '@uppy/core/utils'
@@ -400,6 +400,94 @@ describe('uploader/ThumbnailGeneratorPlugin', () => {
         height: 25,
       })
     })
+  })
+
+  describe('createThumbnail', () => {
+    // A 400×300 JPEG with red, green / blue, yellow quadrants and an EXIF
+    // Orientation tag.
+    async function jpegWithOrientation(orientation: number): Promise<File> {
+      const canvas = document.createElement('canvas')
+      canvas.width = 400
+      canvas.height = 300
+      const ctx = canvas.getContext('2d')!
+      for (const [color, x, y] of [
+        ['#f00', 0, 0],
+        ['#0f0', 200, 0],
+        ['#00f', 0, 150],
+        ['#ff0', 200, 150],
+      ] as const) {
+        ctx.fillStyle = color
+        ctx.fillRect(x, y, 200, 150)
+      }
+      const blob = await new Promise<Blob | null>((resolve) =>
+        canvas.toBlob(resolve, 'image/jpeg', 1),
+      )
+      const jpeg = new Uint8Array(await blob!.arrayBuffer())
+      // APP1 segment: marker and length, 'Exif\0\0', a little-endian TIFF
+      // header, then an IFD0 with one entry, Orientation (0x0112) as a SHORT.
+      const hex = `ffe10022 457869660000 49492a0008000000 0100 1201030001000000 0${orientation}000000 00000000`
+      const app1 = Uint8Array.from(hex.replaceAll(' ', '').match(/../g)!, (b) =>
+        Number.parseInt(b, 16),
+      )
+      return new File([jpeg.subarray(0, 2), app1, jpeg.subarray(2)], 'a.jpg', {
+        type: 'image/jpeg',
+      })
+    }
+
+    it.each([
+      // [orientation, thumbnail size, quadrant colours as RGB bits]
+      [1, [200, 150], ['100', '010', '001', '110']],
+      // 3 = rotate 180°: yellow, blue / green, red
+      [3, [200, 150], ['110', '001', '010', '100']],
+      // 5 = mirror across the main diagonal: red, blue / green, yellow
+      [5, [200, 267], ['100', '001', '010', '110']],
+      // 6 = rotate 90° clockwise to display: blue, red / yellow, green
+      [6, [200, 267], ['001', '100', '110', '010']],
+      // 7 = mirror across the other diagonal: yellow, green / blue, red
+      [7, [200, 267], ['110', '010', '001', '100']],
+      // 8 = rotate 90° counter-clockwise: green, yellow / red, blue
+      [8, [200, 267], ['010', '110', '100', '001']],
+    ])(
+      'should draw EXIF orientation %i the way the browser displays it',
+      async (orientation, size, colors) => {
+        using core = new Uppy()
+        core.use(ThumbnailGeneratorPlugin)
+        const plugin = core.getPlugin(
+          'ThumbnailGenerator',
+        ) as ThumbnailGeneratorPlugin<Meta, Record<string, never>>
+        const fileId = core.addFile({
+          name: 'a.jpg',
+          type: 'image/jpeg',
+          data: await jpegWithOrientation(orientation),
+        })
+
+        const thumbnail = new Image()
+        thumbnail.src = await plugin.createThumbnail(
+          core.getFile(fileId) as LocalUppyFile<Meta, Record<string, never>>,
+          200,
+          null,
+        )
+        await thumbnail.decode()
+        const [w, h] = [thumbnail.naturalWidth, thumbnail.naturalHeight]
+        expect([w, h]).toEqual(size)
+
+        const canvas = document.createElement('canvas')
+        canvas.width = w
+        canvas.height = h
+        const ctx = canvas.getContext('2d')!
+        ctx.drawImage(thumbnail, 0, 0)
+        const bits = (x: number, y: number) =>
+          Array.from(ctx.getImageData(x, y, 1, 1).data.slice(0, 3))
+            .map((c) => (c > 127 ? 1 : 0))
+            .join('')
+        expect([
+          bits(w / 4, h / 4),
+          bits((3 * w) / 4, h / 4),
+          bits(w / 4, (3 * h) / 4),
+          bits((3 * w) / 4, (3 * h) / 4),
+        ]).toEqual(colors)
+      },
+    )
   })
 
   describe('resizeImage', () => {

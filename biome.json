@@ -7,20 +7,7 @@
   },
   "files": {
     "ignoreUnknown": true,
-    "includes": [
-      "packages/**",
-      "examples/**",
-      "scripts/**",
-      "private/**",
-      "website/**",
-      "!**/*.md",
-      "!website/static",
-      "!packages/**/{angular/src,dist,lib}",
-      "!node_modules",
-      "!.svelte-kit",
-      "!packages/@uppy/components/src/input.css",
-      "!examples/angular/**/*.html"
-    ]
+    "includes": ["**", "!**/*.md"]
   },
   "formatter": {
     "enabled": true,
@@ -81,6 +68,10 @@
   "css": {
     "formatter": {
       "quoteStyle": "single"
+    },
+    "parser": {
+      "cssModules": true,
+      "tailwindDirectives": true
     }
   },
   "javascript": {
@@ -185,6 +176,29 @@
       }
     },
     {
+      "includes": [
+        "packages/@uppy/companion/src/**",
+        "!packages/@uppy/companion/src/types/express.ts"
+      ],
+      "linter": {
+        "rules": {
+          "style": {
+            "noRestrictedImports": {
+              "level": "error",
+              "options": {
+                "paths": {
+                  "express": {
+                    "importNames": ["Request", "RequestHandler"],
+                    "message": "Import Request/RequestHandler from src/types/express.ts, which types req.body as unknown."
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    {
       "includes": ["**/*.vue", "**/*.svelte", "packages/@uppy/vue/**/*.ts"],
       "linter": {
         "rules": {
@@ -205,14 +219,6 @@
           "style": {
             "noDescendingSpecificity": "off"
           }
-        }
-      }
-    },
-    {
-      "includes": ["examples/nextjs/**/*.css"],
-      "css": {
-        "parser": {
-          "tailwindDirectives": true
         }
       }
     }
