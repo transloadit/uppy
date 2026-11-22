@@ -1,4 +1,6 @@
-import type { Request, Response } from 'express'
+import type { Response } from 'express'
+
+import type { Request } from '../../types/express.js'
 
 import express from 'express'
 import { z } from 'zod'
@@ -53,6 +55,7 @@ const get = async (req: Request, res: Response): Promise<void> => {
         return streamGoogleFile({
           token: accessToken,
           id: parsedBody.data.fileId,
+          allowLocalUrls,
         })
       }
       return downloadURL(parsedBody.data.url, allowLocalUrls, req.id, {

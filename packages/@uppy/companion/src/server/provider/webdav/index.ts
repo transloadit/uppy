@@ -12,7 +12,7 @@ import type {
   ProviderSimpleAuthOptions,
 } from '../Provider.js'
 
-import fetch from 'node-fetch'
+import fetch, { Headers, Response } from 'node-fetch'
 import { AuthType, createClient, getPatcher } from 'webdav'
 
 import { getProtectedHttpAgent, validateURL } from '../../helpers/request.js'
@@ -21,6 +21,7 @@ import logger from '../../logger.js'
 import { ProviderApiError, ProviderAuthError } from '../error.js'
 import { userError } from '../errorCodes.js'
 import Provider from '../Provider.js'
+import { validateResponseXml } from './validateResponseXml.js'
 
 const defaultDirectory = '/'
 
@@ -34,17 +35,35 @@ const defaultDirectory = '/'
  * downloads (which stream `response.body`) are not limited by this.
  *
  * The webdav patcher is a package-wide singleton, so this applies to every
- * webdav client in the process, and a later `getPatcher().patch('fetch', …)`
- * by an embedding app would replace it.
+ * webdav client in the process. An embedder that replaces this fetch patch
+ * must preserve the same bounds.
  */
 export const MAX_WEBDAV_RESPONSE_BYTES = 5 * 1024 * 1024
 
-getPatcher().patch('fetch', (url: unknown, options: unknown) =>
-  fetch(url as RequestInfo, {
-    ...(options as RequestInit),
+getPatcher().patch('fetch', async (url: unknown, options: unknown) => {
+  // webdav's hot-patcher has no typed fetch boundary.
+  const requestOptions = options as RequestInit
+  const headers = new Headers(requestOptions.headers)
+  // Avoids a decompressor where the server honours it (a server that ignores
+  // it gets one, as on main). A compressed body is still capped by `size`,
+  // which node-fetch counts after decompression.
+  headers.set('accept-encoding', 'identity')
+  const response = await fetch(url as RequestInfo, {
+    ...requestOptions,
+    headers,
     size: MAX_WEBDAV_RESPONSE_BYTES,
-  }),
-)
+  })
+  if (response.ok && requestOptions.method?.toUpperCase() === 'PROPFIND') {
+    const xml = await response.text()
+    validateResponseXml(xml)
+    return new Response(xml, {
+      status: response.status,
+      statusText: response.statusText,
+      headers: response.headers,
+    })
+  }
+  return response
+})
 
 type WebdavUserSession = { webdavUrl?: string }
 type WebdavClient = ReturnType<typeof createClient>
@@ -163,6 +182,12 @@ export default class WebdavProvider extends Provider<WebdavUserSession> {
     const { allowLocalUrls } = this
     if (!validateURL(url, allowLocalUrls)) {
       throw new Error('invalid webdav url')
+    }
+    if (
+      decodeURIComponent(new URL(url).pathname).split('/').filter(Boolean)
+        .length > 32
+    ) {
+      throw new Error('WebDAV URL exceeds the maximum folder depth')
     }
     const HttpAgent = getProtectedHttpAgent({
       protocol: 'http',
