@@ -1,6 +1,8 @@
+import type { NextRequest } from 'next/server'
+
 import { mkdir, writeFile } from 'node:fs/promises'
 import path from 'node:path'
-import type { NextRequest } from 'next/server'
+
 import { NextResponse } from 'next/server'
 
 export const config = {

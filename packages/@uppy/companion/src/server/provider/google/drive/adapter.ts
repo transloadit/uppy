@@ -1,5 +1,6 @@
-import querystring from 'node:querystring'
 import type { Query } from '../../Provider.js'
+
+import querystring from 'node:querystring'
 
 export type DriveItem = {
   kind?: string
@@ -169,7 +170,7 @@ const getItemThumbnailUrl = (item: DriveItem) => {
   return item.thumbnailLink
 }
 
-const getNextPagePath = (
+const getDriveNextPagePath = (
   data: DriveListResponse,
   sharedDrives: DriveSharedDrivesResponse | null | undefined,
   currentQuery: Query | undefined,
@@ -271,7 +272,7 @@ export const adaptData = (
   return {
     username: getUsername(about),
     items: adaptedItems,
-    nextPagePath: getNextPagePath(
+    nextPagePath: getDriveNextPagePath(
       listFilesResp,
       sharedDrivesResp,
       query,

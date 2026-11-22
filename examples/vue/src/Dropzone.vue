@@ -4,6 +4,7 @@
     v-bind="getRootProps()"
     role="button"
     class="border-2 border-dashed border-gray-300 rounded-lg p-6 bg-gray-50 transition-colors duration-200"
+    tabindex="0"
   >
     <div class="flex items-center justify-center gap-4">
       <input v-bind="getFileInputProps()" class="hidden" />
