@@ -1,5 +1,6 @@
 import type { Socket } from 'node:net'
-import type { RequestHandler } from 'express'
+
+import type { RequestHandler } from '../types/express.js'
 
 /** Bound requests retained while a pipelined connection waits on upstream I/O. */
 export function limitPendingRequests(maxPending = 100): RequestHandler {

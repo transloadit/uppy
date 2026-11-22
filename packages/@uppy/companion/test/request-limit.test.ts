@@ -1,8 +1,12 @@
+import type { Response } from 'express'
+
 import { once } from 'node:events'
 import { createServer } from 'node:http'
 import { connect } from 'node:net'
-import express, { type Response } from 'express'
+
+import express from 'express'
 import { expect, test, vi } from 'vitest'
+
 import { limitPendingRequests } from '../dist/standalone/request-limit.js'
 
 test('rejects excess pipelined requests before starting their upstream work', async () => {
