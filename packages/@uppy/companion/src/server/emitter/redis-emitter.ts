@@ -234,8 +234,8 @@ export default function redisEmitter(
         if (handlersByPattern.has(pattern)) await subscriber.psubscribe(pattern)
       })
     } catch (err) {
-      // A failed on() must leave no listener behind, or a later on() with the
-      // same handler would have it called twice.
+      // A failed on() must leave no listener behind, or its handler would start
+      // getting messages once a later on() for the same event succeeds.
       if (handlers.get(handler) === registration) {
         handlers.delete(handler)
         if (handlers.size === 0 && handlersByPattern.get(pattern) === handlers)
