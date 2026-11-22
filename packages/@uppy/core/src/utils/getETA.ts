@@ -1,4 +1,5 @@
 import type { FileProgress } from './FileProgress.js'
+
 import getBytesRemaining from './getBytesRemaining.js'
 import getSpeed from './getSpeed.js'
 

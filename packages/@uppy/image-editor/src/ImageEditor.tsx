@@ -6,9 +6,11 @@ import type {
   Uppy,
   UppyFile,
 } from '@uppy/core'
-import { UIPlugin } from '@uppy/core'
 import type { LocaleStrings } from '@uppy/core/utils'
+
+import { UIPlugin } from '@uppy/core'
 import Cropper from 'cropperjs'
+
 import packageJson from '../package.json' with { type: 'json' }
 import Editor from './Editor.js'
 import locale from './locale.js'

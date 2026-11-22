@@ -1,7 +1,8 @@
 import type { NonNullableUppyContext, UploadStatus } from '@uppy/components'
-import { createUppyEventAdapter } from '@uppy/components'
 import type Uppy from '@uppy/core'
 import type { PropType } from 'vue'
+
+import { createUppyEventAdapter } from '@uppy/components'
 import {
   defineComponent,
   inject,

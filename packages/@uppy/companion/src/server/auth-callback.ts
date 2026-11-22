@@ -1,6 +1,9 @@
-import { once } from 'node:events'
 import type { Redis } from 'ioredis'
+
 import type { CompanionInitOptions } from '../schemas/companion.js'
+
+import { once } from 'node:events'
+
 import emitter from './emitter/index.js'
 import { jsonStringify } from './helpers/utils.js'
 import * as logger from './logger.js'

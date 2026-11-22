@@ -1,11 +1,10 @@
+import '@uppy/react/css/style.css'
+
 import { Dropzone, UppyContextProvider } from '@uppy/react'
 import { useState } from 'react'
 import { Uppy } from 'uppy'
 
 import { BrowserWindow } from './BrowserWindow'
-
-import '@uppy/react/css/style.css'
-
 import styles from './dropzone.module.css'
 
 export default function DropzoneDemo() {

@@ -1,7 +1,12 @@
 import type { Server as HttpServer } from 'node:http'
 import type { Server as HttpsServer } from 'node:https'
-import { type WebSocket, WebSocketServer } from 'ws'
+
+import type { WebSocket } from 'ws'
+
 import type { CompanionInitOptions } from '../schemas/companion.js'
+
+import { WebSocketServer } from 'ws'
+
 import { authCallbackRetentionMs, takeAuthCallback } from './auth-callback.js'
 import emitter from './emitter/index.js'
 import { isRecord } from './helpers/type-guards.js'
@@ -112,12 +117,15 @@ async function handleAuthCallbackSocketConnection({
   options: CompanionInitOptions
 }) {
   const events = emitter()
+  // The socket leaves OPEN as soon as the client's close frame arrives. Its 'close' event only
+  // fires once the connection has ended, which can be after a pending subscription completes,
+  // and a replay then would consume a result that can no longer be sent.
+  const isClosed = () => ws.readyState !== ws.OPEN
   const openedAt = Date.now()
-  let closed = false
   let sent = false
   let replaysInFlight = 0
   function send(data: unknown) {
-    if (closed || sent) return
+    if (isClosed() || sent) return
     sent = true
     ws.send(jsonStringify(data), (err) => {
       if (err)
@@ -130,7 +138,7 @@ async function handleAuthCallbackSocketConnection({
   }
 
   async function replay() {
-    if (closed || sent) return
+    if (isClosed() || sent) return
     replaysInFlight++
     let data: unknown
     try {
@@ -153,7 +161,6 @@ async function handleAuthCallbackSocketConnection({
   function onError() {
     // Subscription errors include the callback token in command arguments.
     logger.error('Auth callback failed', 'socket.auth.redis.error')
-    closed = true
     ws.close()
   }
 
@@ -171,20 +178,18 @@ async function handleAuthCallbackSocketConnection({
           Date.now() - openedAt,
         )
         // Another replay (from a message) may still deliver the result.
-        if (sent || closed || replaysInFlight > 0) return
+        if (sent || isClosed() || replaysInFlight > 0) return
         if (waited < authCallbackRetentionMs) return
         logger.info(
           'Auth callback may have expired during a Redis outage',
           'socket.auth.redis.expired',
         )
-        closed = true
         ws.close()
       })
       .catch(onError)
   }
 
   ws.on('close', () => {
-    closed = true
     events.removeListener(token, onMessage)
     events.removeListener('redis:resubscribed', onResubscribed)
   })
@@ -197,7 +202,7 @@ async function handleAuthCallbackSocketConnection({
     // Late readiness must remove any listener registered after socket closure.
     const subscribed = Promise.resolve(events.on(token, onMessage)).then(
       async () => {
-        if (closed) await events.removeListener(token, onMessage)
+        if (isClosed()) await events.removeListener(token, onMessage)
       },
     )
     let subscriptionTimer: NodeJS.Timeout | undefined
@@ -215,7 +220,7 @@ async function handleAuthCallbackSocketConnection({
     } finally {
       clearTimeout(subscriptionTimer)
     }
-    if (closed) {
+    if (isClosed()) {
       events.removeListener(token, onMessage)
       return
     }

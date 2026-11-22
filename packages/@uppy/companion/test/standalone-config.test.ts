@@ -1,7 +1,9 @@
 import { mkdtempSync, rmSync, writeFileSync } from 'node:fs'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
+
 import { afterAll, afterEach, expect, test, vi } from 'vitest'
+
 import { defaultOptions } from '../src/config/companion.js'
 import { getCompanionOptions } from '../src/standalone/helper.js'
 
@@ -64,18 +66,16 @@ test('rejects conflicting file and inline configuration', () => {
   expect(() => getCompanionOptions()).toThrow('Choose either')
 })
 
-test.each([
-  '[]',
-  'null',
-  '"credential-value"',
-  '{"secret":"credential-value"',
-])('rejects invalid configuration without echoing it (%s)', (inline) => {
-  vi.stubEnv('COMPANION_CONFIG_FILE', undefined)
-  vi.stubEnv('COMPANION_CONFIG_JSON', inline)
-  expect(() => getCompanionOptions()).toThrow(
-    'Invalid Companion JSON configuration',
-  )
-})
+test.each(['[]', 'null', '"credential-value"', '{"secret":"credential-value"'])(
+  'rejects invalid configuration without echoing it (%s)',
+  (inline) => {
+    vi.stubEnv('COMPANION_CONFIG_FILE', undefined)
+    vi.stubEnv('COMPANION_CONFIG_JSON', inline)
+    expect(() => getCompanionOptions()).toThrow(
+      'Invalid Companion JSON configuration',
+    )
+  },
+)
 
 test('resolves allowlist patterns from inline configuration', () => {
   vi.stubEnv('COMPANION_CONFIG_FILE', undefined)

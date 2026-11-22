@@ -1,10 +1,13 @@
-import got from 'got'
 import type {
   ProviderLogoutOptions,
   ProviderLogoutResponse,
   ProviderRefreshTokenOptions,
   ProviderRefreshTokenResponse,
 } from '../Provider.js'
+
+import got from 'got'
+
+import { refreshAccessToken } from '../oauth.js'
 import { withGoogleErrorHandling } from '../providerErrors.js'
 
 /**
@@ -15,37 +18,13 @@ export interface GoogleUserSession {
   accessToken: string
 }
 
-const getOauthClient = () =>
-  got.extend({
-    prefixUrl: 'https://oauth2.googleapis.com',
-  })
-
-export function refreshToken({
-  clientId,
-  clientSecret,
-  refreshToken: theRefreshToken,
-}: ProviderRefreshTokenOptions): Promise<ProviderRefreshTokenResponse> {
+export function refreshToken(
+  options: ProviderRefreshTokenOptions,
+): Promise<ProviderRefreshTokenResponse> {
   return withGoogleErrorHandling(
     'google',
     'provider.google.token.refresh.error',
-    async () => {
-      const tokenRes = await getOauthClient()
-        .post('token', {
-          responseType: 'json',
-          form: {
-            refresh_token: theRefreshToken,
-            grant_type: 'refresh_token',
-            client_id: clientId,
-            client_secret: clientSecret,
-          },
-        })
-        .json<{ access_token?: unknown }>()
-      const accessToken = tokenRes.access_token
-      if (typeof accessToken !== 'string' || accessToken.length === 0) {
-        throw new Error('Missing access_token')
-      }
-      return { accessToken }
-    },
+    () => refreshAccessToken('https://oauth2.googleapis.com/token', options),
   )
 }
 

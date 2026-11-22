@@ -1,7 +1,9 @@
 import { once } from 'node:events'
 import { createServer } from 'node:http'
+
 import { getOneMessage, sendMessage } from 'execa'
 import { z } from 'zod'
+
 import { publishAuthCallback } from '../../dist/server/auth-callback.js'
 import getEmitter from '../../dist/server/emitter/index.js'
 import * as redis from '../../dist/server/redis.js'

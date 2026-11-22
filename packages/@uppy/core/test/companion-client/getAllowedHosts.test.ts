@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest'
+
 import getAllowedHosts from '../../lib/companion-client/getAllowedHosts.js'
 
 describe('getAllowedHosts', () => {

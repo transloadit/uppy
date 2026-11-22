@@ -1,9 +1,9 @@
-import {
-  createScreenCaptureController,
-  type ScreenCaptureSnapshot,
-} from '@uppy/components'
+import type { ScreenCaptureSnapshot } from '@uppy/components'
+
+import { createScreenCaptureController } from '@uppy/components'
 import { useEffect, useMemo, useRef } from 'react'
 import { useSyncExternalStore } from 'use-sync-external-store/shim'
+
 import { useUppyContext } from './headless/UppyContextProvider.js'
 
 type ScreenCaptureProps = {
