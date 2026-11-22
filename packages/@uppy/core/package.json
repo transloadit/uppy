@@ -1,7 +1,7 @@
 {
   "name": "@uppy/core",
   "description": "Core module for the extensible JavaScript file upload widget with support for drag&drop, resumable uploads, previews, restrictions, file processing/encoding, remote providers like Dropbox, Google Drive, S3 and more :dog:",
-  "version": "6.3.1",
+  "version": "6.3.2",
   "license": "MIT",
   "style": "dist/style.min.css",
   "type": "module",
@@ -42,6 +42,8 @@
     "./utils": "./lib/utils/index.js",
     "./utils/preact": "./lib/utils/preact/index.js",
     "./utils/preact/hooks": "./lib/utils/preact/hooks.js",
+    "./utils/preact/jsx-dev-runtime": "./lib/utils/preact/jsx-dev-runtime.js",
+    "./utils/preact/jsx-runtime": "./lib/utils/preact/jsx-runtime.js",
     "./companion-client": "./lib/companion-client/index.js",
     "./provider-views": "./lib/provider-views/index.js",
     "./provider-views/css/style.min.css": "./dist/provider-views.min.css",
@@ -54,7 +56,6 @@
     "classnames": "^2.5.1",
     "lodash": "^4.18.1",
     "mime-match": "^1.0.2",
-    "namespace-emitter": "^2.0.1",
     "nanoid": "^6.0.1",
     "p-queue": "^9.3.3",
     "p-retry": "^8.0.0",
@@ -67,19 +68,18 @@
     "@types/google.picker": "^0.0.52",
     "@types/lodash": "^4.17.25",
     "@types/mime-match": "^1.0.0",
-    "@types/namespace-emitter": "^2.0.0",
     "@types/node": "^22.20.1",
     "@uppy-dev/tsconfig": "workspace:^",
-    "@vitest/browser-playwright": "^5.0.5",
+    "@vitest/browser-playwright": "^5.1.0",
     "cssnano": "^8.0.1",
     "deep-freeze": "^0.0.1",
     "msw": "^3.0.3",
-    "playwright": "1.64.1",
+    "playwright": "1.65.0",
     "postcss": "^8.5.32",
     "postcss-cli": "^12.0.0",
     "sass": "^1.89.2",
     "typescript": "^6.0.3",
     "vite": "^8.3.5",
-    "vitest": "^5.0.5"
+    "vitest": "^5.1.0"
   }
 }

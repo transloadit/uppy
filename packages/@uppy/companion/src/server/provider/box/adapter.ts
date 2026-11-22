@@ -1,6 +1,8 @@
-import querystring from 'node:querystring'
-import mime from 'mime-types'
 import type { BuildUrl } from '../../../types/express.js'
+
+import mime from 'mime-types'
+
+import { getNextPagePath } from '../../helpers/utils.js'
 
 type BoxItem = {
   type?: string
@@ -63,21 +65,20 @@ const getItemThumbnailUrl = (item: BoxItem): string => {
   return `/box/thumbnail/${getItemRequestPath(item)}`
 }
 
-const getNextPagePath = (data: BoxListResponse): string | null => {
-  if (
-    data.total_count < data.limit ||
-    data.offset + data.limit > data.total_count
-  ) {
-    return null
-  }
-  const query = { cursor: data.offset + data.limit }
-  return `?${querystring.stringify(query)}`
+const getBoxNextPagePath = (
+  data: BoxListResponse,
+  directory: string | undefined,
+): string | null => {
+  if (data.offset + data.limit >= data.total_count) return null
+  // the client lists `${nextPagePath}` as the folder, so it must name it
+  return getNextPagePath(directory ?? '', {}, data.offset + data.limit)
 }
 
 const adaptData = function adaptData(
   res: BoxListResponse,
   username: string | undefined,
   companion: CompanionLike,
+  directory?: string,
 ) {
   const items = getItemSubList(res).map((item) => ({
     isFolder: isFolder(item),
@@ -91,7 +92,7 @@ const adaptData = function adaptData(
     size: getItemSize(item),
   }))
 
-  const nextPagePath = getNextPagePath(res)
+  const nextPagePath = getBoxNextPagePath(res, directory)
 
   return { username, items, nextPagePath }
 }

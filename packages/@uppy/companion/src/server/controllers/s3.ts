@@ -1,5 +1,12 @@
 import type { Socket } from 'node:net'
+
 import type { Part, S3Client } from '@aws-sdk/client-s3'
+import type { PresignedPostOptions } from '@aws-sdk/s3-presigned-post'
+import type { NextFunction, Response, Router } from 'express'
+
+import type { CompanionRuntimeOptions } from '../../types/companion-options.js'
+import type { Request } from '../../types/express.js'
+
 import {
   AbortMultipartUploadCommand,
   CompleteMultipartUploadCommand,
@@ -8,15 +15,11 @@ import {
   UploadPartCommand,
 } from '@aws-sdk/client-s3'
 import { GetFederationTokenCommand, STSClient } from '@aws-sdk/client-sts'
-import {
-  createPresignedPost,
-  type PresignedPostOptions,
-} from '@aws-sdk/s3-presigned-post'
+import { createPresignedPost } from '@aws-sdk/s3-presigned-post'
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner'
-import type { NextFunction, Request, Response, Router } from 'express'
 import express from 'express'
-import type { CompanionRuntimeOptions } from '../../types/companion-options.js'
-import { isRecord } from '../helpers/type-guards.js'
+
+import { asRecord, isRecord } from '../helpers/type-guards.js'
 import {
   getBucket,
   rfc2047EncodeMetadata,
@@ -187,7 +190,17 @@ async function fetchAllParts(
 
     holdsSlot = await takePagedListingSlot(res)
     if (!holdsSlot) return undefined
+    let previousMarker = 0
     while (page.IsTruncated) {
+      const marker = Number(page.NextPartNumberMarker)
+      if (
+        !Number.isInteger(marker) ||
+        marker <= previousMarker ||
+        marker > 10000
+      ) {
+        throw new Error('S3 returned an invalid part listing cursor')
+      }
+      previousMarker = marker
       page = await listPage(page.NextPartNumberMarker)
       if (clientGone(res)) return undefined
       if (page.Parts) parts.push(...page.Parts)
@@ -314,11 +327,19 @@ export default function s3(
     if (!client) return undefined
     const uploadId = req.params['uploadId']
     const key = req.query['key']
-    if (typeof uploadId !== 'string' || uploadId.length === 0) {
+    if (
+      typeof uploadId !== 'string' ||
+      uploadId.length === 0 ||
+      uploadId.length > 2048
+    ) {
       res.status(400).json({ error: 's3: uploadId must be provided.' })
       return undefined
     }
-    if (typeof key !== 'string') {
+    if (
+      typeof key !== 'string' ||
+      key.length === 0 ||
+      Buffer.byteLength(key) > 1024
+    ) {
       res.status(400).json({
         error:
           's3: the object key must be passed as a query parameter. For example: "?key=abc.jpg"',
@@ -449,11 +470,7 @@ export default function s3(
     const client = getS3Client(req, res)
     if (!client) return
 
-    const {
-      type,
-      filename,
-      metadata: maybeMetadata,
-    }: { type: unknown; filename: unknown; metadata: unknown } = req.body
+    const { type, filename, metadata: maybeMetadata } = asRecord(req.body)
 
     const metadata = isRecord(maybeMetadata) ? maybeMetadata : {}
 
@@ -757,7 +774,7 @@ export default function s3(
     if (!target) return
     const { client, uploadId, key } = target
 
-    const { parts }: { parts: unknown } = req.body
+    const { parts } = asRecord(req.body)
     if (
       !Array.isArray(parts) ||
       !parts.every(

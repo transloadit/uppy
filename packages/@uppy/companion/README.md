@@ -107,11 +107,10 @@ override both.
 
 OAuth callback results are retained for at most 60 seconds and consumed once. With
 Redis, they are shared across workers in the configured `redisPubSubScope` and deleted
-atomically when consumed. Without Redis, they stay in the current process, with a
-limit of 1,000 pending results (oldest first). Each result is limited to 64 KiB.
-OAuth Redis commands and subscription readiness have a five-second deadline. If
-retention or replay fails, the login attempt fails; Companion does not fall back to
-live delivery of an unconsumed result. Users can retry signing in.
+atomically when consumed. Without Redis, they stay in the current process.
+OAuth Redis commands have a five-second deadline. If retention, publication or replay
+fails, the login attempt fails; Companion does not fall back to live delivery of an
+unconsumed result. Users can retry signing in.
 
 If you cloned the repo from GitHub and want to run it as a standalone server,
 you may also run the following command from within its directory

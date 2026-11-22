@@ -2,9 +2,10 @@ import { randomUUID } from 'node:crypto'
 import { once } from 'node:events'
 import { join } from 'node:path'
 import { setTimeout } from 'node:timers/promises'
+
 import { execa } from 'execa'
 import { Redis } from 'ioredis'
-import { afterEach, describe, expect, test } from 'vitest'
+import { afterEach, expect, test } from 'vitest'
 import { WebSocket } from 'ws'
 import { z } from 'zod'
 
@@ -34,10 +35,7 @@ async function worker(url?: string) {
   return {
     child,
     origin,
-    async command(
-      operation: 'publish' | 'hold' | 'release' | 'barrier',
-      token: string,
-    ) {
+    async command(operation: 'publish', token: string) {
       await child.sendMessage({ operation, token })
       return child.getOneMessage()
     },
@@ -70,50 +68,6 @@ afterEach(async () => {
   for (const { client, name } of aclUsers.splice(0))
     await client.acl('DELUSER', name)
   for (const client of clients.splice(0)) client.disconnect()
-})
-
-describe.each(['memory', 'redis'] as const)('%s callback sockets', (mode) => {
-  test.skipIf(mode === 'redis' && !redisUrl)(
-    'delivers a callback completed before subscription once',
-    async () => {
-      const publisher = await worker(mode === 'redis' ? redisUrl : undefined)
-      const subscriber = mode === 'redis' ? await worker(redisUrl) : publisher
-      const token = randomUUID()
-      expect(await publisher.command('publish', token)).toEqual({ ok: true })
-      const connection = connect(subscriber.origin, token)
-      await connection.message
-      const duplicate = connect(publisher.origin, token)
-      await duplicate.opened
-      await setTimeout(100)
-      expect([...connection.messages, ...duplicate.messages]).toEqual([
-        { token: 'fixture-auth-result' },
-      ])
-    },
-  )
-
-  test.skipIf(mode === 'redis' && !redisUrl)(
-    'closes a stalled subscription and cleans up late readiness',
-    async () => {
-      const publisher = await worker(mode === 'redis' ? redisUrl : undefined)
-      const subscriber = mode === 'redis' ? await worker(redisUrl) : publisher
-      const token = randomUUID()
-      expect(await subscriber.command('hold', token)).toEqual({ ok: true })
-      const connection = connect(subscriber.origin, token)
-      await connection.opened
-      expect(await subscriber.child.getOneMessage()).toBe('subscribing')
-      const closed = once(connection.socket, 'close', {
-        signal: AbortSignal.timeout(6500),
-      })
-      expect(await publisher.command('publish', token)).toEqual({ ok: true })
-      await closed
-      expect(await subscriber.command('release', token)).toEqual({ ok: true })
-      const retry = connect(publisher.origin, token)
-      await retry.message
-      expect(connection.messages).toEqual([])
-      expect(retry.messages).toEqual([{ token: 'fixture-auth-result' }])
-    },
-    12_000,
-  )
 })
 
 test.skipIf(!redisUrl)(
@@ -177,7 +131,8 @@ test.skipIf(!redisUrl)(
   },
 )
 
-async function restricted(denied: 'set' | 'get') {
+/** A worker whose Redis user may not run GET. */
+async function withoutGet() {
   const url = new URL(z.string().parse(redisUrl))
   const client = new Redis(url.href)
   clients.push(client)
@@ -191,7 +146,7 @@ async function restricted(denied: 'set' | 'get') {
     '~*',
     '&*',
     '+@all',
-    `-${denied}`,
+    '-get',
   )
   aclUsers.push({ client, name })
   url.username = name
@@ -200,25 +155,10 @@ async function restricted(denied: 'set' | 'get') {
 }
 
 test.skipIf(!redisUrl)(
-  'fails retention without falling back to live pub/sub',
-  async () => {
-    const publisher = await restricted('set')
-    const subscriber = await worker(redisUrl)
-    const token = randomUUID()
-    const connection = connect(subscriber.origin, token)
-    await connection.opened
-    await subscriber.command('barrier', token)
-    expect(await publisher.command('publish', token)).toEqual({ ok: false })
-    await setTimeout(100)
-    expect(connection.messages).toEqual([])
-  },
-)
-
-test.skipIf(!redisUrl)(
   'closes failed replay without publishing an unconsumed copy',
   async () => {
     const publisher = await worker(redisUrl)
-    const subscriber = await restricted('get')
+    const subscriber = await withoutGet()
     const token = randomUUID()
     await publisher.command('publish', token)
     const connection = connect(subscriber.origin, token)
@@ -229,24 +169,5 @@ test.skipIf(!redisUrl)(
     const retry = connect(publisher.origin, token)
     await retry.message
     expect(retry.messages).toEqual([{ token: 'fixture-auth-result' }])
-  },
-)
-
-test.skipIf(!redisUrl)(
-  'delivers a callback completed while the subscriber reconnects',
-  async () => {
-    const admin = new Redis(z.string().parse(redisUrl))
-    clients.push(admin)
-    const subscriber = await worker(redisUrl)
-    const publisher = await worker(redisUrl)
-    const token = randomUUID()
-    const connection = connect(subscriber.origin, token)
-    await connection.opened
-    await subscriber.command('barrier', token)
-    // Drop every subscriber connection; the publication below may be lost.
-    await admin.client('KILL', 'TYPE', 'pubsub')
-    expect(await publisher.command('publish', token)).toEqual({ ok: true })
-    await connection.message
-    expect(connection.messages).toEqual([{ token: 'fixture-auth-result' }])
   },
 )

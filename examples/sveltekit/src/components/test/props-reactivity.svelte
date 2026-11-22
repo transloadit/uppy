@@ -1,11 +1,11 @@
 <script lang="ts">
-import Uppy from '@uppy/core'
-import Dashboard from '@uppy/svelte/dashboard'
-import StatusBar from '@uppy/svelte/status-bar'
-
 import '@uppy/core/css/style.css'
 import '@uppy/dashboard/css/style.css'
 import '@uppy/status-bar/css/style.css'
+
+import Uppy from '@uppy/core'
+import Dashboard from '@uppy/svelte/dashboard'
+import StatusBar from '@uppy/svelte/status-bar'
 
 const uppy = new Uppy()
 uppy.addFile(new File(['hello world'], 'hello.txt'))

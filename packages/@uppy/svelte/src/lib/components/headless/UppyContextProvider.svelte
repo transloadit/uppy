@@ -1,8 +1,11 @@
 <script module lang="ts">
+import type {
+	UploadStatus,
+	UppyContext,
+} from "@uppy/components";
+
 import {
 	createUppyEventAdapter,
-	type UploadStatus,
-	type UppyContext,
 } from "@uppy/components";
 
 export const UppyContextKey = "uppy-context";

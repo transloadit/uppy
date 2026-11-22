@@ -1,13 +1,19 @@
-import type { AsyncStore, BaseProviderPlugin, Body, Meta } from '@uppy/core'
-import { UIPlugin, type Uppy } from '@uppy/core'
-import {
-  type CompanionPluginOptions,
-  defaultStorage,
-  type GooglePickerState,
-  RequestClient,
+import type {
+  AsyncStore,
+  BaseProviderPlugin,
+  Body,
+  Meta,
+  Uppy,
+} from '@uppy/core'
+import type {
+  CompanionPluginOptions,
+  GooglePickerState,
 } from '@uppy/core/companion-client'
-import { GoogleDriveIcon, GooglePickerView } from '@uppy/core/provider-views'
 import type { LocaleStrings } from '@uppy/core/utils'
+
+import { UIPlugin } from '@uppy/core'
+import { defaultStorage, RequestClient } from '@uppy/core/companion-client'
+import { GoogleDriveIcon, GooglePickerView } from '@uppy/core/provider-views'
 
 import packageJson from '../package.json' with { type: 'json' }
 import locale from './locale.js'

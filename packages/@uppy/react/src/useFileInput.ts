@@ -1,6 +1,9 @@
 import type { FileInputFunctions, FileInputProps } from '@uppy/components'
+import type { ChangeEvent } from 'react'
+
 import { createFileInput } from '@uppy/components'
-import { type ChangeEvent, useMemo } from 'react'
+import { useMemo } from 'react'
+
 import { useUppyContext } from './headless/UppyContextProvider.js'
 
 type TEvent = Event & ChangeEvent<HTMLInputElement>

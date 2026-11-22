@@ -1,8 +1,13 @@
-import { EventEmitter } from 'node:events'
-import safeStringify from 'fast-safe-stringify'
 import type { Redis } from 'ioredis'
-import * as logger from '../logger.js'
+
 import type { EmitterLike } from './index.js'
+
+import { EventEmitter } from 'node:events'
+
+import safeStringify from 'fast-safe-stringify'
+
+import { isRecord } from '../helpers/type-guards.js'
+import * as logger from '../logger.js'
 
 function replacer(key: string, value: unknown): unknown {
   // Remove the circular structure and internal ones
@@ -37,9 +42,54 @@ export default function redisEmitter(
     `${prefix}${escapeGlob(eventName)}`
 
   const errorEmitter = new EventEmitter()
-  // Pending login sockets listen for resubscription and remove the listener on close.
-  errorEmitter.setMaxListeners(0)
-  const handleError = (err: unknown) => errorEmitter.emit('error', err)
+  function handleError(err: unknown) {
+    // Redis command errors can contain credentials and private channel names,
+    // so log only what kind of error it was.
+    const kind = isRecord(err)
+      ? [err['name'], err['code']]
+          .filter((v) => typeof v === 'string')
+          .join(' ')
+      : ''
+    logger.error(
+      `Redis emitter operation failed${kind ? ` (${kind})` : ''}`,
+      'emitter.redis.error',
+    )
+    if (errorEmitter.listenerCount('error') > 0) errorEmitter.emit('error', err)
+  }
+
+  /**
+   * Callers that await see a failed Redis command as a rejection (a login must
+   * not wait forever for a message that was never published), but one that
+   * doesn't await must not crash the process with an unhandled rejection.
+   */
+  function handled<T>(promise: Promise<T>): Promise<T> {
+    promise.catch(() => {})
+    return promise
+  }
+
+  type Handler = (...args: unknown[]) => unknown
+  const handlersByPattern = new Map<string, Map<Handler, boolean>>()
+
+  function dispatch(pattern: string, _channel: string, message: string) {
+    const handlers = handlersByPattern.get(pattern)
+    if (!handlers) return
+    let args: unknown
+    try {
+      args = JSON.parse(message)
+      if (!Array.isArray(args)) throw new Error('Expected JSON array')
+    } catch {
+      handleError(new Error('Invalid Redis event payload'))
+      return
+    }
+    for (const [handler, once] of [...handlers]) {
+      if (once) handled(removeListenerByPattern(pattern, handler))
+      try {
+        Promise.resolve(handler(...args)).catch(handleError)
+      } catch (err) {
+        handleError(err)
+      }
+    }
+  }
 
   async function makeRedis() {
     const publisher = redisClient.duplicate({ lazyConnect: true })
@@ -47,31 +97,11 @@ export default function redisEmitter(
       logger.error('publisher redis error', err.toString()),
     )
     const subscriber = publisher.duplicate()
+    // One lookup per message, independent of unrelated upload sockets.
+    subscriber.on('pmessage', dispatch)
     subscriber.on('error', (err) =>
       logger.error('subscriber redis error', err.toString()),
     )
-    // Pub/sub drops publications while disconnected. ioredis resubscribes
-    // before the deferred 'ready' event, so a PING sent here is answered only
-    // after the resubscription; retained results can then be replayed safely.
-    // Listeners get how long the subscriber was gone, to tell whether a
-    // result published meanwhile can still be retained.
-    let connected = false
-    let disconnectedAt: number | undefined
-    subscriber.on('close', () => {
-      disconnectedAt ??= Date.now()
-    })
-    subscriber.on('ready', () => {
-      const downtimeMs = Date.now() - (disconnectedAt ?? Date.now())
-      disconnectedAt = undefined
-      if (!connected) {
-        connected = true
-        return
-      }
-      subscriber
-        .ping()
-        .then(() => errorEmitter.emit('redis:resubscribed', downtimeMs))
-        .catch(() => {})
-    })
     await publisher.connect()
     await subscriber.connect()
     return { subscriber, publisher }
@@ -91,17 +121,9 @@ export default function redisEmitter(
       await fn(await redisPromise)
     } catch (err) {
       handleError(err)
+      throw err
     }
   }
-
-  // because each event can have multiple listeners, we need to keep track of them
-  const handlersByEventName: Map<
-    string,
-    Map<
-      (...args: unknown[]) => unknown,
-      (pattern: string, _channel: string, message: string) => unknown
-    >
-  > = new Map()
 
   /**
    * Remove an event listener
@@ -109,32 +131,23 @@ export default function redisEmitter(
    * @param eventName name of the event
    * @param handler the handler of the event to remove
    */
-  type Handler = (...args: unknown[]) => unknown
-
   async function removeListener(eventName: string, handler: Handler) {
-    if (eventName === 'error' || eventName === 'redis:resubscribed') {
-      errorEmitter.removeListener(eventName, handler)
+    if (eventName === 'error') {
+      errorEmitter.removeListener('error', handler)
       return
     }
 
-    const actualHandlerByHandler = handlersByEventName.get(eventName)
-    if (actualHandlerByHandler == null) return
+    await removeListenerByPattern(getPatternName(eventName), handler)
+  }
 
-    const actualHandler = actualHandlerByHandler.get(handler)
-    if (actualHandler == null) return
-
-    actualHandlerByHandler.delete(handler)
-
-    const didRemoveLastListener = actualHandlerByHandler.size === 0
-    if (didRemoveLastListener) {
-      handlersByEventName.delete(eventName)
-    }
-
+  async function removeListenerByPattern(pattern: string, handler: Handler) {
+    const handlers = handlersByPattern.get(pattern)
+    if (!handlers?.delete(handler) || handlers.size > 0) return
+    handlersByPattern.delete(pattern)
     await runWhenConnected(async ({ subscriber }) => {
-      subscriber.off('pmessage', actualHandler)
-      if (didRemoveLastListener) {
-        await subscriber.punsubscribe(getPatternName(eventName))
-      }
+      // A listener may have rejoined while the Redis connection was opening.
+      if (!handlersByPattern.has(pattern))
+        await subscriber.punsubscribe(pattern)
     })
   }
 
@@ -149,47 +162,22 @@ export default function redisEmitter(
     handler: Handler,
     _once = false,
   ) {
-    if (eventName === 'error' || eventName === 'redis:resubscribed') {
-      if (_once) errorEmitter.once(eventName, handler)
-      else errorEmitter.addListener(eventName, handler)
+    if (eventName === 'error') {
+      if (_once) errorEmitter.once('error', handler)
+      else errorEmitter.addListener('error', handler)
       return
     }
 
-    function actualHandler(pattern: string, _channel: string, message: string) {
-      if (pattern !== getPatternName(eventName)) {
-        return
-      }
-
-      if (_once) removeListener(eventName, handler)
-      let args: unknown[]
-      try {
-        const parsed: unknown = JSON.parse(message)
-        if (!Array.isArray(parsed)) {
-          throw new Error('Expected JSON array')
-        }
-        args = parsed
-      } catch (_ex) {
-        handleError(
-          new Error(
-            `Invalid JSON received! Channel: ${eventName} Message: ${message}`,
-          ),
-        )
-        return
-      }
-
-      handler(...args)
+    const pattern = getPatternName(eventName)
+    let handlers = handlersByPattern.get(pattern)
+    if (!handlers) {
+      handlers = new Map()
+      handlersByPattern.set(pattern, handlers)
     }
-
-    let actualHandlerByHandler = handlersByEventName.get(eventName)
-    if (actualHandlerByHandler == null) {
-      actualHandlerByHandler = new Map()
-      handlersByEventName.set(eventName, actualHandlerByHandler)
-    }
-    actualHandlerByHandler.set(handler, actualHandler)
+    handlers.set(handler, _once)
 
     await runWhenConnected(async ({ subscriber }) => {
-      subscriber.on('pmessage', actualHandler)
-      await subscriber.psubscribe(getPatternName(eventName))
+      if (handlersByPattern.has(pattern)) await subscriber.psubscribe(pattern)
     })
   }
 
@@ -199,8 +187,8 @@ export default function redisEmitter(
    * @param eventName name of the event
    * @param handler the handler of the event
    */
-  async function on(eventName: string, handler: Handler) {
-    await addListener(eventName, handler)
+  function on(eventName: string, handler: Handler) {
+    return handled(addListener(eventName, handler))
   }
 
   /**
@@ -209,8 +197,8 @@ export default function redisEmitter(
    * @param eventName name of the event
    * @param handler the handler of the event
    */
-  async function off(eventName: string, handler: Handler) {
-    await removeListener(eventName, handler)
+  function off(eventName: string, handler: Handler) {
+    return handled(removeListener(eventName, handler))
   }
 
   /**
@@ -219,8 +207,8 @@ export default function redisEmitter(
    * @param eventName name of the event
    * @param handler the handler of the event
    */
-  async function once(eventName: string, handler: Handler) {
-    await addListener(eventName, handler, true)
+  function once(eventName: string, handler: Handler) {
+    return handled(addListener(eventName, handler, true))
   }
 
   /**
@@ -228,11 +216,13 @@ export default function redisEmitter(
    *
    * @param eventName name of the event
    */
-  async function emit(eventName: string, ...args: unknown[]) {
-    await runWhenConnected(async ({ publisher }) =>
-      publisher.publish(
-        getChannelName(eventName),
-        safeStringify.default(args, replacer),
+  function emit(eventName: string, ...args: unknown[]) {
+    return handled(
+      runWhenConnected(async ({ publisher }) =>
+        publisher.publish(
+          getChannelName(eventName),
+          safeStringify.default(args, replacer),
+        ),
       ),
     )
   }
@@ -243,14 +233,14 @@ export default function redisEmitter(
    * @param eventName name of the event
    */
   async function removeAllListeners(eventName: string) {
-    if (eventName === 'error' || eventName === 'redis:resubscribed') {
+    if (eventName === 'error') {
       errorEmitter.removeAllListeners(eventName)
       return
     }
 
-    const actualHandlerByHandler = handlersByEventName.get(eventName)
-    if (actualHandlerByHandler != null) {
-      for (const handler of actualHandlerByHandler.keys()) {
+    const handlers = handlersByPattern.get(getPatternName(eventName))
+    if (handlers != null) {
+      for (const handler of handlers.keys()) {
         await removeListener(eventName, handler)
       }
     }
@@ -261,7 +251,9 @@ export default function redisEmitter(
     off,
     once,
     emit,
-    removeListener,
-    removeAllListeners,
+    removeListener: (eventName: string, handler: Handler) =>
+      handled(removeListener(eventName, handler)),
+    removeAllListeners: (eventName: string) =>
+      handled(removeAllListeners(eventName)),
   }
 }

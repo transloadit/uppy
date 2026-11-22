@@ -1,10 +1,12 @@
 import '@uppy-dev/msw-setup'
+
 import { network } from 'virtual:msw'
 import Core from '@uppy/core'
 import { RateLimitedQueue } from '@uppy/core/utils'
 import Transloadit from '@uppy/transloadit'
 import { HttpResponse, http } from 'msw'
 import { describe, expect, it, vi } from 'vitest'
+
 import Assembly from '../lib/Assembly.js'
 
 // Transloadit reports client-side upload failures to this endpoint. Several
@@ -591,4 +593,88 @@ describe('Transloadit', () => {
     plugin.assembly = new Assembly(status, new RateLimitedQueue())
     expect(uppy.getState().plugins.Transloadit.error).toBeUndefined()
   })
+
+  it.each([
+    [
+      'http://api2.transloadit.com/companion',
+      'https://api2.transloadit.com/companion',
+    ],
+    [
+      'https://api2.transloadit.com.evil.example/companion',
+      'https://api2.transloadit.com/companion',
+    ],
+    [
+      'https://evil.example/companion',
+      'https://api2.transloadit.com/companion',
+    ],
+    [
+      'https://api2-hu123ab.transloadit.com/companion',
+      'https://api2-hu123ab.transloadit.com/companion',
+    ],
+    [
+      'https://api2-us-east-1.transloadit.com/companion/',
+      'https://api2-us-east-1.transloadit.com/companion',
+    ],
+    [
+      'https://api2-eu-west-1.transloadit.com/companion',
+      'https://api2-eu-west-1.transloadit.com/companion',
+      'https://api2-us-east-1.transloadit.com/companion',
+    ],
+    [
+      'https://api2-eu-west-1.transloadit.com/companion/',
+      'https://api2-eu-west-1.transloadit.com/companion',
+      'https://api2-us-east-1.transloadit.com/companion/',
+    ],
+  ])(
+    "reroutes remote files to companion_url %s only if it is Transloadit's",
+    async (companionUrl, expected, startUrl = 'https://api2.transloadit.com/companion') => {
+      // Keep the Assembly offline: no EventSource, status polling or error beacon
+      using _connect = vi
+        .spyOn(Assembly.prototype, 'connect')
+        .mockImplementation(() => {})
+      using uppy = new Core()
+      uppy.use(Transloadit, {
+        assemblyOptions: {
+          params: { auth: { key: 'key' }, template_id: 'id' },
+        },
+      })
+      uppy.registerRequestClient('companion', {
+        uploadRemoteFile: () => new Promise(() => {}),
+      })
+      uppy.getPlugin('Transloadit').client.createAssembly = () =>
+        Promise.resolve({
+          ok: 'ASSEMBLY_UPLOADING',
+          assembly_id: 'a1',
+          assembly_ssl_url: 'https://api2.transloadit.com/assemblies/a1',
+          tus_url: 'https://api2.transloadit.com/resumable/files/',
+          companion_url: companionUrl,
+        })
+      uppy.getPlugin('Transloadit').client.cancelAssembly = () =>
+        Promise.resolve()
+      const id = uppy.addFile({
+        source: 'Dropbox',
+        name: 'remote.txt',
+        data: { size: 1 },
+        isRemote: true,
+        remote: {
+          requestClientId: 'companion',
+          companionUrl: startUrl,
+          url: `${startUrl.replace(/\/$/, '')}/dropbox/get/x`,
+        },
+      })
+
+      // Fires right before #prepareUpload stores and connects the Assembly, so
+      // cancelAll() below sees it.
+      const prepared = new Promise((resolve) =>
+        uppy.once('preprocess-complete', resolve),
+      )
+      uppy.upload().catch(() => {})
+      await prepared
+
+      const { remote } = uppy.getFile(id)
+      expect(remote.companionUrl).toBe(expected)
+      expect(remote.url).toBe(`${expected}/dropbox/get/x`)
+      uppy.cancelAll()
+    },
+  )
 })

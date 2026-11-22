@@ -1,13 +1,18 @@
+import type { Server } from 'node:http'
+
+import type { EmitterLike } from '../dist/server/emitter/index.js'
+
 import { EventEmitter, once } from 'node:events'
-import { createServer, type Server } from 'node:http'
+import { createServer } from 'node:http'
+
 import express from 'express'
 import session from 'express-session'
 import { Redis } from 'ioredis'
 import request from 'supertest'
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest'
 import { WebSocket } from 'ws'
+
 import { defaultOptions } from '../dist/config/companion.js'
-import type { EmitterLike } from '../dist/server/emitter/index.js'
 import redisEmitter from '../dist/server/emitter/redis-emitter.js'
 import { generateEncryptedAuthToken } from '../dist/server/helpers/jwt.js'
 import { encodeState } from '../dist/server/helpers/oauth-state.js'
@@ -215,17 +220,19 @@ describe.each(['memory', 'redis'] as const)('%s auth callback', (mode) => {
     expect(JSON.stringify(published)).not.toContain(flow.callbackToken)
   })
 
-  if (mode === 'redis')
-    run('retains results regardless of clock skew with Redis', async () => {
-      const flow = await start()
-      const now = Date.now()
-      vi.spyOn(Date, 'now').mockReturnValue(now - 70_000)
-      await flow.callback()
-      vi.mocked(Date.now).mockRestore()
-      expect(await takeAuthCallback(flow.callbackToken, options)).toEqual({
-        token,
-      })
-    })
+  run('removes the retained result when publication fails', async () => {
+    const flow = await start()
+    vi.spyOn(console, 'log').mockImplementation(() => {})
+    bus = flow.publisher
+    const failure = new Error('Publish unavailable')
+    if (mode === 'redis')
+      vi.spyOn(Redis.prototype, 'publish').mockRejectedValueOnce(failure)
+    else vi.spyOn(flow.publisher, 'emit').mockRejectedValueOnce(failure)
+    await expect(
+      publishAuthCallback(flow.callbackToken, { token }, options),
+    ).rejects.toThrow('OAuth callback publication failed')
+    expect(await takeAuthCallback(flow.callbackToken, options)).toBeUndefined()
+  })
 
   if (mode === 'redis')
     run(
@@ -256,8 +263,11 @@ describe.each(['memory', 'redis'] as const)('%s auth callback', (mode) => {
           },
         }),
       )
+      const publish = vi.spyOn(Redis.prototype, 'publish')
       const response = await flow.callback(500)
       expect(response.status).toBe(500)
+      // fail closed: no live delivery of a result that was not retained
+      expect(publish).not.toHaveBeenCalled()
       expect(response.text).not.toContain(token)
       expect(response.text).not.toContain(flow.callbackToken)
       const output = log.mock.calls.flat().join(' ')

@@ -1,11 +1,10 @@
+import '@uppy/react/css/style.css'
+
 import { Thumbnail, UppyContextProvider, useUppyState } from '@uppy/react'
 import { useEffect, useState } from 'react'
 import { Uppy } from 'uppy'
 
 import { BrowserWindow } from './BrowserWindow'
-
-import '@uppy/react/css/style.css'
-
 import styles from './thumbnail.module.css'
 
 export default function ThumbnailDemo() {

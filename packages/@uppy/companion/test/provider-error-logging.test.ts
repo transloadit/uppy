@@ -1,4 +1,5 @@
 import { afterEach, expect, test, vi } from 'vitest'
+
 import logger from '../src/server/logger.js'
 import {
   ProviderApiError,
@@ -23,27 +24,24 @@ class MappingProvider extends Provider {
   }
 }
 
-test('logs and throws the mapped error while preserving unexpected-error severity', async () => {
+test('logs the original unexpected error and throws the mapped one', async () => {
   const provider = new MappingProvider({ allowLocalUrls: false })
   provider.mapped = new ProviderUserError({ code: 'S3_REQUEST_FAILED' })
+  const original = new Error('SDK failure')
   const log = vi.spyOn(logger, 'error').mockImplementation(() => {})
-  await expect(provider.fail(new Error('SDK failure'))).rejects.toBe(
-    provider.mapped,
-  )
-  expect(log).toHaveBeenCalledExactlyOnceWith(provider.mapped, 'test.provider')
+  await expect(provider.fail(original)).rejects.toBe(provider.mapped)
+  expect(log).toHaveBeenCalledExactlyOnceWith(original, 'test.provider')
 })
 
-test('keeps intentional authorization failures at debug level after mapping', async () => {
+test('keeps intentional authorization failures at debug level', async () => {
   const provider = new MappingProvider({ allowLocalUrls: false })
-  const mapped = new ProviderAuthError()
-  provider.mapped = mapped
+  provider.mapped = new ProviderAuthError()
+  const original = new ProviderAuthError()
   const log = vi.spyOn(logger, 'debug').mockImplementation(() => {})
   const errors = vi.spyOn(logger, 'error').mockImplementation(() => {})
-  await expect(provider.fail(new ProviderAuthError())).rejects.toBe(
-    provider.mapped,
-  )
+  await expect(provider.fail(original)).rejects.toBe(provider.mapped)
   expect(log).toHaveBeenCalledExactlyOnceWith(
-    `${mapped.name}: ${mapped.message}`,
+    `${original.name}: ${original.message}`,
     'test.provider',
   )
   expect(errors).not.toHaveBeenCalled()

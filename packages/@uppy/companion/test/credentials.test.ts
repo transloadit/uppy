@@ -12,6 +12,7 @@ import {
   test,
   vi,
 } from 'vitest'
+
 import * as tokenService from '../dist/server/helpers/jwt.js'
 import * as oAuthState from '../dist/server/helpers/oauth-state.js'
 import logger from '../dist/server/logger.js'
@@ -175,7 +176,7 @@ test('does not follow a redirecting credentials endpoint', async () => {
   expect(res.status).toBe(500)
   // The redirect target is for the operator's log only, like the endpoint's
   // other errors: the client gets the generic message.
-  expect(res.body.message).toBe('Could not fetch credentials')
+  expect(res.body.message).toBe('Something went wrong')
   expect(logError).toHaveBeenCalledWith(
     expect.objectContaining({
       message:
@@ -221,12 +222,15 @@ describe('remote credentials with transloadit_gateway', () => {
   test.each([
     ['empty', ''],
     ['whitespace-only', '  '],
-  ])('a %s gateway is ignored and the OAuth redirect proceeds', async (_, gateway) => {
-    const res = await connectWithGateway(gateway)
-    expect(res.text).not.toContain('Could not fetch credentials')
-    expect(res.status).toBe(302)
-    expect(res.headers.location).toContain('dropbox.com')
-  })
+  ])(
+    'a %s gateway is ignored and the OAuth redirect proceeds',
+    async (_, gateway) => {
+      const res = await connectWithGateway(gateway)
+      expect(res.text).not.toContain('Could not fetch credentials')
+      expect(res.status).toBe(302)
+      expect(res.headers.location).toContain('dropbox.com')
+    },
+  )
 
   test('a configured gateway becomes the redirect_uri host', async () => {
     const res = await connectWithGateway('https://gateway.example.com')

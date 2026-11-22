@@ -1,5 +1,8 @@
-import Core, { type UppyEventMap } from '@uppy/core'
-import Tus, { type TusBody } from '@uppy/tus'
+import type { UppyEventMap } from '@uppy/core'
+import type { TusBody } from '@uppy/tus'
+
+import Core from '@uppy/core'
+import Tus from '@uppy/tus'
 import { describe, expect, expectTypeOf, it, vi } from 'vitest'
 
 // Shared fake XHR object — must be declared via vi.hoisted so it's available
@@ -134,5 +137,31 @@ describe('Tus', () => {
         'File cannot be uploaded as the BIN content type is disallowed!',
       )
     })
+  })
+
+  it('sends only allowedMetaFields to Companion for remote files', async () => {
+    using uppy = new Core().use(Tus, {
+      endpoint: 'https://tus.example.com/files/',
+      allowedMetaFields: ['caption'],
+    })
+    const uploadRemoteFile = vi.fn(async () => {})
+    uppy.registerRequestClient('companion', { uploadRemoteFile })
+    uppy.addFile({
+      name: 'remote.txt',
+      data: { size: 1 } as any,
+      isRemote: true,
+      remote: { requestClientId: 'companion', url: '', companionUrl: '' },
+      type: 'text/plain',
+      meta: { caption: 'hi', secret: 'do not send' },
+    } as any)
+
+    await uppy.upload()
+
+    expect(uploadRemoteFile).toHaveBeenCalledOnce()
+    const [, args] = uploadRemoteFile.mock.calls[0] as unknown as [
+      unknown,
+      { metadata: Record<string, unknown> },
+    ]
+    expect(args.metadata).toEqual({ caption: 'hi' })
   })
 })

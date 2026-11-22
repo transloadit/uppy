@@ -53,7 +53,7 @@ function inlinePartials(body, fileDir, loadPartial) {
   let rest = body.replace(/^\s+/, '')
   for (;;) {
     const match = statement.exec(rest)
-    if (!match || match.index !== 0) break
+    if (match?.index !== 0) break
     const imp = IMPORT_RE.exec(match[0].trim())
     if (imp && /\.mdx?$/.test(imp[2]) && imp[2].startsWith('.')) {
       partials.set(imp[1], path.join(fileDir, imp[2]))

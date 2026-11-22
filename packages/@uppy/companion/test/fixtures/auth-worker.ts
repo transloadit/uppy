@@ -1,7 +1,9 @@
 import { once } from 'node:events'
 import { createServer } from 'node:http'
+
 import { getOneMessage, sendMessage } from 'execa'
 import { z } from 'zod'
+
 import { publishAuthCallback } from '../../dist/server/auth-callback.js'
 import getEmitter from '../../dist/server/emitter/index.js'
 import * as redis from '../../dist/server/redis.js'
@@ -12,8 +14,7 @@ async function main(): Promise<void> {
     .object({ redisUrl: z.string().optional(), scope: z.string() })
     .parse(await getOneMessage())
   const storage = redisUrl ? redis.client({ redisUrl }) : undefined
-  const emitter = getEmitter(storage, scope)
-  emitter.on('error', () => {})
+  getEmitter(storage, scope)
   const server = createServer((_request, response) => {
     response.writeHead(404).end()
   })
@@ -31,39 +32,16 @@ async function main(): Promise<void> {
   }
   setupSockets(server, options)
   await sendMessage({ origin })
-  const subscribe = emitter.on.bind(emitter)
-  let release: (() => void) | undefined
   while (true) {
-    const command = z
-      .object({
-        operation: z.enum(['publish', 'hold', 'release', 'barrier']),
-        token: z.string(),
-      })
+    const { token } = z
+      .object({ operation: z.literal('publish'), token: z.string() })
       .parse(await getOneMessage())
     try {
-      if (command.operation === 'publish') {
-        await publishAuthCallback(
-          command.token,
-          { token: 'fixture-auth-result' },
-          options,
-        )
-      } else if (command.operation === 'hold') {
-        const held = Promise.withResolvers<void>()
-        release = held.resolve
-        emitter.on = async (token, handler) => {
-          if (token === 'redis:resubscribed') return subscribe(token, handler)
-          await sendMessage('subscribing')
-          await held.promise
-          return subscribe(token, handler)
-        }
-      } else if (command.operation === 'release') {
-        release?.()
-        emitter.on = subscribe
-      } else {
-        const noop = () => {}
-        await emitter.on(command.token, noop)
-        await emitter.removeListener(command.token, noop)
-      }
+      await publishAuthCallback(
+        token,
+        { token: 'fixture-auth-result' },
+        options,
+      )
       await sendMessage({ ok: true })
     } catch {
       await sendMessage({ ok: false })

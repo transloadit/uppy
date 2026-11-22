@@ -1,9 +1,11 @@
 import type { h } from 'preact'
+
 import type {
   PartialTreeFile,
   PartialTreeFolderNode,
   PartialTreeId,
 } from '../../../index.js'
+
 import ItemIcon from './ItemIcon.js'
 
 // if folder:
