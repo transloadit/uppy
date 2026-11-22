@@ -338,8 +338,10 @@ export default class Provider<US = unknown> {
   }
 
   /**
-   * Run `fn`, mapping provider errors before logging and rethrowing them.
-   * Providers can remove SDK-specific context in `mapProviderError()`.
+   * Run `fn`, logging the original error under `tag` and rethrowing it
+   * translated by `mapProviderError()`. Providers wrap their SDK calls in this
+   * so error mapping and logging live in one place: the log keeps the error as
+   * the provider threw it, and `mapProviderError()` stays a pure mapping.
    */
   protected async withErrorHandling<T>(
     tag: string,
@@ -348,7 +350,6 @@ export default class Provider<US = unknown> {
     try {
       return await fn()
     } catch (err: unknown) {
-      const mapped = this.mapProviderError(err)
       if (
         err instanceof ProviderUserError ||
         err instanceof ProviderAuthError
@@ -356,17 +357,13 @@ export default class Provider<US = unknown> {
         // Thrown on purpose for the user (a name taken, a stale session):
         // routine, and a client can trigger them at will. Not an error log.
         logger.debug(
-          mapped instanceof Error
-            ? `${mapped.name}: ${mapped instanceof ProviderUserError ? JSON.stringify(mapped.json) : mapped.message}`
-            : mapped,
+          `${err.name}: ${err instanceof ProviderUserError ? JSON.stringify(err.json) : err.message}`,
           tag,
         )
       } else {
-        // An unexpected SDK failure remains an error even if its mapped response
-        // is a user-facing error. Preserve observability while logging the mapping.
-        logger.error(mapped, tag)
+        logger.error(err, tag)
       }
-      throw mapped
+      throw this.mapProviderError(err)
     }
   }
 
