@@ -2,6 +2,7 @@ import Uppy from '@uppy/core'
 import { expect, test } from 'vitest'
 import { userEvent } from 'vitest/browser'
 import { render } from 'vitest-browser-svelte'
+
 import ThumbnailUnmount from './ThumbnailUnmount.svelte'
 
 // Thumbnail registers the cleanup that revokes its URL in an effect. Preact runs

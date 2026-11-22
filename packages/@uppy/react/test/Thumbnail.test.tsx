@@ -1,5 +1,7 @@
+import type { UppyFile } from '@uppy/core'
+
 import { cleanup, render } from '@testing-library/react'
-import Uppy, { type UppyFile } from '@uppy/core'
+import Uppy from '@uppy/core'
 import { Thumbnail, UppyContextProvider } from '@uppy/react'
 import { afterEach, describe, expect, it } from 'vitest'
 import { page } from 'vitest/browser'
