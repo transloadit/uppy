@@ -58,13 +58,10 @@ async function bounded<T>(client: Redis, run: () => Promise<T>): Promise<T> {
   }
 }
 
-function scopePrefix(options: CompanionInitOptions) {
-  return options.redisPubSubScope ? `${options.redisPubSubScope}:` : ''
-}
-
 function storageKey(token: string, options: CompanionInitOptions) {
+  const prefix = options.redisPubSubScope ? `${options.redisPubSubScope}:` : ''
   // Preserve #6751's key so mixed-version workers consume the same result.
-  return `${scopePrefix(options)}companion:auth-callback:${token}`
+  return `${prefix}companion:auth-callback:${token}`
 }
 
 export async function publishAuthCallback(
@@ -111,17 +108,8 @@ export async function publishAuthCallback(
   // marks retained results so new workers consume storage instead of replaying
   // the publication after another socket already consumed it.
   try {
-    if (storage) {
-      // Same wire format as the emitter, whose emit() swallows Redis errors.
-      await bounded(storage, () =>
-        storage.publish(
-          `${scopePrefix(options)}${token}`,
-          jsonStringify([data, true]),
-        ),
-      )
-    } else {
-      await emitter().emit(token, data, true)
-    }
+    const publish = async () => emitter().emit(token, data, true)
+    await (storage ? bounded(storage, publish) : publish())
   } catch {
     // Do not leave a result behind a failure page. Best effort: Redis may be gone.
     if (storage) await bounded(storage, () => storage.del(key)).catch(() => {})

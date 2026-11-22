@@ -220,6 +220,20 @@ describe.each(['memory', 'redis'] as const)('%s auth callback', (mode) => {
     expect(JSON.stringify(published)).not.toContain(flow.callbackToken)
   })
 
+  run('removes the retained result when publication fails', async () => {
+    const flow = await start()
+    vi.spyOn(console, 'log').mockImplementation(() => {})
+    bus = flow.publisher
+    const failure = new Error('Publish unavailable')
+    if (mode === 'redis')
+      vi.spyOn(Redis.prototype, 'publish').mockRejectedValueOnce(failure)
+    else vi.spyOn(flow.publisher, 'emit').mockRejectedValueOnce(failure)
+    await expect(
+      publishAuthCallback(flow.callbackToken, { token }, options),
+    ).rejects.toThrow('OAuth callback publication failed')
+    expect(await takeAuthCallback(flow.callbackToken, options)).toBeUndefined()
+  })
+
   if (mode === 'redis')
     run('retains results regardless of clock skew with Redis', async () => {
       const flow = await start()
