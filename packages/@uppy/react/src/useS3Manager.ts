@@ -1,9 +1,9 @@
-import {
-  createS3ManagerController,
-  type S3ManagerSnapshot,
-} from '@uppy/components'
+import type { S3ManagerSnapshot } from '@uppy/components'
+
+import { createS3ManagerController } from '@uppy/components'
 import { useEffect, useMemo } from 'react'
 import { useSyncExternalStore } from 'use-sync-external-store/shim'
+
 import { useUppyContext } from './headless/UppyContextProvider.js'
 
 /** @experimental Headless manager-mode storage browser, e.g. `@uppy/s3`. */

@@ -1,9 +1,18 @@
 import { act, cleanup, render, screen, waitFor } from '@testing-library/react'
 import Uppy from '@uppy/core'
+import Dashboard from '@uppy/dashboard'
 import { UppyContextProvider, useScreenCapture } from '@uppy/react'
 import ScreenCapture from '@uppy/screen-capture'
-import { useEffect, useState } from 'react'
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
+import { StrictMode, useEffect, useState } from 'react'
+import {
+  afterEach,
+  beforeEach,
+  describe,
+  expect,
+  it,
+  onTestFinished,
+  vi,
+} from 'vitest'
 
 function fakeScreen() {
   const canvas = document.createElement('canvas')
@@ -21,13 +30,18 @@ function fakeScreen() {
       streams.push(stream)
       return Promise.resolve(stream)
     })
-  vi.spyOn(navigator.mediaDevices, 'getUserMedia').mockImplementation(() =>
-    Promise.resolve(canvas.captureStream()),
-  )
+  const micStreams: MediaStream[] = []
+  const getUserMedia = vi
+    .spyOn(navigator.mediaDevices, 'getUserMedia')
+    .mockImplementation(() => {
+      const stream = canvas.captureStream()
+      micStreams.push(stream)
+      return Promise.resolve(stream)
+    })
   // Synthetic clicks grant no user activation, so Chromium rejects the
   // unmuted play() in captureScreenshot()
   vi.spyOn(HTMLMediaElement.prototype, 'play').mockResolvedValue()
-  return { streams, getDisplayMedia }
+  return { streams, micStreams, getDisplayMedia, getUserMedia }
 }
 
 const isLive = (stream: MediaStream) =>
@@ -66,7 +80,15 @@ function setup(
   const result = render(
     <UppyContextProvider uppy={uppy}>{ui}</UppyContextProvider>,
   )
-  return { uppy, ...result }
+  return {
+    uppy,
+    ...result,
+    // Unmount first, the hook reads the plugin's state while mounted
+    [Symbol.dispose]() {
+      result.unmount()
+      uppy.destroy()
+    },
+  }
 }
 
 const button = (name: string) =>
@@ -93,7 +115,7 @@ describe('useScreenCapture', () => {
   })
 
   it('shows the stopped state when stop() is called while mounted', async () => {
-    setup(<Capture />)
+    using _ = setup(<Capture />)
     await waitForReady()
 
     await click('stop capture')
@@ -119,7 +141,7 @@ describe('useScreenCapture', () => {
         </>
       )
     }
-    setup(<Parent />)
+    using _ = setup(<Parent />)
     await waitForReady()
 
     await click('rerender')
@@ -136,9 +158,10 @@ describe('useScreenCapture', () => {
 
   it('does not call onSubmit or drop the preview when restrictions reject the capture', async () => {
     const onSubmit = vi.fn()
-    const { uppy } = setup(<Capture onSubmit={onSubmit} />, {
+    using rendered = setup(<Capture onSubmit={onSubmit} />, {
       restrictions: { allowedFileTypes: ['application/pdf'] },
     })
+    const { uppy } = rendered
     await waitForReady()
 
     await click('screenshot')
@@ -152,5 +175,167 @@ describe('useScreenCapture', () => {
 
     await click('discard')
     await waitForReady()
+  })
+
+  it('stops the stream of a superseded start in StrictMode', async () => {
+    using uppy = new Uppy().use(ScreenCapture)
+    render(
+      <StrictMode>
+        <UppyContextProvider uppy={uppy}>
+          <Capture />
+        </UppyContextProvider>
+      </StrictMode>,
+    )
+    await waitForReady()
+
+    expect(display.streams.map(isLive)).toEqual([false, true])
+
+    cleanup()
+    expect(display.streams.map(isLive)).toEqual([false, false])
+  })
+
+  it('stops a stream that resolves after unmounting', async () => {
+    let resolve!: () => void
+    display.getDisplayMedia.mockImplementationOnce(async () => {
+      await new Promise<void>((r) => {
+        resolve = r
+      })
+      const stream = document.createElement('canvas').captureStream()
+      display.streams.push(stream)
+      return stream
+    })
+    using rendered = setup(<Capture />)
+    const { unmount } = rendered
+    await waitFor(() => expect(resolve).toBeDefined())
+
+    unmount()
+    await act(async () => resolve())
+
+    await waitFor(() => expect(display.streams).toHaveLength(1))
+    expect(isLive(display.streams[0]!)).toBe(false)
+  })
+
+  it('stops a stream that resolves after the plugin is removed', async () => {
+    let resolve!: () => void
+    display.getDisplayMedia.mockImplementationOnce(async () => {
+      await new Promise<void>((r) => {
+        resolve = r
+      })
+      const stream = document.createElement('canvas').captureStream()
+      display.streams.push(stream)
+      return stream
+    })
+    using uppy = new Uppy().use(ScreenCapture)
+    const plugin = uppy.getPlugin<ScreenCapture<any, any>>('ScreenCapture')!
+    const started = plugin.start()
+    await waitFor(() => expect(resolve).toBeDefined())
+
+    uppy.removePlugin(plugin)
+    resolve()
+    await started
+
+    expect(display.streams).toHaveLength(1)
+    expect(isLive(display.streams[0]!)).toBe(false)
+  })
+
+  it('stops the microphone when screen sharing is ended from the browser', async () => {
+    using _ = setup(<Capture />)
+    await waitForReady()
+    expect(display.micStreams).toHaveLength(1)
+    const stopMic = vi.spyOn(display.micStreams[0]!.getTracks()[0]!, 'stop')
+
+    // Like the browser's "Stop sharing" button: the screen stream goes inactive
+    for (const track of display.streams[0]!.getTracks()) track.stop()
+
+    await waitFor(() => expect(button('screenshot').disabled).toBe(true))
+    expect(stopMic).toHaveBeenCalled()
+    expect(isLive(display.micStreams[0]!)).toBe(false)
+  })
+
+  it('stops a microphone stream that resolves after screen sharing was ended', async () => {
+    let grantMic!: () => void
+    display.getUserMedia.mockImplementationOnce(async () => {
+      await new Promise<void>((r) => {
+        grantMic = r
+      })
+      const stream = document.createElement('canvas').captureStream()
+      display.micStreams.push(stream)
+      return stream
+    })
+    using rendered = setup(<Capture />)
+    const plugin =
+      rendered.uppy.getPlugin<ScreenCapture<any, any>>('ScreenCapture')!
+    await waitForReady()
+    expect(grantMic).toBeDefined()
+
+    // "Stop sharing" while the microphone prompt is still open, then grant it
+    for (const track of display.streams[0]!.getTracks()) track.stop()
+    await waitFor(() => expect(button('screenshot').disabled).toBe(true))
+    await act(async () => grantMic())
+
+    await waitFor(() => expect(display.micStreams).toHaveLength(1))
+    await waitFor(() => expect(isLive(display.micStreams[0]!)).toBe(false))
+    expect(plugin.audioStream).toBeNull()
+    expect(plugin.getPluginState().audioStreamActive).toBe(false)
+
+    await click('start capture')
+    await waitForReady()
+    await waitFor(() => expect(plugin.audioStream).toBe(display.micStreams[1]))
+    expect(plugin.videoStream).toBe(display.streams[1])
+    expect(isLive(display.streams[1]!)).toBe(true)
+    expect(isLive(display.micStreams[1]!)).toBe(true)
+  })
+
+  it('ignores the old stream going inactive after stop() and start()', async () => {
+    using rendered = setup(<Capture />)
+    const { uppy } = rendered
+    await waitForReady()
+    const plugin = uppy.getPlugin<ScreenCapture<any, any>>('ScreenCapture')!
+
+    await act(() => {
+      plugin.stop()
+      return plugin.start()
+    })
+    await waitForReady()
+    expect(display.streams).toHaveLength(2)
+    expect(display.micStreams).toHaveLength(2)
+
+    // `stop()` makes the old stream inactive; dispatch the event explicitly so
+    // it is guaranteed to arrive after the new stream is set
+    await act(() => {
+      display.streams[0]!.dispatchEvent(new Event('inactive'))
+    })
+
+    expect(plugin.videoStream).toBe(display.streams[1])
+    expect(plugin.audioStream).toBe(display.micStreams[1])
+    expect(isLive(display.streams[1]!)).toBe(true)
+    expect(isLive(display.micStreams[1]!)).toBe(true)
+    expect(plugin.getPluginState()).toMatchObject({
+      status: 'ready',
+      streamActive: true,
+      audioStreamActive: true,
+    })
+    expect(button('screenshot').disabled).toBe(false)
+  })
+
+  it('does not touch state or the Dashboard when a stream goes inactive after removing the plugin', async () => {
+    const target = document.createElement('div')
+    document.body.appendChild(target)
+    onTestFinished(() => target.remove())
+    using uppy = new Uppy()
+      .use(Dashboard, { inline: true, target })
+      .use(ScreenCapture, { target: Dashboard })
+    const dashboard = uppy.getPlugin<Dashboard<any, any>>('Dashboard')!
+    const plugin = uppy.getPlugin<ScreenCapture<any, any>>('ScreenCapture')!
+    await plugin.start()
+    expect(display.streams).toHaveLength(1)
+    const hideAllPanels = vi.spyOn(dashboard, 'hideAllPanels')
+
+    uppy.removePlugin(plugin)
+    expect(uppy.getState().plugins.ScreenCapture).toBeUndefined()
+    display.streams[0]!.dispatchEvent(new Event('inactive'))
+
+    expect(uppy.getState().plugins.ScreenCapture).toBeUndefined()
+    expect(hideAllPanels).not.toHaveBeenCalled()
   })
 })

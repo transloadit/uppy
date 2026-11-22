@@ -1,10 +1,8 @@
-import {
-  createUppyEventAdapter,
-  type NonNullableUppyContext,
-  type UploadStatus,
-} from '@uppy/components'
+import type { NonNullableUppyContext, UploadStatus } from '@uppy/components'
 import type Uppy from '@uppy/core'
 import type React from 'react'
+
+import { createUppyEventAdapter } from '@uppy/components'
 import { createContext, useContext, useEffect, useState } from 'react'
 
 interface UppyContextValue {

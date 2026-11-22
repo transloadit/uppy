@@ -1,20 +1,26 @@
 import type { Readable } from 'node:stream'
-import fetch, { type RequestInfo, type RequestInit } from 'node-fetch'
+
+import type { RequestInfo, RequestInit } from 'node-fetch'
 import type { WebDAVClientOptions } from 'webdav'
+
+import type {
+  ProviderDownloadOptions,
+  ProviderDownloadResponse,
+  ProviderListOptions,
+  ProviderListResponse,
+  ProviderLogoutResponse,
+  ProviderSimpleAuthOptions,
+} from '../Provider.js'
+
+import fetch from 'node-fetch'
 import { AuthType, createClient, getPatcher } from 'webdav'
+
 import { getProtectedHttpAgent, validateURL } from '../../helpers/request.js'
 import { isRecord } from '../../helpers/type-guards.js'
 import logger from '../../logger.js'
 import { ProviderApiError, ProviderAuthError } from '../error.js'
 import { userError } from '../errorCodes.js'
-import Provider, {
-  type ProviderDownloadOptions,
-  type ProviderDownloadResponse,
-  type ProviderListOptions,
-  type ProviderListResponse,
-  type ProviderLogoutResponse,
-  type ProviderSimpleAuthOptions,
-} from '../Provider.js'
+import Provider from '../Provider.js'
 
 const defaultDirectory = '/'
 
@@ -277,15 +283,6 @@ export default class WebdavProvider extends Provider<WebdavUserSession> {
         return { stream: body, size: stat.size }
       },
     )
-  }
-
-  override thumbnail(): Promise<never> {
-    // not implementing this because a public thumbnail from webdav will be used instead
-    logger.error(
-      'call to thumbnail is not implemented',
-      'provider.webdav.thumbnail.error',
-    )
-    throw new Error('call to thumbnail is not implemented')
   }
 
   protected override mapProviderError(err: unknown): unknown {

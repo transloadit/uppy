@@ -1,5 +1,6 @@
 import nock from 'nock'
 import { afterEach, describe, expect, test } from 'vitest'
+
 import Box from '../src/server/provider/box/index.js'
 import { Drive } from '../src/server/provider/google/drive/index.js'
 import OneDrive from '../src/server/provider/onedrive/index.js'
@@ -18,17 +19,20 @@ describe('provider listing bounds', () => {
       { query: { driveId: '..' } },
       'https://graph.microsoft.com',
     ],
-  ])('rejects invalid paths before starting a user-info request (%s)', async (provider, options, origin) => {
-    const upstream = nock(origin).get(/.*/).reply(401, {})
-    await expect(
-      provider.list({
-        ...options,
-        companion: {} as never,
-        providerUserSession: { accessToken: 'expired-token' },
-      }),
-    ).rejects.toThrow('Invalid id')
-    expect(upstream.isDone()).toBe(false)
-  })
+  ])(
+    'rejects invalid paths before starting a user-info request (%s)',
+    async (provider, options, origin) => {
+      const upstream = nock(origin).get(/.*/).reply(401, {})
+      await expect(
+        provider.list({
+          ...options,
+          companion: {} as never,
+          providerUserSession: { accessToken: 'expired-token' },
+        }),
+      ).rejects.toThrow('Invalid id')
+      expect(upstream.isDone()).toBe(false)
+    },
+  )
 
   test('paginates shared drives without duplicating files or losing their cursor', async () => {
     const api = nock('https://www.googleapis.com')

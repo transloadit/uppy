@@ -1,4 +1,5 @@
 import { describe, expect, test } from 'vitest'
+
 import { getMaskableSecrets } from '../src/config/companion.js'
 
 describe('getMaskableSecrets', () => {

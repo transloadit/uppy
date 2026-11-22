@@ -1,5 +1,8 @@
-import { type ComponentChildren, h } from '@uppy/core/utils/preact'
+import type { ComponentChildren } from '@uppy/core/utils/preact'
+
 import type { MetaField } from '../../Dashboard.js'
+
+import { h } from '@uppy/core/utils/preact'
 
 interface RenderMetaFieldsProps {
   computedMetaFields: MetaField[]

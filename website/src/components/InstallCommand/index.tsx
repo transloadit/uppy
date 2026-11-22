@@ -1,4 +1,5 @@
 import type { ReactNode } from 'react'
+
 import { useCopyToClipboard } from '../../hooks/useCopyToClipboard'
 import CopyStateIcon from '../CopyStateIcon'
 import styles from './styles.module.css'
