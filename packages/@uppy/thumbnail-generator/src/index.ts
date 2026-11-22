@@ -395,8 +395,15 @@ export default class ThumbnailGenerator<
   }
 
   onRestored = (): void => {
-    const restoredFiles = this.uppy.getFiles().filter((file) => file.isRestored)
-    for (const file of restoredFiles) {
+    for (const file of this.uppy.getFiles()) {
+      if (!file.isRestored) {
+        continue
+      }
+
+      if (file.isRemote) {
+        continue
+      }
+
       // Only add blob URLs; they are likely invalid after being restored.
       if (!file.preview || isObjectURL(file.preview)) {
         this.addToQueue(file.id)
