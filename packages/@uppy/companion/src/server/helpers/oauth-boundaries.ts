@@ -1,31 +1,39 @@
-import type { RequestHandler } from '../../types/express.js'
+import type { Request, RequestHandler } from '../../types/express.js'
 
 import { isRecord } from './type-guards.js'
 
-/** Prevent Grant from copying arbitrary or recursive input into the session. */
+/**
+ * Prevent Grant from copying arbitrary or recursive input into the session.
+ * `onRejectedCallback` runs before a rejected OAuth callback is answered.
+ */
 export function guardGrantInput(
   getDynamicFields: (provider: string) => readonly string[] | undefined,
+  onRejectedCallback: (req: Request) => void = () => {},
 ): RequestHandler {
   return (req, res, next) => {
+    const isCallback = req.params['override'] === 'callback'
+    const reject = (status: number) => {
+      if (isCallback) onRejectedCallback(req)
+      res.sendStatus(status)
+    }
     const provider = req.params['oauthProvider']
     const dynamicFields =
       typeof provider === 'string' ? getDynamicFields(provider) : undefined
     if (dynamicFields == null) {
-      res.sendStatus(400)
+      reject(400)
       return
     }
     // Providers add their own callback parameters (Google's `iss`, Facebook's
     // `error_reason`, ...), so callbacks are bounded by type and size only.
-    const allowedFields =
-      req.params['override'] === 'callback'
-        ? undefined
-        : new Set(['state', ...dynamicFields])
+    const allowedFields = isCallback
+      ? undefined
+      : new Set(['state', ...dynamicFields])
     let bytes = 0
     let fields = 0
     for (const input of [req.query, req.body]) {
       if (input == null) continue
       if (!isRecord(input)) {
-        res.sendStatus(400)
+        reject(400)
         return
       }
       // Stop at the budget rather than enumerating an entire host-parsed object.
@@ -38,12 +46,12 @@ export function guardGrantInput(
           (allowedFields && !allowedFields.has(key)) ||
           typeof value !== 'string'
         ) {
-          res.sendStatus(400)
+          reject(400)
           return
         }
         bytes += Buffer.byteLength(key) + Buffer.byteLength(value)
         if (bytes > 8192) {
-          res.sendStatus(413)
+          reject(413)
           return
         }
       }

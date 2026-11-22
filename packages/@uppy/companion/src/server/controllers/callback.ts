@@ -15,9 +15,25 @@ import * as tokenService from '../helpers/jwt.js'
 import * as oAuthState from '../helpers/oauth-state.js'
 import logger from '../logger.js'
 
+/**
+ * Tell the Uppy client waiting on this session's login, if any, that it
+ * failed. Only new Uppy clients set an authCallbackToken in the state and
+ * wait on a socket; they close the login window themselves.
+ */
+export function notifyLoginFailed(
+  req: Request,
+  secret: string | Buffer,
+): boolean {
+  const { state } = oAuthState.getGrantDynamicFromRequest(req)
+  const authCallbackToken =
+    state && oAuthState.getFromState(state, 'authCallbackToken', secret)
+  if (!authCallbackToken) return false
+  emitter().emit(authCallbackToken, { error: true })
+  return true
+}
+
 export default function callback(req: Request, res: Response): void {
   const providerName = req.params['providerName']
-  const { companion } = req
 
   if (typeof providerName !== 'string' || providerName.length === 0) {
     res.sendStatus(400)
@@ -46,17 +62,7 @@ export default function callback(req: Request, res: Response): void {
       req.id,
     )
     logger.debug(response, 'callback.oauth.resp', req.id)
-    const authCallbackToken =
-      grantDynamic.state &&
-      oAuthState.getFromState(
-        grantDynamic.state,
-        'authCallbackToken',
-        companion.options.secret,
-      )
-    // only new Uppy clients will set an authCallbackToken in the state
-    // in that case, we send the token through the emitter.
-    if (authCallbackToken) {
-      emitter().emit(authCallbackToken, { error: true })
+    if (notifyLoginFailed(req, secret)) {
       res.status(400).send(authCallbackErrorHtml())
     } else {
       // This is backwards compatible with old Uppy clients:

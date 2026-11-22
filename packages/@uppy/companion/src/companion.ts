@@ -24,6 +24,7 @@ import {
   validateConfig,
 } from './config/companion.js'
 import grantConfigFn from './config/grant.js'
+import { notifyLoginFailed } from './server/controllers/callback.js'
 import googlePicker from './server/controllers/googlePicker.js'
 import * as controllers from './server/controllers/index.js'
 import s3 from './server/controllers/s3.js'
@@ -193,6 +194,7 @@ export function app(optionsArg: CompanionInitOptions): {
     }
     const pendingProvider = req.session?.grant?.provider
     if (pendingProvider && pendingProvider !== oauthProvider) {
+      notifyLoginFailed(req, options.secret)
       res.sendStatus(400)
       return
     }
@@ -205,6 +207,7 @@ export function app(optionsArg: CompanionInitOptions): {
       Object.keys(req.query).length > 0 ? req.query : asRecord(req.body)
     if (input['code'] ? !req.session?.grant?.state : !input['error']) {
       // Also what an expired session looks like: tell the user to retry.
+      notifyLoginFailed(req, options.secret)
       res
         .status(400)
         .send('This login did not start here or has expired. Please try again.')
@@ -224,10 +227,12 @@ export function app(optionsArg: CompanionInitOptions): {
       limit: '8kb',
       parameterLimit: 32,
     }),
-    guardGrantInput((provider) =>
-      Object.hasOwn(grantConfig, provider) && provider !== 'defaults'
-        ? (grantConfig[provider]?.dynamic ?? [])
-        : undefined,
+    guardGrantInput(
+      (provider) =>
+        Object.hasOwn(grantConfig, provider) && provider !== 'defaults'
+          ? (grantConfig[provider]?.dynamic ?? [])
+          : undefined,
+      (req) => notifyLoginFailed(req, options.secret),
     ),
     // before the credentials middleware, which fetches provider keys
     rejectUnstartedOAuthCallback,
