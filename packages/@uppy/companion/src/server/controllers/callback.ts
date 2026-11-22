@@ -25,8 +25,14 @@ export function notifyLoginFailed(
   secret: string | Buffer,
 ): boolean {
   const { state } = oAuthState.getGrantDynamicFromRequest(req)
-  const authCallbackToken =
-    state && oAuthState.getFromState(state, 'authCallbackToken', secret)
+  let authCallbackToken: string | undefined
+  try {
+    authCallbackToken =
+      state && oAuthState.getFromState(state, 'authCallbackToken', secret)
+  } catch {
+    // Grant stores a `state` passed to /connect as is, so it can be anything.
+    return false
+  }
   if (!authCallbackToken) return false
   emitter().emit(authCallbackToken, { error: true })
   return true

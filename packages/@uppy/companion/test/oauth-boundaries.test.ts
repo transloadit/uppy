@@ -194,6 +194,14 @@ describe('OAuth request boundaries', () => {
     expect(messages).toEqual([{ error: true }, { error: true }])
   })
 
+  test('still answers 400 to a rejected callback when the session state is not ours', async () => {
+    const agent = request.agent(embedded())
+    // Grant stores a `state` given to /connect in the session as is
+    await agent.get('/connect/dropbox?state=garbage').expect(302)
+    await agent.get('/connect/dropbox/callback?code=a&code=b').expect(400)
+    await agent.get('/connect/dropbox/callback').expect(400)
+  })
+
   test('uses the pending provider rather than an OAuth 1 URL exemption', async () => {
     const app = embedded({
       customProviders: {
