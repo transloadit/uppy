@@ -1,8 +1,10 @@
+import type { AddressInfo } from 'node:net'
+
 import { once } from 'node:events'
 import { createServer } from 'node:http'
-import type { AddressInfo } from 'node:net'
 import { PassThrough } from 'node:stream'
 import { setTimeout as sleep } from 'node:timers/promises'
+
 import { Upload } from 'tus-js-client'
 import { expect, onTestFinished, test } from 'vitest'
 

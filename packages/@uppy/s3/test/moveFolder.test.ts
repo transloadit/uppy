@@ -1,9 +1,9 @@
+import type { FolderMoveProvider } from '../lib/moveFolder.js'
+
 import { describe, expect, it, vi } from 'vitest'
+
 import { splitKey } from '../lib/keys.js'
-import moveFolder, {
-  deleteFolder,
-  type FolderMoveProvider,
-} from '../lib/moveFolder.js'
+import moveFolder, { deleteFolder } from '../lib/moveFolder.js'
 
 /** Folder key (`''` for the root) → the keys it contains. */
 type Tree = Record<string, string[]>

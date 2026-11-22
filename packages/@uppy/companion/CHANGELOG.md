@@ -1,5 +1,20 @@
 # @uppy/companion
 
+## 7.2.4
+
+### Patch Changes
+
+- 1bbf04c: List Zoom recording files that come without an `id`, such as closed captions, and the meetings that only have those. Validate Zoom responses against the documented shape so a missing or unexpected optional field no longer hides a recording, and list each meeting of a year once, in the right year, outside UTC.
+
+## 7.2.3
+
+### Patch Changes
+
+- 51f1692: The errors for `accessKeyId`/`secretAccessKey` in the S3 options no longer point at `providerOptions.s3`. The same check runs for the top-level `s3` upload option and for the S3 providers, so the messages now name only the `key` and `secret` options.
+- 50e109d: Transloadit Storage: native moves now include the request's method and path in their signed params, as the Transloadit API requires for Storage requests.
+- 0c9f2c5: Fix empty Zoom year folders by accepting meeting responses without the recording-file-only `meeting_id` field.
+- b0a41c9: Time out remote provider credential requests after 10 seconds and stop following redirects from the configured credentials endpoint (`credentialsURL` / `COMPANION_*_KEYS_ENDPOINT`). If your endpoint URL redirects (for example http → https), configure the final URL; a redirect now fails, and Companion logs the redirect target.
+
 ## 7.2.2
 
 ### Patch Changes

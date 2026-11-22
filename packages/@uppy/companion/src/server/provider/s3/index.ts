@@ -1,51 +1,52 @@
 import type { Readable } from 'node:stream'
-import {
-  CopyObjectCommand,
-  DeleteObjectCommand,
-  GetObjectCommand,
-  HeadObjectCommand,
-  type HeadObjectCommandOutput,
-  ListObjectsV2Command,
-  NoSuchKey,
-  NotFound,
-  PutObjectCommand,
-  type S3Client,
-  S3ServiceException,
-} from '@aws-sdk/client-s3'
-import { lookup as mimeLookup } from 'mime-types'
-import { z } from 'zod'
+
+import type { HeadObjectCommandOutput, S3Client } from '@aws-sdk/client-s3'
+
 import type {
   CompanionInitOptions,
   S3ClientOptions,
   S3ConnectionOptions,
   S3ObjectWriteOptions,
 } from '../../../schemas/companion.js'
+import type {
+  CompanionLike,
+  ProviderCreateFolderOptions,
+  ProviderCreateFolderResponse,
+  ProviderDeleteItemOptions,
+  ProviderDownloadOptions,
+  ProviderDownloadResponse,
+  ProviderListItem,
+  ProviderListOptions,
+  ProviderListResponse,
+  ProviderLogoutResponse,
+  ProviderMoveItemOptions,
+  ProviderMoveItemResponse,
+  ProviderSimpleAuthOptions,
+} from '../Provider.js'
+import type { ParsedS3ProviderOptions } from './config.js'
+
+import {
+  CopyObjectCommand,
+  DeleteObjectCommand,
+  GetObjectCommand,
+  HeadObjectCommand,
+  ListObjectsV2Command,
+  NoSuchKey,
+  NotFound,
+  PutObjectCommand,
+  S3ServiceException,
+} from '@aws-sdk/client-s3'
+import { lookup as mimeLookup } from 'mime-types'
+import { z } from 'zod'
+
 import { isRecord } from '../../helpers/type-guards.js'
 import { s3WriteParams } from '../../helpers/utils.js'
 import logger from '../../logger.js'
 import getS3Client from '../../s3-client.js'
 import { ProviderApiError, ProviderAuthError } from '../error.js'
 import { userError } from '../errorCodes.js'
-import Provider, {
-  type CompanionLike,
-  type ProviderCreateFolderOptions,
-  type ProviderCreateFolderResponse,
-  type ProviderDeleteItemOptions,
-  type ProviderDownloadOptions,
-  type ProviderDownloadResponse,
-  type ProviderListItem,
-  type ProviderListOptions,
-  type ProviderListResponse,
-  type ProviderLogoutResponse,
-  type ProviderMoveItemOptions,
-  type ProviderMoveItemResponse,
-  type ProviderSimpleAuthOptions,
-} from '../Provider.js'
-import {
-  type ParsedS3ProviderOptions,
-  parseS3ProviderOptions,
-  S3ConfigError,
-} from './config.js'
+import Provider from '../Provider.js'
+import { parseS3ProviderOptions, S3ConfigError } from './config.js'
 import {
   ensureTrailingSlash,
   GrantExpiredError,
@@ -85,6 +86,7 @@ export type S3Session<P extends ParsedS3ProviderOptions> = {
 
 type SessionChecks = {
   requireWrite?: boolean
+  download?: boolean
   /** Keys the request names; each must lie inside the session's prefix. */
   keys?: string[]
 }
@@ -288,10 +290,13 @@ export default class S3Provider<
     companion: CompanionLike,
     config: ResolvedConfig<P>,
     bucket: string,
+    download = false,
   ): S3Client {
     const { cacheKey, clientOptions } = this.clientOptionsFor(config, bucket)
     // Provider names and bucket names cannot contain `/`, so the two cannot collide.
-    const key = `${this.optionsKey}/${cacheKey}`
+    // Unconsumed GetObject bodies hold agent sockets. Keep the finite download
+    // pool separate so paused imports cannot starve browsing and mutations.
+    const key = `${this.optionsKey}/${cacheKey}${download ? '/download' : ''}`
     let client = companion.s3ProviderClients.get(key)
     if (client == null) {
       client = this.getClient(clientOptions)
@@ -308,7 +313,7 @@ export default class S3Provider<
   protected session(
     companion: CompanionLike,
     providerUserSession: S3UserSession,
-    { requireWrite = false, keys = [] }: SessionChecks = {},
+    { requireWrite = false, keys = [], download = false }: SessionChecks = {},
   ): S3Session<P> {
     const config = this.#config(companion)
     if (!this.isAuthenticated({ providerUserSession })) {
@@ -331,7 +336,7 @@ export default class S3Provider<
     return {
       bucket,
       prefix,
-      client: this.#client(companion, config, bucket),
+      client: this.#client(companion, config, bucket, download),
       config,
     }
   }
@@ -476,6 +481,7 @@ export default class S3Provider<
     return this.withErrorHandling('provider.s3.download.error', async () => {
       const { bucket, client } = this.session(companion, providerUserSession, {
         keys: [id],
+        download: true,
       })
       // A queued file outlives the browser session that selected it. Its key
       // must never be read from a bucket the user connected to later.
@@ -704,14 +710,6 @@ export default class S3Provider<
         return itemRef(key)
       },
     )
-  }
-
-  override thumbnail(): Promise<never> {
-    logger.error(
-      'call to thumbnail is not implemented',
-      'provider.s3.thumbnail.error',
-    )
-    throw new Error('call to thumbnail is not implemented')
   }
 
   /**

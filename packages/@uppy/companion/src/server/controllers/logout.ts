@@ -1,4 +1,7 @@
-import type { NextFunction, Request, Response } from 'express'
+import type { NextFunction, Response } from 'express'
+
+import type { Request } from '../../types/express.js'
+
 import * as tokenService from '../helpers/jwt.js'
 import { respondWithError } from '../provider/error.js'
 

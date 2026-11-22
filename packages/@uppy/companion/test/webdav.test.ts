@@ -1,6 +1,8 @@
-import http from 'node:http'
 import type { AddressInfo } from 'node:net'
+
+import http from 'node:http'
 import { gzipSync } from 'node:zlib'
+
 import {
   afterAll,
   beforeAll,
@@ -10,6 +12,7 @@ import {
   test,
   vi,
 } from 'vitest'
+
 import { FORBIDDEN_IP_ADDRESS } from '../dist/server/helpers/request.js'
 import { ProviderApiError } from '../dist/server/provider/error.js'
 import WebdavProvider from '../dist/server/provider/webdav/index.js'
@@ -82,17 +85,125 @@ describe('webdav SSRF protection', () => {
 describe('webdav response bounds', () => {
   test('rejects a PROPFIND body over 5 MiB', async () => {
     const padding = ' '.repeat(6 * 1024 * 1024)
-    const body = gzipSync(
-      `<?xml version="1.0"?><d:multistatus xmlns:d="DAV:">${padding}</d:multistatus>`,
-    )
+    const body = `<?xml version="1.0"?><d:multistatus xmlns:d="DAV:">${padding}</d:multistatus>`
+    handler = (_req, res) => {
+      res.writeHead(207, {
+        'content-type': 'application/xml',
+      })
+      res.end(body)
+    }
+    await expect(simpleAuth(true)).rejects.toThrow(/max-size|over limit/)
+  })
+
+  test('rejects a compressed PROPFIND body that decompresses to over 5 MiB', async () => {
+    const padding = ' '.repeat(6 * 1024 * 1024)
     handler = (_req, res) => {
       res.writeHead(207, {
         'content-type': 'application/xml',
         'content-encoding': 'gzip',
       })
-      res.end(body)
+      res.end(
+        gzipSync(
+          `<?xml version="1.0"?><d:multistatus xmlns:d="DAV:">${padding}</d:multistatus>`,
+        ),
+      )
     }
     await expect(simpleAuth(true)).rejects.toThrow(/max-size|over limit/)
+  })
+
+  test('asks for an uncompressed listing, but still reads a compressed one', async () => {
+    handler = (req, res) => {
+      expect(req.headers['accept-encoding']).toBe('identity')
+      res.writeHead(207, {
+        'content-type': 'application/xml',
+        'content-encoding': 'gzip',
+      })
+      res.end(gzipSync(multistatus(fileResponse('/a.txt'))))
+    }
+    const { items } = await provider().list({
+      providerUserSession: { webdavUrl },
+      directory: '/',
+      query: {},
+    } as never)
+    expect(items).toHaveLength(1)
+  })
+
+  test('rejects a deeply nested base URL before requesting a listing', async () => {
+    await expect(
+      provider().simpleAuth({
+        requestBody: { form: { webdavUrl: `${webdavUrl}${'a/'.repeat(33)}` } },
+        companion: {} as never,
+      }),
+    ).rejects.toThrow('maximum folder depth')
+    expect(requestCount).toBe(0)
+  })
+
+  test('lists a large folder from a server that declares namespaces on every entry', async () => {
+    // As Apache mod_dav and IIS do: well within the byte limit, but with
+    // more elements and attributes than the original structural limits allowed
+    const entries = Array.from({ length: 8000 }, (_, index) =>
+      fileResponse(`/f${index}.txt`).replace(
+        '<d:response>',
+        '<d:response xmlns:lp1="DAV:" xmlns:lp2="http://apache.org/dav/props/">',
+      ),
+    )
+    handler = (_req, res) => {
+      res.writeHead(207, { 'content-type': 'application/xml' })
+      res.end(multistatus(...entries))
+    }
+    const { items } = await provider().list({
+      providerUserSession: { webdavUrl },
+      directory: '/',
+      query: {},
+    } as never)
+    expect(items.length).toBeGreaterThanOrEqual(7999)
+  })
+
+  test('rejects a listing of tiny elements within the byte limit', async () => {
+    handler = (_req, res) => {
+      res.writeHead(207, { 'content-type': 'application/xml' })
+      res.end(multistatus('<a/>'.repeat(250_001)))
+    }
+    await expect(simpleAuth(true)).rejects.toThrow('structural limits')
+  })
+
+  test('rejects an element with too many attributes', async () => {
+    handler = (_req, res) => {
+      const attributes = Array.from(
+        { length: 65 },
+        (_, index) => `a${index}="x"`,
+      ).join(' ')
+      res.writeHead(207, { 'content-type': 'application/xml' })
+      res.end(
+        `<d:multistatus xmlns:d="DAV:"><d:response ${attributes}/></d:multistatus>`,
+      )
+    }
+    await expect(simpleAuth(true)).rejects.toThrow('structural limits')
+  })
+
+  test('accepts a Content-Encoding that is no compression', async () => {
+    // misconfigured servers send values like `binary` for plain bytes
+    handler = (_req, res) => {
+      res.writeHead(207, {
+        'content-type': 'application/xml',
+        'content-encoding': 'binary',
+      })
+      res.end(emptyListing)
+    }
+    await expect(simpleAuth(true)).resolves.toBeDefined()
+  })
+
+  test('rejects recursive XML and DTDs before tree parsing', async () => {
+    handler = (_req, res) => {
+      res.writeHead(207, { 'content-type': 'application/xml' })
+      res.end(`${'<a>'.repeat(65)}${'</a>'.repeat(65)}`)
+    }
+    await expect(simpleAuth(true)).rejects.toThrow('structural limits')
+    handler = (_req, res) => {
+      res.writeHead(207, { 'content-type': 'application/xml' })
+      res.end('<!DOCTYPE a [<!ENTITY b "text">]><a>&b;</a>')
+    }
+    await expect(simpleAuth(true)).rejects.toThrow('structural limits')
   })
 
   test('builds item ids from the server path, not the route id', async () => {

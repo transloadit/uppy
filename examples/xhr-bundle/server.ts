@@ -1,5 +1,6 @@
-import cors from 'cors'
 import type { Request, Response } from 'express'
+
+import cors from 'cors'
 import express from 'express'
 import multer from 'multer'
 

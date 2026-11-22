@@ -1,3 +1,5 @@
+import type { SignedAssemblyOptions } from '@uppy/transloadit-storage'
+
 import { getSignedSmartCdnUrl } from '@transloadit/utils'
 import Audio from '@uppy/audio'
 import AwsS3 from '@uppy/aws-s3'
@@ -17,13 +19,12 @@ import RemoteSources from '@uppy/remote-sources'
 import S3 from '@uppy/s3'
 import ScreenCapture from '@uppy/screen-capture'
 import Transloadit from '@uppy/transloadit'
-import TransloaditStorage, {
-  type SignedAssemblyOptions,
-} from '@uppy/transloadit-storage'
+import TransloaditStorage from '@uppy/transloadit-storage'
 import Tus from '@uppy/tus'
 import Webcam from '@uppy/webcam'
 import Webdav from '@uppy/webdav'
 import XHRUpload from '@uppy/xhr-upload'
+
 import generateSignatureIfSecret from './generateSignatureIfSecret.js'
 
 // DEV CONFIG: create a .env file in the project root directory to customize those values.
