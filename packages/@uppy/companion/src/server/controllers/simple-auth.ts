@@ -1,9 +1,11 @@
-import type { NextFunction, Request, Response } from 'express'
-import type { ProviderUserSession } from '../../types/express.js'
+import type { NextFunction, Response } from 'express'
+
+import type { ProviderUserSession, Request } from '../../types/express.js'
+import type { ProviderCtor } from '../provider/Provider.js'
+
 import * as tokenService from '../helpers/jwt.js'
 import logger from '../logger.js'
 import { respondWithError } from '../provider/error.js'
-import type { ProviderCtor } from '../provider/Provider.js'
 
 /**
  * Lifetime, in seconds, of the session token issued after `simpleAuth()`.
@@ -33,7 +35,6 @@ export default async function simpleAuth(
     res.sendStatus(400)
     return
   }
-  const { secret } = req.companion.options
   const { provider, providerClass } = req.companion
   if (!provider || !providerClass) {
     res.sendStatus(400)
@@ -56,17 +57,12 @@ export default async function simpleAuth(
       undefined,
       req.id,
     )
-    const maxAge = getTokenMaxAge(
-      providerClass,
-      req.companion.providerUserSession,
+    const uppyAuthToken = tokenService.issueAuthToken(
+      req,
+      res,
+      providerName,
+      getTokenMaxAge(providerClass, req.companion.providerUserSession),
     )
-    const uppyAuthToken = tokenService.generateEncryptedAuthToken(
-      { [providerName]: req.companion.providerUserSession },
-      secret,
-      maxAge,
-    )
-
-    tokenService.addToCookiesIfNeeded(req, res, uppyAuthToken, maxAge)
 
     res.send({ uppyAuthToken })
   } catch (err) {

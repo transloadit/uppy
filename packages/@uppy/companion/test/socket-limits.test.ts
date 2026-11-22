@@ -1,9 +1,13 @@
-import { randomUUID } from 'node:crypto'
-import { createServer, type Server } from 'node:http'
+import type { Server } from 'node:http'
 import type { AddressInfo } from 'node:net'
+
+import { randomUUID } from 'node:crypto'
+import { createServer } from 'node:http'
+
 import { register } from 'prom-client'
 import { afterAll, beforeAll, describe, expect, test, vi } from 'vitest'
 import WebSocket from 'ws'
+
 import { setDefaultEnv } from './mockserver.js'
 
 vi.mock('express-prom-bundle')

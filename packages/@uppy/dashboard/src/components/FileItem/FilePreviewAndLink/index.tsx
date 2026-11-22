@@ -1,5 +1,7 @@
 import type { Body, I18n, Meta, UppyFile } from '@uppy/core/utils'
+
 import type { DashboardState } from '../../../Dashboard.js'
+
 import getFileTypeIcon from '../../../utils/getFileTypeIcon.js'
 import FilePreview from '../../FilePreview.js'
 import MetaErrorMessage from '../MetaErrorMessage.js'

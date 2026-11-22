@@ -1,5 +1,8 @@
+import type { AddressInfo } from 'node:net'
+
 import http from 'node:http'
-import net, { type AddressInfo } from 'node:net'
+import net from 'node:net'
+
 import {
   AbortMultipartUploadCommand,
   CompleteMultipartUploadCommand,
@@ -10,6 +13,7 @@ import {
 import express from 'express'
 import request from 'supertest'
 import { describe, expect, onTestFinished, test, vi } from 'vitest'
+
 import s3 from '../src/server/controllers/s3.js'
 
 type Cmd = { constructor: { name: string }; input: Record<string, unknown> }
@@ -86,19 +90,15 @@ describe('batchSignPartsUpload', () => {
     )
   })
 
-  test.each([
-    '0',
-    '10001',
-    '1.5',
-    '1abc',
-    '-1',
-    '1,,2',
-  ])('refuses part number list %j', async (partNumbers) => {
-    const res = await batch(partNumbers).expect(400)
-    expect(res.body.error).toBe(
-      's3: the part numbers must be a number between 1 and 10000.',
-    )
-  })
+  test.each(['0', '10001', '1.5', '1abc', '-1', '1,,2'])(
+    'refuses part number list %j',
+    async (partNumbers) => {
+      const res = await batch(partNumbers).expect(400)
+      expect(res.body.error).toBe(
+        's3: the part numbers must be a number between 1 and 10000.',
+      )
+    },
+  )
 })
 
 /**
@@ -399,14 +399,17 @@ describe('s3.conditions on multipart uploads', () => {
     [{ 'content-type': 'image/png' }, 'text/html', 400],
     [['starts-with', '$key', 'uploads/'], 'text/html', 200],
     [['content-length-range', 0, 1], 'text/html', 200],
-  ])('creating with %j and type %j answers %d', async (condition, type, status) => {
-    const { response, sent } = create([condition], type)
-    const res = await response.expect(status)
-    if (status === 400) {
-      expect(res.body.error).toBe('s3: this content type is not allowed')
-    }
-    expect(sent(CreateMultipartUploadCommand)).toBe(status === 200 ? 1 : 0)
-  })
+  ])(
+    'creating with %j and type %j answers %d',
+    async (condition, type, status) => {
+      const { response, sent } = create([condition], type)
+      const res = await response.expect(status)
+      if (status === 400) {
+        expect(res.body.error).toBe('s3: this content type is not allowed')
+      }
+      expect(sent(CreateMultipartUploadCommand)).toBe(status === 200 ? 1 : 0)
+    },
+  )
 
   const complete = (
     conditions: unknown[],

@@ -3,7 +3,9 @@
   generics="M extends import('@uppy/core').Meta, B extends import('@uppy/core').Body"
 >
 import type { Uppy } from "@uppy/core";
-import StatusBarPlugin, { type StatusBarOptions } from "@uppy/status-bar";
+import type { StatusBarOptions } from "@uppy/status-bar";
+
+import StatusBarPlugin from "@uppy/status-bar";
 import { onDestroy, onMount } from "svelte";
 
 let container: HTMLElement;
