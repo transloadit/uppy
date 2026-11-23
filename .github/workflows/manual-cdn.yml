@@ -28,21 +28,24 @@ jobs:
       S3_BUCKET: ${{ secrets.S3_BUCKET }}
       S3_ENDPOINT: ${{ secrets.S3_ENDPOINT }}
     steps:
-      - name: Checkout sources
-        uses: actions/checkout@v7
-      - name: Install Node.js
-        uses: actions/setup-node@v7
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
         with:
-          node-version: lts/*
+          node-version-file: .node-version
+      - run: npm install --global corepack@0.36.0
       - name: Install upload-to-cdn dependencies
         if: ${{ inputs.version }}
         run: corepack yarn workspaces focus uppy
       - name: Install all dependencies
         if: ${{ !inputs.version }}
         run: corepack yarn install --immutable
-      - name: Build before publishing
+      - run: corepack yarn run build
         if: ${{ !inputs.version }}
-        run: corepack yarn run build
+      # The `uppy` bundle contains the Companion client. With a version given,
+      # this still checks the minimum declared on the checked-out branch.
+      - name: Check hosted Companion is new enough
+        if: ${{ inputs.package == 'uppy' }}
+        run: node scripts/check-companion-compat.ts
       - name: Upload "${{ inputs.package }}" to CDN
         if: ${{ !inputs.force }}
         run: corepack yarn workspace uppy node upload-to-cdn.js "$PACKAGE" "$VERSION"

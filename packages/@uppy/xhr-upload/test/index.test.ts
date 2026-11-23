@@ -1,6 +1,9 @@
 import '@uppy-dev/msw-setup'
+
+import type { UppyEventMap } from '@uppy/core'
+
 import { network } from 'virtual:msw'
-import Core, { type UppyEventMap } from '@uppy/core'
+import Core from '@uppy/core'
 import XHRUpload from '@uppy/xhr-upload'
 import { HttpResponse, http } from 'msw'
 import { describe, expect, it, vi } from 'vitest'
@@ -83,7 +86,7 @@ describe('XHRUpload', () => {
       id: 'XHRUpload',
       endpoint: 'https://fake-endpoint.uppy.io',
       shouldRetry,
-      async onAfterResponse(xhr) {
+      onAfterResponse(xhr) {
         if (xhr.status === 400) {
           // We want to test that we can define our own error message
           throw new Error(JSON.parse(xhr.responseText).message)

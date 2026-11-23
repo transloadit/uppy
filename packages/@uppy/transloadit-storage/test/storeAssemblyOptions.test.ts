@@ -1,9 +1,12 @@
 import type { Body, Meta, Uppy } from '@uppy/core'
+
+import type { StoreAssemblyParameters } from '../lib/storeAssemblyOptions.js'
+
 import { describe, expect, it, vi } from 'vitest'
+
 import {
   buildStoreAssemblyParams,
   createStoreAssemblyOptions,
-  type StoreAssemblyParameters,
 } from '../lib/storeAssemblyOptions.js'
 
 /** Transloadit's Assembly placeholder, not a JavaScript template. */
@@ -41,7 +44,7 @@ describe('createStoreAssemblyOptions', () => {
     const storage = {
       rootPrefix: '',
       getPluginState: () => ({ authenticated, currentFolderId: null }),
-      openFolderPath: vi.fn(async () => {
+      openFolderPath: vi.fn(() => {
         authenticated = true
         storage.rootPrefix = 'tenant/'
         return true

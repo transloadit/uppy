@@ -1,4 +1,5 @@
 import type { UppyFile } from '@uppy/core'
+
 import { useImageEditor } from '@uppy/react'
 
 interface ImageEditorProps {
@@ -127,5 +128,3 @@ export function ImageEditor({ file, close }: ImageEditorProps) {
     </div>
   )
 }
-
-export default ImageEditor

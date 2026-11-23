@@ -6,14 +6,18 @@ import type {
   Uppy,
   UppyFile,
 } from '@uppy/core'
+import type { ComponentChild } from '@uppy/core/utils/preact'
+
+import type { StatusBarOptions } from './StatusBarOptions.js'
+import type { StatusBarUIProps } from './StatusBarUI.js'
+
 import { UIPlugin } from '@uppy/core'
 import { emaFilter, getTextDirection } from '@uppy/core/utils'
-import type { ComponentChild } from '@uppy/core/utils/preact'
+
 import packageJson from '../package.json' with { type: 'json' }
 import locale from './locale.js'
-import type { StatusBarOptions } from './StatusBarOptions.js'
 import statusBarStates from './StatusBarStates.js'
-import StatusBarUI, { type StatusBarUIProps } from './StatusBarUI.js'
+import StatusBarUI from './StatusBarUI.js'
 
 declare module '@uppy/core' {
   export interface PluginTypeRegistry<M extends Meta, B extends Body> {
@@ -201,15 +205,15 @@ export default class StatusBar<M extends Meta, B extends Body> extends UIPlugin<
       )
     ) {
       totalSize = 0
-      startedFiles.forEach((file) => {
+      for (const file of startedFiles) {
         totalSize! += file.progress.bytesTotal || 0
         totalUploadedSize += file.progress.bytesUploaded || 0
-      })
+      }
     } else {
       // however uploaded size we will always have
-      startedFiles.forEach((file) => {
+      for (const file of startedFiles) {
         totalUploadedSize += file.progress.bytesUploaded || 0
-      })
+      }
     }
 
     const totalETA = this.#computeSmoothETA({

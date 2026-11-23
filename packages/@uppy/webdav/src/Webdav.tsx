@@ -7,17 +7,16 @@ import type {
   Uppy,
   UppyFile,
 } from '@uppy/core'
-import { UIPlugin } from '@uppy/core'
-import {
-  type CompanionPluginOptions,
-  Provider,
-  tokenStorage,
-} from '@uppy/core/companion-client'
-import { ProviderViews, SearchView } from '@uppy/core/provider-views'
+import type { CompanionPluginOptions } from '@uppy/core/companion-client'
 import type { I18n, LocaleStrings } from '@uppy/core/utils'
+
+import { UIPlugin } from '@uppy/core'
+import { defaultStorage, Provider } from '@uppy/core/companion-client'
+import { ProviderViews, SearchView } from '@uppy/core/provider-views'
 // biome-ignore lint/style/useImportType: h is not a type
 import { type ComponentChild, h } from '@uppy/core/utils/preact'
 import { useCallback, useState } from '@uppy/core/utils/preact/hooks'
+
 import packageJson from '../package.json' with { type: 'json' }
 import locale from './locale.js'
 
@@ -25,7 +24,7 @@ class WebdavSimpleAuthProvider<M extends Meta, B extends Body> extends Provider<
   M,
   B
 > {
-  override async login({
+  override login({
     authFormData,
     uppyVersions = '',
     signal,
@@ -42,7 +41,7 @@ class WebdavSimpleAuthProvider<M extends Meta, B extends Body> extends Provider<
     return {
       ok: true,
       revoked: true,
-    } as unknown as ResBody
+    } as ResBody
   }
 }
 
@@ -98,7 +97,7 @@ export default class Webdav<M extends Meta, B extends Body>
     this.id = this.opts.id || 'WebDav'
     this.type = 'acquirer'
     this.files = []
-    this.storage = this.opts.storage || tokenStorage
+    this.storage = this.opts.storage || defaultStorage
 
     this.defaultLocale = locale
     this.i18nInit()

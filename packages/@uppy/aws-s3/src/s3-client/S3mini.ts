@@ -3,10 +3,13 @@
  * Modified to make it work with Uppy.
  */
 
+import type { Promisable } from 'type-fest'
+
+import type * as IT from './types.js'
+
 import * as C from './consts.js'
 import S3Client from './S3Client.js'
 import { createSigV4Signer } from './signer.js'
-import type * as IT from './types.js'
 import * as U from './utils.js'
 
 /**
@@ -109,7 +112,7 @@ class S3mini extends S3Client {
   }
 
   /** Gets cached credentials or fetches new ones. */
-  private async _getCachedCredentials(): Promise<IT.CredentialsResponse> {
+  private _getCachedCredentials(): Promisable<IT.CredentialsResponse> {
     // Return Cached Credentials if available
     if (this.cachedCredentials != null) {
       return this.cachedCredentials
@@ -176,7 +179,7 @@ class S3mini extends S3Client {
   /**
    * Uploads an object to S3 using XHR for progress tracking.
    */
-  public override async putObject({
+  public override putObject({
     key,
     data,
     fileType = C.DEFAULT_STREAM_CONTENT_TYPE,
@@ -502,6 +505,13 @@ class S3mini extends S3Client {
 
         // S3 returns PascalCase (Location, Bucket, Key, ETag).
         // Normalize to lowercase for our type interface.
+        //
+        // The key here is authoritative and safe to adopt: complete is the last
+        // request of the upload, so it is only reported, never signed for again.
+        // The same field on `InitiateMultipartUploadResult` is deliberately not
+        // read: every later request would be signed for it, and a signer that
+        // derives the key on each request would prefix an already-prefixed key
+        // and get `NoSuchUpload`.
         const resultLocation = (r.Location || r.location) as string | undefined
         const resultBucket = (r.Bucket || r.bucket) as string | undefined
         const resultKey = (r.Key || r.key) as string | undefined

@@ -1,13 +1,19 @@
-import type { AsyncStore, BaseProviderPlugin, Body, Meta } from '@uppy/core'
-import { UIPlugin, type Uppy } from '@uppy/core'
-import {
-  type CompanionPluginOptions,
-  type GooglePickerState,
-  RequestClient,
-  tokenStorage,
+import type {
+  AsyncStore,
+  BaseProviderPlugin,
+  Body,
+  Meta,
+  Uppy,
+} from '@uppy/core'
+import type {
+  CompanionPluginOptions,
+  GooglePickerState,
 } from '@uppy/core/companion-client'
-import { GooglePhotosIcon, GooglePickerView } from '@uppy/core/provider-views'
 import type { LocaleStrings } from '@uppy/core/utils'
+
+import { UIPlugin } from '@uppy/core'
+import { defaultStorage, RequestClient } from '@uppy/core/companion-client'
+import { GooglePhotosIcon, GooglePickerView } from '@uppy/core/provider-views'
 
 import packageJson from '../package.json' with { type: 'json' }
 import locale from './locale.js'
@@ -44,7 +50,7 @@ export default class GooglePhotosPicker<M extends Meta, B extends Body>
   constructor(uppy: Uppy<M, B>, opts: GooglePhotosPickerOptions) {
     super(uppy, opts)
     this.id = this.opts.id || 'GooglePhotosPicker'
-    this.storage = this.opts.storage || tokenStorage
+    this.storage = this.opts.storage || defaultStorage
 
     this.defaultLocale = locale
     this.i18nInit()

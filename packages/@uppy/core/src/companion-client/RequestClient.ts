@@ -1,7 +1,11 @@
-import pRetry, { AbortError } from 'p-retry'
-import packageJson from '../../package.json' with { type: 'json' }
+import type { Promisable } from 'type-fest'
+
 import type Uppy from '../index.js'
 import type { Body, Meta, RemoteUppyFile, UppyFile } from '../utils/index.js'
+
+import pRetry, { AbortError } from 'p-retry'
+
+import packageJson from '../../package.json' with { type: 'json' }
 import {
   ErrorWithCause,
   fetchWithNetworkError,
@@ -141,7 +145,7 @@ export default class RequestClient<M extends Meta, B extends Body> {
     return stripTrailingSlash(companion?.[host] ? companion[host] : host)
   }
 
-  async headers(emptyBody = false): Promise<Record<string, string>> {
+  headers(emptyBody = false): Promisable<Record<string, string>> {
     const defaultHeaders = {
       Accept: 'application/json',
       ...(emptyBody
@@ -164,10 +168,21 @@ export default class RequestClient<M extends Meta, B extends Body> {
     const companion = state.companion || {}
     const host = this.opts.companionUrl
 
-    // Store the self-identified domain name for the Companion instance we just hit.
-    if (headers.has('i-am') && headers.get('i-am') !== companion[host]) {
+    const identifiedHost = headers.get('i-am')
+    if (!identifiedHost) return
+    let url: URL
+    try {
+      url = new URL(identifiedHost)
+    } catch {
+      return
+    }
+    // This value also becomes the OAuth popup URL, so active URL schemes
+    // must never enter the cached Companion address.
+    if (url.protocol !== 'http:' && url.protocol !== 'https:') return
+    if (url.username || url.password) return
+    if (url.href !== companion[host]) {
       this.uppy.setState({
-        companion: { ...companion, [host]: headers.get('i-am') as string },
+        companion: { ...companion, [host]: url.href },
       })
     }
   }
@@ -223,14 +238,11 @@ export default class RequestClient<M extends Meta, B extends Body> {
     }
   }
 
-  async get<PostBody>(
-    path: string,
-    options?: RequestOptions,
-  ): Promise<PostBody> {
+  get<PostBody>(path: string, options?: RequestOptions): Promise<PostBody> {
     return this.request({ ...options, path })
   }
 
-  async post<PostBody>(
+  post<PostBody>(
     path: string,
     data: Record<string, unknown>,
     options?: RequestOptions,
@@ -238,7 +250,7 @@ export default class RequestClient<M extends Meta, B extends Body> {
     return this.request<PostBody>({ ...options, path, method: 'POST', data })
   }
 
-  async delete<T>(
+  delete<T>(
     path: string,
     data?: Record<string, unknown>,
     options?: RequestOptions,
@@ -265,7 +277,7 @@ export default class RequestClient<M extends Meta, B extends Body> {
       const queue = getQueue()
 
       return await pRetry(
-        async () => {
+        () => {
           const queueRemoteUploadAttempt = queue.wrapPromiseFunction(
             async () => {
               const currentFile = this.uppy.getFile(file.id) as

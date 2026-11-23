@@ -1,30 +1,15 @@
-import type { NextFunction, Request, Response } from 'express'
-import { respondWithError } from '../provider/error.js'
+import withProvider from './with-provider.js'
 
-export default async function deauthCallback(
-  req: Request,
-  res: Response,
-  next: NextFunction,
-): Promise<void> {
+// we need the provider instance to decide status codes because
+// this endpoint does not cater to a uniform client.
+// It doesn't respond to Uppy client like other endpoints.
+// Instead it responds to the providers themselves.
+export default withProvider(async (req, res, provider) => {
   const { body, companion, headers } = req
-  const { provider } = companion
-  if (!provider) {
-    res.sendStatus(400)
-    return
-  }
-  // we need the provider instance to decide status codes because
-  // this endpoint does not cater to a uniform client.
-  // It doesn't respond to Uppy client like other endpoints.
-  // Instead it responds to the providers themselves.
-  try {
-    const { data, status } = await provider.deauthorizationCallback({
-      companion,
-      body,
-      headers,
-    })
-    res.status(status ?? 200).json(data)
-  } catch (err) {
-    if (respondWithError(err, res)) return
-    next(err)
-  }
-}
+  const { data, status } = await provider.deauthorizationCallback({
+    companion,
+    body,
+    headers,
+  })
+  res.status(status ?? 200).json(data)
+})

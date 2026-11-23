@@ -1,6 +1,8 @@
-import { describe, expect, it } from 'vitest'
-import getFileType from '../../lib/utils/getFileType.js'
 import type { UppyFile } from '../../lib/utils/UppyFile.js'
+
+import { describe, expect, it } from 'vitest'
+
+import getFileType from '../../lib/utils/getFileType.js'
 
 describe('getFileType', () => {
   it('should trust the filetype if the file comes from a remote source', () => {

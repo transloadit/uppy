@@ -1,3 +1,5 @@
+import type { Promisable } from 'type-fest'
+
 export interface PresignableRequestBase {
   key: string
   expiresIn?: number
@@ -53,6 +55,14 @@ export type PresignedResponse = {
    * prefix). Only honored on `putObject` and `createMultipartUpload`; later
    * requests already carry the right key. When `fields` is present,
    * `fields.key` is what S3 stores and wins over this.
+   *
+   * Without `fields`, return it whenever the server stores the object under a
+   * different key, even if you don't read the key back. Without it the two
+   * upload paths disagree about what `upload-success` reports: a single-part
+   * `PUT` has no key to fall back on and reports the requested one, while a
+   * multipart upload reports the key S3 echoes in
+   * `CompleteMultipartUploadResult`. The same signer then yields a different
+   * key depending on the file's size.
    */
   key?: string
   /**
@@ -81,7 +91,7 @@ export type PresignedResponse = {
 /** Function that generates a pre-signed URL for a request */
 export type SignRequestFn = (
   request: PresignableRequest,
-) => Promise<PresignedResponse>
+) => Promisable<PresignedResponse>
 
 /**
  * Temporary security credentials from STS or similar service.
@@ -107,7 +117,7 @@ export interface CredentialsResponse {
 /** Function that retrieves temporary credentials */
 export type GetCredentialsFn = (options?: {
   signal?: AbortSignal
-}) => CredentialsResponse | Promise<CredentialsResponse>
+}) => Promisable<CredentialsResponse>
 
 /** Base configuration shared by both signing approaches */
 type S3ConfigBase = {

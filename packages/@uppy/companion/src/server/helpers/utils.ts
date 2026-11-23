@@ -1,10 +1,13 @@
-import crypto from 'node:crypto'
 import type { ObjectCannedACL, ServerSideEncryption } from '@aws-sdk/client-s3'
-import type { Request } from 'express'
+
 import type {
   GetBucketFn,
   S3ObjectWriteOptions,
 } from '../../schemas/companion.js'
+import type { Request } from '../../types/express.js'
+
+import crypto from 'node:crypto'
+import querystring from 'node:querystring'
 
 const authTagLength = 16
 const nonceLength = 16
@@ -363,6 +366,23 @@ export function s3WriteParams({
   }
 }
 
+/** A file size from a provider response (a number or numeric string), else undefined. */
+export const parseSize = (value: unknown): number | undefined => {
+  const size = typeof value === 'string' ? Number.parseInt(value, 10) : value
+  return typeof size === 'number' && Number.isFinite(size) ? size : undefined
+}
+
+/**
+ * The `nextPagePath` of a list response: `path` with the current query and the
+ * provider's cursor for the next page.
+ */
+export const getNextPagePath = (
+  path: string,
+  query: object,
+  cursor: string | number | undefined,
+): string =>
+  `${path}?${querystring.stringify({ ...query, cursor } as querystring.ParsedUrlQueryInput)}`
+
 export const truncateFilename = (
   filename: string,
   maxFilenameLength?: number,
@@ -376,4 +396,21 @@ export const truncateFilename = (
     return filename
   }
   return filename.slice(maxFilenameLength * -1)
+}
+
+// Uppy and Companion both mint these with randomUUID(). Anything else must not
+// reach the emitter: EventEmitter has reserved names and the Redis emitter
+// subscribes with glob patterns.
+export const SOCKET_TOKEN_RE =
+  /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
+
+/**
+ * An id as one URL path segment. Encoding leaves `.` and `..` as they are,
+ * and URL resolution would turn them into steps up the provider's API path.
+ */
+export function pathSegment(id: string): string {
+  if (id === '.' || id === '..') {
+    throw Object.assign(new Error('Invalid id'), { name: 'ValidationError' })
+  }
+  return encodeURIComponent(id)
 }

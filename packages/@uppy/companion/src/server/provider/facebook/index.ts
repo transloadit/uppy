@@ -1,19 +1,23 @@
-import crypto from 'node:crypto'
-import got from 'got'
-import { isRecord } from '../../helpers/type-guards.js'
-import { HttpError, prepareStream } from '../../helpers/utils.js'
-import logger from '../../logger.js'
-import Provider, {
-  type ProviderDownloadOptions,
-  type ProviderDownloadResponse,
-  type ProviderListOptions,
-  type ProviderListResponse,
-  type ProviderLogoutOptions,
-  type ProviderLogoutResponse,
-  type ProviderThumbnailResponse,
+import type {
+  ProviderDownloadOptions,
+  ProviderDownloadResponse,
+  ProviderListOptions,
+  ProviderListResponse,
+  ProviderLogoutOptions,
+  ProviderLogoutResponse,
 } from '../Provider.js'
-import { withProviderErrorHandling } from '../providerErrors.js'
-import { adaptData, type FacebookListResponse, sortImages } from './adapter.js'
+import type { FacebookListResponse } from './adapter.js'
+
+import crypto from 'node:crypto'
+
+import got from 'got'
+
+import { getProtectedGot } from '../../helpers/request.js'
+import { isRecord } from '../../helpers/type-guards.js'
+import { HttpError, pathSegment, prepareStream } from '../../helpers/utils.js'
+import Provider from '../Provider.js'
+import { jsonStringAt, withProviderErrorHandling } from '../providerErrors.js'
+import { adaptData, sortImages } from './adapter.js'
 
 type FacebookBatchRequest = {
   method: string
@@ -89,7 +93,7 @@ async function getMediaUrl({
     requests: [
       {
         method: 'GET',
-        relative_url: `${id}?${new URLSearchParams({ fields: 'images' }).toString()}`,
+        relative_url: `${pathSegment(id)}?${new URLSearchParams({ fields: 'images' }).toString()}`,
       },
     ],
   })
@@ -124,7 +128,7 @@ export default class Facebook extends Provider<FacebookUserSession> {
     return 'facebook'
   }
 
-  override async list({
+  override list({
     directory,
     providerUserSession: { accessToken: token },
     query,
@@ -143,7 +147,7 @@ export default class Facebook extends Provider<FacebookUserSession> {
 
       let path = 'me/albums'
       if (directory) {
-        path = `${directory}/photos`
+        path = `${pathSegment(directory)}/photos`
         qs['fields'] = 'icon,images,name,width,height,created_time'
       }
 
@@ -179,7 +183,7 @@ export default class Facebook extends Provider<FacebookUserSession> {
     })
   }
 
-  override async download({
+  override download({
     companion,
     id,
     providerUserSession: { accessToken: token },
@@ -193,23 +197,16 @@ export default class Facebook extends Provider<FacebookUserSession> {
           throw new Error('Facebook provider secret is not configured')
         }
         const url = await getMediaUrl({ secret, token, id })
-        const stream = got.stream.get(url, { responseType: 'json' })
+        const stream = getProtectedGot({
+          allowLocalIPs: this.allowLocalUrls,
+        }).stream.get(url, { responseType: 'json' })
         const { size } = await prepareStream(stream)
         return { stream, size }
       },
     )
   }
 
-  override async thumbnail(): Promise<ProviderThumbnailResponse> {
-    // not implementing this because a public thumbnail from facebook will be used instead
-    logger.error(
-      'call to thumbnail is not implemented',
-      'provider.facebook.thumbnail.error',
-    )
-    throw new Error('call to thumbnail is not implemented')
-  }
-
-  override async logout({
+  override logout({
     companion,
     providerUserSession: { accessToken: token },
   }: ProviderLogoutOptions<FacebookUserSession>): Promise<ProviderLogoutResponse> {
@@ -232,7 +229,7 @@ export default class Facebook extends Provider<FacebookUserSession> {
     )
   }
 
-  async #withErrorHandling<T>(tag: string, fn: () => Promise<T>): Promise<T> {
+  #withErrorHandling<T>(tag: string, fn: () => Promise<T>): Promise<T> {
     return withProviderErrorHandling({
       fn,
       tag,
@@ -241,13 +238,7 @@ export default class Facebook extends Provider<FacebookUserSession> {
         isRecord(response.body) &&
         isRecord(response.body['error']) &&
         response.body['error']['code'] === 190, // Invalid OAuth 2.0 Access Token
-      getJsonErrorMessage: (body) => {
-        if (!isRecord(body)) return undefined
-        const error = body['error']
-        if (!isRecord(error)) return undefined
-        const message = error['message']
-        return typeof message === 'string' ? message : undefined
-      },
+      getJsonErrorMessage: jsonStringAt('error', 'message'),
     })
   }
 }

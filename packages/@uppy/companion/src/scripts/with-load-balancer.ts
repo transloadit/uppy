@@ -2,6 +2,7 @@
 
 import http from 'node:http'
 import process from 'node:process'
+
 import { execa, execaNode } from 'execa'
 import httpProxy from 'http-proxy'
 
@@ -108,7 +109,7 @@ try {
   await Promise.all(companions)
 } finally {
   loadBalancer?.close()
-  companions.forEach((companion) => {
+  for (const companion of companions) {
     companion.kill()
-  })
+  }
 }

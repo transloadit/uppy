@@ -22,14 +22,14 @@ demo sets [`generateObjectKey`](https://uppy.io/docs/aws-s3/#generateobjectkeyfi
 in `public/index.html` instead. The STS credentials are scoped to that prefix,
 so changing it in one place without the other will cause `AccessDenied`.
 
-`@uppy/aws-s3` only switches to multipart for files larger than 100&nbsp;MiB by
+`@uppy/aws-s3` only switches to multipart for files larger than 100 MiB by
 default ([`shouldUseMultipart`](https://uppy.io/docs/aws-s3/#shouldusemultipartfile)).
 Below that size every upload is a single `PUT`, so the multipart permissions and
 the `POST`/`GET`/`DELETE` branches of `/s3/presign` are never exercised.
 
 ## AWS Configuration
 
-It's assumed that you are familiar with AWS, at least, with the storage service
+It’s assumed that you are familiar with AWS, at least, with the storage service
 (S3) and users & policies (IAM).
 
 These instructions are **not fit for production**, tightening the security is
@@ -37,8 +37,8 @@ out of the scope here.
 
 ### S3 Setup
 
-Assuming you're trying to setup the user `MY-UPPY-USER` to put the uploaded
-files to the bucket `MY-UPPY-BUCKET`, here's how you can allow `MY-UPPY-USER` to
+Assuming you’re trying to setup the user `MY-UPPY-USER` to put the uploaded
+files to the bucket `MY-UPPY-BUCKET`, here’s how you can allow `MY-UPPY-USER` to
 get STS Federated Token and upload files to `MY-UPPY-BUCKET`:
 
 1. Set CORS settings on `MY-UPPY-BUCKET` bucket:
@@ -109,7 +109,7 @@ get STS Federated Token and upload files to `MY-UPPY-BUCKET`:
    ```
 
    The S3 statement is what actually authorizes both demos: a
-   `GetFederationToken` session gets the **intersection** of this user's
+   `GetFederationToken` session gets the **intersection** of this user’s
    identity-based policies and the session policy that `routes/sts.js` passes in
    the call. Without S3 actions here the intersection is empty and every
    client-side upload fails with `AccessDenied`. The bucket policy in step 2 is
@@ -127,7 +127,7 @@ You may use existing AWS credentials or create a new user in the IAM page.
 - This example reads credentials **only** from `COMPANION_AWS_KEY` and
   `COMPANION_AWS_SECRET` (see `routes/sts.js` and `routes/presign.js`). Both
   clients are constructed with an explicit `credentials` object, which bypasses
-  the AWS SDK's default provider chain, so `AWS_ACCESS_KEY_ID`, `AWS_PROFILE`
+  the AWS SDK’s default provider chain, so `AWS_ACCESS_KEY_ID`, `AWS_PROFILE`
   and `~/.aws/credentials` are ignored. Remove that `credentials` block from
   both files if you want the default chain instead.
 
@@ -178,6 +178,6 @@ Start the application:
 corepack yarn workspace example-aws-nodejs start
 ```
 
-Dashboard demo should now be available at http://localhost:8080.
+Dashboard demo should now be available at <http://localhost:8080>.
 
 _Feel free to check how the demo works and feel free to open an issue._

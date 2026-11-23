@@ -1,20 +1,25 @@
-import got from 'got'
-import { isRecord } from '../../helpers/type-guards.js'
-import { prepareStream } from '../../helpers/utils.js'
-import logger from '../../logger.js'
-import Provider, {
-  type ProviderDownloadOptions,
-  type ProviderDownloadResponse,
-  type ProviderListOptions,
-  type ProviderListResponse,
-  type ProviderLogoutResponse,
-  type ProviderRefreshTokenOptions,
-  type ProviderRefreshTokenResponse,
-  type ProviderSizeOptions,
-  type ProviderThumbnailResponse,
-  type Query,
+import type {
+  ProviderDownloadOptions,
+  ProviderDownloadResponse,
+  ProviderListOptions,
+  ProviderListResponse,
+  ProviderLogoutResponse,
+  ProviderRefreshTokenOptions,
+  ProviderRefreshTokenResponse,
+  ProviderSizeOptions,
+  Query,
 } from '../Provider.js'
-import { withProviderErrorHandling } from '../providerErrors.js'
+
+import got from 'got'
+
+import { parseSize, pathSegment, prepareStream } from '../../helpers/utils.js'
+import { refreshAccessToken } from '../oauth.js'
+import Provider from '../Provider.js'
+import {
+  isUnauthorized,
+  jsonStringAt,
+  withProviderErrorHandling,
+} from '../providerErrors.js'
 import adaptData from './adapter.js'
 
 type OneDriveClient = ReturnType<typeof got.extend>
@@ -27,11 +32,6 @@ const getClient = ({ token }: { token: string }): OneDriveClient =>
     },
   })
 
-const getOauthClient = () =>
-  got.extend({
-    prefixUrl: 'https://login.live.com',
-  })
-
 function getQueryRecord(query: Query | undefined) {
   const out: { driveId?: string; cursor?: string } = {}
   const driveId = query?.['driveId']
@@ -42,7 +42,9 @@ function getQueryRecord(query: Query | undefined) {
 }
 
 const getRootPath = (query: Query): string =>
-  query['driveId'] ? `drives/${query['driveId']}` : 'me/drive'
+  query['driveId']
+    ? `drives/${pathSegment(query['driveId'] as string)}`
+    : 'me/drive'
 
 interface OneDriveUserSession {
   accessToken: string
@@ -65,14 +67,14 @@ export default class OneDrive extends Provider<OneDriveUserSession> {
    * @param options.query
    * @param options.providerUserSession
    */
-  override async list({
+  override list({
     directory,
     providerUserSession: { accessToken: token },
     query,
   }: ProviderListOptions<OneDriveUserSession>): Promise<ProviderListResponse> {
     return this.#withErrorHandling('provider.onedrive.list.error', async () => {
       const queryRecord = getQueryRecord(query)
-      const path = directory ? `items/${directory}` : 'root'
+      const path = directory ? `items/${pathSegment(directory)}` : 'root'
       // https://learn.microsoft.com/en-us/graph/query-parameters?tabs=http#top-parameter
       const pageSize = 999
       // const pageSize = 20 // to test pagination easily
@@ -86,13 +88,14 @@ export default class OneDrive extends Provider<OneDriveUserSession> {
       }
 
       const client = getClient({ token })
+      const childrenPath = `${getRootPath(queryRecord)}/${path}/children`
 
       const [{ mail, userPrincipalName }, list] = await Promise.all([
         client
           .get('me', { responseType: 'json' })
           .json<{ mail?: string; userPrincipalName?: string }>(),
         client
-          .get(`${getRootPath(queryRecord)}/${path}/children`, {
+          .get(childrenPath, {
             searchParams: qs,
             responseType: 'json',
           })
@@ -103,7 +106,7 @@ export default class OneDrive extends Provider<OneDriveUserSession> {
     })
   }
 
-  override async download({
+  override download({
     id,
     providerUserSession: { accessToken: token },
     query,
@@ -113,7 +116,7 @@ export default class OneDrive extends Provider<OneDriveUserSession> {
       async () => {
         const queryRecord = getQueryRecord(query)
         const stream = getClient({ token }).stream.get(
-          `${getRootPath(queryRecord)}/items/${id}/content`,
+          `${getRootPath(queryRecord)}/items/${pathSegment(id)}/content`,
           { responseType: 'json' },
         )
         const { size } = await prepareStream(stream)
@@ -122,16 +125,7 @@ export default class OneDrive extends Provider<OneDriveUserSession> {
     )
   }
 
-  override async thumbnail(): Promise<ProviderThumbnailResponse> {
-    // not implementing this because a public thumbnail from onedrive will be used instead
-    logger.error(
-      'call to thumbnail is not implemented',
-      'provider.onedrive.thumbnail.error',
-    )
-    throw new Error('call to thumbnail is not implemented')
-  }
-
-  override async size({
+  override size({
     id,
     query,
     providerUserSession: { accessToken: token },
@@ -139,16 +133,15 @@ export default class OneDrive extends Provider<OneDriveUserSession> {
     return this.#withErrorHandling('provider.onedrive.size.error', async () => {
       const queryRecord = getQueryRecord(query)
       const body = await getClient({ token })
-        .get(`${getRootPath(queryRecord)}/items/${id}`, {
+        .get(`${getRootPath(queryRecord)}/items/${pathSegment(id)}`, {
           responseType: 'json',
         })
         .json<Record<string, unknown>>()
-      const size = body['size']
-      return typeof size === 'number' ? size : undefined
+      return parseSize(body['size'])
     })
   }
 
-  override async logout(): Promise<ProviderLogoutResponse> {
+  override logout(): ProviderLogoutResponse {
     // apparently M$ doesn't support programmatic oauth2 revoke
     return {
       revoked: false,
@@ -156,44 +149,28 @@ export default class OneDrive extends Provider<OneDriveUserSession> {
     }
   }
 
-  override async refreshToken({
-    clientId,
-    clientSecret,
-    refreshToken,
-    redirectUri,
-  }: ProviderRefreshTokenOptions): Promise<ProviderRefreshTokenResponse> {
+  override refreshToken(
+    options: ProviderRefreshTokenOptions,
+  ): Promise<ProviderRefreshTokenResponse> {
     return this.#withErrorHandling(
       'provider.onedrive.token.refresh.error',
-      async () => {
-        const body = await getOauthClient()
-          .post('oauth20_token.srf', {
-            responseType: 'json',
-            form: {
-              refresh_token: refreshToken,
-              grant_type: 'refresh_token',
-              client_id: clientId,
-              client_secret: clientSecret,
-              redirect_uri: redirectUri,
-            },
-          })
-          .json<Record<string, unknown>>()
-
-        const accessToken =
-          typeof body['access_token'] === 'string' ? body['access_token'] : null
-        if (!accessToken) {
-          throw new Error('Unexpected OneDrive token refresh response')
-        }
-        return { accessToken }
-      },
+      () =>
+        refreshAccessToken(
+          'https://login.live.com/oauth20_token.srf',
+          options,
+          {
+            redirect_uri: options.redirectUri,
+          },
+        ),
     )
   }
 
-  async #withErrorHandling<T>(tag: string, fn: () => Promise<T>): Promise<T> {
+  #withErrorHandling<T>(tag: string, fn: () => Promise<T>): Promise<T> {
     return withProviderErrorHandling({
       fn,
       tag,
       providerName: OneDrive.oauthProvider,
-      isAuthError: (response) => response.statusCode === 401,
+      isAuthError: isUnauthorized,
       isUserFacingError: (response) =>
         typeof response.statusCode === 'number' &&
         [400, 403].includes(response.statusCode),
@@ -202,12 +179,7 @@ export default class OneDrive extends Provider<OneDriveUserSession> {
       // without an Office365 licence or OneDrive account setup completed
       // 400: Tenant does not have a SPO license
       // 403: You do not have access to create this personal site or you do not have a valid license
-      getJsonErrorMessage: (body) => {
-        if (!isRecord(body)) return undefined
-        const err = body['error']
-        if (!isRecord(err)) return undefined
-        return typeof err['message'] === 'string' ? err['message'] : undefined
-      },
+      getJsonErrorMessage: jsonStringAt('error', 'message'),
     })
   }
 }

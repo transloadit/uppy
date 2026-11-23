@@ -1,9 +1,5 @@
-import classNames from 'classnames'
-import debounce from 'lodash/debounce.js'
 import type { h } from 'preact'
-import packageJson from '../../../package.json' with { type: 'json' }
-import { isAuthError } from '../../companion-client/AuthError.js'
-import { describeCompanionError } from '../../companion-client/errorCodes.js'
+
 import type {
   Body,
   Meta,
@@ -17,8 +13,19 @@ import type {
   Uppy,
   ValidateableFile,
 } from '../../index.js'
-import ErrorWithCause from '../../utils/ErrorWithCause.js'
 import type { CompanionFile, I18n } from '../../utils/index.js'
+import type {
+  ConfirmOptions,
+  PromptOptions,
+} from '../ProviderDialogController.js'
+
+import classNames from 'classnames'
+import debounce from 'lodash/debounce.js'
+
+import packageJson from '../../../package.json' with { type: 'json' }
+import { isAuthError } from '../../companion-client/AuthError.js'
+import { describeCompanionError } from '../../companion-client/errorCodes.js'
+import ErrorWithCause from '../../utils/ErrorWithCause.js'
 import {
   getErrorMessage,
   isAbortError,
@@ -28,10 +35,7 @@ import Browser from '../Browser.js'
 import FilterInput from '../FilterInput.js'
 import FooterActions from '../FooterActions.js'
 import ProviderDialog from '../ProviderDialog.js'
-import ProviderDialogController, {
-  type ConfirmOptions,
-  type PromptOptions,
-} from '../ProviderDialogController.js'
+import ProviderDialogController from '../ProviderDialogController.js'
 import addFiles from '../utils/addFiles.js'
 import getClickedRange from '../utils/getClickedRange.js'
 import handleError from '../utils/handleError.js'
@@ -964,14 +968,19 @@ export default class ProviderView<M extends Meta, B extends Body> {
     }).catch(handleError(this.plugin.uppy))
   }
 
-  async handleAuth(authFormData?: unknown): Promise<void> {
+  async handleAuth(
+    authFormData?: unknown,
+    { skipInitialListing = false }: { skipInitialListing?: boolean } = {},
+  ): Promise<void> {
     await this.#withAbort(async (signal) => {
       this.setLoading(true)
       await this.provider.login({ authFormData, signal })
       this.plugin.setPluginState({ authenticated: true })
       await Promise.all([
         this.provider.fetchPreAuthToken(),
-        this.openFolder(this.plugin.rootFolderId),
+        skipInitialListing
+          ? Promise.resolve()
+          : this.openFolder(this.plugin.rootFolderId),
       ])
     }).catch(handleError(this.plugin.uppy))
     this.#doneLoading()
@@ -1042,13 +1051,15 @@ export default class ProviderView<M extends Meta, B extends Body> {
       // 1. Enrich our partialTree by fetching all 'checked' but not-yet-fetched folders
       const enrichedTree: PartialTree = await PartialTreeUtils.afterFill(
         partialTree,
-        (path: PartialTreeId) => this.provider.list(path, { signal }),
+        (path: PartialTreeId, fillSignal) =>
+          this.provider.list(path, { signal: fillSignal }),
         this.validateSingleFile,
         (n) => {
           this.setLoading(
             this.plugin.uppy.i18n('addedNumFiles', { numFiles: n }),
           )
         },
+        signal,
       )
 
       // 2. Now that we know how many files there are - recheck aggregateRestrictions!
@@ -1161,11 +1172,11 @@ export default class ProviderView<M extends Meta, B extends Body> {
 
     // todo memoize this so we don't have to do it on every render
     const itemsById = new Map<string, PartialTreeFile | PartialTreeFolderNode>()
-    partialTree.forEach((item) => {
+    for (const item of partialTree) {
       if (item.type !== 'root') {
         itemsById.set(item.id, item)
       }
-    })
+    }
 
     // the search results view needs data from the partial tree,
     const searchResults = ids!.map((id) => {

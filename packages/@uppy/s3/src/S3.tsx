@@ -1,36 +1,39 @@
-import {
-  decodeStorageGrant,
-  normalizeStorageGrantPrefix,
-  type StorageGrantClaims,
-} from '@transloadit/utils'
+import type { StorageGrantClaims } from '@transloadit/utils'
 import type {
   AsyncStore,
   Body,
   Meta,
+  PartialTreeId,
   PluginTarget,
   UnknownProviderPlugin,
   UnknownProviderPluginState,
   Uppy,
   UppyFile,
 } from '@uppy/core'
-import { UIPlugin, UserFacingApiError } from '@uppy/core'
-import {
-  type CompanionPluginOptions,
-  isAuthError,
-  Provider,
-  tokenStorage,
-} from '@uppy/core/companion-client'
-import {
-  type ProviderAction,
-  type ProviderBulkAction,
-  type ProviderToolbarAction,
-  ProviderViews,
+import type { CompanionPluginOptions } from '@uppy/core/companion-client'
+import type {
+  ProviderAction,
+  ProviderBulkAction,
+  ProviderToolbarAction,
 } from '@uppy/core/provider-views'
 import type { LocaleStrings } from '@uppy/core/utils'
-// biome-ignore lint/style/useImportType: h is not a type
-import { type ComponentChild, h } from '@uppy/core/utils/preact'
 // Load Dashboard's event augmentation without adding a runtime dependency.
 import type {} from '@uppy/dashboard'
+
+import {
+  decodeStorageGrant,
+  normalizeStorageGrantPrefix,
+} from '@transloadit/utils'
+import { UIPlugin, UserFacingApiError } from '@uppy/core'
+import {
+  defaultStorage,
+  isAuthError,
+  Provider,
+} from '@uppy/core/companion-client'
+import { ProviderViews } from '@uppy/core/provider-views'
+// biome-ignore lint/style/useImportType: h is not a type
+import { type ComponentChild, h } from '@uppy/core/utils/preact'
+
 import packageJson from '../package.json' with { type: 'json' }
 import { asFolderKey, splitKey } from './keys.js'
 import locale from './locale.js'
@@ -376,7 +379,7 @@ export default class S3<M extends Meta, B extends Body>
     this.id = this.opts.id || 'S3'
     this.type = 'acquirer'
     this.files = []
-    this.storage = this.opts.storage || tokenStorage
+    this.storage = this.opts.storage || defaultStorage
 
     this.defaultLocale = locale
     this.i18nInit()
@@ -418,9 +421,10 @@ export default class S3<M extends Meta, B extends Body>
   }
 
   /**
-   * Opens the folder at `key` (e.g. `docs/photos/`), walking down from the
-   * browsing root so each parent listing reveals the next segment — loading
-   * further pages when a segment is not on the first one. Returns false when a
+   * Opens the folder at `key` (e.g. `docs/photos/`). With a grant, lists the
+   * target directly and constructs its breadcrumbs from the scoped path. An
+   * empty or missing target falls back to walking the parents and their pages,
+   * so stale deep links still stop at the nearest existing folder. Returns false when a
    * segment no longer exists, or when the key is outside the session's root:
    * the view then stays where the walk got to (useful for restoring stale deep
    * links).
@@ -438,8 +442,68 @@ export default class S3<M extends Meta, B extends Body>
     if (
       !prefix.startsWith(root) ||
       prefix.split('/').some((segment) => segment === '..' || segment === '.')
-    )
+    ) {
+      // A granted login no longer lists the root, so show it rather than an empty library.
+      const rootFolder = this.getPluginState().partialTree.find(
+        (node) => node.id === this.rootFolderId,
+      )
+      if (rootFolder?.type === 'root' && !rootFolder.cached)
+        await this.view.openFolder(this.rootFolderId)
       return false
+    }
+    if (prefix !== root && this.#grant) {
+      const folderId = encodeURIComponent(prefix)
+      const before = this.getPluginState()
+      const known = before.partialTree.some(
+        (node) => node.type === 'folder' && node.id === folderId,
+      )
+      if (!known) {
+        const partialTree = [...before.partialTree]
+        let path = root
+        let parentId: PartialTreeId = this.rootFolderId
+        let checked = false
+        for (const segment of prefix
+          .slice(root.length)
+          .split('/')
+          .filter(Boolean)) {
+          path += `${segment}/`
+          const id = encodeURIComponent(path)
+          const existing = partialTree.find((node) => node.id === id)
+          if (existing?.type === 'folder')
+            checked = existing.status === 'checked'
+          if (!existing) {
+            partialTree.push({
+              type: 'folder',
+              id,
+              parentId,
+              cached: false,
+              nextPagePath: null,
+              status: checked ? 'checked' : 'unchecked',
+              data: { name: segment, icon: 'folder', isFolder: true },
+            })
+          }
+          parentId = id
+        }
+        this.setPluginState({ partialTree })
+      }
+      await this.view.openFolder(folderId)
+      const state = this.getPluginState()
+      // Object stores also return an empty listing for a nonexistent prefix. Only the parent
+      // listing can distinguish that case from a genuinely empty folder.
+      if (
+        state.currentFolderId === folderId &&
+        (known ||
+          state.partialTree.some(
+            (node) => node.type !== 'root' && node.parentId === folderId,
+          ))
+      )
+        return true
+      if (state.authenticated === false) return false
+      this.setPluginState({
+        partialTree: before.partialTree,
+        currentFolderId: before.currentFolderId,
+      })
+    }
     await this.view.openFolder(this.rootFolderId)
     let path = root
     for (const segment of prefix
@@ -469,7 +533,7 @@ export default class S3<M extends Meta, B extends Body>
     if (
       !this.getPluginState().authenticated &&
       this.#needsLogin &&
-      !(await this.#connect())
+      !(await this.#connect(!this.opts.getGrant))
     )
       return false
     // Without a grant only a listing tells us which prefix the session is
@@ -484,9 +548,9 @@ export default class S3<M extends Meta, B extends Body>
     return this.#grant !== null || this.#session !== undefined
   }
 
-  /** Logs in (which lists the root); resolves to whether that worked. */
-  async #connect(): Promise<boolean> {
-    await this.view.handleAuth({})
+  /** Logs in, optionally leaving the first listing to the scoped deep-link navigation. */
+  async #connect(listRoot = true): Promise<boolean> {
+    await this.view.handleAuth({}, { skipInitialListing: !listRoot })
     return Boolean(this.getPluginState().authenticated)
   }
 

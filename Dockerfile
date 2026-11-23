@@ -1,11 +1,11 @@
-FROM node:26.10.0-alpine AS build
+FROM node:26.12.1-alpine AS build
 
 # Create link to node on amd64 so that corepack can find it
 RUN if [ "$(uname -m)" = 'aarch64' ]; then mkdir -p /usr/local/sbin/ && ln -s /usr/local/bin/node /usr/local/sbin/node; fi
 
 RUN apk add --no-cache --virtual .build-deps build-base python3 libgcc libstdc++ git
 
-RUN npm install --global corepack@latest
+RUN npm install --global corepack@0.36.0
 RUN corepack enable
 
 COPY . /app/
@@ -19,7 +19,7 @@ RUN corepack yarn workspace @uppy/companion build
 # Now remove all non-prod dependencies for a leaner image
 RUN corepack yarn workspaces focus @uppy/companion --production
 
-FROM node:26.10.0-alpine
+FROM node:26.12.1-alpine
 
 WORKDIR /app
 

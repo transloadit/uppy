@@ -1,0 +1,23 @@
+{
+  "extends": "@uppy-dev/tsconfig",
+  "exclude": ["build"],
+  "references": [
+    { "path": "../packages/@uppy/drag-drop/tsconfig.build.json" },
+    { "path": "../packages/@uppy/react/tsconfig.build.json" },
+    { "path": "../packages/uppy/tsconfig.build.json" }
+  ],
+  "compilerOptions": {
+    "allowJs": true,
+    "exactOptionalPropertyTypes": false,
+    "jsx": "react-jsx",
+    "paths": {
+      "@site/*": ["./*"]
+    },
+    "strictNullChecks": false,
+    "types": [
+      "node",
+      "@docusaurus/module-type-aliases",
+      "@docusaurus/theme-classic"
+    ]
+  }
+}

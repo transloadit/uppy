@@ -1,5 +1,9 @@
+import type { Query } from '../src/server/provider/Provider.js'
+import type { GrantClaims } from './fixtures/s3.js'
+
 import { createServer } from 'node:http'
 import { Readable } from 'node:stream'
+
 import {
   CopyObjectCommand,
   DeleteObjectCommand,
@@ -10,20 +14,14 @@ import {
   S3ServiceException,
 } from '@aws-sdk/client-s3'
 import { describe, expect, onTestFinished, test, vi } from 'vitest'
+
 import {
   ProviderAuthError,
   ProviderUserError,
 } from '../src/server/provider/error.js'
-import type { Query } from '../src/server/provider/Provider.js'
 import S3Provider from '../src/server/provider/s3/index.js'
 import TransloaditStorageProvider from '../src/server/provider/s3/transloadit-storage.js'
-import {
-  claims,
-  GRANT_SECRET,
-  type GrantClaims,
-  mint,
-  nowSeconds,
-} from './fixtures/s3.js'
+import { claims, GRANT_SECRET, mint, nowSeconds } from './fixtures/s3.js'
 
 const makeProvider = (send: (cmd: unknown) => Promise<unknown> = vi.fn()) => {
   const provider = new S3Provider({ allowLocalUrls: false })
@@ -493,6 +491,7 @@ describe('S3 provider', () => {
       't/p-copy.txt': { ContentLength: 3, ETag: '"placeholder"' },
     }
     const makeMoveProvider = () => {
+      // biome-ignore lint/suspicious/useAwait: This mocks an asynchronous function.
       const send = vi.fn(async (cmd: unknown) => {
         if (cmd instanceof HeadObjectCommand) {
           const head = heads[(cmd as unknown as Cmd).input['Key'] as string]
@@ -595,6 +594,7 @@ describe('S3 provider', () => {
 
     test('a source replaced after the copy is kept and reported as a conflict', async () => {
       const { provider, send } = makeMoveProvider()
+      // biome-ignore lint/suspicious/useAwait: This mocks an asynchronous function.
       send.mockImplementation(async (cmd: unknown) => {
         if (cmd instanceof HeadObjectCommand) {
           const key = (cmd as unknown as Cmd).input['Key'] as string
@@ -622,6 +622,7 @@ describe('S3 provider', () => {
         ['t/a.txt', 'a'],
         ['t/b.txt', 'b'],
       ])
+      // biome-ignore lint/suspicious/useAwait: This mocks an asynchronous function.
       const send = vi.fn(async (cmd: unknown) => {
         const input = (cmd as unknown as Cmd).input
         const key = input['Key'] as string
@@ -718,13 +719,24 @@ describe('S3 provider', () => {
       await expect(create('docs/', '  ')).rejects.toEqual(
         userError('S3_INVALID_NAME'),
       )
+      // linear time even for a long run of slashes
+      const started = performance.now()
+      await expect(create('docs/', `x${'/'.repeat(100_000)}x`)).rejects.toEqual(
+        userError('S3_INVALID_NAME'),
+      )
+      expect(performance.now() - started).toBeLessThan(500)
       expect(inputsOf(send, PutObjectCommand)).toEqual([])
       expect(await create('docs/', ' fresh ')).toEqual({
         id: 'docs/fresh/',
         requestPath: 'docs%2Ffresh%2F',
       })
+      expect(await create('docs/', '//slashed//')).toEqual({
+        id: 'docs/slashed/',
+        requestPath: 'docs%2Fslashed%2F',
+      })
       expect(inputsOf(send, PutObjectCommand)).toEqual([
         { Bucket: 'b', Key: 'docs/fresh/', Body: '', IfNoneMatch: '*' },
+        { Bucket: 'b', Key: 'docs/slashed/', Body: '', IfNoneMatch: '*' },
       ])
     })
 
@@ -899,7 +911,7 @@ describe('S3 provider', () => {
       ])
       const params = requests[0]?.body.get('params') ?? ''
       expect(JSON.parse(params)).toMatchObject({
-        auth: { key: 'ws-key' },
+        auth: { key: 'ws-key', method: 'POST', path: '/dam/entries/move' },
         source: 'tenant/photo.jpg',
         destination: 'tenant/renamed.jpg',
       })
@@ -968,15 +980,13 @@ describe('S3 provider', () => {
   })
 
   test('S3 errors reach the browser only as "not found" or a generic failure', async () => {
-    const denied = new S3ServiceException({
-      name: 'AccessDenied',
-      $fault: 'client',
-      $metadata: { httpStatusCode: 403 },
-    })
-    let error: unknown = denied
-    const send = vi.fn(async () => {
-      throw error
-    })
+    const send = vi.fn().mockRejectedValue(
+      new S3ServiceException({
+        name: 'AccessDenied',
+        $fault: 'client',
+        $metadata: { httpStatusCode: 403 },
+      }),
+    )
     const provider = makeProvider(send)
     const list = () =>
       provider.list({
@@ -984,17 +994,67 @@ describe('S3 provider', () => {
         providerUserSession: bucketSession,
       })
     await expect(list()).rejects.toEqual(userError('S3_REQUEST_FAILED'))
-    error = notFound()
+    send.mockRejectedValue(notFound())
     await expect(list()).rejects.toEqual(userError('S3_NOT_FOUND'))
-    error = new S3ServiceException({
-      name: 'PreconditionFailed',
-      $fault: 'client',
-      $metadata: { httpStatusCode: 412 },
-    })
+    send.mockRejectedValue(
+      new S3ServiceException({
+        name: 'PreconditionFailed',
+        $fault: 'client',
+        $metadata: { httpStatusCode: 412 },
+      }),
+    )
     await expect(list()).rejects.toEqual(userError('S3_CONFLICT'))
-    error = new ProviderUserError({ message: 'passthrough' })
+    send.mockRejectedValue(new ProviderUserError({ message: 'passthrough' }))
     await expect(list()).rejects.toEqual(
       expect.objectContaining({ json: { message: 'passthrough' } }),
     )
   })
 })
+
+test('fifty idle downloads do not consume the S3 browsing socket pool', async () => {
+  const server = createServer((req, res) => {
+    if (req.url?.includes('list-type=2')) {
+      res.setHeader('content-type', 'application/xml')
+      res.end(
+        '<ListBucketResult><IsTruncated>false</IsTruncated></ListBucketResult>',
+      )
+      return
+    }
+    res.writeHead(200, { 'content-length': '1000' })
+    res.write('x')
+  })
+  await new Promise<void>((resolve) => server.listen(0, '127.0.0.1', resolve))
+  const address = server.address()
+  if (address == null || typeof address === 'string')
+    throw new Error('Expected TCP server')
+  const companion = companionWith({
+    bucket: 'b',
+    region: 'us-east-1',
+    key: 'key',
+    secret: 'secret',
+    forcePathStyle: true,
+    endpoint: `http://127.0.0.1:${address.port}`,
+  })
+  const provider = new S3Provider({ allowLocalUrls: false })
+  const streams: Readable[] = []
+  onTestFinished(() => {
+    for (const stream of streams) stream.destroy()
+    server.closeAllConnections()
+    server.close()
+  })
+  for (let index = 0; index < 50; index++) {
+    const { stream } = await provider.download({
+      companion,
+      id: `file-${index}`,
+      query: { bucket: 'b' },
+      providerUserSession: bucketSession,
+    })
+    streams.push(stream)
+  }
+  const listing = await provider.list({
+    companion,
+    query: {},
+    providerUserSession: bucketSession,
+  })
+  expect(listing.items).toEqual([])
+}, 10000)

@@ -1,10 +1,12 @@
+import type { ViteDevServer } from 'vite'
+
 import { mkdir } from 'node:fs/promises'
 import path from 'node:path'
+
 import { createRequestHandler } from '@react-router/express'
 import { FileStore } from '@tus/file-store'
 import { Server as TusServer } from '@tus/server'
 import express from 'express'
-import type { ViteDevServer } from 'vite'
 
 async function startServer() {
   try {
@@ -65,7 +67,7 @@ async function startServer() {
     })
 
     // Graceful shutdown handling
-    const shutdown = async (signal: string) => {
+    const shutdown = (signal: string) => {
       console.log(`\n${signal} received. Shutting down gracefully...`)
 
       server.close(async (err) => {
