@@ -17,7 +17,7 @@ import {
   generateEncryptedToken,
 } from '../dist/server/helpers/jwt.js'
 import { guardGrantInput } from '../dist/server/helpers/oauth-boundaries.js'
-import { encodeState } from '../dist/server/helpers/oauth-state.js'
+import { decodeState, encodeState } from '../dist/server/helpers/oauth-state.js'
 import Provider from '../dist/server/provider/Provider.js'
 import standalone from '../dist/standalone/index.js'
 import { setDefaultEnv } from './mockserver.js'
@@ -38,8 +38,12 @@ class LegacyProvider extends Provider {
   }
 }
 
-function embedded(options: Partial<CompanionInitOptions> = {}) {
+function embedded(
+  options: Partial<CompanionInitOptions> = {},
+  host: { before?: express.RequestHandler } = {},
+) {
   const app = express()
+  if (host.before) app.use(host.before)
   // Deliberately parse first, as in an embedding application.
   app.use(express.json())
   app.use(session({ secret, resave: false, saveUninitialized: false }))
@@ -77,6 +81,8 @@ function embedded(options: Partial<CompanionInitOptions> = {}) {
       ...options,
     }).app,
   )
+  // a host route mounted after Companion
+  app.post('/host', (_req, res) => res.sendStatus(204))
   return app
 }
 
@@ -200,6 +206,62 @@ describe('OAuth request boundaries', () => {
     await agent.get('/connect/dropbox?state=garbage').expect(302)
     await agent.get('/connect/dropbox/callback?code=a&code=b').expect(400)
     await agent.get('/connect/dropbox/callback').expect(400)
+  })
+
+  test('a rejected callback answers older clients with the legacy error page', async () => {
+    const agent = request.agent(embedded())
+    // no authCallbackToken: an Uppy client that waits for a postMessage
+    await agent.post(`/seed/${encodeURIComponent(tenantA)}`).expect(200)
+    const response = await agent
+      .get('/connect/dropbox/callback?code=a&code=b')
+      .expect(400)
+    expect(response.text).toContain('postMessage')
+    // serialize-javascript escapes the slashes
+    expect(response.text).toContain('tenant-a.test')
+  })
+
+  test('tells the waiting Uppy client when send-token refuses its origin', async () => {
+    const agent = request.agent(embedded({ corsOrigins: [tenantA] }))
+    const authCallbackToken = randomUUID()
+    await agent
+      .post(`/seed/${encodeURIComponent(tenantB)}`)
+      .query({ authCallbackToken })
+      .expect(200)
+    const messages: unknown[] = []
+    await emitter().on(authCallbackToken, (message) => messages.push(message))
+    const callback = await agent.get('/dropbox/callback').expect(302)
+    const location = new URL(callback.get('location') ?? '')
+    await agent.get(`${location.pathname}${location.search}`).expect(403)
+    expect(messages).toEqual([{ error: true }])
+  })
+
+  test('saves the client origin when the host sets its own Access-Control-Allow-Origin', async () => {
+    const app = embedded(
+      {},
+      {
+        // as examples/companion does
+        before: (_req, res, next) => {
+          res.setHeader('Access-Control-Allow-Origin', '*')
+          next()
+        },
+      },
+    )
+    const response = await request(app)
+      .get('/dropbox/connect')
+      .query({ state: btoa(JSON.stringify({ origin: tenantA })) })
+      .expect(302)
+    const location = new URL(response.get('location') ?? '', 'http://x')
+    const state = location.searchParams.get('state')
+    expect(state && decodeState(state, secret).origin).toBe(tenantA)
+  })
+
+  test('leaves the encoding of host routes after Companion alone', async () => {
+    await request(embedded())
+      .post('/host')
+      .set('content-type', 'application/octet-stream')
+      .set('content-encoding', 'gzip')
+      .send(gzipSync('{}'))
+      .expect(204)
   })
 
   test('uses the pending provider rather than an OAuth 1 URL exemption', async () => {
