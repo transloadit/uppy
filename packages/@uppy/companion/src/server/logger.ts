@@ -1,4 +1,4 @@
-import { inspect, styleText } from 'node:util'
+import { inspect, stripVTControlCharacters, styleText } from 'node:util'
 import escapeStringRegexp from 'escape-string-regexp'
 
 type Colors = Parameters<typeof styleText>[0]
@@ -55,12 +55,13 @@ function maskMessage(msg: string): string {
 }
 
 /**
- * Show control characters escaped (tabs aside), so logged data can't drive the
- * terminal: e.g. OSC 52 writes the clipboard, and colour codes can hide the
- * records that follow. The logger's own colours are applied outside this.
+ * Keep logged data from driving the terminal: drop its escape sequences
+ * (colour codes, which could hide the records that follow, or OSC 52, which
+ * writes the clipboard) and show any other control characters escaped (tabs
+ * aside). The logger's own colours are applied outside this.
  */
 function escapeControls(text: string): string {
-  return text.replace(
+  return stripVTControlCharacters(text).replace(
     /[^\P{Cc}\t]/gu,
     (character) =>
       `\\u${character.charCodeAt(0).toString(16).padStart(4, '0')}`,
@@ -116,7 +117,11 @@ function log(params: {
   }
 
   const msgString = msgToString()
-  const maskedFull = maskMessage(msgString.replaceAll('\r', ''))
+  // Strip escape sequences before masking: one inside a secret would
+  // otherwise keep it from matching, and the later strip rejoin it.
+  const maskedFull = maskMessage(
+    stripVTControlCharacters(msgString.replaceAll('\r', '')),
+  )
   const masked =
     maskedFull.length > MAX_LOG_MESSAGE_LENGTH
       ? `${maskedFull.slice(0, MAX_LOG_MESSAGE_LENGTH)}… [truncated ${
