@@ -1,3 +1,5 @@
+import '@uppy/react/dist/styles.css'
+
 import {
   Dropzone,
   FilesList,
@@ -8,8 +10,6 @@ import { useState } from 'react'
 import { Tus, Uppy } from 'uppy'
 
 import { BrowserWindow } from './BrowserWindow'
-
-import '@uppy/react/dist/styles.css'
 
 export default function BasicUploadDemo() {
   const [uppy] = useState(() =>

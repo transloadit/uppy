@@ -7,22 +7,26 @@ import type {
   Uppy,
   UppyFile,
 } from '@uppy/core'
-import { BasePlugin, EventManager } from '@uppy/core'
 import type { RequestClient } from '@uppy/core/companion-client'
+import type {
+  FetcherOptions,
+  LocalUppyFile,
+  RemoteUppyFile,
+} from '@uppy/core/utils'
+
+import { BasePlugin, EventManager } from '@uppy/core'
 import {
-  type FetcherOptions,
   fetcher,
   filterFilesToEmitUploadStarted,
   filterFilesToUpload,
   getAllowedMetaFields,
   isAbortError,
   isNetworkError,
-  type LocalUppyFile,
   NetworkError,
-  type RemoteUppyFile,
   TaskQueue,
   toError,
 } from '@uppy/core/utils'
+
 import packageJson from '../package.json' with { type: 'json' }
 import locale from './locale.js'
 

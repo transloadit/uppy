@@ -1,26 +1,14 @@
 /* global AggregateError */
 
-import throttle from 'lodash/throttle.js'
-import ee from 'namespace-emitter'
-import { nanoid } from 'nanoid/non-secure'
 import type { h } from 'preact'
 import type { Promisable } from 'type-fest'
-import packageJson from '../package.json' with { type: 'json' }
+
 import type BasePlugin from './BasePlugin.js'
 import type Provider from './companion-client/Provider.js'
 import type SearchProvider from './companion-client/SearchProvider.js'
-import getFileName from './getFileName.js'
-import locale from './locale.js'
-import { debugLogger, justErrorsLogger } from './loggers.js'
 import type ProviderView from './provider-views/ProviderView/ProviderView.js'
 import type { Restrictions, ValidateableFile } from './Restricter.js'
-import {
-  defaultOptions as defaultRestrictionOptions,
-  Restricter,
-  RestrictionError,
-} from './Restricter.js'
-import DefaultStore, { type Store } from './store/index.js'
-import supportsUploadProgress from './supportsUploadProgress.js'
+import type { Store } from './store/index.js'
 import type {
   Body,
   CompanionFile,
@@ -36,6 +24,22 @@ import type {
   UppyFile,
   UppyFileId,
 } from './utils/index.js'
+
+import throttle from 'lodash/throttle.js'
+import { nanoid } from 'nanoid/non-secure'
+
+import packageJson from '../package.json' with { type: 'json' }
+import getFileName from './getFileName.js'
+import locale from './locale.js'
+import { debugLogger, justErrorsLogger } from './loggers.js'
+import {
+  defaultOptions as defaultRestrictionOptions,
+  Restricter,
+  RestrictionError,
+} from './Restricter.js'
+import DefaultStore from './store/index.js'
+import supportsUploadProgress from './supportsUploadProgress.js'
+import createEmitter from './utils/createEmitter.js'
 import {
   getErrorMessage,
   getFileNameAndExtension,
@@ -457,7 +461,7 @@ export class Uppy<
 
   #storeUnsubscribe
 
-  #emitter = ee()
+  #emitter = createEmitter()
 
   #preProcessors: Set<Processor> = new Set()
 
@@ -1924,9 +1928,11 @@ export class Uppy<
     if (typeof window !== 'undefined' && window.addEventListener) {
       window.addEventListener('online', this.#updateOnlineStatus)
       window.addEventListener('offline', this.#updateOnlineStatus)
-      setTimeout(this.#updateOnlineStatus, 3000)
+      this.#onlineStatusTimeout = setTimeout(this.#updateOnlineStatus, 3000)
     }
   }
+
+  #onlineStatusTimeout?: ReturnType<typeof setTimeout>
 
   updateOnlineStatus(): void {
     const online = window.navigator.onLine ?? true
@@ -2092,6 +2098,7 @@ export class Uppy<
     if (typeof window !== 'undefined' && window.removeEventListener) {
       window.removeEventListener('online', this.#updateOnlineStatus)
       window.removeEventListener('offline', this.#updateOnlineStatus)
+      clearTimeout(this.#onlineStatusTimeout)
     }
   }
 

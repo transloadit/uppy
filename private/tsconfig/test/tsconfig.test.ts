@@ -1,4 +1,5 @@
 import { readdir, readFile } from 'node:fs/promises'
+
 import { expect, test } from 'vitest'
 
 const ignore = ['angular', 'svelte']
@@ -41,6 +42,7 @@ test('tsconfig.json', async () => {
       { path: './examples/xhr-node/tsconfig.json' },
       { path: './examples/xhr-php/tsconfig.json' },
       { path: './examples/xhr-python/tsconfig.json' },
+      { path: './scripts/tsconfig.json' },
       { path: './website/tsconfig.json' },
     ],
   })

@@ -1,5 +1,6 @@
 import request from 'supertest'
 import { afterEach, describe, expect, test, vi } from 'vitest'
+
 import * as tokenService from '../dist/server/helpers/jwt.js'
 
 const secret = 'secret'

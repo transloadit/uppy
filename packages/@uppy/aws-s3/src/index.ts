@@ -1,9 +1,4 @@
-import {
-  BasePlugin,
-  type DefinePluginOpts,
-  type PluginOpts,
-  type Uppy,
-} from '@uppy/core'
+import type { DefinePluginOpts, PluginOpts, Uppy } from '@uppy/core'
 import type { RequestClient } from '@uppy/core/companion-client'
 import type {
   Body,
@@ -12,18 +7,24 @@ import type {
   RemoteUppyFile,
   UppyFile,
 } from '@uppy/core/utils'
+
+import type { UploadResult } from './S3Uploader.js'
+import type S3Client from './s3-client/S3Client.js'
+import type * as IT from './s3-client/types.js'
+
+import { BasePlugin } from '@uppy/core'
 import {
   filterFilesToEmitUploadStarted,
   filterFilesToUpload,
   getAllowedMetaFields,
   TaskQueue,
+  toError,
 } from '@uppy/core/utils'
+
 import packageJson from '../package.json' with { type: 'json' }
-import S3Uploader, { type UploadResult } from './S3Uploader.js'
+import S3Uploader from './S3Uploader.js'
 import S3Companion from './s3-client/CompanionS3.js'
-import type S3Client from './s3-client/S3Client.js'
 import S3mini from './s3-client/S3mini.js'
-import type * as IT from './s3-client/types.js'
 
 // ============================================================================
 // Types
@@ -300,7 +301,6 @@ export default class AwsS3<M extends Meta, B extends Body> extends BasePlugin<
           },
 
           onError: (err) => {
-            this.uppy.emit('upload-error', file, err)
             reject(err)
           },
 
@@ -315,6 +315,10 @@ export default class AwsS3<M extends Meta, B extends Body> extends BasePlugin<
         // Start the upload
         uploader.start()
       })
+    } catch (err) {
+      // Also reached by errors thrown before the upload starts, e.g. no `crypto.randomUUID` outside a secure context
+      this.uppy.emit('upload-error', file, toError(err))
+      throw err
     } finally {
       // Clean up uploader instance after upload completes or fails
       delete this.#uploaders[file.id]
@@ -400,6 +404,18 @@ export type { AwsS3Options as AwsS3MultipartOptions }
 /** Body type for AWS S3 upload responses */
 export interface AwsBody extends Body {
   location: string
+  /**
+   * The key the object was stored under.
+   *
+   * For a single-part upload this is `fields.key` of a presigned POST, else
+   * the `key` the signer returned, falling back to the one `generateObjectKey`
+   * proposed. For a multipart upload it is the key S3 reports on complete. So
+   * a `PUT` signer that relocates the object without returning a `key` is
+   * reported accurately only for multipart uploads; return `key` from
+   * `signRequest` to make both paths agree. If you can't change the signer,
+   * use `location` (also the response's `uploadURL`), the URL the object was
+   * actually uploaded to, and take the key from its path.
+   */
   key: string
 }
 

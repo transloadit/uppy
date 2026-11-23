@@ -1,6 +1,7 @@
+import type Dashboard from '@uppy/dashboard'
+
 import { act, render } from '@testing-library/react'
 import Uppy from '@uppy/core'
-import type Dashboard from '@uppy/dashboard'
 import DashboardModal from '@uppy/react/dashboard-modal'
 import Webcam from '@uppy/webcam'
 import { expect, it, vi } from 'vitest'

@@ -2,7 +2,9 @@ import type Uppy from '@uppy/core'
 import type { Body, Meta, UppyFile } from '@uppy/core'
 import type { I18n } from '@uppy/core/utils'
 import type { MouseEventHandler } from 'preact'
+
 import type { DashboardState } from '../../../Dashboard.js'
+
 import copyToClipboard from '../../../utils/copyToClipboard.js'
 
 function EditButton<M extends Meta, B extends Body>({
@@ -71,7 +73,7 @@ function RemoveButton<M extends Meta, B extends Body>({
     <button
       className="uppy-u-reset uppy-Dashboard-Item-action uppy-Dashboard-Item-action--remove"
       type="button"
-      aria-label={i18n('removeFile', { file: file.meta.name })}
+      aria-label={i18n('removeFileWithFilename', { file: file.meta.name })}
       title={i18n('removeFile', { file: file.meta.name })}
       onClick={() => onClick()}
     >

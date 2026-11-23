@@ -113,7 +113,7 @@ The build system uses Turbo (turbo.json) for task orchestration:
 - All plugins extend `BasePlugin` or `UIPlugin`
 - Plugins must have unique IDs and specify their type
 - State management through Uppy’s store system
-- Event-driven architecture using namespace-emitter
+- Event-driven architecture using Uppy’s event emitter (`on`, `once`, `off`, `emit`)
 
 ## Testing
 

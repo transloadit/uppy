@@ -1,11 +1,10 @@
+import '@uppy/react/css/style.css'
+
 import { FilesList, UppyContextProvider } from '@uppy/react'
 import { useEffect, useState } from 'react'
 import { Uppy } from 'uppy'
 
 import { BrowserWindow } from './BrowserWindow'
-
-import '@uppy/react/css/style.css'
-
 import styles from './files-list.module.css'
 
 type UploadableFile = Parameters<Uppy['addFiles']>[0][number]

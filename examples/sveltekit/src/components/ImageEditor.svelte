@@ -1,5 +1,6 @@
 <script lang="ts">
 import type { UppyFile } from '@uppy/core'
+
 import { useImageEditor } from '@uppy/svelte'
 
 interface Props {
@@ -32,11 +33,12 @@ const editor = useImageEditor({ file })
   </div>
 
   <div class="mb-4">
-    <label class="block text-sm font-medium mb-2">
+    <label class="block text-sm font-medium mb-2" for="angle">
       Fine Rotation: {editor.state.angle}°
     </label>
     <input
       class="w-full"
+      id="angle"
       {...editor.getRotationSliderProps()}
     />
   </div>

@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest'
+
 import secondsToTime from '../../lib/utils/secondsToTime.js'
 
 describe('secondsToTime', () => {

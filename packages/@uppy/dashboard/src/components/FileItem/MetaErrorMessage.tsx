@@ -1,5 +1,6 @@
 import type { Body, I18n, Meta, UppyFile } from '@uppy/core/utils'
 import type { ComponentChildren } from 'preact'
+
 import type { DashboardState } from '../../Dashboard.js'
 
 function metaFieldIdToName<M extends Meta, B extends Body>(

@@ -1,22 +1,22 @@
-import { createHmac } from 'node:crypto'
-import got, { type OptionsInit, type Response } from 'got'
-import { z } from 'zod'
+import type { OptionsInit, Response } from 'got'
+
 import type { S3ClientOptions } from '../../../schemas/companion.js'
+import type { ParsedTransloaditStorageOptions } from './config.js'
+import type { ItemRef, ResolvedConfig, S3Session } from './index.js'
+
+import { createHmac } from 'node:crypto'
+
+import got from 'got'
+import { z } from 'zod'
+
 import logger from '../../logger.js'
 import { ProviderApiError } from '../error.js'
 import { userError } from '../errorCodes.js'
 import {
-  type ParsedTransloaditStorageOptions,
   parseTransloaditStorageProviderOptions,
   S3ConfigError,
 } from './config.js'
-import S3Provider, {
-  type ItemRef,
-  itemRef,
-  type ResolvedConfig,
-  type S3Session,
-  withOwnCredentials,
-} from './index.js'
+import S3Provider, { itemRef, withOwnCredentials } from './index.js'
 
 const moveResponseSchema = z.object({
   ok: z.literal('DAM_ENTRY_MOVED'),
