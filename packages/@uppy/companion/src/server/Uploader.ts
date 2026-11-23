@@ -238,14 +238,8 @@ function validateOptions(
   }
 }
 
-/**
- * Passes a one-shot body stream through a byte count. `check` gets the count
- * so far after each chunk, and once more with `ended` when the source ends;
- * an error it returns fails the stream before that chunk is passed on.
- * Destroying the returned stream destroys the source too.
- */
 /** tus-js-client keeps an upload URL as url-parse formats it; compare the WHATWG form. */
-function normalizeUrl(url: string): string {
+function whatwgUrl(url: string): string {
   try {
     return new URL(url).href
   } catch {
@@ -253,6 +247,12 @@ function normalizeUrl(url: string): string {
   }
 }
 
+/**
+ * Passes a one-shot body stream through a byte count. `check` gets the count
+ * so far after each chunk, and once more with `ended` when the source ends;
+ * an error it returns fails the stream before that chunk is passed on.
+ * Destroying the returned stream destroys the source too.
+ */
 function countBytes(
   stream: NodeReadableStream,
   check: (seen: number, ended: boolean) => Error | undefined,
@@ -314,7 +314,8 @@ export const PAUSED_TIMEOUT_MS = 10 * 60 * 1000
 // upload may go this long without progress for each byte of its parts in flight.
 const MIN_S3_BYTES_PER_SECOND = 64 * 1024
 // lib-storage's defaults
-const S3_PART_SIZE = 5 * 1024 * 1024
+const S3_MIN_PART_SIZE = 5 * 1024 * 1024
+const S3_MAX_PARTS = 10_000
 const S3_QUEUE_SIZE = 4
 
 const states = {
@@ -466,7 +467,7 @@ export default class Uploader {
       if (this.tus) {
         const shouldTerminate =
           this.tus.url != null &&
-          normalizeUrl(this.tus.url) === this.#createdTusUrl
+          whatwgUrl(this.tus.url) === this.#createdTusUrl
         this.tus.abort(shouldTerminate).catch(() => {})
       }
       this.#canceled = true
@@ -570,8 +571,9 @@ export default class Uploader {
    * (any protocol) the limit is PAUSED_TIMEOUT_MS instead. Neither
    * tus-js-client nor our multipart and S3 uploads have a request timeout, so
    * this is also what ends a request the server never answers. A multipart or
-   * S3 upload is one request from start to finish, so it always gets
-   * PAUSED_TIMEOUT_MS: the shorter limit only applies to tus.
+   * S3 upload is one request from start to finish, so it always gets the
+   * longer limit (more for S3 with large parts): the shorter one only applies
+   * to tus.
    */
   #watchTransfer(): () => void {
     let last: string | undefined
@@ -1328,7 +1330,9 @@ export default class Uploader {
       // A body that did not match the announced size is our own error; surface
       // it rather than got's generic request failure.
       if (framingError) throw framingError
-      logger.error(err, 'upload.multipart.error')
+      // our own abort: the upload has already failed with the reason
+      if (!controller.signal.aborted)
+        logger.error(err, 'upload.multipart.error')
       const errObj = isRecord(err) ? err : null
       const response =
         errObj && isRecord(errObj['response']) ? errObj['response'] : null
@@ -1387,18 +1391,25 @@ export default class Uploader {
       client,
       params,
       // using chunkSize as partSize too, see https://github.com/transloadit/uppy/pull/3511
-      partSize: this.options.chunkSize ?? S3_PART_SIZE,
+      ...(this.options.chunkSize != null && {
+        partSize: this.options.chunkSize,
+      }),
       queueSize: S3_QUEUE_SIZE,
       leavePartsOnError: true, // https://github.com/aws/aws-sdk-js-v3/issues/2311
     })
+    // Stops further parts and the completion of a multipart upload. lib-storage
+    // can't stop a request already sent, so a file that fits in one part (a
+    // single PutObject) may still be stored.
     this.#abortRequest = () => {
       upload.abort().catch(() => {})
     }
+    // the part size lib-storage uses when none is given
+    const partSize =
+      this.options.chunkSize ??
+      Math.max(S3_MIN_PART_SIZE, Math.ceil((this.size ?? 0) / S3_MAX_PARTS))
     this.#requestPendingLimitMs = Math.max(
       PAUSED_TIMEOUT_MS,
-      ((S3_QUEUE_SIZE * (this.options.chunkSize ?? S3_PART_SIZE)) /
-        MIN_S3_BYTES_PER_SECOND) *
-        1000,
+      ((S3_QUEUE_SIZE * partSize) / MIN_S3_BYTES_PER_SECOND) * 1000,
     )
 
     upload.on('httpUploadProgress', ({ loaded, total }) => {

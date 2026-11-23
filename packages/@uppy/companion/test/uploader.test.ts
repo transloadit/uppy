@@ -982,7 +982,7 @@ describe('uploader', () => {
       expect(settled).not.toHaveBeenCalled()
       await cancel(uploader)
       await expect(upload).rejects.toThrow('Canceled')
-      // the parts in flight must not complete after the client was told
+      // so no further parts, or the completion, run after the client was told
       expect(abort).toHaveBeenCalled()
       uploader.removeEmitterListeners()
     })

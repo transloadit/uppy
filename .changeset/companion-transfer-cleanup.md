@@ -5,7 +5,8 @@
 Companion cleans up failed and cancelled transfers more reliably:
 
 - Source streams are destroyed on every exit, and a stalled transfer is abandoned. A multipart or S3 upload request that makes no progress for 10 minutes is stopped; for S3 the limit grows with `chunkSize`, since S3 reports progress only per stored part.
-- An abandoned or cancelled multipart or S3 request is aborted, so it can't finish after the client was told the upload failed.
+- An abandoned or cancelled multipart upload request is aborted, and so is an S3 multipart upload (a file that fits in a single S3 part may still be stored).
+- Downloads and uploads refuse an upstream protocol upgrade.
 - A pause and resume no longer start a tus upload again while it is still running, and cancelling no longer deletes a tus upload Companion didn't create.
 - When resuming a tus upload, the server's offset and length are checked against the file.
 - With a fixed `Authorization` header, credentials in the tus or upload URL are dropped.
