@@ -44,11 +44,11 @@
     "requirements.txt"
   ],
   "rules": [
-    "Uppy 6 stylesheets are imported through each package's exports map, for example @uppy/core/css/style.min.css and @uppy/dashboard/css/style.min.css. dist/ paths such as @uppy/core/dist/style.min.css are not exported.",
-    "@uppy/aws-s3 takes one of three signing options: signRequest (your own signer returns a presigned URL), getCredentials together with s3Endpoint (SigV4 signing in the browser with temporary credentials), or companionEndpoint (Companion signs).",
-    "@uppy/aws-s3 sets Companion with companionEndpoint. The older options companionUrl, endpoint, headers and cookiesRule no longer exist. Remote source plugins such as @uppy/dropbox and @uppy/remote-sources still use companionUrl.",
+    "Import Uppy 6 CSS through each package's exports map, e.g. @uppy/core/css/style.min.css and @uppy/dashboard/css/style.min.css. dist/ paths such as @uppy/core/dist/style.min.css are not exported.",
+    "@uppy/aws-s3 takes one signing option: signRequest (your signer returns a presigned URL), getCredentials with s3Endpoint (SigV4 in the browser with temporary credentials), or companionEndpoint.",
+    "@uppy/aws-s3 uses companionEndpoint for Companion; companionUrl, endpoint, headers and cookiesRule were removed. Remote source plugins such as @uppy/dropbox still use companionUrl.",
     "@uppy/aws-s3-multipart no longer exists. @uppy/aws-s3 handles single-request and multipart uploads, and by default uses multipart for files larger than 100 MiB (shouldUseMultipart).",
-    "@uppy/golden-retriever keeps local file contents in IndexedDB only for files up to 10 MiB each and 300 MiB in total. Larger local files are restored only with its serviceWorker option and service worker set up.",
-    "@uppy/drag-drop and @uppy/status-bar are published for Uppy 6 and included in the uppy CDN bundle as DragDrop and StatusBar. In React, Vue and Svelte, the Dropzone component or useDropzone hook takes the place of @uppy/drag-drop."
+    "@uppy/golden-retriever keeps local file contents in IndexedDB only up to 10 MiB per file and 300 MiB in total. Larger local files need its serviceWorker option and a service worker.",
+    "@uppy/drag-drop and @uppy/status-bar are published for Uppy 6 and in the CDN bundle as DragDrop and StatusBar. In React, Vue and Svelte, the Dropzone component or useDropzone hook replaces drag-drop."
   ]
 }
