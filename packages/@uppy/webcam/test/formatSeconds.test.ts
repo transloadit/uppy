@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest'
+
 import formatSeconds from '../lib/formatSeconds.js'
 
 describe('formatSeconds', () => {

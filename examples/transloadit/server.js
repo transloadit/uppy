@@ -2,6 +2,7 @@
 
 import http from 'node:http'
 import qs from 'node:querystring'
+
 import he from 'he'
 
 const e = he.encode
@@ -130,9 +131,9 @@ function onrequest(req, res) {
     res.setHeader('content-type', 'text/html')
     res.write(Header())
     res.write(FormFields(fields))
-    assemblies.forEach((assembly) => {
+    for (const assembly of assemblies) {
       res.write(AssemblyResult(assembly))
-    })
+    }
     res.end(Footer())
   }
 

@@ -1,9 +1,10 @@
+import type { ProviderCtor } from '../dist/server/provider/Provider.js'
+
 import { beforeEach, describe, expect, test } from 'vitest'
+
 import createGrantConfig from '../dist/config/grant.js'
 import * as providerManager from '../dist/server/provider/index.js'
-import Provider, {
-  type ProviderCtor,
-} from '../dist/server/provider/Provider.js'
+import Provider from '../dist/server/provider/Provider.js'
 import { getCompanionOptions } from '../dist/standalone/helper.js'
 import { setDefaultEnv } from './mockserver.js'
 
@@ -259,6 +260,7 @@ describe('Test Custom Provider options', () => {
           config: {
             key: 'foo_key',
             secret: 'foo_secret',
+            state: false,
           },
           module: SomeProvider,
         },
@@ -273,6 +275,7 @@ describe('Test Custom Provider options', () => {
     )
     expect(someProvider['key']).toBe('foo_key')
     expect(someProvider['secret']).toBe('foo_secret')
+    expect(someProvider['state']).toBe(true)
     expect(providers['foo' as keyof typeof providers]).toBeTruthy()
   })
 })

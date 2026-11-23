@@ -1,15 +1,15 @@
-import React, { useState } from 'react'
+import '@uppy/react/dist/styles.css'
+
 import {
-  UppyContextProvider,
   Dropzone,
   FilesList,
   UploadButton,
+  UppyContextProvider,
 } from '@uppy/react'
+import { useState } from 'react'
 import { Tus, Uppy } from 'uppy'
 
 import { BrowserWindow } from './BrowserWindow'
-
-import '@uppy/react/dist/styles.css'
 
 export default function BasicUploadDemo() {
   const [uppy] = useState(() =>

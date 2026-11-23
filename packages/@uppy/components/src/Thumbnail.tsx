@@ -1,14 +1,20 @@
-import type { Body, Meta, UppyFile } from '@uppy/core'
-import { useEffect, useMemo } from '@uppy/core/utils/preact/hooks'
+import type { UppyFile } from '@uppy/core'
+
 import type { UppyContext } from './types.js'
 
+import { useEffect, useMemo } from '@uppy/core/utils/preact/hooks'
+
 export type ThumbnailProps = {
-  file: UppyFile<Meta, Body>
+  // `any`: UppyFile is invariant in its generics, so a concrete type would
+  // reject files from an Uppy instance with a different Meta or Body.
+  file: UppyFile<any, any>
   width?: string
   height?: string
   images?: boolean
   ctx?: UppyContext
 }
+
+const RASTER_IMAGE = /^image\/(jpe?g|gif|png|bmp|webp|avif)$/i
 
 export default function Thumbnail(props: ThumbnailProps) {
   const width = props.width || '100%'
@@ -30,25 +36,38 @@ export default function Thumbnail(props: ThumbnailProps) {
   const isPDF = fileTypeGeneral === 'application' && fileTypeSpecific === 'pdf'
 
   const objectUrl = useMemo(() => {
-    if (!props.images) {
-      return ''
+    if (!props.images || !isImage) {
+      return undefined
     }
     if (props.file.isRemote) {
       return props.file.preview
     }
     if (props.file.data == null) throw new Error('File data is empty')
-    return URL.createObjectURL(props.file.data)
-  }, [props.file.data, props.images, props.file.isRemote, props.file.preview])
+    // A blob URL opened as a document (e.g. in a new tab) is rendered as its
+    // type, so an SVG or HTML one would run scripts with the app's origin. Only
+    // raster types get a URL, and it gets that type whatever the bytes or the
+    // Blob's own type are (which may also be missing).
+    if (!RASTER_IMAGE.test(props.file.type)) return undefined
+    const { data } = props.file
+    return URL.createObjectURL(data.slice(0, data.size, props.file.type))
+  }, [
+    props.file.data,
+    props.file.type,
+    props.images,
+    props.file.isRemote,
+    props.file.preview,
+    isImage,
+  ])
 
   const showThumbnail = props.images && isImage && objectUrl
 
   useEffect(() => {
     return () => {
-      if (objectUrl) {
+      if (objectUrl && !props.file.isRemote) {
         URL.revokeObjectURL(objectUrl)
       }
     }
-  }, [objectUrl])
+  }, [objectUrl, props.file.isRemote])
 
   return (
     <div

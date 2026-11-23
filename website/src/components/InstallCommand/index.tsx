@@ -1,7 +1,7 @@
-import React from 'react'
+import type { ReactNode } from 'react'
 
-import CopyStateIcon from '../CopyStateIcon'
 import { useCopyToClipboard } from '../../hooks/useCopyToClipboard'
+import CopyStateIcon from '../CopyStateIcon'
 import styles from './styles.module.css'
 
 type Props = {
@@ -12,7 +12,7 @@ type Props = {
 export default function InstallCommand({
   command,
   className,
-}: Props): JSX.Element {
+}: Props): ReactNode {
   const { copied, copy } = useCopyToClipboard(command)
 
   return (

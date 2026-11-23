@@ -1,14 +1,25 @@
 import type { Server as HttpServer } from 'node:http'
 import type { Server as HttpsServer } from 'node:https'
-import { type WebSocket, WebSocketServer } from 'ws'
+
+import type { WebSocket } from 'ws'
+
 import type { CompanionInitOptions } from '../schemas/companion.js'
+
+import { WebSocketServer } from 'ws'
+
 import { takeAuthCallback } from './auth-callback.js'
 import emitter from './emitter/index.js'
 import { isRecord } from './helpers/type-guards.js'
-import { getURLBuilder, jsonStringify } from './helpers/utils.js'
+import {
+  getURLBuilder,
+  jsonStringify,
+  SOCKET_TOKEN_RE,
+} from './helpers/utils.js'
 import * as logger from './logger.js'
 import * as redis from './redis.js'
 import Uploader from './Uploader.js'
+
+const SOCKET_MAX_PAYLOAD_BYTES = 1024
 
 type SocketMessage = { action: string; payload: Record<string, unknown> }
 
@@ -18,6 +29,10 @@ function isSocketMessage(value: unknown): value is SocketMessage {
     typeof value['action'] === 'string' &&
     isRecord(value['payload'])
   )
+}
+
+function validToken(token: string | undefined): string | undefined {
+  return token && SOCKET_TOKEN_RE.test(token) ? token : undefined
 }
 
 function handleUploadSocketConnection({
@@ -74,16 +89,34 @@ function handleUploadSocketConnection({
   }
   emitter().on(token, onRedisMessage)
 
+  let pendingActions = 0
+  let rejected = false
   ws.on('message', (jsonData) => {
+    if (rejected) return
     try {
       const data: unknown = JSON.parse(jsonData.toString())
       // whitelist triggered actions
       const action = isRecord(data) ? data['action'] : undefined
       if (action === 'pause' || action === 'resume' || action === 'cancel') {
-        emitter().emit(`${action}:${token}`)
+        if (pendingActions >= 16) {
+          rejected = true
+          ws.close(1008, 'Too many pending actions')
+          return
+        }
+        pendingActions += 1
+        Promise.resolve(emitter().emit(`${action}:${token}`))
+          .catch(() => {
+            rejected = true
+            ws.close(1011, 'Upload action failed')
+          })
+          .finally(() => {
+            pendingActions -= 1
+          })
       }
-    } catch (err) {
-      logger.error(err, 'websocket.error', Uploader.shortenToken(token))
+    } catch {
+      rejected = true
+      logger.warn('Invalid upload socket message', 'websocket.error')
+      ws.close(1007, 'Invalid JSON')
     }
   })
 
@@ -102,10 +135,13 @@ async function handleAuthCallbackSocketConnection({
   options: CompanionInitOptions
 }) {
   const events = emitter()
-  let closed = false
+  // The socket leaves OPEN as soon as the client's close frame arrives. Its 'close' event only
+  // fires once the connection has ended, which can be after a pending subscription completes,
+  // and a replay then would consume a result that can no longer be sent.
+  const isClosed = () => ws.readyState !== ws.OPEN
   let sent = false
   function send(data: unknown) {
-    if (closed || sent) return
+    if (isClosed() || sent) return
     sent = true
     ws.send(jsonStringify(data), (err) => {
       if (err)
@@ -118,7 +154,7 @@ async function handleAuthCallbackSocketConnection({
   }
 
   async function replay() {
-    if (closed || sent) return
+    if (isClosed() || sent) return
     const data = await takeAuthCallback(token, options)
     // Consumption is final if the socket closes during this read. Clients
     // already reject closed login sockets instead of reconnecting them.
@@ -139,7 +175,6 @@ async function handleAuthCallbackSocketConnection({
   }
 
   ws.on('close', () => {
-    closed = true
     events.removeListener(token, onMessage)
   })
 
@@ -147,7 +182,7 @@ async function handleAuthCallbackSocketConnection({
     // HTTP 101 precedes Redis subscription readiness. Subscribe first, then
     // consume storage, covering callbacks both before and during subscription.
     await events.on(token, onMessage)
-    if (closed) {
+    if (isClosed()) {
       events.removeListener(token, onMessage)
       return
     }
@@ -164,7 +199,13 @@ export default function setupSockets(
   server: HttpServer | HttpsServer,
   companionOptions: CompanionInitOptions,
 ) {
-  const wss = new WebSocketServer({ server })
+  // Clients only send ~32-byte pause/resume/cancel messages. Without a cap, ws
+  // accepts 100 MiB and JSON.parse of a deeply nested array aborts the process
+  // on heap exhaustion, which no try/catch can prevent.
+  const wss = new WebSocketServer({
+    server,
+    maxPayload: SOCKET_MAX_PAYLOAD_BYTES,
+  })
 
   const urlBuilder = getURLBuilder(companionOptions)
 
@@ -181,13 +222,13 @@ export default function setupSockets(
 
     // authentication callback token?
     const authCallbackTokenMatch = path?.match(
-      /^\/api2\/auth-callback\/token\/([^/]+)/,
+      /^\/api2\/auth-callback\/token\/([^/?#]+)$/,
     )
-    const authCallbackToken = authCallbackTokenMatch?.[1]
+    const authCallbackToken = validToken(authCallbackTokenMatch?.[1])
 
     // or token that identifies which ongoing upload's progress, the socket connection wishes to listen to.
-    const uploadTokenMatch = path?.match(/^\/api\/([^/]+)/)
-    const uploadToken = uploadTokenMatch?.[1]
+    const uploadTokenMatch = path?.match(/^\/api\/([^/?#]+)$/)
+    const uploadToken = validToken(uploadTokenMatch?.[1])
 
     ws.on('error', (err) => {
       // https://github.com/websockets/ws/issues/1543
@@ -213,8 +254,9 @@ export default function setupSockets(
 
     if (uploadToken) {
       logger.info(
-        `Upload token connection received from ${uploadToken}`,
+        'Upload token connection received',
         'socket.upload.connect',
+        Uploader.shortenToken(uploadToken),
       )
 
       handleUploadSocketConnection({ token: uploadToken, ws })
@@ -236,6 +278,6 @@ export default function setupSockets(
       return
     }
 
-    ws.close()
+    ws.close(1008)
   })
 }

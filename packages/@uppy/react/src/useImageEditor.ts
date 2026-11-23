@@ -1,15 +1,10 @@
-import {
-  createImageEditorController,
-  type ImageEditorSnapshot,
-} from '@uppy/components'
+import type { ImageEditorSnapshot } from '@uppy/components'
 import type { UppyFile } from '@uppy/core'
-import {
-  type ChangeEvent,
-  type SyntheticEvent,
-  useEffect,
-  useMemo,
-  useSyncExternalStore,
-} from 'react'
+import type { ChangeEvent, SyntheticEvent } from 'react'
+
+import { createImageEditorController } from '@uppy/components'
+import { useEffect, useMemo, useSyncExternalStore } from 'react'
+
 import { useUppyContext } from './headless/UppyContextProvider.js'
 
 type ImageEditorProps = {

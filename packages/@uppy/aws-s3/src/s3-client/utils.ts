@@ -1,5 +1,6 @@
-import { ERROR_PREFIX } from './consts.js'
 import type { XmlMap, XmlValue } from './types.js'
+
+import { ERROR_PREFIX } from './consts.js'
 
 export const sanitizeXmlETag = (etag: string): string =>
   etag.replace(/^(&quot;|&#34;)+|(&quot;|&#34;)+$/g, '')

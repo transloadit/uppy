@@ -1,4 +1,5 @@
-import React from 'react'
+import type React from 'react'
+
 import styles from './browser-window.module.css'
 
 interface BrowserWindowProps {

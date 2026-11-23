@@ -31,9 +31,9 @@ export type AllFilesMessage = {
 
 function sendMessageToAllClients(msg: AllFilesMessage): void {
   self.clients.matchAll().then((clientList) => {
-    clientList.forEach((client) => {
+    for (const client of clientList) {
       client.postMessage(msg)
-    })
+    }
   })
 }
 

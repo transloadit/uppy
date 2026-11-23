@@ -1,44 +1,43 @@
-import React, { useState, Fragment } from 'react'
-
-import Layout from '@theme/Layout'
-import Head from '@docusaurus/Head'
-import Heading from '@theme/Heading'
-import Link from '@docusaurus/Link'
-import BrowserOnly from '@docusaurus/BrowserOnly'
-
-import {
-  Uppy,
-  Webcam,
-  Zoom,
-  Dropbox,
-  OneDrive,
-  Unsplash,
-  Url,
-  Box,
-  Audio,
-  ScreenCapture,
-  ImageEditor,
-  Tus,
-  GoogleDrivePicker,
-  GooglePhotosPicker,
-} from 'uppy'
-import Dashboard from '@uppy/react/dashboard'
-
-import InstallCommand from '../components/InstallCommand'
-import AgentPrompt from '../components/AgentPrompt'
-
-import IconUpload from '../../static/img/upload.svg'
-import IconLanguage from '../../static/img/language.svg'
-import IconSparkles from '../../static/img/sparkles.svg'
-import IconFolder from '../../static/img/folder.svg'
-import IconWrench from '../../static/img/wrench.svg'
-import IconPencil from '../../static/img/pencil.svg'
-import IconPointer from '../../static/img/pointer.svg'
-import IconBlocks from '../../static/img/blocks.svg'
-import IconBolt from '../../static/img/bolt.svg'
-
 import 'uppy/dist/uppy.min.css'
 
+import type React from 'react'
+import type { ReactNode } from 'react'
+
+import BrowserOnly from '@docusaurus/BrowserOnly'
+import Head from '@docusaurus/Head'
+import Link from '@docusaurus/Link'
+import Heading from '@theme/Heading'
+import Layout from '@theme/Layout'
+import Dashboard from '@uppy/react/dashboard'
+import { Fragment, useState } from 'react'
+import {
+  Audio,
+  Box,
+  Dropbox,
+  GoogleDrivePicker,
+  GooglePhotosPicker,
+  ImageEditor,
+  OneDrive,
+  ScreenCapture,
+  Tus,
+  Unsplash,
+  Uppy,
+  Url,
+  Webcam,
+  Zoom,
+} from 'uppy'
+
+import IconBlocks from '../../static/img/blocks.svg'
+import IconBolt from '../../static/img/bolt.svg'
+import IconFolder from '../../static/img/folder.svg'
+import IconLanguage from '../../static/img/language.svg'
+import IconPencil from '../../static/img/pencil.svg'
+import IconPointer from '../../static/img/pointer.svg'
+import IconSparkles from '../../static/img/sparkles.svg'
+import IconUpload from '../../static/img/upload.svg'
+import IconWrench from '../../static/img/wrench.svg'
+import AgentPrompt from '../components/AgentPrompt'
+import InstallCommand from '../components/InstallCommand'
 import styles from './index.module.css'
 
 const companionUrl = 'https://companion.uppy.io'
@@ -378,7 +377,7 @@ const capabilities = [
   },
 ]
 
-export default function Home(): JSX.Element {
+export default function Home(): ReactNode {
   const [target, setTarget] = useState(installTargets[0].name)
   const [manager, setManager] = useState(packageManagers[0].name)
   const activeTarget = installTargets.find((t) => t.name === target)
@@ -517,9 +516,10 @@ export default function Home(): JSX.Element {
 
             {/* One box for both variants — see .installBody. */}
             <div className={styles.installBody}>
-              {activeTarget.agent ?
+              {activeTarget?.agent ? (
                 <AgentPrompt className={styles.heroAgent} />
-              : <>
+              ) : (
+                <>
                   {/* The package manager is a property of the command, so it docks
                       to the field as a tab strip rather than repeating the pill
                       treatment used for the framework choice above. */}
@@ -546,17 +546,17 @@ export default function Home(): JSX.Element {
                     </div>
 
                     <InstallCommand
-                      command={`${activeManager.prefix} ${activeTarget.packages}`}
+                      command={`${activeManager!.prefix} ${activeTarget!.packages}`}
                       className={styles.heroInstall}
                     />
                   </div>
 
-                  <Link className={styles.installDocs} to={activeTarget.docs}>
-                    Then wire it up in the {activeTarget.docsLabel} docs{' '}
+                  <Link className={styles.installDocs} to={activeTarget!.docs}>
+                    Then wire it up in the {activeTarget!.docsLabel} docs{' '}
                     <span aria-hidden>→</span>
                   </Link>
                 </>
-              }
+              )}
             </div>
           </div>
         </div>
@@ -705,7 +705,7 @@ export default function Home(): JSX.Element {
                   {/* Mark then rail, the same way round in both lanes: each reads
                       "[who] — [what they do]". */}
                   <span className={styles.lineLogo}>
-                    <img {...logo} />
+                    <img {...logo} alt={logo.alt} />
                   </span>
 
                   <span className={styles.lineRail}>

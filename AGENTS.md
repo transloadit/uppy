@@ -97,7 +97,7 @@ The build system uses Turbo (turbo.json) for task orchestration:
 
 ### Linting and Formatting
 
-- **Biome** is used for linting and formatting (replaces ESLint/Prettier)
+- **Biome** is used for linting and formatting
 - Configuration in `biome.json`
 - Use single quotes, semicolons as needed
 - 2-space indentation
@@ -113,7 +113,7 @@ The build system uses Turbo (turbo.json) for task orchestration:
 - All plugins extend `BasePlugin` or `UIPlugin`
 - Plugins must have unique IDs and specify their type
 - State management through Uppy’s store system
-- Event-driven architecture using namespace-emitter
+- Event-driven architecture using Uppy’s event emitter (`on`, `once`, `off`, `emit`)
 
 ## Testing
 

@@ -1,0 +1,353 @@
+import type { Locale } from '@uppy/core/utils'
+
+import fs from 'node:fs'
+import { glob } from 'node:fs/promises'
+import path from 'node:path'
+import process from 'node:process'
+import { fileURLToPath } from 'node:url'
+import { styleText } from 'node:util'
+
+import { getLocales, localeNameFromLocalePath, omit } from './helpers.ts'
+
+const root = fileURLToPath(new URL('../../../../', import.meta.url))
+const leadingLocaleName = 'en_US'
+// Node strips types when importing `.ts`, so the modes that compare language
+// packs read `src/` and stay independent of `yarn build`. (`unused` still needs
+// `lib/`, but of the *plugin* packages, to look for each key in their compiled code.)
+const localePackGlob = `${root}/packages/@uppy/locales/src/*.ts`
+const mode = process.argv[2]
+const verbose = process.argv.includes('--verbose')
+// Locale keys of the package on the left that code in the listed packages uses.
+const pluginLocaleDependencies: Record<string, string[]> = {
+  'status-bar': ['core'],
+}
+// Keys no code uses today. Removing them changes the public `Locale` types, so
+// they are listed here until that is done; an entry that becomes used fails.
+const knownUnusedKeys: Record<string, string[]> = {
+  audio: ['recordingLength'],
+  core: [
+    'emptyFolderAdded',
+    'folderAdded',
+    'folderAlreadyAdded',
+    'logIn',
+    'resetSearch',
+  ],
+  transloadit: ['creatingAssembly'],
+  webcam: ['recordingLength'],
+}
+
+function getAllFilesPerPlugin(pluginNames: string[]) {
+  const filesPerPlugin: Record<string, string[]> = {}
+
+  function getFiles(name: string) {
+    const files = fs.globSync(`${root}/packages/@uppy/${name}/lib/**/*.js`)
+    if (files.length === 0) {
+      throw new Error(`@uppy/${name} has no lib/: run \`yarn build\` first`)
+    }
+    return files
+      .filter((filePath) => !filePath.includes('locale.js'))
+      .map((filePath) => fs.readFileSync(filePath, 'utf-8'))
+  }
+
+  for (const name of pluginNames) {
+    filesPerPlugin[name] = getFiles(name)
+
+    if (name in pluginLocaleDependencies) {
+      for (const subDeb of pluginLocaleDependencies[name]!) {
+        filesPerPlugin[name].push(...getFiles(subDeb))
+      }
+    }
+  }
+
+  return filesPerPlugin
+}
+
+async function unused(filesPerPlugin: Record<string, string[]>) {
+  const problems: string[] = []
+  for (const [name, fileStrings] of Object.entries(filesPerPlugin)) {
+    const fileString = fileStrings.join('\n')
+    const localePath = path.join(
+      root,
+      'packages',
+      '@uppy',
+      name,
+      'src',
+      'locale.ts',
+    )
+    const locale = (await import(localePath)).default
+    const allowed = knownUnusedKeys[name] ?? []
+
+    for (const key of Object.keys(locale.strings)) {
+      // Keys are also passed through variables and error-code maps, not only
+      // to i18n() directly, so any string literal naming the key counts.
+      const used = new RegExp(`['\`"]${key}['\`"]`).test(fileString)
+      if (!used && !allowed.includes(key)) {
+        problems.push(`Unused locale key "${key}" in @uppy/${name}`)
+      } else if (used && allowed.includes(key)) {
+        problems.push(
+          `Locale key "${key}" in @uppy/${name} is used: remove it from knownUnusedKeys`,
+        )
+      }
+    }
+  }
+
+  if (problems.length) {
+    throw new Error(
+      `\n${problems.join('\n')}\n\n${problems.length} problem(s): remove unused keys from the package's locale.ts, or list them in knownUnusedKeys`,
+    )
+  }
+}
+
+interface LocaleWithLeading {
+  leadingLocale: Locale
+  followerLocales: Record<string, Locale>
+}
+
+// Locales are community-contributed and always lag behind `en_US`, so
+// discrepancies are expected and this mode is advisory: it reports, it never
+// fails the build. Pass `--verbose` for the per-key breakdown; the default is a
+// one-line-per-locale summary so it stays readable in CI.
+function warnings({ leadingLocale, followerLocales }: LocaleWithLeading) {
+  const leadingStrings = leadingLocale.strings
+  const total = Object.keys(leadingStrings).length
+  const entries = Object.entries(followerLocales).sort(([a], [b]) =>
+    a.localeCompare(b),
+  )
+  const details = []
+  const summary = []
+  let missingTotal = 0
+  let excessTotal = 0
+
+  for (const [name, locale] of entries) {
+    const strings = locale.strings
+    const missing = Object.keys(leadingStrings).filter(
+      (key) => !(key in strings),
+    )
+    const excess = Object.keys(strings).filter(
+      (key) => !(key in leadingStrings),
+    )
+
+    missingTotal += missing.length
+    excessTotal += excess.length
+
+    summary.push(
+      [
+        styleText('cyan', name.padEnd(16)),
+        `${String(missing.length).padStart(3)} missing`,
+        `${String(excess.length).padStart(3)} excess`,
+        `(of ${total} keys in ${leadingLocaleName})`,
+      ].join('  '),
+    )
+
+    details.push('')
+    details.push(`--> Keys from ${leadingLocaleName} missing in ${name}`)
+    details.push('')
+
+    for (const key of missing) {
+      let value = leadingStrings[key]
+
+      if (typeof value === 'object') {
+        // For values with plural forms, just take the first one right now
+        value = Object.values(value)[0]
+      }
+
+      details.push(
+        [
+          `${styleText('cyan', name)} locale has missing string: '${styleText('red', key)}'`,
+          `that is present in ${styleText('cyan', leadingLocaleName)}`,
+          `with value: ${styleText('yellow', value as string)}`,
+        ].join(' '),
+      )
+    }
+
+    details.push('')
+    details.push(`--> Keys from ${name} missing in ${leadingLocaleName}`)
+    details.push('')
+
+    for (const key of excess) {
+      details.push(
+        [
+          `${styleText('cyan', name)} locale has excess string:`,
+          `'${styleText('yellow', key)}' that is not present`,
+          `in ${styleText('cyan', leadingLocaleName)}.`,
+        ].join(' '),
+      )
+    }
+  }
+
+  if (verbose) {
+    console.log(details.join('\n'))
+    console.log('')
+  }
+
+  console.log(`--> Locale coverage relative to ${leadingLocaleName}\n`)
+  console.log(summary.join('\n'))
+  console.log(
+    `\n${styleText('bold', `${entries.length} locales`)}: ${styleText(
+      'red',
+      `${missingTotal} missing`,
+    )}, ${styleText('yellow', `${excessTotal} excess`)} string(s) in total.`,
+  )
+
+  if (!verbose && missingTotal + excessTotal > 0) {
+    console.log(
+      styleText(
+        'dim',
+        'Re-run with --verbose to list the individual keys. This check is advisory and does not fail the build.',
+      ),
+    )
+  }
+}
+
+// @uppy/core's Translator interpolates by building `new RegExp('%\\{' + arg + '\\}')`
+// from the option name, so only the exact `%{name}` form is ever substituted.
+const placeholderPattern = /%\{(\w+)\}/g
+
+/**
+ * Anything that looks like a placeholder but isn't the exact `%{name}` form:
+ * `% {name}`, `%{ name }`, `%{name` and `{name}` all render verbatim.
+ * Only meaningful for a `name` we already know is not present in its exact form.
+ */
+function findMalformedPlaceholder(
+  string: string,
+  name: string,
+): string | undefined {
+  const [match] = string.match(new RegExp(`%?\\s*\\{\\s*${name}\\s*\\}?`)) ?? []
+  return match
+}
+
+function getPlaceholders(string: string): Set<string> {
+  return new Set(
+    Array.from(string.matchAll(placeholderPattern), ([, name]) => name!),
+  )
+}
+
+/**
+ * A locale value is either a string, or an object of plural forms keyed by the
+ * indices the locale's `pluralize` returns. Normalize both into `[form, string]`
+ * pairs so every form gets checked.
+ */
+function getForms(
+  value: string | Record<number, string>,
+): [string | null, string][] {
+  if (typeof value === 'string') return [[null, value]]
+  return Object.entries(value)
+}
+
+// Unlike `warnings`, this mode does fail the build: a placeholder that cannot
+// interpolate is never an intentional translation choice, it is a typo that
+// renders raw `%{...}` to users. Diverging placeholder *sets* are advisory,
+// since a translation may legitimately spell a number out instead.
+function placeholders({ leadingLocale, followerLocales }: LocaleWithLeading) {
+  const errors = []
+  const logs = []
+
+  for (const [name, locale] of Object.entries(followerLocales)) {
+    for (const [key, value] of Object.entries(locale.strings)) {
+      const leadingValue = leadingLocale.strings[key]
+      // Excess keys are already reported by the `warnings` mode.
+      if (leadingValue == null) continue
+
+      const expected = new Set(
+        getForms(leadingValue).flatMap(([, string]) => [
+          ...getPlaceholders(string),
+        ]),
+      )
+
+      for (const [form, string] of getForms(value)) {
+        const where = [
+          styleText('cyan', name),
+          `→ ${styleText('yellow', key)}${form == null ? '' : `['${form}']`}`,
+        ].join(' ')
+        const found = getPlaceholders(string)
+
+        for (const placeholder of expected) {
+          if (found.has(placeholder)) continue
+
+          const malformed = findMalformedPlaceholder(string, placeholder)
+          if (malformed) {
+            errors.push(
+              [
+                `${where}: malformed placeholder ${styleText('red', malformed)},`,
+                `expected ${styleText('green', `%{${placeholder}}`)}.`,
+                `It will not interpolate and is rendered as-is:\n    ${string}`,
+              ].join(' '),
+            )
+          } else {
+            logs.push(
+              [
+                `${where}: missing placeholder ${styleText('red', `%{${placeholder}}`)}`,
+                `that ${styleText('cyan', leadingLocaleName)} has:\n    ${string}`,
+              ].join(' '),
+            )
+          }
+        }
+
+        for (const placeholder of found) {
+          if (expected.has(placeholder)) continue
+
+          logs.push(
+            [
+              `${where}: unknown placeholder ${styleText('red', `%{${placeholder}}`)}`,
+              `that ${styleText('cyan', leadingLocaleName)} does not have,`,
+              `so no value is passed for it and it is rendered as-is:\n    ${string}`,
+            ].join(' '),
+          )
+        }
+      }
+    }
+  }
+
+  if (logs.length) {
+    console.log(logs.join('\n'))
+    console.log(
+      `\n${styleText('yellow', `${logs.length} placeholder warning(s).`)}`,
+    )
+  }
+
+  if (errors.length) {
+    throw new Error(
+      `\n${errors.join('\n')}\n\n${errors.length} malformed placeholder(s).`,
+    )
+  }
+}
+
+async function test() {
+  switch (mode) {
+    case 'unused': {
+      const paths = glob(`${root}/packages/@uppy/**/src/locale.ts`)
+
+      await unused(
+        getAllFilesPerPlugin(
+          await Array.fromAsync(paths, (filePath) =>
+            path.basename(path.join(filePath, '..', '..')),
+          ),
+        ),
+      )
+      break
+    }
+
+    case 'warnings': {
+      const locales = await getLocales(localePackGlob, localeNameFromLocalePath)
+      warnings({
+        leadingLocale: locales[leadingLocaleName]!,
+        followerLocales: omit(locales, leadingLocaleName),
+      })
+      break
+    }
+
+    case 'placeholders': {
+      const locales = await getLocales(localePackGlob, localeNameFromLocalePath)
+      placeholders({
+        leadingLocale: locales[leadingLocaleName]!,
+        followerLocales: omit(locales, leadingLocaleName),
+      })
+      break
+    }
+
+    default:
+      throw new Error(`Invalid mode "${mode}"`)
+  }
+}
+
+await test()
