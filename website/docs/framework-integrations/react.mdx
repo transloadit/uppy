@@ -182,6 +182,31 @@ const [stepName, result, assembly] = results // strongly typed
 useUppyEvent(uppy, 'cancel-all', clearResults)
 ```
 
+#### `useUppyContext()`
+
+Returns the [context value](#uppycontextprovider) of the nearest
+`UppyContextProvider`: `uppy`, `status` and `progress`. Unlike
+`useContext(UppyContext)`, `uppy` is never `undefined`: the hook throws when
+it’s used outside a `UppyContextProvider`.
+
+```tsx
+import { useUppyContext } from '@uppy/react'
+
+function StartUpload() {
+  const { uppy, status, progress } = useUppyContext()
+
+  return (
+    <button
+      type="button"
+      onClick={() => uppy.upload()}
+      disabled={status !== 'ready'}
+    >
+      {status === 'uploading' ? `Uploading ${progress}%` : 'Upload'}
+    </button>
+  )
+}
+```
+
 <HooksShared />
 
 ## Examples
@@ -318,5 +343,133 @@ function Component({ userId }) {
   }, [uppy, userId])
 }
 ```
+
+### Example: image editor with `useImageEditor`
+
+A minimal editor for images picked with the headless `<Dropzone />` and shown in
+`<FilesList />`. See [`useImageEditor`](#useimageeditor-file-) for all the
+controls.
+
+```tsx
+import { useState } from 'react'
+import Uppy, { type UppyFile } from '@uppy/core'
+import ImageEditor from '@uppy/image-editor'
+import {
+  Dropzone,
+  FilesList,
+  UppyContextProvider,
+  useImageEditor,
+} from '@uppy/react'
+
+import '@uppy/react/css/style.css'
+import '@uppy/react/css/image-editor.css'
+
+function Editor({
+  file,
+  close,
+}: {
+  file: UppyFile<any, any>
+  close: () => void
+}) {
+  const editor = useImageEditor({ file })
+
+  return (
+    <div>
+      <img {...editor.getImageProps()} style={{ maxWidth: '100%' }} />
+      <input {...editor.getRotationSliderProps()} />
+      <button {...editor.getRotateButtonProps(90)}>Rotate</button>
+      <button {...editor.getFlipHorizontalButtonProps()}>Flip</button>
+      <button {...editor.getCropSquareButtonProps()}>Square</button>
+      <button {...editor.getResetButtonProps()}>Reset</button>
+      <button {...editor.getCancelButtonProps({ onClick: close })}>
+        Cancel
+      </button>
+      <button {...editor.getSaveButtonProps({ onClick: close })}>Save</button>
+    </div>
+  )
+}
+
+export function App() {
+  const [uppy] = useState(() => new Uppy().use(ImageEditor))
+  const [editing, setEditing] = useState<UppyFile<any, any> | null>(null)
+
+  return (
+    <UppyContextProvider uppy={uppy}>
+      {editing ? (
+        <Editor file={editing} close={() => setEditing(null)} />
+      ) : (
+        <>
+          <Dropzone />
+          <FilesList
+            editFile={(file) => {
+              if (file.type.startsWith('image/')) setEditing(file)
+            }}
+          />
+        </>
+      )}
+    </UppyContextProvider>
+  )
+}
+```
+
+### Example: Google Drive Picker with `useGooglePicker`
+
+A button that opens Google Drive’s picker. The `GoogleDrivePicker` options are
+explained in the [Google Drive Picker docs](/docs/google-drive-picker). For
+Google Photos, add `@uppy/google-photos-picker` and use
+`pickerType: 'photos'`. Add an uploader plugin, such as
+[`@uppy/tus`](/docs/tus), to upload the picked files.
+
+```tsx
+import { useState } from 'react'
+import Uppy from '@uppy/core'
+import GoogleDrivePicker from '@uppy/google-drive-picker'
+import { UppyContextProvider, useGooglePicker } from '@uppy/react'
+
+function GoogleDriveButton() {
+  const drive = useGooglePicker({ pickerType: 'drive' })
+
+  return (
+    <>
+      <button
+        type="button"
+        onClick={() => drive.show()}
+        disabled={drive.loading}
+      >
+        Import from Google Drive
+      </button>
+      {drive.accessToken && (
+        <button type="button" onClick={() => drive.logout()}>
+          Sign out of Google
+        </button>
+      )}
+    </>
+  )
+}
+
+export function App() {
+  const [uppy] = useState(() =>
+    new Uppy().use(GoogleDrivePicker, {
+      companionUrl: 'https://your-companion.com',
+      clientId: 'From Google Developer Console',
+      apiKey: 'From Google Developer Console',
+      appId: 'From Google Developer Console',
+    }),
+  )
+
+  return (
+    <UppyContextProvider uppy={uppy}>
+      <GoogleDriveButton />
+    </UppyContextProvider>
+  )
+}
+```
+
+:::note
+
+If you pass `storage`, create it outside the component (or memoize it). A new
+object on every render makes the hook set itself up again on every render.
+
+:::
 
 [react]: https://facebook.github.io/react

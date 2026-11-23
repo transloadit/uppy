@@ -145,4 +145,116 @@ All hooks must be used within a `UppyContextProvider`.
 
 <HooksShared />
 
+## Examples
+
+`useImageEditor` and `useGooglePicker` return a ref. Templates unwrap it, so you
+can write `editor.getImageProps()` there; in `<script>`, use `editor.value`.
+
+### Example: image editor with `useImageEditor`
+
+A minimal editor component. See [`useImageEditor`](#useimageeditor-file-) for
+all the controls. The hook reads `file` once, so give the component a `key`
+when the file can change.
+
+```vue
+<!-- ImageEditor.vue -->
+<script setup lang="ts">
+import type { UppyFile } from '@uppy/core'
+import { useImageEditor } from '@uppy/vue'
+
+const props = defineProps<{ file: UppyFile<any, any> }>()
+const emit = defineEmits<{ close: [] }>()
+
+const editor = useImageEditor({ file: props.file })
+const close = () => emit('close')
+</script>
+
+<template>
+  <img v-bind="editor.getImageProps()" style="max-width: 100%" />
+  <input v-bind="editor.getRotationSliderProps()" />
+  <button v-bind="editor.getRotateButtonProps(90)">Rotate</button>
+  <button v-bind="editor.getFlipHorizontalButtonProps()">Flip</button>
+  <button v-bind="editor.getCropSquareButtonProps()">Square</button>
+  <button v-bind="editor.getResetButtonProps()">Reset</button>
+  <button v-bind="editor.getCancelButtonProps({ onClick: close })">
+    Cancel
+  </button>
+  <button v-bind="editor.getSaveButtonProps({ onClick: close })">Save</button>
+</template>
+```
+
+Render it inside an `UppyContextProvider` whose Uppy instance has the
+`ImageEditor` plugin, for example from `<FilesList />`:
+
+```vue
+<script setup lang="ts">
+import { ref } from 'vue'
+import Uppy, { type UppyFile } from '@uppy/core'
+import ImageEditor from '@uppy/image-editor'
+import { Dropzone, FilesList, UppyContextProvider } from '@uppy/vue'
+import Editor from './ImageEditor.vue'
+
+const uppy = new Uppy().use(ImageEditor)
+const editing = ref<UppyFile<any, any> | null>(null)
+
+function editFile(file: UppyFile<any, any>) {
+  if (file.type.startsWith('image/')) editing.value = file
+}
+</script>
+
+<template>
+  <UppyContextProvider :uppy="uppy">
+    <Editor
+      v-if="editing"
+      :key="editing.id"
+      :file="editing"
+      @close="editing = null"
+    />
+    <template v-else>
+      <Dropzone />
+      <FilesList :edit-file="editFile" />
+    </template>
+  </UppyContextProvider>
+</template>
+
+<style src="@uppy/vue/css/style.css"></style>
+<style src="@uppy/vue/css/image-editor.css"></style>
+```
+
+### Example: Google Drive Picker with `useGooglePicker`
+
+A button that opens Google Drive’s picker. Render it inside an
+`UppyContextProvider` whose Uppy instance has the `GoogleDrivePicker` plugin,
+set up as explained in the [Google Drive Picker docs](/docs/google-drive-picker):
+
+```js
+new Uppy().use(GoogleDrivePicker, {
+  companionUrl: 'https://your-companion.com',
+  clientId: 'From Google Developer Console',
+  apiKey: 'From Google Developer Console',
+  appId: 'From Google Developer Console',
+})
+```
+
+For Google Photos, use `@uppy/google-photos-picker` and
+`pickerType: 'photos'`. Add an uploader plugin, such as
+[`@uppy/tus`](/docs/tus), to upload the picked files.
+
+```vue
+<script setup lang="ts">
+import { useGooglePicker } from '@uppy/vue'
+
+const drive = useGooglePicker({ pickerType: 'drive' })
+</script>
+
+<template>
+  <button type="button" :disabled="drive.loading" @click="drive.show()">
+    Import from Google Drive
+  </button>
+  <button v-if="drive.accessToken" type="button" @click="drive.logout()">
+    Sign out of Google
+  </button>
+</template>
+```
+
 [vue]: https://vuejs.org
