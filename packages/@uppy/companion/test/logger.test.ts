@@ -96,6 +96,13 @@ describe('Test Logger secret mask', () => {
     expect(loggedMessage.includes('TOBEMasKED2')).toBe(false)
   })
 
+  test('masks a secret that escape sequences were inserted into', () => {
+    const loggedMessage = captureConsoleLog(() => {
+      logger.info('leaked ToBe\u001b[0mMasked1')
+    })
+    expect(loggedMessage).toBe('leaked ******')
+  })
+
   test('escape regex characters from secret values before masking them', () => {
     const loggedMessage = captureConsoleLog(() => {
       logger.warn(
@@ -148,13 +155,13 @@ describe('log message bounds and error formatting', () => {
     for (const [prefix] of records) expect(prefix).toContain('id tag')
   })
 
-  test('keeps tabs, and escapes other terminal controls, colour codes too', () => {
+  test('keeps tabs, drops escape sequences and escapes other controls', () => {
     const [record] = captureRecords(() => {
-      logger.info('a\tb \u001b[8mhidden \u001b]52;c;eA==\u0007 \u009b \u0000')
+      logger.info(
+        'a\tb \u001b[8mhidden \u001b]52;c;eA==\u0007 \u001b[31mred\u001b[0m \u0007 \u0000',
+      )
     })
-    expect(record?.[1]).toBe(
-      'a\tb \\u001b[8mhidden \\u001b]52;c;eA==\\u0007 \\u009b \\u0000',
-    )
+    expect(record?.[1]).toBe('a\tb hidden  red \\u0007 \\u0000')
   })
 
   test('caps the records one message takes', () => {
