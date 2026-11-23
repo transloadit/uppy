@@ -9,5 +9,7 @@ export default {
     uploadFiles: 'Upload files',
     storing: 'Storing…',
     storageNotConnected: 'Connect to Transloadit Storage before uploading',
+    uploadQueuedElsewhere:
+      'Upload or remove the queued files first: they go to another folder',
   },
 }

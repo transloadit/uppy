@@ -1,4 +1,4 @@
-import type { Body, Meta, UploadResult, Uppy } from '@uppy/core'
+import type { Body, Meta, UploadResult, Uppy, UppyFile } from '@uppy/core'
 import type {
   ProviderAction,
   ProviderToolbarAction,
@@ -41,7 +41,8 @@ export type TransloaditStorageOptions<
   /** Server-authorized, version-pinned original URL with Content-Disposition: attachment. */
   getDownloadUrl?: (key: string) => Promise<string>
   /**
-   * Store uploads in the folder that is open in this panel, through an
+   * Store uploads in the folder that was open in this panel when they were
+   * added (see `uploadFolderKey`), through an
    * `@uppy/transloadit` plugin installed on the same Uppy instance. You sign
    * the Assembly params (server-side, ideally); see `createStoreAssemblyOptions`
    * to wire it yourself instead.
@@ -152,8 +153,57 @@ export default class TransloaditStorage<
   override get acceptsFileDrops(): boolean {
     return (
       this.opts.mode !== 'manager' &&
-      (this.opts.storeUploads == null || this.canWrite)
+      (this.opts.storeUploads == null ||
+        (this.canWrite && this.#storesInOpenFolder()))
     )
+  }
+
+  /** The folder the queued files were added in; see `uploadFolderKey`. */
+  #addedIn: string | undefined
+
+  /**
+   * The storage key prefix uploads are stored under: the folder that was open
+   * when the first of the queued files was added, so navigating meanwhile (or
+   * reopening the panel elsewhere) does not move them. With nothing queued,
+   * the open folder.
+   *
+   * @experimental `@uppy/transloadit-storage` is experimental: its options,
+   * behaviour and Companion endpoints will change incompatibly, also in
+   * minor releases.
+   */
+  get uploadFolderKey(): string {
+    const queued = this.uppy
+      .getFiles()
+      .some((file) => !file.progress.uploadComplete)
+    return queued && this.#addedIn !== undefined
+      ? this.#addedIn
+      : openFolderKey(this)
+  }
+
+  /**
+   * Whether files added now would be stored in the folder the panel shows:
+   * not while the next folder is still listing (`currentFolderId` is still
+   * the previous one), nor while files queued in another folder wait.
+   */
+  #storesInOpenFolder(): boolean {
+    return (
+      !this.getPluginState().loading &&
+      this.uploadFolderKey === openFolderKey(this)
+    )
+  }
+
+  /** A new queue is stored in the folder open when its first files arrive. */
+  #onFilesAdded = (files: UppyFile<M, B>[]): void => {
+    const added = new Set(files.map((file) => file.id))
+    const alreadyQueued = this.uppy
+      .getFiles()
+      .some((file) => !added.has(file.id) && !file.progress.uploadComplete)
+    if (alreadyQueued) return
+    // Before the session is connected its root is unknown: the Assembly
+    // settles it then (see `createStoreAssemblyOptions`).
+    this.#addedIn = this.getPluginState().authenticated
+      ? openFolderKey(this)
+      : undefined
   }
 
   override builtInActions(): ProviderAction<M, B>[] {
@@ -213,10 +263,15 @@ export default class TransloaditStorage<
         // The host app can take over (e.g. a full Dashboard modal with remote
         // sources); otherwise a plain file picker owned by the widget. Either
         // way files go into the folder that is open (storeUploads builds the
-        // Assembly params).
+        // Assembly params). The view does not run it while a folder lists.
         run: () => {
-          if (onUploadRequest) onUploadRequest({ prefix: openFolderKey(this) })
-          else this.#pickFiles()
+          if (onUploadRequest) {
+            onUploadRequest({ prefix: openFolderKey(this) })
+          } else if (this.#storesInOpenFolder()) {
+            this.#pickFiles()
+          } else {
+            this.uppy.info(this.i18n('uploadQueuedElsewhere'), 'info', 5000)
+          }
         },
       },
       ...actions,
@@ -265,11 +320,13 @@ export default class TransloaditStorage<
       })
     }
     super.install()
+    this.uppy.on('files-added', this.#onFilesAdded)
     if (reopenAfterUpload) this.uppy.on('complete', this.#reopenAfterUpload)
   }
 
   override uninstall(): void {
     this.uppy.off('complete', this.#reopenAfterUpload)
+    this.uppy.off('files-added', this.#onFilesAdded)
     super.uninstall()
   }
 

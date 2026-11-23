@@ -102,7 +102,8 @@ export function buildStoreAssemblyParams(
 
 /**
  * Builds the `assemblyOptions` function for `@uppy/transloadit` that stores
- * every upload in the folder currently open in the Transloadit Storage panel.
+ * every upload in the Transloadit Storage folder they were added in (see
+ * `uploadFolderKey`).
  * The params are built unsigned; `signAssembly` turns them into what the
  * Transloadit plugin sends.
  *
@@ -134,7 +135,7 @@ export function createStoreAssemblyOptions<M extends Meta, B extends Body>(
     }
     return options.signAssembly(
       buildStoreAssemblyParams(
-        openFolderKey(storage),
+        storage.uploadFolderKey,
         options.conflictStrategy,
       ),
     )

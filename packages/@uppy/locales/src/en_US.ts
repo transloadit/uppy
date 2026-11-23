@@ -299,6 +299,8 @@ en_US.strings = {
     '1': 'Uploading %{smart_count} files',
   },
   uploadPaused: 'Upload paused',
+  uploadQueuedElsewhere:
+    'Upload or remove the queued files first: they go to another folder',
   uploadStalled:
     'Upload has not made any progress for %{seconds} seconds. You may want to retry it.',
   uploadXFiles: {

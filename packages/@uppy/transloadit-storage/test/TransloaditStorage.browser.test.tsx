@@ -213,6 +213,140 @@ describe('Transloadit Storage in the browser', () => {
       .toEqual(['dropped.txt'])
   })
 
+  it('offers no folder-dependent writes while the next folder is still listing', async () => {
+    const onUploadRequest = vi.fn()
+    setup({ onUploadRequest })
+    await page.getByRole('tab', { name: 'Transloadit Storage' }).click()
+    await expect.element(page.getByText('readme.md')).toBeVisible()
+
+    // Hold the listing of docs/ until released (then the mock answers it).
+    let release = () => {}
+    const held = new Promise<void>((resolve) => {
+      release = resolve
+    })
+    network.use(
+      http.get(`${COMPANION}/transloadit-storage/list/docs%2F`, async () => {
+        await held
+      }),
+    )
+    await page.getByText('docs', { exact: true }).click()
+    const upload = page.getByRole('button', { name: 'Upload files' })
+    await expect.element(upload).toBeDisabled()
+    const plugin =
+      uppy!.getPlugin<TransloaditStorage<any, any>>('TransloaditStorage')!
+    // An impatient second click aborts the first listing: still loading.
+    void plugin.view.openFolder('docs%2F')
+    await new Promise((resolve) => setTimeout(resolve, 100))
+    await expect.element(upload).toBeDisabled()
+    // Not through the view either (a headless UI), and not with the root.
+    const action = plugin.view.opts.toolbarActions!.find(
+      (a) => a.id === 'transloadit:uploadFiles',
+    )!
+    await plugin.view.runToolbarAction(action)
+    expect(onUploadRequest).not.toHaveBeenCalled()
+
+    release()
+    await expect.element(page.getByText('hello.txt')).toBeVisible()
+    await upload.click()
+    expect(onUploadRequest).toHaveBeenCalledWith({ prefix: 'docs/' })
+  })
+
+  it('stores queued files in the folder they were added in, and takes no drops while that is unsettled', async () => {
+    network.use(
+      ...toMswHandlers(createMockS3Companion({ token: TOKEN }), COMPANION, {
+        http,
+      }),
+    )
+    const target = document.createElement('div')
+    document.body.appendChild(target)
+    uppy = new Uppy()
+      .use(FixtureUploader, {})
+      .use(Dashboard, { target, inline: true })
+      .use(TransloaditStorage, {
+        companionUrl: COMPANION,
+        storeUploads: {
+          signAssembly: async (params) => ({ params, signature: 'test' }),
+        },
+      })
+    const plugin =
+      uppy.getPlugin<TransloaditStorage<any, any>>('TransloaditStorage')!
+    const dashboard =
+      uppy.getPlugin<Dashboard<Record<string, unknown>, Record<string, never>>>(
+        'Dashboard',
+      )!
+    const storedPath = async () => {
+      const build = uppy!.getPlugin<FixtureUploader>('Transloadit')!.opts
+        .assemblyOptions as () => Promise<{
+        params: { steps: { stored: { path: string } } }
+      }>
+      return (await build()).params.steps.stored.path
+    }
+    const drop = (name: string) => {
+      const panel = document.querySelector(
+        '[data-uppy-panelType="PickerPanel"]',
+      )
+      if (!panel) throw new Error('Missing picker panel')
+      const dataTransfer = new DataTransfer()
+      dataTransfer.items.add(new File(['hi'], name))
+      for (const type of ['dragover', 'drop']) {
+        panel.dispatchEvent(
+          new DragEvent(type, {
+            bubbles: true,
+            cancelable: true,
+            dataTransfer,
+          }),
+        )
+      }
+    }
+    const fileNames = () => uppy?.getFiles().map((file) => file.name)
+
+    await page.getByRole('tab', { name: 'Transloadit Storage' }).click()
+    await expect.element(page.getByText('readme.md')).toBeVisible()
+
+    // While docs/ lists, the panel still has the root open: no drops.
+    let release = () => {}
+    const held = new Promise<void>((resolve) => {
+      release = resolve
+    })
+    network.use(
+      http.get(`${COMPANION}/transloadit-storage/list/docs%2F`, async () => {
+        await held
+      }),
+    )
+    await page.getByText('docs', { exact: true }).click()
+    await vi.waitFor(() => expect(plugin.getPluginState().loading).toBeTruthy())
+    expect(plugin.acceptsFileDrops).toBe(false)
+    drop('too-early.txt')
+    expect(fileNames()).toEqual([])
+    release()
+    await expect.element(page.getByText('hello.txt')).toBeVisible()
+
+    // Added in docs/: stored there, even when the panel is at the root by
+    // the time the upload starts.
+    drop('report.txt')
+    await expect.poll(fileNames).toEqual(['report.txt'])
+    dashboard.showPanel('TransloaditStorage')
+    await plugin.view.openFolder(plugin.rootFolderId)
+    // biome-ignore lint/suspicious/noTemplateCurlyInString: a Transloadit placeholder.
+    expect(await storedPath()).toBe('docs/${file.name}')
+    // New files here would silently join docs/: the panel refuses them.
+    expect(plugin.acceptsFileDrops).toBe(false)
+    await page.getByRole('button', { name: 'Upload files' }).click()
+    expect(uppy.getState().info.map((info) => info.message)).toContain(
+      'Upload or remove the queued files first: they go to another folder',
+    )
+
+    // Once nothing is queued, the folder open then decides again.
+    uppy.clear()
+    expect(plugin.acceptsFileDrops).toBe(true)
+    dashboard.showPanel('TransloaditStorage')
+    await expect.element(page.getByText('readme.md')).toBeVisible()
+    drop('root.txt')
+    await expect.poll(fileNames).toEqual(['root.txt'])
+    // biome-ignore lint/suspicious/noTemplateCurlyInString: a Transloadit placeholder.
+    expect(await storedPath()).toBe('${file.name}')
+  })
+
   it('renames a folder in one native move instead of walking it', async () => {
     // Manager mode is headless, as in a file library using `useS3Manager`.
     const companion = createMockS3Companion({ token: TOKEN })
