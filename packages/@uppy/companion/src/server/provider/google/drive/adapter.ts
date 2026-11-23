@@ -1,6 +1,6 @@
 import type { Query } from '../../Provider.js'
 
-import { getNextPagePath } from '../../../helpers/utils.js'
+import querystring from 'node:querystring'
 
 export type DriveItem = {
   kind?: string
@@ -172,17 +172,34 @@ const getItemThumbnailUrl = (item: DriveItem) => {
 
 const getDriveNextPagePath = (
   data: DriveListResponse,
+  sharedDrives: DriveSharedDrivesResponse | null | undefined,
   currentQuery: Query | undefined,
   currentPath: string | undefined,
 ): string | null => {
-  if (!data.nextPageToken) {
+  const query: Record<string, string | string[]> = {}
+  for (const [key, value] of Object.entries(currentQuery ?? {})) {
+    if (
+      typeof value === 'string' ||
+      (Array.isArray(value) && value.every((item) => typeof item === 'string'))
+    ) {
+      query[key] = value
+    }
+  }
+  delete query['cursor']
+  delete query['sharedDriveCursor']
+  delete query['fileCursor']
+  if (
+    typeof sharedDrives?.nextPageToken === 'string' &&
+    sharedDrives.nextPageToken
+  ) {
+    query['sharedDriveCursor'] = sharedDrives.nextPageToken
+    if (data.nextPageToken) query['fileCursor'] = data.nextPageToken
+  } else if (data.nextPageToken) {
+    query['cursor'] = data.nextPageToken
+  } else {
     return null
   }
-  return getNextPagePath(
-    currentPath ?? '',
-    currentQuery ?? {},
-    data.nextPageToken,
-  )
+  return `${currentPath}?${querystring.stringify(query)}`
 }
 
 const getImageHeight = (item: DriveItem) => item.imageMediaMetadata?.height
@@ -255,6 +272,11 @@ export const adaptData = (
   return {
     username: getUsername(about),
     items: adaptedItems,
-    nextPagePath: getDriveNextPagePath(listFilesResp, query, directory),
+    nextPagePath: getDriveNextPagePath(
+      listFilesResp,
+      sharedDrivesResp,
+      query,
+      directory,
+    ),
   }
 }

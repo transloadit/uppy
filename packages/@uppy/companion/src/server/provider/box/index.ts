@@ -54,11 +54,10 @@ function list({
   query?: Query | undefined
   token: string
 }): Promise<Parameters<typeof adaptData>[0]> {
-  const rootFolderID = '0'
   const cursor =
     typeof query?.['cursor'] === 'string' ? query?.['cursor'] : undefined
   return getClient({ token })
-    .get(`folders/${pathSegment(directory || rootFolderID)}/items`, {
+    .get(`folders/${directory}/items`, {
       searchParams: {
         fields: BOX_FILES_FIELDS,
         offset: cursor,
@@ -99,12 +98,13 @@ export default class Box extends Provider<BoxUserSession> {
     companion,
   }: ProviderListOptions<BoxUserSession>): Promise<ProviderListResponse> {
     return this.#withErrorHandling('provider.box.list.error', async () => {
+      const folderId = pathSegment(directory || '0')
       const [userInfo, files] = await Promise.all([
         getUserInfo({ token }),
-        list({ directory, query, token }),
+        list({ directory: folderId, query, token }),
       ])
 
-      return adaptData(files, userInfo.login, companion)
+      return adaptData(files, userInfo.login, companion, directory)
     })
   }
 

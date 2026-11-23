@@ -6,6 +6,8 @@ import fs from 'node:fs'
 import http from 'node:http'
 import { PassThrough, Readable } from 'node:stream'
 
+import { S3Client } from '@aws-sdk/client-s3'
+import { Upload as S3Upload } from '@aws-sdk/lib-storage'
 import express from 'express'
 import nock from 'nock'
 import request from 'supertest'
@@ -586,6 +588,19 @@ describe('uploader', () => {
       uploader.removeEmitterListeners()
     })
 
+    test('cancel terminates an upload whose URL the client keeps unnormalized', async () => {
+      // tus-js-client resolves Location with url-parse, which keeps the space
+      Reflect.get(
+        tusClient,
+        '__setNextRequestUrl',
+      )('https://tus.endpoint/files/foo bar')
+      const { uploader, upload } = await startTusUpload(true)
+      await deliver('cancel', uploader.token)
+      await expect(upload).rejects.toThrow('Canceled')
+      expect(getTusSentRequests()).toEqual(['POST', 'DELETE'])
+      uploader.removeEmitterListeners()
+    })
+
     test('a paused upload resumes', async () => {
       const { uploader, upload } = await startTusUpload(true)
       await deliver('pause', uploader.token)
@@ -936,6 +951,83 @@ describe('uploader', () => {
         uploader.removeEmitterListeners()
       },
     )
+
+    test('an S3 upload with large parts may go longer without progress', async () => {
+      // lib-storage on Node reports progress only when a whole part is stored
+      vi.spyOn(S3Upload.prototype, 'done').mockReturnValue(
+        new Promise(() => {}),
+      )
+      const abort = vi.spyOn(S3Upload.prototype, 'abort').mockResolvedValue()
+      const uploader = new Uploader({
+        companionOptions: { ...companionOptions, streamingUpload: true },
+        protocol: 's3-multipart',
+        chunkSize: 100 * 1024 * 1024,
+        pathPrefix,
+        metadata: {},
+        s3: {
+          client: new S3Client({ region: 'us-east-1' }),
+          options: {
+            ...companionOptions.s3,
+            bucket: 'bucket',
+            getKey: () => 'key',
+          } as never,
+        },
+      })
+      const upload = uploader.uploadStream(new PassThrough(), requireMockReq())
+      const settled = vi.fn()
+      upload.then(settled, settled)
+      await vi.advanceTimersByTimeAsync(
+        PAUSED_TIMEOUT_MS + 2 * STALL_TIMEOUT_MS,
+      )
+      expect(settled).not.toHaveBeenCalled()
+      await cancel(uploader)
+      await expect(upload).rejects.toThrow('Canceled')
+      // so no further parts, or the completion, run after the client was told
+      expect(abort).toHaveBeenCalled()
+      uploader.removeEmitterListeners()
+    })
+
+    test('a multipart request whose body was sent is aborted on cancel', async () => {
+      nock.enableNetConnect('127.0.0.1')
+      const received = Promise.withResolvers<void>()
+      const closed = Promise.withResolvers<void>()
+      const endpoint = http.createServer((req) => {
+        req.resume()
+        req.on('end', () => received.resolve())
+        req.socket.on('close', () => closed.resolve())
+      })
+      await new Promise<void>((resolve) =>
+        endpoint.listen(0, '127.0.0.1', resolve),
+      )
+      const { port } = endpoint.address() as AddressInfo
+      try {
+        const uploader = new Uploader({
+          companionOptions: {
+            ...companionOptions,
+            streamingUpload: true,
+            uploadUrls: [`http://127.0.0.1:${port}/`],
+          },
+          endpoint: `http://127.0.0.1:${port}/`,
+          protocol: 'multipart',
+          size: 5,
+          metadata: {},
+          pathPrefix,
+        })
+        const upload = uploader.uploadStream(
+          Readable.from([Buffer.from('hello')]),
+          requireMockReq(),
+        )
+        upload.catch(() => {})
+        await received.promise
+        await cancel(uploader)
+        await expect(upload).rejects.toThrow('Canceled')
+        await closed.promise
+        uploader.removeEmitterListeners()
+      } finally {
+        endpoint.close()
+        nock.enableNetConnect()
+      }
+    })
 
     test('a multipart destination that takes minutes to answer still succeeds', async () => {
       nock.enableNetConnect('127.0.0.1')
@@ -1376,6 +1468,67 @@ describe('uploader', () => {
         },
       }),
     ).resolves.toMatchObject({ extraData: { bytesUploaded: 17 } })
+  })
+
+  test('does not log the query of a failed multipart upload URL', async () => {
+    nock('http://localhost')
+      .put('/upload')
+      .query({ 'X-Amz-Signature': 'secret-signature' })
+      .reply(403, 'Forbidden')
+    using logged = vi.spyOn(console, 'log').mockImplementation(() => {})
+    const fileContent = Buffer.from('Some file content')
+    const stream = Readable.from([fileContent])
+    stream.pause()
+    const uploader = new Uploader({
+      companionOptions: { ...companionOptions, streamingUpload: true },
+      endpoint: 'http://localhost/upload?X-Amz-Signature=secret-signature',
+      protocol: 'multipart',
+      httpMethod: 'PUT',
+      size: fileContent.length,
+      metadata: {},
+      pathPrefix,
+    })
+    await expect(
+      uploader.uploadStream(stream, requireMockReq()),
+    ).rejects.toThrow()
+    const output = logged.mock.calls.flat().join(' ')
+    expect(output).not.toContain('secret-signature')
+    expect(output).toContain('status 403')
+  })
+
+  test('multipart uploads preserve large buffer views with a byte offset', async () => {
+    const backing = Buffer.alloc(100_100, 0x58)
+    backing.fill(0x41, 100)
+    const fileContent = backing.subarray(100)
+    let received = Buffer.alloc(0)
+    await using server = http.createServer((req, res) => {
+      const chunks: Buffer[] = []
+      req.on('data', (chunk: Buffer) => chunks.push(chunk))
+      req.on('end', () => {
+        received = Buffer.concat(chunks)
+        res.end('ok')
+      })
+    })
+    await new Promise<void>((resolve) => server.listen(0, '127.0.0.1', resolve))
+    const stream = Readable.from([fileContent])
+    stream.pause()
+    const uploader = new Uploader({
+      companionOptions: { ...companionOptions, streamingUpload: true },
+      endpoint: `http://127.0.0.1:${(server.address() as AddressInfo).port}/`,
+      protocol: 'multipart',
+      useFormData: true,
+      size: fileContent.length,
+      metadata: {},
+      pathPrefix,
+    })
+    await uploader.uploadStream(stream, requireMockReq())
+    const bodyStart = received.indexOf('\r\n\r\n') + 4
+    expect(bodyStart).toBeGreaterThan(3)
+    expect(
+      received
+        .subarray(bodyStart, bodyStart + fileContent.length)
+        .equals(fileContent),
+    ).toBe(true)
   })
 
   const formDataNoMetaMatch =

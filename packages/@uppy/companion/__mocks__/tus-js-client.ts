@@ -127,6 +127,8 @@ export class Upload {
       await onBeforeRequest({ getURL: () => url, getMethod: () => method })
     }
     sentRequests.push(method)
+    // like the real client, which then uses the Location it got back
+    if (method === 'POST') this.url = url
     // The server answers at once: in hang mode the upload then waits for its
     // source, as the real client does while it reads the next chunk.
     const onAfterResponse = this.options['onAfterResponse']

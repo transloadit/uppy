@@ -31,7 +31,7 @@ jobs:
       - uses: actions/setup-node@v7
         with:
           node-version-file: .node-version
-          registry-url: "https://registry.npmjs.org"
+          registry-url: 'https://registry.npmjs.org'
       - run: npm install --global corepack@0.36.0
 
       - run: corepack yarn --mode=update-lockfile
@@ -48,8 +48,8 @@ jobs:
         with:
           version-script: corepack yarn run version
           publish-script: corepack yarn run release
-          commit-message: "[ci] release"
-          pr-title: "[ci] release"
+          commit-message: '[ci] release'
+          pr-title: '[ci] release'
           github-token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Check if Companion was released

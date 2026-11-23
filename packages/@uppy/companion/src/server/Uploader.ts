@@ -12,10 +12,11 @@ import { once } from 'node:events'
 import { createReadStream, createWriteStream, ReadStream } from 'node:fs'
 import { stat, unlink } from 'node:fs/promises'
 import { join } from 'node:path'
-import { Transform } from 'node:stream'
+import { Readable, Transform } from 'node:stream'
 import { pipeline } from 'node:stream/promises'
 
 import { Upload } from '@aws-sdk/lib-storage'
+import { FormDataEncoder } from 'form-data-encoder'
 import { FormData } from 'formdata-node'
 import got from 'got'
 import throttle from 'lodash/throttle.js'
@@ -238,6 +239,15 @@ function validateOptions(
   }
 }
 
+/** tus-js-client keeps an upload URL as url-parse formats it; compare the WHATWG form. */
+function whatwgUrl(url: string): string {
+  try {
+    return new URL(url).href
+  } catch {
+    return url
+  }
+}
+
 /**
  * Passes a one-shot body stream through a byte count. `check` gets the count
  * so far after each chunk, and once more with `ended` when the source ends;
@@ -301,6 +311,13 @@ function limitToAnnouncedSize(
 // stops moving must not wait forever.
 export const STALL_TIMEOUT_MS = 2 * 60 * 1000
 export const PAUSED_TIMEOUT_MS = 10 * 60 * 1000
+// lib-storage reports S3 progress only when a whole part is stored, so an S3
+// upload may go this long without progress for each byte of its parts in flight.
+const MIN_S3_BYTES_PER_SECOND = 64 * 1024
+// lib-storage's defaults
+const S3_MIN_PART_SIZE = 5 * 1024 * 1024
+const S3_MAX_PARTS = 10_000
+const S3_QUEUE_SIZE = 4
 
 const states = {
   idle: 'idle',
@@ -450,7 +467,8 @@ export default class Uploader {
       logger.debug('Received from client: cancel', 'uploader', this.shortToken)
       if (this.tus) {
         const shouldTerminate =
-          this.tus.url != null && this.tus.url === this.#createdTusUrl
+          this.tus.url != null &&
+          whatwgUrl(this.tus.url) === this.#createdTusUrl
         this.tus.abort(shouldTerminate).catch(() => {})
       }
       this.#canceled = true
@@ -529,6 +547,12 @@ export default class Uploader {
   /** A tus request has been sent and its response has not arrived yet. */
   #requestPending = false
 
+  /** How long a pending request may go without progress. */
+  #requestPendingLimitMs = PAUSED_TIMEOUT_MS
+
+  /** Stops the multipart or S3 request in flight. */
+  #abortRequest: (() => void) | undefined
+
   /** When the tus transfer last moved: a request, a response, or progress. */
   #activityAt = 0
 
@@ -548,8 +572,9 @@ export default class Uploader {
    * (any protocol) the limit is PAUSED_TIMEOUT_MS instead. Neither
    * tus-js-client nor our multipart and S3 uploads have a request timeout, so
    * this is also what ends a request the server never answers. A multipart or
-   * S3 upload is one request from start to finish, so it always gets
-   * PAUSED_TIMEOUT_MS: the shorter limit only applies to tus.
+   * S3 upload is one request from start to finish, so it always gets the
+   * longer limit (more for S3 with large parts): the shorter one only applies
+   * to tus.
    */
   #watchTransfer(): () => void {
     let last: string | undefined
@@ -566,7 +591,9 @@ export default class Uploader {
         this.#activityAt = Date.now()
         return
       }
-      const limit = this.#requestPending ? PAUSED_TIMEOUT_MS : STALL_TIMEOUT_MS
+      const limit = this.#requestPending
+        ? this.#requestPendingLimitMs
+        : STALL_TIMEOUT_MS
       if (Date.now() - this.#activityAt < limit) return
       this.tus?.abort().catch(() => {})
       this.abortReadStream(new Error('Upload stalled'))
@@ -594,6 +621,9 @@ export default class Uploader {
   abortReadStream(err: Error): void {
     this.#uploadState = states.done
     if (this.readStream) this.readStream.destroy(err)
+    // A request whose body was sent no longer reads the stream, so stop it too:
+    // it must not finish after the client was told the upload failed.
+    this.#abortRequest?.()
     // A stream that already ended emits no 'error', so settle the upload here.
     this.#rejectUpload?.(err)
   }
@@ -1210,10 +1240,11 @@ export default class Uploader {
 
     const url = this.options.endpoint
     let framingError: Error | undefined
+    const controller = new AbortController()
+    this.#abortRequest = () => controller.abort()
     const reqOptions: OptionsOfTextResponseBody = {
+      signal: controller.signal,
       headers: headerSanitize(this.options.headers),
-      isStream: false,
-      resolveBodyOnly: false,
       responseType: 'text',
       // The body is a one-shot stream (or FormData wrapping one). got retries
       // PUT on network errors by default; the retry fired after this promise
@@ -1250,8 +1281,13 @@ export default class Uploader {
         },
       })
 
-      // @ts-expect-error This type error will be resolved by updating to the latest `got`.
-      reqOptions.body = formData
+      // Stay on form-data-encoder 2: version 4 splits byte arrays over 64 KiB
+      // by slicing the backing ArrayBuffer without the view's byteOffset, which
+      // sends the wrong bytes for a Buffer that is a view into a larger one.
+      // @ts-expect-error Version 2 types entries() as a Generator; formdata-node returns an IterableIterator.
+      const encoder = new FormDataEncoder(formData)
+      reqOptions.headers = { ...reqOptions.headers, ...encoder.headers }
+      reqOptions.body = Readable.from(encoder)
     } else {
       if (this.size != null) {
         reqOptions.headers = {
@@ -1298,7 +1334,6 @@ export default class Uploader {
       // A body that did not match the announced size is our own error; surface
       // it rather than got's generic request failure.
       if (framingError) throw framingError
-      logger.error(err, 'upload.multipart.error')
       const errObj = isRecord(err) ? err : null
       const response =
         errObj && isRecord(errObj['response']) ? errObj['response'] : null
@@ -1306,6 +1341,17 @@ export default class Uploader {
         response && typeof response['statusCode'] === 'number'
           ? response['statusCode']
           : undefined
+      // Got's HTTPError message names the full URL, so a presigned query
+      // (signature included) would end up in the log. Our own abort isn't
+      // logged: the upload has already failed with the reason.
+      if (!controller.signal.aborted) {
+        logger.error(
+          statusCode != null
+            ? `Upload destination answered with status ${statusCode}`
+            : err,
+          'upload.multipart.error',
+        )
+      }
 
       if (statusCode != null) {
         const statusMessage =
@@ -1360,8 +1406,23 @@ export default class Uploader {
       ...(this.options.chunkSize != null && {
         partSize: this.options.chunkSize,
       }),
+      queueSize: S3_QUEUE_SIZE,
       leavePartsOnError: true, // https://github.com/aws/aws-sdk-js-v3/issues/2311
     })
+    // Stops further parts and the completion of a multipart upload. lib-storage
+    // can't stop a request already sent, so a file that fits in one part (a
+    // single PutObject) may still be stored.
+    this.#abortRequest = () => {
+      upload.abort().catch(() => {})
+    }
+    // the part size lib-storage uses when none is given
+    const partSize =
+      this.options.chunkSize ??
+      Math.max(S3_MIN_PART_SIZE, Math.ceil((this.size ?? 0) / S3_MAX_PARTS))
+    this.#requestPendingLimitMs = Math.max(
+      PAUSED_TIMEOUT_MS,
+      ((S3_QUEUE_SIZE * partSize) / MIN_S3_BYTES_PER_SECOND) * 1000,
+    )
 
     upload.on('httpUploadProgress', ({ loaded, total }) => {
       this.onProgress(loaded, total)
