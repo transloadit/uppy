@@ -16,25 +16,41 @@ import * as oAuthState from '../helpers/oauth-state.js'
 import logger from '../logger.js'
 
 /**
- * Tell the Uppy client waiting on this session's login, if any, that it
- * failed. Only new Uppy clients set an authCallbackToken in the state and
- * wait on a socket; they close the login window themselves.
+ * Answer a failed login so the Uppy client waiting on this session's login
+ * hears about it. Clients that set an authCallbackToken wait on a socket and
+ * close the login window themselves; older ones get a postMessage. Returns
+ * false, leaving the response to the caller, when the session has no state
+ * of ours.
  */
-export function notifyLoginFailed(
+export function sendLoginFailed(
   req: Request,
+  res: Response,
   secret: string | Buffer,
+  status = 400,
 ): boolean {
   const { state } = oAuthState.getGrantDynamicFromRequest(req)
-  let authCallbackToken: string | undefined
+  let decoded: oAuthState.OAuthState | undefined
   try {
-    authCallbackToken =
-      state && oAuthState.getFromState(state, 'authCallbackToken', secret)
+    decoded = state ? oAuthState.decodeState(state, secret) : undefined
   } catch {
     // Grant stores a `state` passed to /connect as is, so it can be anything.
     return false
   }
-  if (!authCallbackToken) return false
-  emitter().emit(authCallbackToken, { error: true })
+  if (!decoded) return false
+  if (decoded.authCallbackToken) {
+    emitter().emit(decoded.authCallbackToken, { error: true })
+    res.status(status).send(authCallbackErrorHtml())
+  } else {
+    const { origin } = decoded
+    res
+      .status(status)
+      .send(
+        legacyAuthCallbackHtml(
+          { error: true },
+          typeof origin === 'string' ? origin : undefined,
+        ),
+      )
+  }
   return true
 }
 
@@ -48,10 +64,6 @@ export default function callback(req: Request, res: Response): void {
   const secret = req.companion.options.secret
 
   const grantDynamic = oAuthState.getGrantDynamicFromRequest(req)
-  const origin =
-    grantDynamic.state &&
-    oAuthState.getFromState(grantDynamic.state, 'origin', secret)
-  const originString = typeof origin === 'string' ? origin : undefined
 
   const grant = req.session?.grant
   const response = grant?.response
@@ -68,13 +80,8 @@ export default function callback(req: Request, res: Response): void {
       req.id,
     )
     logger.debug(response, 'callback.oauth.resp', req.id)
-    if (notifyLoginFailed(req, secret)) {
-      res.status(400).send(authCallbackErrorHtml())
-    } else {
-      // This is backwards compatible with old Uppy clients:
-      res
-        .status(400)
-        .send(legacyAuthCallbackHtml({ error: true }, originString))
+    if (!sendLoginFailed(req, res, secret)) {
+      res.status(400).send(legacyAuthCallbackHtml({ error: true }, undefined))
     }
 
     return

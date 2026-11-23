@@ -24,7 +24,7 @@ import {
   validateConfig,
 } from './config/companion.js'
 import grantConfigFn from './config/grant.js'
-import { notifyLoginFailed } from './server/controllers/callback.js'
+import { sendLoginFailed } from './server/controllers/callback.js'
 import googlePicker from './server/controllers/googlePicker.js'
 import * as controllers from './server/controllers/index.js'
 import s3 from './server/controllers/s3.js'
@@ -160,17 +160,6 @@ export function app(optionsArg: CompanionInitOptions): {
 
   app.get('/health', (_req, res) => res.end())
 
-  // A host app may already have inflated and parsed the body. Checking the
-  // encoding here is independent of whether our own parser consumes it.
-  app.use((req, res, next) => {
-    const encoding = req.get('content-encoding')
-    if (encoding && encoding.trim().toLowerCase() !== 'identity') {
-      res.sendStatus(415)
-      return
-    }
-    next()
-  })
-
   app.use(cookieParser()) // server tokens are added to cookies
 
   app.use((req, res, next) =>
@@ -194,7 +183,7 @@ export function app(optionsArg: CompanionInitOptions): {
     }
     const pendingProvider = req.session?.grant?.provider
     if (pendingProvider && pendingProvider !== oauthProvider) {
-      notifyLoginFailed(req, options.secret)
+      if (sendLoginFailed(req, res, options.secret)) return
       res.sendStatus(400)
       return
     }
@@ -206,8 +195,8 @@ export function app(optionsArg: CompanionInitOptions): {
     const input: Record<string, unknown> =
       Object.keys(req.query).length > 0 ? req.query : asRecord(req.body)
     if (input['code'] ? !req.session?.grant?.state : !input['error']) {
+      if (sendLoginFailed(req, res, options.secret)) return
       // Also what an expired session looks like: tell the user to retry.
-      notifyLoginFailed(req, options.secret)
       res
         .status(400)
         .send('This login did not start here or has expired. Please try again.')
@@ -221,6 +210,16 @@ export function app(optionsArg: CompanionInitOptions): {
   // See https://github.com/simov/grant#dynamic-http
   app.use(
     '/connect/:oauthProvider{/:override}',
+    // Our parsers don't inflate (`inflate: false`), but a host app's parser
+    // may already have, and Grant reads that body too.
+    (req, res, next) => {
+      const encoding = req.get('content-encoding')
+      if (encoding && encoding.trim().toLowerCase() !== 'identity') {
+        res.sendStatus(415)
+        return
+      }
+      next()
+    },
     express.urlencoded({
       extended: false,
       inflate: false,
@@ -232,7 +231,7 @@ export function app(optionsArg: CompanionInitOptions): {
         Object.hasOwn(grantConfig, provider) && provider !== 'defaults'
           ? (grantConfig[provider]?.dynamic ?? [])
           : undefined,
-      (req) => notifyLoginFailed(req, options.secret),
+      (req, res, status) => sendLoginFailed(req, res, options.secret, status),
     ),
     // before the credentials middleware, which fetches provider keys
     rejectUnstartedOAuthCallback,

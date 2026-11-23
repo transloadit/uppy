@@ -5,6 +5,7 @@ import type { Request } from '../../types/express.js'
 import { timingSafeEqual } from 'node:crypto'
 
 import { publishAuthCallback } from '../auth-callback.js'
+import emitter from '../emitter/index.js'
 import {
   authCallbackSuccessHtml,
   legacyAuthCallbackHtml,
@@ -59,7 +60,14 @@ export default async function sendToken(
           })
         })
       : isOriginAllowed(clientOrigin, allowedOrigins)
+  const authCallbackToken = oAuthState.getFromState(
+    state,
+    'authCallbackToken',
+    secret,
+  )
   if (!currentlyAllowed) {
+    // The pending token is gone: tell a waiting client the login failed.
+    if (authCallbackToken) emitter().emit(authCallbackToken, { error: true })
     res.sendStatus(403)
     return
   }
@@ -77,11 +85,6 @@ export default async function sendToken(
     return
   }
 
-  const authCallbackToken = oAuthState.getFromState(
-    state,
-    'authCallbackToken',
-    companion.options.secret,
-  )
   // only new Uppy clients will set an authCallbackToken in the state
   // in that case, we send the token through the emitter.
   if (authCallbackToken) {

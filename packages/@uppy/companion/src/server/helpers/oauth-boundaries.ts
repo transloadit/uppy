@@ -1,19 +1,26 @@
+import type { Response } from 'express'
+
 import type { Request, RequestHandler } from '../../types/express.js'
 
 import { isRecord } from './type-guards.js'
 
 /**
  * Prevent Grant from copying arbitrary or recursive input into the session.
- * `onRejectedCallback` runs before a rejected OAuth callback is answered.
+ * `answerRejectedCallback` may answer a rejected OAuth callback itself, and
+ * returns whether it did.
  */
 export function guardGrantInput(
   getDynamicFields: (provider: string) => readonly string[] | undefined,
-  onRejectedCallback: (req: Request) => void = () => {},
+  answerRejectedCallback: (
+    req: Request,
+    res: Response,
+    status: number,
+  ) => boolean = () => false,
 ): RequestHandler {
   return (req, res, next) => {
     const isCallback = req.params['override'] === 'callback'
     const reject = (status: number) => {
-      if (isCallback) onRejectedCallback(req)
+      if (isCallback && answerRejectedCallback(req, res, status)) return
       res.sendStatus(status)
     }
     const provider = req.params['oauthProvider']
