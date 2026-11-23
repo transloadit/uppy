@@ -24,12 +24,17 @@ import {
   validateConfig,
 } from './config/companion.js'
 import grantConfigFn from './config/grant.js'
+import { sendLoginFailed } from './server/controllers/callback.js'
 import googlePicker from './server/controllers/googlePicker.js'
 import * as controllers from './server/controllers/index.js'
 import s3 from './server/controllers/s3.js'
 import searchController from './server/controllers/search.js'
 import url from './server/controllers/url.js'
 import createEmitter from './server/emitter/index.js'
+import {
+  guardGrantInput,
+  requireOAuthNavigation,
+} from './server/helpers/oauth-boundaries.js'
 import { asRecord } from './server/helpers/type-guards.js'
 import { getURLBuilder } from './server/helpers/utils.js'
 import * as jobs from './server/jobs.js'
@@ -172,7 +177,17 @@ export function app(optionsArg: CompanionInitOptions): {
   }> = (req, res, next) => {
     const { oauthProvider, override } = req.params
     // override === 'callback' is Grant's own callback URL, matched the way Grant matches it
-    if (override !== 'callback' || grantConfig[oauthProvider]?.oauth === 1) {
+    if (override !== 'callback') {
+      next()
+      return
+    }
+    const pendingProvider = req.session?.grant?.provider
+    if (pendingProvider && pendingProvider !== oauthProvider) {
+      if (sendLoginFailed(req, res, options.secret)) return
+      res.sendStatus(400)
+      return
+    }
+    if (pendingProvider && grantConfig[pendingProvider]?.oauth === 1) {
       next()
       return
     }
@@ -180,6 +195,7 @@ export function app(optionsArg: CompanionInitOptions): {
     const input: Record<string, unknown> =
       Object.keys(req.query).length > 0 ? req.query : asRecord(req.body)
     if (input['code'] ? !req.session?.grant?.state : !input['error']) {
+      if (sendLoginFailed(req, res, options.secret)) return
       // Also what an expired session looks like: tell the user to retry.
       res
         .status(400)
@@ -194,7 +210,29 @@ export function app(optionsArg: CompanionInitOptions): {
   // See https://github.com/simov/grant#dynamic-http
   app.use(
     '/connect/:oauthProvider{/:override}',
-    express.urlencoded({ extended: false, inflate: false }),
+    // Our parsers don't inflate (`inflate: false`), but a host app's parser
+    // may already have, and Grant reads that body too.
+    (req, res, next) => {
+      const encoding = req.get('content-encoding')
+      if (encoding && encoding.trim().toLowerCase() !== 'identity') {
+        res.sendStatus(415)
+        return
+      }
+      next()
+    },
+    express.urlencoded({
+      extended: false,
+      inflate: false,
+      limit: '8kb',
+      parameterLimit: 32,
+    }),
+    guardGrantInput(
+      (provider) =>
+        Object.hasOwn(grantConfig, provider) && provider !== 'defaults'
+          ? (grantConfig[provider]?.dynamic ?? [])
+          : undefined,
+      (req, res, status) => sendLoginFailed(req, res, options.secret, status),
+    ),
     // before the credentials middleware, which fetches provider keys
     rejectUnstartedOAuthCallback,
     getCredentialsOverrideMiddleware(
@@ -244,6 +282,7 @@ export function app(optionsArg: CompanionInitOptions): {
   )
   app.get(
     '/:providerName/callback',
+    requireOAuthNavigation,
     middlewares.hasSessionAndProvider,
     middlewares.hasOAuthProvider,
     controllers.callback,
@@ -272,6 +311,7 @@ export function app(optionsArg: CompanionInitOptions): {
   )
   app.get(
     '/:providerName/send-token',
+    requireOAuthNavigation,
     middlewares.hasSessionAndProvider,
     middlewares.hasOAuthProvider,
     middlewares.verifyToken,
