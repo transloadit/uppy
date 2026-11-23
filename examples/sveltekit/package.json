@@ -13,21 +13,21 @@
     "check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch"
   },
   "dependencies": {
-    "@uppy/core": "workspace:*",
-    "@uppy/dashboard": "workspace:*",
-    "@uppy/image-editor": "workspace:*",
-    "@uppy/remote-sources": "workspace:*",
-    "@uppy/screen-capture": "workspace:*",
-    "@uppy/svelte": "workspace:*",
-    "@uppy/tus": "workspace:*",
-    "@uppy/webcam": "workspace:*"
+    "@uppy/core": "*",
+    "@uppy/dashboard": "*",
+    "@uppy/image-editor": "*",
+    "@uppy/remote-sources": "*",
+    "@uppy/screen-capture": "*",
+    "@uppy/svelte": "*",
+    "@uppy/tus": "*",
+    "@uppy/webcam": "*"
   },
   "devDependencies": {
     "@sveltejs/adapter-auto": "^7.0.1",
     "@sveltejs/kit": "^2.70.2",
     "@sveltejs/vite-plugin-svelte": "^7.3.1",
     "@tailwindcss/vite": "^4.3.3",
-    "@uppy/status-bar": "workspace:*",
+    "@uppy/status-bar": "*",
     "@vitest/browser-playwright": "^5.1.0",
     "msw": "^3.0.3",
     "playwright": "1.65.0",

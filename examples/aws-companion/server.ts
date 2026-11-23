@@ -8,7 +8,7 @@ import cors from 'cors'
 import express from 'express'
 import session from 'express-session'
 
-process.loadEnvFile(path.resolve(import.meta.dirname, '..', '..', '.env'))
+process.loadEnvFile(path.resolve(import.meta.dirname, '.env'))
 
 const DATA_DIR = path.join(import.meta.dirname, 'tmp')
 

@@ -13,20 +13,26 @@ canonical guides for
 [Vue](https://uppy.io/docs/guides/uppy-transloadit/#vue), and
 [Angular](https://uppy.io/docs/guides/uppy-transloadit/#angular).
 
-## Run it
+## Run it in this repository
 
-To run this example, make sure you’ve correctly installed the **repository
-root**:
+From the repository root:
 
 ```sh
 corepack yarn install
 corepack yarn build
-```
-
-That will also install the dependencies for this example.
-
-Then, again in the **repository root**, start this example by doing:
-
-```sh
 corepack yarn workspace example-transloadit start
 ```
+
+This starts a small form-handling server on port 9967 and the Vite dev server
+for the client; open the URL Vite prints (<http://localhost:5173> by default).
+
+## Run it on its own
+
+```sh
+npx degit transloadit/uppy/examples/transloadit my-app
+cd my-app
+npm install
+npm start
+```
+
+This installs the latest Uppy release from npm.

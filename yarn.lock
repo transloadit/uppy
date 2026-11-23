@@ -7580,44 +7580,43 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@tus/file-store@npm:latest":
-  version: 2.1.1
-  resolution: "@tus/file-store@npm:2.1.1"
+"@tus/file-store@npm:^2.1.1":
+  version: 2.1.2
+  resolution: "@tus/file-store@npm:2.1.2"
   dependencies:
     "@redis/client": "npm:^5.0.0"
-    "@tus/utils": "npm:^0.7.1"
+    "@tus/utils": "npm:^0.7.3"
     debug: "npm:^4.3.4"
   dependenciesMeta:
     "@redis/client":
       optional: true
-  checksum: 10/8e4cc1192d731eae9d7044380b73f99888db3fee0722a2bd37387cb23e32f483cc1ac7aca8798254165f63dd8f89e92e6041ab992882d0d6bde182d272dad474
+  checksum: 10/ede90f3023fd50b99dbe29e5eaf04375955046deff5af306e6283c36186c80f0f476e629fd52b175f1d812fcc748321e195ee7c42f43c256de7f149293e5b903
   languageName: node
   linkType: hard
 
-"@tus/server@npm:latest":
-  version: 2.4.5
-  resolution: "@tus/server@npm:2.4.5"
+"@tus/server@npm:^2.4.5":
+  version: 2.4.7
+  resolution: "@tus/server@npm:2.4.7"
   dependencies:
     "@redis/client": "npm:^5.0.0"
-    "@tus/utils": "npm:^0.7.1"
+    "@tus/utils": "npm:^0.7.3"
     debug: "npm:^4.3.4"
     ioredis: "npm:^5.4.1"
     lodash.throttle: "npm:^4.1.1"
-    set-cookie-parser: "npm:^2.7.1"
     srvx: "npm:~0.11.15"
   dependenciesMeta:
     "@redis/client":
       optional: true
     ioredis:
       optional: true
-  checksum: 10/6f4bf631d320709865092980afe6337a4099c6627accd6cad12ef8f278d14146036c0a64c7cec9d1330fca4fa3ee4754fb618b586109ee849f809667635f332e
+  checksum: 10/6a13646c1fc8cec852823cb2115ba5aa02ca4ad432db1368fb49e05c85ce857949d55c1efc4cd08e52c3ba2760b176062374ece0608bdddf665920eda18de64a
   languageName: node
   linkType: hard
 
-"@tus/utils@npm:^0.7.1":
-  version: 0.7.1
-  resolution: "@tus/utils@npm:0.7.1"
-  checksum: 10/967cb8b77e8a29a8bc30398f9adc79a4bb41e0d8f0c38aaf99a8bd4b1c765eb1ae7cbddb70539405975c705b29a6f3a9e474de60d3ea9ea40a4bbc093bb5bc90
+"@tus/utils@npm:^0.7.3":
+  version: 0.7.3
+  resolution: "@tus/utils@npm:0.7.3"
+  checksum: 10/44d76b1fbd52996f3862f71edbe938ea84750baa29822d31a7c61e292d9967f0780467d69aff157633b00337669ec6389ab737add6d3787c168e4b1ca23eebd0
   languageName: node
   linkType: hard
 
@@ -8415,7 +8414,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@uppy/angular@workspace:*, @uppy/angular@workspace:packages/@uppy/angular":
+"@uppy/angular@npm:*, @uppy/angular@workspace:packages/@uppy/angular":
   version: 0.0.0-use.local
   resolution: "@uppy/angular@workspace:packages/@uppy/angular"
   dependencies:
@@ -8464,7 +8463,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@uppy/aws-s3@workspace:*, @uppy/aws-s3@workspace:packages/@uppy/aws-s3":
+"@uppy/aws-s3@npm:*, @uppy/aws-s3@workspace:*, @uppy/aws-s3@workspace:packages/@uppy/aws-s3":
   version: 0.0.0-use.local
   resolution: "@uppy/aws-s3@workspace:packages/@uppy/aws-s3"
   dependencies:
@@ -8497,7 +8496,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@uppy/companion@workspace:*, @uppy/companion@workspace:packages/@uppy/companion":
+"@uppy/companion@npm:*, @uppy/companion@workspace:packages/@uppy/companion":
   version: 0.0.0-use.local
   resolution: "@uppy/companion@workspace:packages/@uppy/companion"
   dependencies:
@@ -8624,7 +8623,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@uppy/core@workspace:*, @uppy/core@workspace:^, @uppy/core@workspace:packages/@uppy/core":
+"@uppy/core@npm:*, @uppy/core@workspace:*, @uppy/core@workspace:^, @uppy/core@workspace:packages/@uppy/core":
   version: 0.0.0-use.local
   resolution: "@uppy/core@workspace:packages/@uppy/core"
   dependencies:
@@ -8658,7 +8657,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@uppy/dashboard@workspace:*, @uppy/dashboard@workspace:^, @uppy/dashboard@workspace:packages/@uppy/dashboard":
+"@uppy/dashboard@npm:*, @uppy/dashboard@workspace:*, @uppy/dashboard@workspace:^, @uppy/dashboard@workspace:packages/@uppy/dashboard":
   version: 0.0.0-use.local
   resolution: "@uppy/dashboard@workspace:packages/@uppy/dashboard"
   dependencies:
@@ -8747,7 +8746,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@uppy/form@workspace:*, @uppy/form@workspace:packages/@uppy/form":
+"@uppy/form@npm:*, @uppy/form@workspace:*, @uppy/form@workspace:packages/@uppy/form":
   version: 0.0.0-use.local
   resolution: "@uppy/form@workspace:packages/@uppy/form"
   dependencies:
@@ -8779,7 +8778,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@uppy/google-drive-picker@workspace:*, @uppy/google-drive-picker@workspace:packages/@uppy/google-drive-picker":
+"@uppy/google-drive-picker@npm:*, @uppy/google-drive-picker@workspace:*, @uppy/google-drive-picker@workspace:packages/@uppy/google-drive-picker":
   version: 0.0.0-use.local
   resolution: "@uppy/google-drive-picker@workspace:packages/@uppy/google-drive-picker"
   dependencies:
@@ -8792,7 +8791,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@uppy/google-drive@workspace:*, @uppy/google-drive@workspace:^, @uppy/google-drive@workspace:packages/@uppy/google-drive":
+"@uppy/google-drive@npm:*, @uppy/google-drive@workspace:*, @uppy/google-drive@workspace:^, @uppy/google-drive@workspace:packages/@uppy/google-drive":
   version: 0.0.0-use.local
   resolution: "@uppy/google-drive@workspace:packages/@uppy/google-drive"
   dependencies:
@@ -8805,7 +8804,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@uppy/google-photos-picker@workspace:*, @uppy/google-photos-picker@workspace:packages/@uppy/google-photos-picker":
+"@uppy/google-photos-picker@npm:*, @uppy/google-photos-picker@workspace:*, @uppy/google-photos-picker@workspace:packages/@uppy/google-photos-picker":
   version: 0.0.0-use.local
   resolution: "@uppy/google-photos-picker@workspace:packages/@uppy/google-photos-picker"
   dependencies:
@@ -8818,7 +8817,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@uppy/image-editor@workspace:*, @uppy/image-editor@workspace:packages/@uppy/image-editor":
+"@uppy/image-editor@npm:*, @uppy/image-editor@workspace:*, @uppy/image-editor@workspace:packages/@uppy/image-editor":
   version: 0.0.0-use.local
   resolution: "@uppy/image-editor@workspace:packages/@uppy/image-editor"
   dependencies:
@@ -8876,7 +8875,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@uppy/react@workspace:*, @uppy/react@workspace:packages/@uppy/react":
+"@uppy/react@npm:*, @uppy/react@workspace:*, @uppy/react@workspace:packages/@uppy/react":
   version: 0.0.0-use.local
   resolution: "@uppy/react@workspace:packages/@uppy/react"
   dependencies:
@@ -8914,7 +8913,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@uppy/remote-sources@workspace:*, @uppy/remote-sources@workspace:packages/@uppy/remote-sources":
+"@uppy/remote-sources@npm:*, @uppy/remote-sources@workspace:*, @uppy/remote-sources@workspace:packages/@uppy/remote-sources":
   version: 0.0.0-use.local
   resolution: "@uppy/remote-sources@workspace:packages/@uppy/remote-sources"
   dependencies:
@@ -8961,7 +8960,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@uppy/screen-capture@workspace:*, @uppy/screen-capture@workspace:packages/@uppy/screen-capture":
+"@uppy/screen-capture@npm:*, @uppy/screen-capture@workspace:*, @uppy/screen-capture@workspace:packages/@uppy/screen-capture":
   version: 0.0.0-use.local
   resolution: "@uppy/screen-capture@workspace:packages/@uppy/screen-capture"
   dependencies:
@@ -8977,7 +8976,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@uppy/status-bar@workspace:*, @uppy/status-bar@workspace:packages/@uppy/status-bar":
+"@uppy/status-bar@npm:*, @uppy/status-bar@workspace:*, @uppy/status-bar@workspace:packages/@uppy/status-bar":
   version: 0.0.0-use.local
   resolution: "@uppy/status-bar@workspace:packages/@uppy/status-bar"
   dependencies:
@@ -8995,7 +8994,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@uppy/svelte@workspace:*, @uppy/svelte@workspace:packages/@uppy/svelte":
+"@uppy/svelte@npm:*, @uppy/svelte@workspace:packages/@uppy/svelte":
   version: 0.0.0-use.local
   resolution: "@uppy/svelte@workspace:packages/@uppy/svelte"
   dependencies:
@@ -9064,7 +9063,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@uppy/transloadit@workspace:*, @uppy/transloadit@workspace:^, @uppy/transloadit@workspace:packages/@uppy/transloadit":
+"@uppy/transloadit@npm:*, @uppy/transloadit@workspace:*, @uppy/transloadit@workspace:^, @uppy/transloadit@workspace:packages/@uppy/transloadit":
   version: 0.0.0-use.local
   resolution: "@uppy/transloadit@workspace:packages/@uppy/transloadit"
   dependencies:
@@ -9084,7 +9083,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@uppy/tus@workspace:*, @uppy/tus@workspace:^, @uppy/tus@workspace:packages/@uppy/tus":
+"@uppy/tus@npm:*, @uppy/tus@workspace:*, @uppy/tus@workspace:^, @uppy/tus@workspace:packages/@uppy/tus":
   version: 0.0.0-use.local
   resolution: "@uppy/tus@workspace:packages/@uppy/tus"
   dependencies:
@@ -9134,7 +9133,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@uppy/vue@workspace:*, @uppy/vue@workspace:packages/@uppy/vue":
+"@uppy/vue@npm:*, @uppy/vue@workspace:packages/@uppy/vue":
   version: 0.0.0-use.local
   resolution: "@uppy/vue@workspace:packages/@uppy/vue"
   dependencies:
@@ -9167,7 +9166,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@uppy/webcam@workspace:*, @uppy/webcam@workspace:^, @uppy/webcam@workspace:packages/@uppy/webcam":
+"@uppy/webcam@npm:*, @uppy/webcam@workspace:*, @uppy/webcam@workspace:^, @uppy/webcam@workspace:packages/@uppy/webcam":
   version: 0.0.0-use.local
   resolution: "@uppy/webcam@workspace:packages/@uppy/webcam"
   dependencies:
@@ -9200,7 +9199,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@uppy/xhr-upload@workspace:*, @uppy/xhr-upload@workspace:^, @uppy/xhr-upload@workspace:packages/@uppy/xhr-upload":
+"@uppy/xhr-upload@npm:*, @uppy/xhr-upload@workspace:*, @uppy/xhr-upload@workspace:^, @uppy/xhr-upload@workspace:packages/@uppy/xhr-upload":
   version: 0.0.0-use.local
   resolution: "@uppy/xhr-upload@workspace:packages/@uppy/xhr-upload"
   dependencies:
@@ -13081,11 +13080,11 @@ __metadata:
     "@angular/compiler-cli": "npm:^22.2.6"
     "@angular/core": "npm:^22.2.6"
     "@angular/platform-browser": "npm:^22.2.6"
-    "@uppy/angular": "workspace:*"
-    "@uppy/core": "workspace:*"
-    "@uppy/dashboard": "workspace:*"
-    "@uppy/tus": "workspace:*"
-    "@uppy/webcam": "workspace:*"
+    "@uppy/angular": "npm:*"
+    "@uppy/core": "npm:*"
+    "@uppy/dashboard": "npm:*"
+    "@uppy/tus": "npm:*"
+    "@uppy/webcam": "npm:*"
     rxjs: "npm:~7.8.0"
     tslib: "npm:^2.3.0"
     typescript: "npm:^6.0.3"
@@ -13100,12 +13099,12 @@ __metadata:
     "@types/cookie-parser": "npm:^1.4.10"
     "@types/cors": "npm:^2.8.19"
     "@types/express-session": "npm:^1.19.0"
-    "@uppy/aws-s3": "workspace:*"
-    "@uppy/companion": "workspace:*"
-    "@uppy/core": "workspace:*"
-    "@uppy/dashboard": "workspace:*"
-    "@uppy/google-drive": "workspace:*"
-    "@uppy/webcam": "workspace:*"
+    "@uppy/aws-s3": "npm:*"
+    "@uppy/companion": "npm:*"
+    "@uppy/core": "npm:*"
+    "@uppy/dashboard": "npm:*"
+    "@uppy/google-drive": "npm:*"
+    "@uppy/webcam": "npm:*"
     body-parser: "npm:^2.4.0"
     cookie-parser: "npm:^1.4.7"
     cors: "npm:^2.8.5"
@@ -13132,11 +13131,11 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "example-aws-php@workspace:examples/aws-php"
   dependencies:
-    "@uppy/aws-s3": "workspace:*"
-    "@uppy/core": "workspace:*"
-    "@uppy/dashboard": "workspace:*"
+    "@uppy/aws-s3": "npm:*"
+    "@uppy/core": "npm:*"
+    "@uppy/dashboard": "npm:*"
     esbuild: "npm:^0.28.1"
-    uppy: "workspace:*"
+    uppy: "npm:*"
   languageName: unknown
   linkType: soft
 
@@ -13150,11 +13149,11 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "example-companion-custom-provider@workspace:examples/companion-custom-provider"
   dependencies:
-    "@uppy/companion": "workspace:*"
-    "@uppy/core": "workspace:*"
-    "@uppy/dashboard": "workspace:*"
-    "@uppy/google-drive": "workspace:*"
-    "@uppy/tus": "workspace:*"
+    "@uppy/companion": "npm:*"
+    "@uppy/core": "npm:*"
+    "@uppy/dashboard": "npm:*"
+    "@uppy/google-drive": "npm:*"
+    "@uppy/tus": "npm:*"
     body-parser: "npm:^2.4.0"
     express: "npm:^5.2.1"
     express-session: "npm:^1.15.6"
@@ -13168,10 +13167,10 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "example-companion-digitalocean-spaces@workspace:examples/companion-digitalocean-spaces"
   dependencies:
-    "@uppy/aws-s3": "workspace:*"
-    "@uppy/companion": "workspace:*"
-    "@uppy/core": "workspace:*"
-    "@uppy/dashboard": "workspace:*"
+    "@uppy/aws-s3": "npm:*"
+    "@uppy/companion": "npm:*"
+    "@uppy/core": "npm:*"
+    "@uppy/dashboard": "npm:*"
     body-parser: "npm:^2.4.0"
     cors: "npm:^2.8.5"
     express: "npm:^5.2.1"
@@ -13183,10 +13182,11 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "example-companion@workspace:examples/companion"
   dependencies:
-    "@uppy/companion": "workspace:*"
+    "@uppy/companion": "npm:*"
     body-parser: "npm:^2.4.0"
     express: "npm:^5.2.1"
     express-session: "npm:^1.15.6"
+    npm-run-all2: "npm:^9.0.3"
     vite: "npm:^8.3.5"
   languageName: unknown
   linkType: soft
@@ -13196,17 +13196,17 @@ __metadata:
   resolution: "example-nextjs@workspace:examples/nextjs"
   dependencies:
     "@tailwindcss/postcss": "npm:^4.3.3"
-    "@tus/file-store": "npm:latest"
-    "@tus/server": "npm:latest"
+    "@tus/file-store": "npm:^2.1.1"
+    "@tus/server": "npm:^2.4.5"
     "@types/node": "npm:^22.20.1"
     "@types/react": "npm:^19.3.0"
     "@types/react-dom": "npm:^19.3.0"
-    "@uppy/core": "workspace:*"
-    "@uppy/dashboard": "workspace:*"
-    "@uppy/react": "workspace:*"
-    "@uppy/transloadit": "workspace:*"
-    "@uppy/tus": "workspace:*"
-    "@uppy/xhr-upload": "workspace:*"
+    "@uppy/core": "npm:*"
+    "@uppy/dashboard": "npm:*"
+    "@uppy/react": "npm:*"
+    "@uppy/transloadit": "npm:*"
+    "@uppy/tus": "npm:*"
+    "@uppy/xhr-upload": "npm:*"
     next: "npm:^16.4.5"
     react: "npm:^19.3.1"
     react-dom: "npm:^19.3.1"
@@ -13222,15 +13222,15 @@ __metadata:
     "@tailwindcss/vite": "npm:^4.3.3"
     "@types/react": "npm:^19.3.0"
     "@types/react-dom": "npm:^19.3.0"
-    "@uppy/core": "workspace:*"
-    "@uppy/google-drive-picker": "workspace:*"
-    "@uppy/google-photos-picker": "workspace:*"
-    "@uppy/image-editor": "workspace:*"
-    "@uppy/react": "workspace:*"
-    "@uppy/remote-sources": "workspace:*"
-    "@uppy/screen-capture": "workspace:*"
-    "@uppy/tus": "workspace:*"
-    "@uppy/webcam": "workspace:*"
+    "@uppy/core": "npm:*"
+    "@uppy/google-drive-picker": "npm:*"
+    "@uppy/google-photos-picker": "npm:*"
+    "@uppy/image-editor": "npm:*"
+    "@uppy/react": "npm:*"
+    "@uppy/remote-sources": "npm:*"
+    "@uppy/screen-capture": "npm:*"
+    "@uppy/tus": "npm:*"
+    "@uppy/webcam": "npm:*"
     "@vitejs/plugin-react": "npm:^6.1.2"
     "@vitest/browser-playwright": "npm:^5.1.0"
     msw: "npm:^3.0.3"
@@ -13254,17 +13254,17 @@ __metadata:
     "@react-router/dev": "npm:^8.5.1"
     "@react-router/express": "npm:^8.5.1"
     "@react-router/node": "npm:^8.5.1"
-    "@tus/file-store": "npm:latest"
-    "@tus/server": "npm:latest"
+    "@tus/file-store": "npm:^2.1.1"
+    "@tus/server": "npm:^2.4.5"
     "@types/express": "npm:^5.0.6"
     "@types/react": "npm:^19.3.0"
     "@types/react-dom": "npm:^19.3.0"
-    "@uppy/core": "workspace:*"
-    "@uppy/dashboard": "workspace:*"
-    "@uppy/react": "workspace:*"
-    "@uppy/transloadit": "workspace:*"
-    "@uppy/tus": "workspace:*"
-    "@uppy/xhr-upload": "workspace:*"
+    "@uppy/core": "npm:*"
+    "@uppy/dashboard": "npm:*"
+    "@uppy/react": "npm:*"
+    "@uppy/transloadit": "npm:*"
+    "@uppy/tus": "npm:*"
+    "@uppy/xhr-upload": "npm:*"
     express: "npm:^5.2.1"
     isbot: "npm:^5.1.40"
     react: "npm:^19.3.1"
@@ -13283,15 +13283,15 @@ __metadata:
     "@sveltejs/kit": "npm:^2.70.2"
     "@sveltejs/vite-plugin-svelte": "npm:^7.3.1"
     "@tailwindcss/vite": "npm:^4.3.3"
-    "@uppy/core": "workspace:*"
-    "@uppy/dashboard": "workspace:*"
-    "@uppy/image-editor": "workspace:*"
-    "@uppy/remote-sources": "workspace:*"
-    "@uppy/screen-capture": "workspace:*"
-    "@uppy/status-bar": "workspace:*"
-    "@uppy/svelte": "workspace:*"
-    "@uppy/tus": "workspace:*"
-    "@uppy/webcam": "workspace:*"
+    "@uppy/core": "npm:*"
+    "@uppy/dashboard": "npm:*"
+    "@uppy/image-editor": "npm:*"
+    "@uppy/remote-sources": "npm:*"
+    "@uppy/screen-capture": "npm:*"
+    "@uppy/status-bar": "npm:*"
+    "@uppy/svelte": "npm:*"
+    "@uppy/tus": "npm:*"
+    "@uppy/webcam": "npm:*"
     "@vitest/browser-playwright": "npm:^5.1.0"
     msw: "npm:^3.0.3"
     playwright: "npm:1.65.0"
@@ -13309,13 +13309,13 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "example-transloadit@workspace:examples/transloadit"
   dependencies:
-    "@uppy/core": "workspace:*"
-    "@uppy/dashboard": "workspace:*"
-    "@uppy/form": "workspace:*"
-    "@uppy/image-editor": "workspace:*"
-    "@uppy/remote-sources": "workspace:*"
-    "@uppy/transloadit": "workspace:*"
-    "@uppy/webcam": "workspace:*"
+    "@uppy/core": "npm:*"
+    "@uppy/dashboard": "npm:*"
+    "@uppy/form": "npm:*"
+    "@uppy/image-editor": "npm:*"
+    "@uppy/remote-sources": "npm:*"
+    "@uppy/transloadit": "npm:*"
+    "@uppy/webcam": "npm:*"
     he: "npm:^1.2.0"
     npm-run-all2: "npm:^9.0.3"
     vite: "npm:^8.3.5"
@@ -13327,13 +13327,13 @@ __metadata:
   resolution: "example-vue@workspace:examples/vue"
   dependencies:
     "@tailwindcss/vite": "npm:^4.3.3"
-    "@uppy/core": "workspace:*"
-    "@uppy/image-editor": "workspace:*"
-    "@uppy/remote-sources": "workspace:*"
-    "@uppy/screen-capture": "workspace:*"
-    "@uppy/tus": "workspace:*"
-    "@uppy/vue": "workspace:*"
-    "@uppy/webcam": "workspace:*"
+    "@uppy/core": "npm:*"
+    "@uppy/image-editor": "npm:*"
+    "@uppy/remote-sources": "npm:*"
+    "@uppy/screen-capture": "npm:*"
+    "@uppy/tus": "npm:*"
+    "@uppy/vue": "npm:*"
+    "@uppy/webcam": "npm:*"
     "@vitejs/plugin-vue": "npm:^6.0.10"
     "@vitest/browser-playwright": "npm:^5.1.0"
     msw: "npm:^3.0.3"
@@ -13352,9 +13352,9 @@ __metadata:
   dependencies:
     "@types/cors": "npm:^2.8.19"
     "@types/multer": "npm:^2.2.0"
-    "@uppy/core": "workspace:*"
-    "@uppy/dashboard": "workspace:*"
-    "@uppy/xhr-upload": "workspace:*"
+    "@uppy/core": "npm:*"
+    "@uppy/dashboard": "npm:*"
+    "@uppy/xhr-upload": "npm:*"
     cors: "npm:^2.8.5"
     express: "npm:^5.2.1"
     multer: "npm:^2.5.0"
@@ -13368,10 +13368,10 @@ __metadata:
   resolution: "example-xhr-node@workspace:examples/xhr-node"
   dependencies:
     "@types/formidable": "npm:^3.5.1"
-    "@uppy/core": "workspace:*"
-    "@uppy/dashboard": "workspace:*"
-    "@uppy/webcam": "workspace:*"
-    "@uppy/xhr-upload": "workspace:*"
+    "@uppy/core": "npm:*"
+    "@uppy/dashboard": "npm:*"
+    "@uppy/webcam": "npm:*"
+    "@uppy/xhr-upload": "npm:*"
     formidable: "npm:^3.2.4"
     npm-run-all2: "npm:^9.0.3"
     vite: "npm:^8.3.5"
@@ -13382,10 +13382,10 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "example-xhr-php@workspace:examples/xhr-php"
   dependencies:
-    "@uppy/core": "workspace:*"
-    "@uppy/dashboard": "workspace:*"
-    "@uppy/webcam": "workspace:*"
-    "@uppy/xhr-upload": "workspace:*"
+    "@uppy/core": "npm:*"
+    "@uppy/dashboard": "npm:*"
+    "@uppy/webcam": "npm:*"
+    "@uppy/xhr-upload": "npm:*"
     npm-run-all2: "npm:^9.0.3"
     vite: "npm:^8.3.5"
   languageName: unknown
@@ -13395,10 +13395,10 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "example-xhr-python@workspace:examples/xhr-python"
   dependencies:
-    "@uppy/core": "workspace:*"
-    "@uppy/dashboard": "workspace:*"
-    "@uppy/webcam": "workspace:*"
-    "@uppy/xhr-upload": "workspace:*"
+    "@uppy/core": "npm:*"
+    "@uppy/dashboard": "npm:*"
+    "@uppy/webcam": "npm:*"
+    "@uppy/xhr-upload": "npm:*"
     npm-run-all2: "npm:^9.0.3"
     vite: "npm:^8.3.5"
   languageName: unknown
@@ -22782,13 +22782,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"set-cookie-parser@npm:^2.7.1":
-  version: 2.7.1
-  resolution: "set-cookie-parser@npm:2.7.1"
-  checksum: 10/c92b1130032693342bca13ea1b1bc93967ab37deec4387fcd8c2a843c0ef2fd9a9f3df25aea5bb3976cd05a91c2cf4632dd6164d6e1814208fb7d7e14edd42b4
-  languageName: node
-  linkType: hard
-
 "set-cookie-parser@npm:^3.0.0, set-cookie-parser@npm:^3.0.1":
   version: 3.1.2
   resolution: "set-cookie-parser@npm:3.1.2"
@@ -24557,7 +24550,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"uppy@workspace:*, uppy@workspace:packages/uppy":
+"uppy@npm:*, uppy@workspace:*, uppy@workspace:packages/uppy":
   version: 0.0.0-use.local
   resolution: "uppy@workspace:packages/uppy"
   dependencies:

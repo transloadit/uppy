@@ -3,10 +3,10 @@
   "version": "0.0.0",
   "type": "module",
   "dependencies": {
-    "@uppy/core": "workspace:*",
-    "@uppy/dashboard": "workspace:*",
-    "@uppy/webcam": "workspace:*",
-    "@uppy/xhr-upload": "workspace:*"
+    "@uppy/core": "*",
+    "@uppy/dashboard": "*",
+    "@uppy/webcam": "*",
+    "@uppy/xhr-upload": "*"
   },
   "devDependencies": {
     "npm-run-all2": "^9.0.3",

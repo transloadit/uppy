@@ -7,13 +7,13 @@
     "vite": "^8.3.5"
   },
   "dependencies": {
-    "@uppy/core": "workspace:*",
-    "@uppy/dashboard": "workspace:*",
-    "@uppy/form": "workspace:*",
-    "@uppy/image-editor": "workspace:*",
-    "@uppy/remote-sources": "workspace:*",
-    "@uppy/transloadit": "workspace:*",
-    "@uppy/webcam": "workspace:*",
+    "@uppy/core": "*",
+    "@uppy/dashboard": "*",
+    "@uppy/form": "*",
+    "@uppy/image-editor": "*",
+    "@uppy/remote-sources": "*",
+    "@uppy/transloadit": "*",
+    "@uppy/webcam": "*",
     "he": "^1.2.0"
   },
   "private": true,

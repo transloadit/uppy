@@ -1,59 +1,39 @@
-# AngularModernExamples
+# Uppy + Angular
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 19.2.6.
+An Angular app that uses the `@uppy/angular` components to render an inline
+Dashboard and a Dashboard modal, with the Webcam plugin. Files upload with
+`@uppy/tus` to the public Tus demo server (`https://tusd.tusdemo.net/files/`).
 
-## Development server
+## Run it in this repository
 
-To start a local development server, run:
+From the repository root:
 
-```bash
-ng serve
+```sh
+corepack yarn install
+corepack yarn build
+corepack yarn workspace example-angular start
 ```
 
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
+Then open <http://localhost:4200>.
 
-## Code scaffolding
+Inside this repository, `tsconfig.json` maps `@uppy/angular` to the package
+source in `packages/@uppy/angular/src`, so you don’t need a build of
+`@uppy/angular` itself while working on it.
 
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
+## Run it on its own
 
-```bash
-ng generate component component-name
+```sh
+npx degit transloadit/uppy/examples/angular my-app
+cd my-app
 ```
 
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
+Delete the `paths` entry for `@uppy/angular` from `compilerOptions` in
+`tsconfig.json`; it points into this repository. Then:
 
-```bash
-ng generate --help
+```sh
+npm install
+npm start
 ```
 
-## Building
-
-To build the project run:
-
-```bash
-ng build
-```
-
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
-
-## Running unit tests
-
-To execute unit tests with the [Karma](https://karma-runner.github.io) test runner, use the following command:
-
-```bash
-ng test
-```
-
-## Running end-to-end tests
-
-For end-to-end (e2e) testing, run:
-
-```bash
-ng e2e
-```
-
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
-
-## Additional Resources
-
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+This installs the latest Uppy release from npm. `npm run build` writes a
+production build to `dist/`.

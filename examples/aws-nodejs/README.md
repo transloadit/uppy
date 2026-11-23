@@ -110,12 +110,12 @@ get STS Federated Token and upload files to `MY-UPPY-BUCKET`:
 
    The S3 statement is what actually authorizes both demos: a
    `GetFederationToken` session gets the **intersection** of this user’s
-   identity-based policies and the session policy that `routes/sts.js` passes in
+   identity-based policies and the session policy that `routes/sts.ts` passes in
    the call. Without S3 actions here the intersection is empty and every
    client-side upload fails with `AccessDenied`. The bucket policy in step 2 is
    not part of that intersection — it names the IAM user, not the federated
    session (`arn:aws:sts::ACCOUNT-ID:federated-user/123user`, from the `Name` in
-   `routes/sts.js`) — and it is redundant for a same-account bucket once this
+   `routes/sts.ts`) — and it is redundant for a same-account bucket once this
    policy is in place. Keep it only if the bucket lives in another account.
 
 ### AWS Credentials
@@ -125,59 +125,68 @@ You may use existing AWS credentials or create a new user in the IAM page.
 - Make sure you setup the AWS credentials properly and write down the Access Key
   ID and Secret Access Key.
 - This example reads credentials **only** from `COMPANION_AWS_KEY` and
-  `COMPANION_AWS_SECRET` (see `routes/sts.js` and `routes/presign.js`). Both
+  `COMPANION_AWS_SECRET` (see `routes/sts.ts` and `routes/presign.ts`). Both
   clients are constructed with an explicit `credentials` object, which bypasses
   the AWS SDK’s default provider chain, so `AWS_ACCESS_KEY_ID`, `AWS_PROFILE`
   and `~/.aws/credentials` are ignored. Remove that `credentials` block from
   both files if you want the default chain instead.
 
-## Prerequisites
+## Configure it
 
-Node.js 22 or newer, and a clone of the whole `uppy` repository. This example
-is a Yarn workspace and reads both the `.env` file and the Uppy browser bundle
-from the repository root, so the folder cannot be used standalone.
-
-From the root of the repository, install dependencies and build the browser
-bundle this example serves:
-
-```sh
-corepack yarn install
-corepack yarn build
-```
-
-The build step is required. Without `packages/uppy/dist/uppy.min.mjs` the server
-logs a warning and falls back to an old Uppy release from the CDN whose
-`@uppy/aws-s3` predates both `getCredentials` and `signRequest`. The Dashboards
-still render, so the problem only surfaces as an upload error.
-
-Add a `.env` file **at the root of the repository** (the same directory as
-`package.json` and `.env.example`, not `examples/aws-nodejs/`). `index.js`
-loads `../../.env`. You can start from `cp .env.example .env`.
+Copy `.env.example` to `.env` in this folder and fill it in. `index.ts` loads
+`.env` from next to itself and exits if the file is missing.
 
 ```sh
 COMPANION_AWS_BUCKET=MY-UPPY-BUCKET
 COMPANION_AWS_REGION=…
 COMPANION_AWS_KEY=…
 COMPANION_AWS_SECRET=…
-PORT=8080
 
 # Optional, server-side signing only: path-style addressing for
 # S3-compatible endpoints such as MinIO or LocalStack.
 # COMPANION_AWS_FORCE_PATH_STYLE=true
+
+# Optional, defaults to 8080.
+# PORT=8080
 ```
 
 N.B.: This example uses `COMPANION_AWS_` environment variables to facilitate
 integrations with other examples in this repository, but this example does _not_
 use Companion at all.
 
-## Enjoy it
+## Run it in this repository
 
-Start the application:
+Requires Node.js 22.18 or newer (it runs the TypeScript files directly). From
+the root of the repository, install dependencies, build the browser bundle this
+example serves, and start it:
 
 ```sh
+corepack yarn install
+corepack yarn build
+cp examples/aws-nodejs/.env.example examples/aws-nodejs/.env
 corepack yarn workspace example-aws-nodejs start
 ```
 
+The build step is required. The server serves `packages/uppy/dist/uppy.min.mjs`
+and `uppy.min.css` from this repository; without them it logs a warning and
+falls back to the Uppy release on the CDN that `index.ts` names. The Dashboards
+render either way, so an outdated fallback only surfaces as an upload error.
+
 Dashboard demo should now be available at <http://localhost:8080>.
+
+## Run it on its own
+
+```sh
+npx degit transloadit/uppy/examples/aws-nodejs my-app
+cd my-app
+npm install
+cp .env.example .env
+npm start
+```
+
+Outside this repository there is no local bundle, so the browser always gets
+Uppy from the CDN fallback in `index.ts` (the `/uppy.min.mjs` and
+`/uppy.min.css` routes). Make sure those URLs name a current Uppy release, or
+replace the two routes with your own copy of the bundle.
 
 _Feel free to check how the demo works and feel free to open an issue._

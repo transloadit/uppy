@@ -7,7 +7,7 @@ import express from 'express'
 import { presign } from './routes/presign.ts'
 import { sts } from './routes/sts.ts'
 
-process.loadEnvFile(path.resolve(import.meta.dirname, '..', '..', '.env'))
+process.loadEnvFile(path.resolve(import.meta.dirname, '.env'))
 
 const app = express()
 const port = process.env.PORT ?? 8080
