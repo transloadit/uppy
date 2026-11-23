@@ -438,8 +438,10 @@ describe('uploader', () => {
         pathPrefix,
         metadata: { name: 'file.txt', type: 'text/plain' },
       })
-      const onUploadEvent = vi.fn()
-      Emitter().on(uploader.token, onUploadEvent)
+      // with the Redis emitter, messages arrive asynchronously
+      const success = new Promise<unknown>((resolve) => {
+        socketClient.onUploadSuccess(uploader.token, resolve)
+      })
       const ready = uploader.awaitReady(60000)
       await socketClient.connect(uploader.token)
       await ready
@@ -447,8 +449,7 @@ describe('uploader', () => {
         Readable.from([Buffer.from('Some file content')]),
         requireMockReq(),
       )
-      // a throttled progress event may still come after it
-      expect(onUploadEvent).toHaveBeenCalledWith({
+      expect(await success).toEqual({
         action: 'success',
         payload: {
           url: 'https://tus.endpoint/files/foo-bar',
