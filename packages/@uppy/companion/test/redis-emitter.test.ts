@@ -1,7 +1,6 @@
-import type { Redis } from 'ioredis'
-
 import { EventEmitter, once } from 'node:events'
 
+import { Redis } from 'ioredis'
 import { afterEach, describe, expect, onTestFinished, test, vi } from 'vitest'
 
 import redisEmitter, {
@@ -166,8 +165,8 @@ test('a failed connection rejects the call, without an error listener, and the e
   const error = vi.spyOn(logger, 'error').mockImplementation(() => {})
   const settled = expectNoUnhandledRejections()
   const redis = fakeRedis()
-  // ioredis connects on the first command and fails the queued command once it
-  // has given up retrying it while the connection is down
+  // ioredis fails a queued command once it has given up retrying it while
+  // the connection is down
   redis.publish.mockRejectedValueOnce(
     Object.assign(new Error('Reached the max retries per request limit'), {
       name: 'MaxRetriesPerRequestError',
@@ -336,3 +335,41 @@ describe('redis emitter', () => {
     expect(handler).toHaveBeenCalledWith('hello')
   })
 })
+
+test.skipIf(!process.env['COMPANION_REDIS_URL'])(
+  'works from the first call with enableOfflineQueue: false',
+  async () => {
+    const client = new Redis(process.env['COMPANION_REDIS_URL']!, {
+      enableOfflineQueue: false,
+      lazyConnect: true,
+    })
+    const duplicate = Redis.prototype.duplicate
+    const clients: Redis[] = [client]
+    vi.spyOn(Redis.prototype, 'duplicate').mockImplementation(function (
+      this: Redis,
+      ...args
+    ) {
+      const created = duplicate.apply(this, args)
+      clients.push(created)
+      return created
+    })
+    onTestFinished(() => {
+      for (const c of clients) c.disconnect()
+    })
+    const emitter = redisEmitter(client)
+    // without the offline queue, a command is refused until a client is
+    // connected: the emitter's clients connect without waiting for one
+    await vi.waitFor(
+      () =>
+        expect(clients.slice(1).map((c) => c.status)).toEqual([
+          'ready',
+          'ready',
+        ]),
+      { timeout: 2000 },
+    )
+    const handler = vi.fn()
+    await emitter.on(token, handler)
+    await emitter.emit(token, 'hello')
+    await vi.waitFor(() => expect(handler).toHaveBeenCalledWith('hello'))
+  },
+)

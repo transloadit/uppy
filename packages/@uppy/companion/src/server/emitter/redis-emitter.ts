@@ -144,12 +144,13 @@ export default function redisEmitter(
     }
   }
 
-  // ioredis connects on the first command, queues commands while it
-  // (re)connects and fails them after maxRetriesPerRequest, and re-subscribes
-  // after a reconnect, so a Redis that is down at startup or restarts later
-  // needs no handling here. That holds while retryStrategy keeps retrying: one
-  // that returns null ends the client, and every later call fails.
-  const publisher = redisClient.duplicate({ lazyConnect: true })
+  // ioredis queues commands while it (re)connects and fails them after
+  // maxRetriesPerRequest, and re-subscribes after a reconnect, so a Redis that
+  // is down at startup or restarts later needs no handling here. That holds
+  // while retryStrategy keeps retrying: one that returns null ends the client,
+  // and every later call fails. Connect now rather than on the first command,
+  // which `enableOfflineQueue: false` would refuse while connecting.
+  const publisher = redisClient.duplicate({ lazyConnect: false })
   publisher.on('error', (err) =>
     logger.error(`publisher redis error: ${describe(err)}`),
   )
