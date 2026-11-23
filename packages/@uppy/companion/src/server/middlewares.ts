@@ -1,11 +1,17 @@
 import type { S3Client } from '@aws-sdk/client-s3'
+import type { NextFunction, Response } from 'express'
+
+import type { CompanionRuntimeOptions } from '../types/companion-options.js'
+import type {
+  ProviderUserSession,
+  Request,
+  RequestHandler,
+} from '../types/express.js'
+
 import corsImport from 'cors'
-import type { NextFunction, Request, RequestHandler, Response } from 'express'
 import promBundle from 'express-prom-bundle'
 
 import packageJson from '../../package.json' with { type: 'json' }
-import type { CompanionRuntimeOptions } from '../types/companion-options.js'
-import type { ProviderUserSession } from '../types/express.js'
 import * as tokenService from './helpers/jwt.js'
 import { getCookieName } from './helpers/jwt.js'
 import { getURLBuilder } from './helpers/utils.js'
@@ -181,7 +187,15 @@ export const gentleVerifyToken: RequestHandler = (req, _res, next) => {
   next()
 }
 
-export const cookieAuthToken: RequestHandler = (req, _res, next) => {
+export const cookieAuthToken: RequestHandler = (req, res, next) => {
+  const origin = req.get('origin')
+  const { server } = req.companion.options
+  if (origin && origin !== `${server.protocol}://${server.host}`) {
+    // Ordinary cross-origin <img> loads send no Origin. A credentialed fetch
+    // must not read another tenant's cookie-authenticated thumbnail.
+    res.sendStatus(403)
+    return
+  }
   const oauthProvider = req.companion.providerClass?.oauthProvider
   if (oauthProvider == null || oauthProvider.length === 0) {
     return next()
@@ -305,7 +319,10 @@ export const getCompanionMiddleware = (
 
   const middleware = (req: Request, _res: Response, next: NextFunction) => {
     const authToken =
-      req.header('uppy-auth-token') || req.query['uppyAuthToken']
+      req.header('uppy-auth-token') ||
+      (/^\/[^/]+\/send-token\/?$/.test(req.path)
+        ? req.query['uppyAuthToken']
+        : undefined)
 
     req.companion = {
       options,

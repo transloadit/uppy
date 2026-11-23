@@ -1,3 +1,7 @@
+import '@uppy/core/css/style.css'
+import '@uppy/dashboard/css/style.css'
+import '@uppy/image-editor/css/style.css'
+
 import Uppy from '@uppy/core'
 import Dashboard from '@uppy/dashboard'
 import Form from '@uppy/form'
@@ -5,10 +9,6 @@ import ImageEditor from '@uppy/image-editor'
 import RemoteSources from '@uppy/remote-sources'
 import Transloadit, { COMPANION_URL } from '@uppy/transloadit'
 import Webcam from '@uppy/webcam'
-
-import '@uppy/core/css/style.css'
-import '@uppy/dashboard/css/style.css'
-import '@uppy/image-editor/css/style.css'
 
 const TRANSLOADIT_KEY = '35c1aed03f5011e982b6afe82599b6a0'
 // A trivial template that resizes images, just for example purposes.

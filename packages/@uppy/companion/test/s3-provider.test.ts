@@ -1,5 +1,9 @@
+import type { Query } from '../src/server/provider/Provider.js'
+import type { GrantClaims } from './fixtures/s3.js'
+
 import { createServer } from 'node:http'
 import { Readable } from 'node:stream'
+
 import {
   CopyObjectCommand,
   DeleteObjectCommand,
@@ -10,20 +14,14 @@ import {
   S3ServiceException,
 } from '@aws-sdk/client-s3'
 import { describe, expect, onTestFinished, test, vi } from 'vitest'
+
 import {
   ProviderAuthError,
   ProviderUserError,
 } from '../src/server/provider/error.js'
-import type { Query } from '../src/server/provider/Provider.js'
 import S3Provider from '../src/server/provider/s3/index.js'
 import TransloaditStorageProvider from '../src/server/provider/s3/transloadit-storage.js'
-import {
-  claims,
-  GRANT_SECRET,
-  type GrantClaims,
-  mint,
-  nowSeconds,
-} from './fixtures/s3.js'
+import { claims, GRANT_SECRET, mint, nowSeconds } from './fixtures/s3.js'
 
 const makeProvider = (send: (cmd: unknown) => Promise<unknown> = vi.fn()) => {
   const provider = new S3Provider({ allowLocalUrls: false })
@@ -913,7 +911,7 @@ describe('S3 provider', () => {
       ])
       const params = requests[0]?.body.get('params') ?? ''
       expect(JSON.parse(params)).toMatchObject({
-        auth: { key: 'ws-key' },
+        auth: { key: 'ws-key', method: 'POST', path: '/dam/entries/move' },
         source: 'tenant/photo.jpg',
         destination: 'tenant/renamed.jpg',
       })
@@ -1012,3 +1010,51 @@ describe('S3 provider', () => {
     )
   })
 })
+
+test('fifty idle downloads do not consume the S3 browsing socket pool', async () => {
+  const server = createServer((req, res) => {
+    if (req.url?.includes('list-type=2')) {
+      res.setHeader('content-type', 'application/xml')
+      res.end(
+        '<ListBucketResult><IsTruncated>false</IsTruncated></ListBucketResult>',
+      )
+      return
+    }
+    res.writeHead(200, { 'content-length': '1000' })
+    res.write('x')
+  })
+  await new Promise<void>((resolve) => server.listen(0, '127.0.0.1', resolve))
+  const address = server.address()
+  if (address == null || typeof address === 'string')
+    throw new Error('Expected TCP server')
+  const companion = companionWith({
+    bucket: 'b',
+    region: 'us-east-1',
+    key: 'key',
+    secret: 'secret',
+    forcePathStyle: true,
+    endpoint: `http://127.0.0.1:${address.port}`,
+  })
+  const provider = new S3Provider({ allowLocalUrls: false })
+  const streams: Readable[] = []
+  onTestFinished(() => {
+    for (const stream of streams) stream.destroy()
+    server.closeAllConnections()
+    server.close()
+  })
+  for (let index = 0; index < 50; index++) {
+    const { stream } = await provider.download({
+      companion,
+      id: `file-${index}`,
+      query: { bucket: 'b' },
+      providerUserSession: bucketSession,
+    })
+    streams.push(stream)
+  }
+  const listing = await provider.list({
+    companion,
+    query: {},
+    providerUserSession: bucketSession,
+  })
+  expect(listing.items).toEqual([])
+}, 10000)

@@ -1,20 +1,17 @@
-import { unified } from 'unified'
-import { messageControl } from 'unified-message-control'
-
 import { commentMarker } from 'mdast-comment-marker'
-
-import remarkFrontmatter from 'remark-frontmatter'
 import remarkDirective from 'remark-directive'
+import remarkFrontmatter from 'remark-frontmatter'
 import remarkGfm from 'remark-gfm'
-import remarkRetext from 'remark-retext'
-import remarkPresetRecommended from 'remark-preset-lint-recommended'
 import remarkLintNoUndefinedReferences from 'remark-lint-no-undefined-references'
-
+import remarkPresetRecommended from 'remark-preset-lint-recommended'
+import remarkRetext from 'remark-retext'
 import retextEnglish from 'retext-english'
 import retextEquality from 'retext-equality'
 import retextProfanities from 'retext-profanities'
 import retextQuotes from 'retext-quotes'
 import retextSyntaxMentions from 'retext-syntax-mentions'
+import { unified } from 'unified'
+import { messageControl } from 'unified-message-control'
 
 const retextPreset = [
   remarkRetext,

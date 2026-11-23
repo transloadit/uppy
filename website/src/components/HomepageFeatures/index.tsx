@@ -1,7 +1,9 @@
+import type React from 'react'
 import type { ReactNode } from 'react'
-import React from 'react'
-import clsx from 'clsx'
+
 import Heading from '@theme/Heading'
+import clsx from 'clsx'
+
 import styles from './styles.module.css'
 
 type FeatureItem = {
@@ -63,6 +65,7 @@ export default function HomepageFeatures(): ReactNode {
       <div className="container">
         <div className="row">
           {FeatureList.map((props, idx) => (
+            // biome-ignore lint/suspicious/noArrayIndexKey: Items don’t have a unique identifier.
             <Feature key={idx} {...props} />
           ))}
         </div>

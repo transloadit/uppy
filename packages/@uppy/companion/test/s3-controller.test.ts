@@ -1,5 +1,8 @@
+import type { AddressInfo } from 'node:net'
+
 import http from 'node:http'
-import net, { type AddressInfo } from 'node:net'
+import net from 'node:net'
+
 import {
   AbortMultipartUploadCommand,
   CompleteMultipartUploadCommand,
@@ -10,6 +13,7 @@ import {
 import express from 'express'
 import request from 'supertest'
 import { describe, expect, onTestFinished, test, vi } from 'vitest'
+
 import s3 from '../src/server/controllers/s3.js'
 
 type Cmd = { constructor: { name: string }; input: Record<string, unknown> }
@@ -86,17 +90,93 @@ describe('batchSignPartsUpload', () => {
     )
   })
 
-  test.each([
-    '0',
-    '10001',
-    '1.5',
-    '1abc',
-    '-1',
-    '1,,2',
-  ])('refuses part number list %j', async (partNumbers) => {
-    const res = await batch(partNumbers).expect(400)
+  test.each(['0', '10001', '1.5', '1abc', '-1', '1,,2'])(
+    'refuses part number list %j',
+    async (partNumbers) => {
+      const res = await batch(partNumbers).expect(400)
+      expect(res.body.error).toBe(
+        's3: the part numbers must be a number between 1 and 10000.',
+      )
+    },
+  )
+})
+
+describe('signPartUpload', () => {
+  const sign = (partNumber: string) =>
+    request(makeApp())
+      .get(`/s3/multipart/upload-1/${partNumber}`)
+      .query({ key: 'a.jpg' })
+
+  test('signs a part number', async () => {
+    const res = await sign('10000').expect(200)
+    expect(res.body.url).toEqual(expect.any(String))
+  })
+
+  test.each(['0', '10001', '20000', '5abc', '01'])(
+    'refuses part number %j',
+    async (partNumber) => {
+      const res = await sign(partNumber).expect(400)
+      expect(res.body.error).toBe(
+        's3: the part number must be a number between 1 and 10000.',
+      )
+    },
+  )
+})
+
+describe('request input', () => {
+  test('refuses a missing object key with the same message as before', async () => {
+    const res = await request(makeApp())
+      .get('/s3/multipart/upload-1/1')
+      .expect(400)
     expect(res.body.error).toBe(
-      's3: the part numbers must be a number between 1 and 10000.',
+      's3: the object key must be passed as a query parameter. For example: "?key=abc.jpg"',
+    )
+  })
+
+  test.each([
+    ['1', 'x'],
+    [0, 'x'],
+    [1.5, 'x'],
+    [10001, 'x'],
+    [1, 2],
+  ])(
+    'refuses malformed part {PartNumber: %j, ETag: %j} on complete',
+    async (PartNumber, ETag) => {
+      const res = await request(makeApp())
+        .post('/s3/multipart/upload-1/complete')
+        .query({ key: 'a.jpg' })
+        .send({ parts: [{ PartNumber, ETag }] })
+        .expect(400)
+      expect(res.body.error).toBe(
+        's3: `parts` must be an array of {ETag, PartNumber} objects.',
+      )
+    },
+  )
+
+  test('passes extra part fields such as checksums on to S3', async () => {
+    const { send } = fakeS3()
+    await request(makeApp(send))
+      .post('/s3/multipart/upload-1/complete')
+      .query({ key: 'a.jpg' })
+      .send({
+        parts: [{ PartNumber: 1, ETag: 'x', ChecksumCRC32: 'AAAAAA==' }],
+      })
+      .expect(200)
+    const complete = send.mock.calls
+      .map(([cmd]) => cmd)
+      .find((cmd) => cmd instanceof CompleteMultipartUploadCommand)
+    expect(complete?.input['MultipartUpload']).toEqual({
+      Parts: [{ PartNumber: 1, ETag: 'x', ChecksumCRC32: 'AAAAAA==' }],
+    })
+  })
+
+  test('refuses a create request without a filename', async () => {
+    const res = await request(makeApp())
+      .post('/s3/multipart')
+      .send({ type: 'image/jpeg' })
+      .expect(400)
+    expect(res.body.error).toBe(
+      's3: the "filename" field is required and must be a non-empty string',
     )
   })
 })
@@ -399,14 +479,17 @@ describe('s3.conditions on multipart uploads', () => {
     [{ 'content-type': 'image/png' }, 'text/html', 400],
     [['starts-with', '$key', 'uploads/'], 'text/html', 200],
     [['content-length-range', 0, 1], 'text/html', 200],
-  ])('creating with %j and type %j answers %d', async (condition, type, status) => {
-    const { response, sent } = create([condition], type)
-    const res = await response.expect(status)
-    if (status === 400) {
-      expect(res.body.error).toBe('s3: this content type is not allowed')
-    }
-    expect(sent(CreateMultipartUploadCommand)).toBe(status === 200 ? 1 : 0)
-  })
+  ])(
+    'creating with %j and type %j answers %d',
+    async (condition, type, status) => {
+      const { response, sent } = create([condition], type)
+      const res = await response.expect(status)
+      if (status === 400) {
+        expect(res.body.error).toBe('s3: this content type is not allowed')
+      }
+      expect(sent(CreateMultipartUploadCommand)).toBe(status === 200 ? 1 : 0)
+    },
+  )
 
   const complete = (
     conditions: unknown[],
@@ -475,4 +558,44 @@ describe('s3.conditions on multipart uploads', () => {
     expect(sent(ListPartsCommand)).toBe(0)
     expect(sent(CompleteMultipartUploadCommand)).toBe(1)
   })
+})
+
+describe('multipart target bounds', () => {
+  test.each([
+    ['', 'upload-1'],
+    ['a'.repeat(1025), 'upload-1'],
+    ['é'.repeat(513), 'upload-1'],
+    ['a.jpg', 'a'.repeat(2049)],
+  ])(
+    'rejects invalid key/id before sending or signing',
+    async (key, uploadId) => {
+      const send = vi.fn()
+      const app = makeApp(send)
+      await request(app)
+        .get(`/s3/multipart/${uploadId}/batch`)
+        .query({ key, partNumbers: '1' })
+        .expect(400)
+      await request(app)
+        .delete(`/s3/multipart/${uploadId}`)
+        .query({ key })
+        .expect(400)
+      expect(send).not.toHaveBeenCalled()
+    },
+  )
+
+  test.each([undefined, '', '0', 'not-a-number'])(
+    'stops truncated part listings with cursor %j',
+    async (marker) => {
+      const send = vi.fn(async () => ({
+        IsTruncated: true,
+        NextPartNumberMarker: marker,
+        Parts: [],
+      }))
+      await request(makeApp(send))
+        .get('/s3/multipart/upload-1')
+        .query({ key: 'a.jpg' })
+        .expect(500)
+      expect(send).toHaveBeenCalledTimes(1)
+    },
+  )
 })

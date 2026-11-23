@@ -1,8 +1,10 @@
 import fs from 'node:fs'
 import path from 'node:path'
 import { setTimeout as sleep } from 'node:timers/promises'
+
 import got from 'got'
 import schedule from 'node-schedule'
+
 import { isRecord } from './helpers/type-guards.js'
 import * as logger from './logger.js'
 import Uploader from './Uploader.js'
@@ -19,18 +21,18 @@ const cleanUpFinishedUploads = (dirPath: string): void => {
     }
 
     logger.info(`found ${files.length} files`, 'jobs.cleanup.files')
-    files.forEach((file) => {
+    for (const file of files) {
       // if it does not contain FILE_NAME_PREFIX then it probably wasn't created by companion.
       // this is to avoid deleting unintended files, e.g if a wrong path was accidentally given
       // by a developer.
       if (!file.startsWith(Uploader.FILE_NAME_PREFIX)) {
         logger.info(`skipping file ${file}`, 'jobs.cleanup.skip')
-        return
+        continue
       }
       // A download can stall for hours without touching its file's mtime.
       if (Uploader.isTmpFileInUse(file)) {
         logger.info(`skipping file ${file} in use`, 'jobs.cleanup.skip')
-        return
+        continue
       }
       const fullPath = path.join(dirPath, file)
 
@@ -50,7 +52,7 @@ const cleanUpFinishedUploads = (dirPath: string): void => {
           if (err3) logger.error(err3, 'jobs.cleanup.delete.error')
         })
       })
-    })
+    }
   })
 }
 

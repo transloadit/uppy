@@ -7,12 +7,10 @@ body:
     attributes:
       label: Initial checklist
       options:
-        - label:
-            I understand this is a feature request and questions should be
+        - label: I understand this is a feature request and questions should be
             posted in the [Community Forum](https://community.transloadit.com/)
           required: true
-        - label:
-            I searched
+        - label: I searched
             [issues](https://github.com/transloadit/uppy/issues?q=is%3Aissue)
             and couldn’t find anything (or linked relevant results below)
           required: true

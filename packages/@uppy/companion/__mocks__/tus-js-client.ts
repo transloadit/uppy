@@ -1,17 +1,42 @@
+import { Readable } from 'node:stream'
+
 type UploadOptions = {
   uploadSize: number
+  uploadLengthDeferred?: boolean
   onProgress: (bytesUploaded: number, bytesTotal: number) => void
   onSuccess: () => void
+  onError: (error: unknown) => void
 } & Record<string, unknown>
 
 let lastUploadFile: unknown
+let lastUploadedBytes = 0
 let nextRequestUrl: string | undefined
 let hang = false
 let sentRequests: string[] = []
 let startGate: Promise<void> | undefined
+let resumeOffset = 0
+let resumeLength: string | undefined = '100'
+let creationStatus = 201
+
+export function __setResumeOffset(value: number): void {
+  resumeOffset = value
+}
+
+/** The HEAD response's Upload-Length; undefined leaves the header out. */
+export function __setResumeLength(value: string | undefined): void {
+  resumeLength = value
+}
+
+export function __setCreationStatus(value: number): void {
+  creationStatus = value
+}
 
 export function __getLastUploadFile(): unknown {
   return lastUploadFile
+}
+
+export function __getLastUploadedBytes(): number {
+  return lastUploadedBytes
 }
 
 export function __setNextRequestUrl(url: string | undefined): void {
@@ -35,14 +60,20 @@ export function __setStartGate(gate: Promise<void> | undefined): void {
 
 export function __resetTusMockState(): void {
   lastUploadFile = undefined
+  lastUploadedBytes = 0
   nextRequestUrl = undefined
   hang = false
   sentRequests = []
   startGate = undefined
+  resumeOffset = 0
+  resumeLength = '100'
+  creationStatus = 201
 }
 
 export class Upload {
   url: string
+
+  file: unknown
 
   options: UploadOptions
 
@@ -50,13 +81,44 @@ export class Upload {
 
   constructor(file: unknown, options: UploadOptions) {
     lastUploadFile = file
-    this.url = 'https://tus.endpoint/files/foo-bar'
+    this.file = file
+    this.url =
+      typeof options['uploadUrl'] === 'string'
+        ? options['uploadUrl']
+        : 'https://tus.endpoint/files/foo-bar'
     this.options = options
   }
 
+  // Consume the source like tus-js-client's StreamSource does, so that stream errors are
+  // reported through onError: until the end if the length is deferred, otherwise only
+  // `uploadSize` bytes (leaving the rest of the stream unread).
+  async _readFile(): Promise<number> {
+    const { uploadSize, uploadLengthDeferred } = this.options
+    if (!(this.file instanceof Readable)) return uploadSize
+    let bytesUploaded = 0
+    for await (const chunk of this.file.iterator({ destroyOnReturn: false })) {
+      bytesUploaded += uploadLengthDeferred
+        ? chunk.length
+        : Math.min(chunk.length, uploadSize - bytesUploaded)
+      lastUploadedBytes = bytesUploaded
+      if (!uploadLengthDeferred && bytesUploaded >= uploadSize) break
+    }
+    if (!uploadLengthDeferred && bytesUploaded !== uploadSize) {
+      throw new Error(
+        `upload was configured with a size of ${uploadSize} bytes, but the source is done after ${bytesUploaded} bytes`,
+      )
+    }
+    return bytesUploaded
+  }
+
   _triggerProgressThenSuccess() {
-    this.options.onProgress(this.options.uploadSize, this.options.uploadSize)
-    setTimeout(() => this.options.onSuccess(), 100)
+    this._readFile().then(
+      (bytesRead) => {
+        this.options.onProgress(bytesRead, bytesRead)
+        setTimeout(() => this.options.onSuccess(), 100)
+      },
+      (err) => this.options.onError(err),
+    )
   }
 
   async _send(method: string, url: string) {
@@ -65,13 +127,26 @@ export class Upload {
       await onBeforeRequest({ getURL: () => url, getMethod: () => method })
     }
     sentRequests.push(method)
+    // like the real client, which then uses the Location it got back
+    if (method === 'POST') this.url = url
     // The server answers at once: in hang mode the upload then waits for its
     // source, as the real client does while it reads the next chunk.
     const onAfterResponse = this.options['onAfterResponse']
     if (typeof onAfterResponse === 'function') {
       await onAfterResponse(
         { getURL: () => url, getMethod: () => method },
-        { getHeader: () => undefined, getStatus: () => 204 },
+        {
+          getHeader: (name: string) => {
+            if (method === 'POST' && name === 'Location') return url
+            if (method === 'HEAD' && name === 'Upload-Offset')
+              return String(resumeOffset)
+            if (method === 'HEAD' && name === 'Upload-Length')
+              return resumeLength
+            return undefined
+          },
+          getStatus: () =>
+            method === 'POST' ? creationStatus : method === 'HEAD' ? 200 : 204,
+        },
       )
     }
   }
@@ -85,7 +160,10 @@ export class Upload {
     await startGate
     this._aborted = false
     try {
-      await this._send('POST', nextRequestUrl ?? this.url)
+      await this._send(
+        this.options['uploadUrl'] ? 'HEAD' : 'POST',
+        nextRequestUrl ?? this.url,
+      )
     } catch (err) {
       const onError = this.options['onError']
       if (!this._aborted && typeof onError === 'function') onError(err)
