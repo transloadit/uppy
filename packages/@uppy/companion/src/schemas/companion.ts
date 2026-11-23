@@ -19,6 +19,8 @@ export interface ProviderOptions {
   secret?: string | undefined
   credentialsURL?: string | undefined
   verificationToken?: string | undefined
+  /** Replaces the OAuth scopes Companion requests from the provider. */
+  scope?: string[] | undefined
 }
 
 /**

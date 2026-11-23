@@ -219,6 +219,25 @@ describe('Test Provider options', () => {
     expect(getGrantProviderField(grantConfig, 'zoom', 'secret')).toBeUndefined()
   })
 
+  test('replaces the OAuth scope with providerOptions scope', () => {
+    const onedrive = companionOptions.providerOptions?.['onedrive']
+    if (onedrive == null) throw new Error('Expected providerOptions.onedrive')
+    onedrive.scope = ['Files.Read', 'offline_access', 'User.Read']
+    providerManager.addProviderOptions(
+      getAddProviderOptionsArgs(companionOptions),
+      grantConfig,
+      getOauthProvider,
+    )
+
+    expect(
+      requireGrantProviderConfig(grantConfig, 'microsoft')['scope'],
+    ).toEqual(['Files.Read', 'offline_access', 'User.Read'])
+    // other providers keep their default scope
+    expect(
+      requireGrantProviderConfig(grantConfig, 'googledrive')['scope'],
+    ).toEqual(['https://www.googleapis.com/auth/drive.readonly'])
+  })
+
   test('sets a main redirect uri, if oauthDomain is set', () => {
     const server = companionOptions.server
     if (server == null) throw new Error('Expected companionOptions.server')

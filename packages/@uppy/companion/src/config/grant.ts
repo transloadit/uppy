@@ -8,11 +8,11 @@ export type GrantProviderStaticConfig = Pick<
   | 'oauth'
   | 'scope_delimiter'
   | 'callback'
-  | 'scope'
   | 'custom_params'
 > & {
   transport?: 'session' | 'state' | undefined // more specific types
   custom_params?: Record<string, string> | undefined // we want more specific types than grant's `any`
+  scope?: string[] | undefined
 }
 export type GrantStaticConfig = Record<string, GrantProviderStaticConfig>
 

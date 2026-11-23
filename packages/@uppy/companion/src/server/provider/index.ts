@@ -174,6 +174,7 @@ export function addProviderOptions(
         key?: string | undefined
         secret?: string | undefined
         credentialsURL?: string | undefined
+        scope?: string[] | undefined
       }
     >
   },
@@ -228,6 +229,9 @@ export function addProviderOptions(
         ]
       if (provider) {
         Object.assign(grantProviderConfig, provider.getExtraGrantConfig())
+      }
+      if (providerOption.scope) {
+        grantProviderConfig['scope'] = providerOption.scope
       }
 
       // override grant.js redirect uri with companion's custom redirect url
