@@ -85,6 +85,14 @@ function resetTusMockState(): void {
   reset()
 }
 
+function setTusLastResponseBody(body: string): void {
+  const setter = Reflect.get(tusClient, '__setLastResponseBody')
+  if (typeof setter !== 'function') {
+    throw new Error('Expected tus mock to expose __setLastResponseBody()')
+  }
+  setter(body)
+}
+
 function setNextTusRequestUrl(url: string | undefined): void {
   const setter = Reflect.get(tusClient, '__setNextRequestUrl')
   if (typeof setter !== 'function') {
@@ -409,6 +417,47 @@ describe('uploader', () => {
       payload: expectedPayload,
     })
   })
+
+  test.each([
+    [
+      'a JSON body',
+      '{"id":"abc"}',
+      { status: 200, responseText: '{"id":"abc"}' },
+    ],
+    ['no body', '', undefined],
+    ['a body that is not JSON', 'OK', undefined],
+  ])(
+    'a tus upload passes on %s of the last response',
+    async (_, body, response) => {
+      setTusLastResponseBody(body)
+      const uploader = new Uploader({
+        companionOptions: { ...companionOptions, streamingUpload: false },
+        endpoint: 'http://url.myendpoint.com/files',
+        protocol: 'tus',
+        size: 17,
+        pathPrefix,
+        metadata: { name: 'file.txt', type: 'text/plain' },
+      })
+      const onUploadEvent = vi.fn()
+      Emitter().on(uploader.token, onUploadEvent)
+      const ready = uploader.awaitReady(60000)
+      await socketClient.connect(uploader.token)
+      await ready
+      await uploader.tryUploadStream(
+        Readable.from([Buffer.from('Some file content')]),
+        requireMockReq(),
+      )
+      // a throttled progress event may still come after it
+      expect(onUploadEvent).toHaveBeenCalledWith({
+        action: 'success',
+        payload: {
+          url: 'https://tus.endpoint/files/foo-bar',
+          complete: true,
+          ...(response && { response }),
+        },
+      })
+    },
+  )
 
   test('a tus upload paused while downloading the file first waits for resume', async () => {
     const uploader = new Uploader({
