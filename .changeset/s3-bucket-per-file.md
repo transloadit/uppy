@@ -1,5 +1,6 @@
 ---
 "@uppy/s3": patch
+"@uppy/locales": patch
 ---
 
-A selected file is imported from the bucket it was listed in, even when a later listing returns a different bucket. A key that was listed in two different buckets in one session is refused instead of guessing which one was selected; logging out clears this.
+When a listing reports a different bucket than the one before it (a renewed grant for another bucket, or a reconnect, without logging out), the plugin now starts over at the root: the loaded folders and the selection are dropped and the user is told to select the files again. Before, files and folders selected in the first bucket could be imported, or expanded, from the second one, where the same key can be another file.

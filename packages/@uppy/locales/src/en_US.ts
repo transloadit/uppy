@@ -43,6 +43,8 @@ en_US.strings = {
   browse: 'browse',
   browseFiles: 'browse files',
   browseFolders: 'browse folders',
+  bucketChanged:
+    'The storage session now shows another bucket, so the folder was reloaded and the selection cleared. Select the files again.',
   cancel: 'Cancel',
   cancelAllUploads: 'Cancel all uploads',
   cancelUpload: 'Cancel upload',
