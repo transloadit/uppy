@@ -2,7 +2,6 @@
 
 import '@uppy/core/css/style.min.css'
 import '@uppy/dashboard/css/style.min.css'
-import '@uppy/webcam/css/style.min.css'
 
 import Uppy from '@uppy/core'
 import Dashboard from '@uppy/react/dashboard'
