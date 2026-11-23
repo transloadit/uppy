@@ -81,6 +81,7 @@ export default async function sendToken(
     customerDefinedAllowedOrigins &&
     !isOriginAllowed(clientOrigin, customerDefinedAllowedOrigins)
   ) {
+    if (authCallbackToken) emitter().emit(authCallbackToken, { error: true })
     next()
     return
   }
