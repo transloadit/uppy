@@ -186,7 +186,7 @@ npm start
 
 Outside this repository there is no local bundle, so the browser always gets
 Uppy from the CDN fallback in `index.ts` (the `/uppy.min.mjs` and
-`/uppy.min.css` routes). Make sure those URLs name a current Uppy release, or
-replace the two routes with your own copy of the bundle.
+`/uppy.min.css` routes), which loads Uppy 6.0.8. Change the version in those
+two URLs to use a newer release.
 
 _Feel free to check how the demo works and feel free to open an issue._

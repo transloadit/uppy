@@ -5,7 +5,7 @@
   "description": "React Router + Uppy upload example with TUS and XHR support",
   "type": "module",
   "scripts": {
-    "dev": "node ./server.ts",
+    "dev": "node --env-file-if-exists=.env ./server.ts",
     "typecheck": "react-router typegen && tsc"
   },
   "dependencies": {
