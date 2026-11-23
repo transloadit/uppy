@@ -197,6 +197,31 @@ describe('list provider files', () => {
     expect1({ username, items, providerFixture })
   })
 
+  test('dropbox search leaves out items without a path', async () => {
+    nockGetCurrentAccount()
+    const entry = (name: string, path_lower?: string) => ({
+      metadata: {
+        metadata: { '.tag': 'file', name, id: `id:${name}`, path_lower },
+      },
+    })
+    nock('https://api.dropboxapi.com')
+      .post('/2/files/search_v2')
+      .reply(200, {
+        // Dropbox omits path_lower for items not mounted in the user's Dropbox
+        matches: [entry('mounted.txt', '/mounted.txt'), entry('unmounted.txt')],
+        has_more: false,
+      })
+
+    const res = await request(await getServerWithEnv())
+      .get('/dropbox/search?q=txt')
+      .set('uppy-auth-token', token)
+      .expect(200)
+
+    expect(
+      res.body.items.map((i: Record<string, unknown>) => i['requestPath']),
+    ).toEqual(['%2Fmounted.txt'])
+  })
+
   test('box', async () => {
     nock('https://api.box.com').get('/2.0/users/me').reply(200, {
       login: defaults.USERNAME,

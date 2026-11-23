@@ -105,6 +105,44 @@ describe('ProviderView Search E2E', () => {
     expect(targetPdfItem).toBeTruthy()
   })
 
+  test('Search result whose requestPath is not an encoded path still renders', async () => {
+    network.use(
+      http.get('http://companion.test/:provider/search', () =>
+        HttpResponse.json({
+          username: 'test-user@example.com',
+          items: [
+            {
+              isFolder: false,
+              icon: 'file',
+              name: 'shared.pdf',
+              mimeType: 'application/pdf',
+              id: 'id:shared',
+              thumbnail: null,
+              // what older Companions sent for Dropbox items without a path
+              requestPath: 'undefined',
+              size: 1,
+            },
+          ],
+          nextPagePath: null,
+        }),
+      ),
+    )
+    uppy = initializeUppy(['Dropbox'])
+    await page.getByRole('tab', { name: 'Dropbox' }).click()
+    await expect
+      .element(page.getByRole('tabpanel').getByText('test-user@example.com'))
+      .toBeVisible()
+
+    const searchInput = document.querySelector(
+      '.uppy-ProviderBrowser-searchFilterInput',
+    ) as HTMLInputElement
+    // before the fix, rendering threw "Partial tree not complete"
+    await userEvent.type(searchInput, 'shared')
+    await expect
+      .element(page.getByRole('button', { name: 'shared.pdf', exact: true }))
+      .toBeVisible()
+  })
+
   test('Search deep folder -> open it -> click ancestor breadcrumb and navigate correctly', async () => {
     uppy = initializeUppy(['Dropbox'])
 

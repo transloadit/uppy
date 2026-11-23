@@ -774,6 +774,7 @@ export default class ProviderView<M extends Meta, B extends Body> {
 
       const { partialTree } = this.plugin.getPluginState()
       const newPartialTree: PartialTree = [...partialTree]
+      const searchResults: string[] = []
 
       for (const file of items) {
         // Decode URI and split into path segments
@@ -852,12 +853,12 @@ export default class ProviderView<M extends Meta, B extends Body> {
           parentId = encodedPath // This node becomes parent for the next iteration
           isParentFolderChecked = status === 'checked'
         })
+        // the id the walk gave this file's leaf node (not `file.requestPath`,
+        // which needn't be encoded the same way)
+        searchResults.push(encodeURIComponent(`/${segments.join('/')}`))
       }
 
-      this.plugin.setPluginState({
-        partialTree: newPartialTree,
-        searchResults: items.map((item) => item.requestPath),
-      })
+      this.plugin.setPluginState({ partialTree: newPartialTree, searchResults })
     }).catch(handleError(this.plugin.uppy))
     this.#doneLoading()
   }
