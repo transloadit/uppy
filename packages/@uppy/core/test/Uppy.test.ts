@@ -865,6 +865,53 @@ describe('src/Core', () => {
       })
     })
 
+    it('should keep files that onBeforeFileAdded adds via setState during addFiles', () => {
+      let added = false
+      using core = new Core({
+        onBeforeFileAdded: () => {
+          if (!added) {
+            added = true
+            core.addFile({
+              name: 'from-hook.txt',
+              type: 'text/plain',
+              data: new Blob(['x']),
+            })
+          }
+          return true
+        },
+      })
+
+      core.addFiles(
+        ['a.txt', 'b.txt'].map((name) => ({
+          name,
+          type: 'text/plain',
+          data: new Blob([name]),
+        })),
+      )
+
+      expect(
+        core
+          .getFiles()
+          .map((f) => f.name)
+          .sort(),
+      ).toEqual(['a.txt', 'b.txt', 'from-hook.txt'])
+    })
+
+    it('should add many files in linear time', () => {
+      using core = new Core()
+      const files = Array.from({ length: 20000 }, (_, i) => ({
+        name: `file-${i}.txt`,
+        type: 'text/plain',
+        data: new Blob(['x']),
+      }))
+
+      const start = performance.now()
+      core.addFiles(files)
+      // ~0.15s with the linear loop, ~20s when it was quadratic
+      expect(performance.now() - start).toBeLessThan(3000)
+      expect(core.getFiles()).toHaveLength(20000)
+    })
+
     it('should add a file', async () => {
       const fileData = await fetchTestImage()
       const fileAddedEventMock = vi.fn()
