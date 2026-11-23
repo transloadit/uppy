@@ -244,6 +244,15 @@ function validateOptions(
  * an error it returns fails the stream before that chunk is passed on.
  * Destroying the returned stream destroys the source too.
  */
+/** tus-js-client keeps an upload URL as url-parse formats it; compare the WHATWG form. */
+function normalizeUrl(url: string): string {
+  try {
+    return new URL(url).href
+  } catch {
+    return url
+  }
+}
+
 function countBytes(
   stream: NodeReadableStream,
   check: (seen: number, ended: boolean) => Error | undefined,
@@ -301,6 +310,12 @@ function limitToAnnouncedSize(
 // stops moving must not wait forever.
 export const STALL_TIMEOUT_MS = 2 * 60 * 1000
 export const PAUSED_TIMEOUT_MS = 10 * 60 * 1000
+// lib-storage reports S3 progress only when a whole part is stored, so an S3
+// upload may go this long without progress for each byte of its parts in flight.
+const MIN_S3_BYTES_PER_SECOND = 64 * 1024
+// lib-storage's defaults
+const S3_PART_SIZE = 5 * 1024 * 1024
+const S3_QUEUE_SIZE = 4
 
 const states = {
   idle: 'idle',
@@ -450,7 +465,8 @@ export default class Uploader {
       logger.debug('Received from client: cancel', 'uploader', this.shortToken)
       if (this.tus) {
         const shouldTerminate =
-          this.tus.url != null && this.tus.url === this.#createdTusUrl
+          this.tus.url != null &&
+          normalizeUrl(this.tus.url) === this.#createdTusUrl
         this.tus.abort(shouldTerminate).catch(() => {})
       }
       this.#canceled = true
@@ -529,6 +545,12 @@ export default class Uploader {
   /** A tus request has been sent and its response has not arrived yet. */
   #requestPending = false
 
+  /** How long a pending request may go without progress. */
+  #requestPendingLimitMs = PAUSED_TIMEOUT_MS
+
+  /** Stops the multipart or S3 request in flight. */
+  #abortRequest: (() => void) | undefined
+
   /** When the tus transfer last moved: a request, a response, or progress. */
   #activityAt = 0
 
@@ -566,7 +588,9 @@ export default class Uploader {
         this.#activityAt = Date.now()
         return
       }
-      const limit = this.#requestPending ? PAUSED_TIMEOUT_MS : STALL_TIMEOUT_MS
+      const limit = this.#requestPending
+        ? this.#requestPendingLimitMs
+        : STALL_TIMEOUT_MS
       if (Date.now() - this.#activityAt < limit) return
       this.tus?.abort().catch(() => {})
       this.abortReadStream(new Error('Upload stalled'))
@@ -594,6 +618,9 @@ export default class Uploader {
   abortReadStream(err: Error): void {
     this.#uploadState = states.done
     if (this.readStream) this.readStream.destroy(err)
+    // A request whose body was sent no longer reads the stream, so stop it too:
+    // it must not finish after the client was told the upload failed.
+    this.#abortRequest?.()
     // A stream that already ended emits no 'error', so settle the upload here.
     this.#rejectUpload?.(err)
   }
@@ -1210,7 +1237,10 @@ export default class Uploader {
 
     const url = this.options.endpoint
     let framingError: Error | undefined
+    const controller = new AbortController()
+    this.#abortRequest = () => controller.abort()
     const reqOptions: OptionsOfTextResponseBody = {
+      signal: controller.signal,
       headers: headerSanitize(this.options.headers),
       isStream: false,
       resolveBodyOnly: false,
@@ -1357,11 +1387,19 @@ export default class Uploader {
       client,
       params,
       // using chunkSize as partSize too, see https://github.com/transloadit/uppy/pull/3511
-      ...(this.options.chunkSize != null && {
-        partSize: this.options.chunkSize,
-      }),
+      partSize: this.options.chunkSize ?? S3_PART_SIZE,
+      queueSize: S3_QUEUE_SIZE,
       leavePartsOnError: true, // https://github.com/aws/aws-sdk-js-v3/issues/2311
     })
+    this.#abortRequest = () => {
+      upload.abort().catch(() => {})
+    }
+    this.#requestPendingLimitMs = Math.max(
+      PAUSED_TIMEOUT_MS,
+      ((S3_QUEUE_SIZE * (this.options.chunkSize ?? S3_PART_SIZE)) /
+        MIN_S3_BYTES_PER_SECOND) *
+        1000,
+    )
 
     upload.on('httpUploadProgress', ({ loaded, total }) => {
       this.onProgress(loaded, total)
