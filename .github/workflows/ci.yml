@@ -273,6 +273,19 @@ jobs:
       - name: Check for duplicate dependencies
         run: corepack yarn dedupe --check
 
+  # `yarn version` rewrites the CDN URLs in READMEs, docs and examples on every
+  # release. Running the same script here must leave nothing to change.
+  cdn_versions:
+    name: CDN versions
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version-file: .node-version
+      - run: node scripts/update-readme-versions.mjs
+      - run: git diff --exit-code
+
   # Deploying the site stays in deploy-website.yml, which needs Pages scopes.
   website:
     name: Build and test (uppy.io)
