@@ -10,7 +10,8 @@ type DropboxItem = {
   size?: number
   name?: string
   id: string
-  path_lower: string
+  // absent for items not mounted in the user's Dropbox, e.g. unmounted shared folders
+  path_lower?: string
   server_modified?: string
 }
 
@@ -49,7 +50,9 @@ const getItemId = (item: DropboxItem): string => {
   return item.id
 }
 
-const getItemRequestPath = (item: DropboxItem): string => {
+type MountedDropboxItem = DropboxItem & { path_lower: string }
+
+const getItemRequestPath = (item: MountedDropboxItem): string => {
   return encodeURIComponent(item.path_lower)
 }
 
@@ -57,7 +60,7 @@ const getItemModifiedDate = (item: DropboxItem): string | undefined => {
   return item.server_modified
 }
 
-const getItemThumbnailUrl = (item: DropboxItem): string => {
+const getItemThumbnailUrl = (item: MountedDropboxItem): string => {
   return `/dropbox/thumbnail/${getItemRequestPath(item)}`
 }
 
@@ -69,17 +72,21 @@ const adaptData = (
   email: string | undefined,
   buildURL: BuildUrl,
 ): ProviderListResponse => {
-  const items = getItemSubList(res).map((item) => ({
-    isFolder: isFolder(item),
-    icon: getItemIcon(item),
-    name: getItemName(item),
-    mimeType: getMimeType(item),
-    id: getItemId(item),
-    thumbnail: buildURL(getItemThumbnailUrl(item), true),
-    requestPath: getItemRequestPath(item),
-    modifiedDate: getItemModifiedDate(item),
-    size: getItemSize(item),
-  }))
+  // Items without a path (search can return these) can't be browsed or
+  // addressed by path, so we leave them out.
+  const items = getItemSubList(res)
+    .filter((item): item is MountedDropboxItem => item.path_lower != null)
+    .map((item) => ({
+      isFolder: isFolder(item),
+      icon: getItemIcon(item),
+      name: getItemName(item),
+      mimeType: getMimeType(item),
+      id: getItemId(item),
+      thumbnail: buildURL(getItemThumbnailUrl(item), true),
+      requestPath: getItemRequestPath(item),
+      modifiedDate: getItemModifiedDate(item),
+      size: getItemSize(item),
+    }))
   items.sort((a, b) => a.name.localeCompare(b.name, 'en-US', { numeric: true }))
 
   return {
