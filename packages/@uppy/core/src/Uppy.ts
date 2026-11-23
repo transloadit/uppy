@@ -26,7 +26,6 @@ import type {
 } from './utils/index.js'
 
 import throttle from 'lodash/throttle.js'
-import ee from 'namespace-emitter'
 import { nanoid } from 'nanoid/non-secure'
 
 import packageJson from '../package.json' with { type: 'json' }
@@ -40,6 +39,7 @@ import {
 } from './Restricter.js'
 import DefaultStore from './store/index.js'
 import supportsUploadProgress from './supportsUploadProgress.js'
+import createEmitter from './utils/createEmitter.js'
 import {
   getErrorMessage,
   getFileNameAndExtension,
@@ -461,7 +461,7 @@ export class Uppy<
 
   #storeUnsubscribe
 
-  #emitter = ee()
+  #emitter = createEmitter()
 
   #preProcessors: Set<Processor> = new Set()
 

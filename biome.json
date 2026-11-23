@@ -7,20 +7,7 @@
   },
   "files": {
     "ignoreUnknown": true,
-    "includes": [
-      "packages/**",
-      "examples/**",
-      "scripts/**",
-      "private/**",
-      "website/**",
-      "!**/*.md",
-      "!website/static",
-      "!packages/**/{angular/src,dist,lib}",
-      "!node_modules",
-      "!.svelte-kit",
-      "!packages/@uppy/components/src/input.css",
-      "!examples/angular/**/*.html"
-    ]
+    "includes": ["**", "!**/*.md"]
   },
   "formatter": {
     "enabled": true,
@@ -81,6 +68,10 @@
   "css": {
     "formatter": {
       "quoteStyle": "single"
+    },
+    "parser": {
+      "cssModules": true,
+      "tailwindDirectives": true
     }
   },
   "javascript": {
@@ -228,14 +219,6 @@
           "style": {
             "noDescendingSpecificity": "off"
           }
-        }
-      }
-    },
-    {
-      "includes": ["examples/nextjs/**/*.css"],
-      "css": {
-        "parser": {
-          "tailwindDirectives": true
         }
       }
     }
