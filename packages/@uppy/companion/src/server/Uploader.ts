@@ -12,10 +12,11 @@ import { once } from 'node:events'
 import { createReadStream, createWriteStream, ReadStream } from 'node:fs'
 import { stat, unlink } from 'node:fs/promises'
 import { join } from 'node:path'
-import { Transform } from 'node:stream'
+import { Readable, Transform } from 'node:stream'
 import { pipeline } from 'node:stream/promises'
 
 import { Upload } from '@aws-sdk/lib-storage'
+import { FormDataEncoder } from 'form-data-encoder'
 import { FormData } from 'formdata-node'
 import got from 'got'
 import throttle from 'lodash/throttle.js'
@@ -1244,8 +1245,6 @@ export default class Uploader {
     const reqOptions: OptionsOfTextResponseBody = {
       signal: controller.signal,
       headers: headerSanitize(this.options.headers),
-      isStream: false,
-      resolveBodyOnly: false,
       responseType: 'text',
       // The body is a one-shot stream (or FormData wrapping one). got retries
       // PUT on network errors by default; the retry fired after this promise
@@ -1282,8 +1281,13 @@ export default class Uploader {
         },
       })
 
-      // @ts-expect-error This type error will be resolved by updating to the latest `got`.
-      reqOptions.body = formData
+      // Stay on form-data-encoder 2: version 4 splits byte arrays over 64 KiB
+      // by slicing the backing ArrayBuffer without the view's byteOffset, which
+      // sends the wrong bytes for a Buffer that is a view into a larger one.
+      // @ts-expect-error Version 2 types entries() as a Generator; formdata-node returns an IterableIterator.
+      const encoder = new FormDataEncoder(formData)
+      reqOptions.headers = { ...reqOptions.headers, ...encoder.headers }
+      reqOptions.body = Readable.from(encoder)
     } else {
       if (this.size != null) {
         reqOptions.headers = {
@@ -1330,9 +1334,6 @@ export default class Uploader {
       // A body that did not match the announced size is our own error; surface
       // it rather than got's generic request failure.
       if (framingError) throw framingError
-      // our own abort: the upload has already failed with the reason
-      if (!controller.signal.aborted)
-        logger.error(err, 'upload.multipart.error')
       const errObj = isRecord(err) ? err : null
       const response =
         errObj && isRecord(errObj['response']) ? errObj['response'] : null
@@ -1340,6 +1341,17 @@ export default class Uploader {
         response && typeof response['statusCode'] === 'number'
           ? response['statusCode']
           : undefined
+      // Got's HTTPError message names the full URL, so a presigned query
+      // (signature included) would end up in the log. Our own abort isn't
+      // logged: the upload has already failed with the reason.
+      if (!controller.signal.aborted) {
+        logger.error(
+          statusCode != null
+            ? `Upload destination answered with status ${statusCode}`
+            : err,
+          'upload.multipart.error',
+        )
+      }
 
       if (statusCode != null) {
         const statusMessage =

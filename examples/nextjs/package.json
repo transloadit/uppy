@@ -17,8 +17,8 @@
     "@uppy/tus": "workspace:*",
     "@uppy/xhr-upload": "workspace:*",
     "next": "^16.4.5",
-    "react": "^19.3.0",
-    "react-dom": "^19.3.0"
+    "react": "^19.3.1",
+    "react-dom": "^19.3.1"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4.3.3",

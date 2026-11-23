@@ -1470,6 +1470,67 @@ describe('uploader', () => {
     ).resolves.toMatchObject({ extraData: { bytesUploaded: 17 } })
   })
 
+  test('does not log the query of a failed multipart upload URL', async () => {
+    nock('http://localhost')
+      .put('/upload')
+      .query({ 'X-Amz-Signature': 'secret-signature' })
+      .reply(403, 'Forbidden')
+    using logged = vi.spyOn(console, 'log').mockImplementation(() => {})
+    const fileContent = Buffer.from('Some file content')
+    const stream = Readable.from([fileContent])
+    stream.pause()
+    const uploader = new Uploader({
+      companionOptions: { ...companionOptions, streamingUpload: true },
+      endpoint: 'http://localhost/upload?X-Amz-Signature=secret-signature',
+      protocol: 'multipart',
+      httpMethod: 'PUT',
+      size: fileContent.length,
+      metadata: {},
+      pathPrefix,
+    })
+    await expect(
+      uploader.uploadStream(stream, requireMockReq()),
+    ).rejects.toThrow()
+    const output = logged.mock.calls.flat().join(' ')
+    expect(output).not.toContain('secret-signature')
+    expect(output).toContain('status 403')
+  })
+
+  test('multipart uploads preserve large buffer views with a byte offset', async () => {
+    const backing = Buffer.alloc(100_100, 0x58)
+    backing.fill(0x41, 100)
+    const fileContent = backing.subarray(100)
+    let received = Buffer.alloc(0)
+    await using server = http.createServer((req, res) => {
+      const chunks: Buffer[] = []
+      req.on('data', (chunk: Buffer) => chunks.push(chunk))
+      req.on('end', () => {
+        received = Buffer.concat(chunks)
+        res.end('ok')
+      })
+    })
+    await new Promise<void>((resolve) => server.listen(0, '127.0.0.1', resolve))
+    const stream = Readable.from([fileContent])
+    stream.pause()
+    const uploader = new Uploader({
+      companionOptions: { ...companionOptions, streamingUpload: true },
+      endpoint: `http://127.0.0.1:${(server.address() as AddressInfo).port}/`,
+      protocol: 'multipart',
+      useFormData: true,
+      size: fileContent.length,
+      metadata: {},
+      pathPrefix,
+    })
+    await uploader.uploadStream(stream, requireMockReq())
+    const bodyStart = received.indexOf('\r\n\r\n') + 4
+    expect(bodyStart).toBeGreaterThan(3)
+    expect(
+      received
+        .subarray(bodyStart, bodyStart + fileContent.length)
+        .equals(fileContent),
+    ).toBe(true)
+  })
+
   const formDataNoMetaMatch =
     /^--form-data-boundary-[a-z0-9]+\r\nContent-Disposition: form-data; name="files\[\]"; filename="uppy-file-[^"]+"\r\nContent-Type: application\/octet-stream\r\n\r\nSome file content\r\n--form-data-boundary-[a-z0-9]+--\r\n\r\n$/
   test('upload functions with xhr formdata', async () => {

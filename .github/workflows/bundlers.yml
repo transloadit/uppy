@@ -33,8 +33,7 @@ jobs:
       - run: npm install --global corepack@0.36.0
       - name: Get yarn cache directory path
         id: yarn-cache-dir-path
-        run:
-          echo "dir=$(corepack yarn config get cacheFolder)" >> $GITHUB_OUTPUT
+        run: echo "dir=$(corepack yarn config get cacheFolder)" >> $GITHUB_OUTPUT
       - uses: actions/cache@v6
         id: yarn-cache # use this to check for `cache-hit` (`steps.yarn-cache.outputs.cache-hit != 'true'`)
         with:
@@ -62,8 +61,7 @@ jobs:
             })();
           EOF
       - name: Eject public packages from repo
-        run:
-          mkdir /tmp/artifacts && corepack yarn workspaces foreach --all
+        run: mkdir /tmp/artifacts && corepack yarn workspaces foreach --all
           --no-private pack --install-if-needed -o /tmp/artifacts/%s-${{
           github.sha }}.tgz
       - name: Debug packaged uppy dependencies
@@ -210,8 +208,7 @@ jobs:
       - run: npm i --save-dev vite@${{matrix.bundler-version}}
       - run: npx vite --version
       - name: Create index.html
-        run:
-          echo '<!doctype html><html><head><script type="module"
+        run: echo '<!doctype html><html><head><script type="module"
           src="./lib/index.js"></script></head></html>' > index.html
       - run: npx vite build
 
