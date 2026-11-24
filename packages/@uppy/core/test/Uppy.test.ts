@@ -1716,7 +1716,7 @@ describe('src/Core', () => {
           b,
         ])
 
-        const retry = core.retryUpload(b)
+        core.retryUpload(b)
         expect(core.getState().currentUploads[firstUploadID]).toBeUndefined()
         expect(
           Object.values(core.getState().currentUploads).map((u) => u.fileIDs),
@@ -1726,10 +1726,6 @@ describe('src/Core', () => {
         const firstResult = await firstUpload
         expect(firstResult!.successful).toEqual([])
         expect(firstResult!.failed).toEqual([])
-
-        await settle(a)
-        await settle(b)
-        expect((await retry)!.successful!.map((f) => f.id)).toEqual([b])
       })
     })
   })

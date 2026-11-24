@@ -2229,11 +2229,8 @@ export class Uppy<
     const otherUploads: typeof currentUploads = {}
     for (const [id, upload] of Object.entries(currentUploads)) {
       const remaining = upload.fileIDs.filter((f) => !newFileIDs.has(f))
-      if (remaining.length === upload.fileIDs.length) {
-        otherUploads[id] = upload
-      } else if (remaining.length > 0) {
+      if (remaining.length > 0)
         otherUploads[id] = { ...upload, fileIDs: remaining }
-      }
     }
 
     this.setState({
