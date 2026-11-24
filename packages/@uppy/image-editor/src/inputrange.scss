@@ -1,4 +1,4 @@
-@use "sass:color";
+@use 'sass:color';
 
 // Styling Cross-Browser Compatible Range Inputs with Sass
 // Github: https://github.com/darlanrod/input-range-sass
@@ -31,7 +31,11 @@ $track-border-color: #cfd8dc !default;
 $track-radius: 5px !default;
 $contrast: 5% !default;
 
-$ie-bottom-track-color: color.adjust($track-color, $lightness: -$contrast, $space: hsl) !default;
+$ie-bottom-track-color: color.adjust(
+  $track-color,
+  $lightness: -$contrast,
+  $space: hsl
+) !default;
 
 @mixin shadow($shadow-size, $shadow-blur, $shadow-color) {
   box-shadow:
@@ -73,7 +77,11 @@ $ie-bottom-track-color: color.adjust($track-color, $lightness: -$contrast, $spac
     outline: 0;
 
     &::-webkit-slider-runnable-track {
-      background: color.adjust($track-color, $lightness: $contrast, $space: hsl);
+      background: color.adjust(
+        $track-color,
+        $lightness: $contrast,
+        $space: hsl
+      );
     }
 
     &::-ms-fill-lower {
@@ -81,7 +89,11 @@ $ie-bottom-track-color: color.adjust($track-color, $lightness: -$contrast, $spac
     }
 
     &::-ms-fill-upper {
-      background: color.adjust($track-color, $lightness: $contrast, $space: hsl);
+      background: color.adjust(
+        $track-color,
+        $lightness: $contrast,
+        $space: hsl
+      );
     }
   }
 
@@ -101,10 +113,8 @@ $ie-bottom-track-color: color.adjust($track-color, $lightness: -$contrast, $spac
     @include thumb;
     -webkit-appearance: none;
     margin-top: (
-      math.div((-$track-border-width * 2 + $track-height), 2) - math.div(
-          $thumb-height,
-          2
-        )
+      math.div((-$track-border-width * 2 + $track-height), 2) -
+        math.div($thumb-height, 2)
     );
   }
 

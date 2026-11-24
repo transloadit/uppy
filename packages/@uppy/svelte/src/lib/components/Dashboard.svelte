@@ -3,7 +3,9 @@
   generics="M extends import('@uppy/core/utils').Meta, B extends import('@uppy/core/utils').Body"
 >
 import type { Uppy } from "@uppy/core";
-import DashboardPlugin, { type DashboardOptions } from "@uppy/dashboard";
+import type { DashboardOptions } from "@uppy/dashboard";
+
+import DashboardPlugin from "@uppy/dashboard";
 import { onDestroy, onMount } from "svelte";
 
 let container: HTMLElement;

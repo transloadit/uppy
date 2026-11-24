@@ -1,4 +1,3 @@
-import Box from '@uppy/box'
 import type {
   Body,
   DefinePluginOpts,
@@ -6,8 +5,10 @@ import type {
   UnknownProviderPlugin,
   Uppy,
 } from '@uppy/core'
-import { BasePlugin } from '@uppy/core'
 import type { CompanionPluginOptions } from '@uppy/core/companion-client'
+
+import Box from '@uppy/box'
+import { BasePlugin } from '@uppy/core'
 import Dropbox from '@uppy/dropbox'
 import Facebook from '@uppy/facebook'
 import GoogleDrive from '@uppy/google-drive'
@@ -15,6 +16,7 @@ import OneDrive from '@uppy/onedrive'
 import Unsplash from '@uppy/unsplash'
 import Url from '@uppy/url'
 import Zoom from '@uppy/zoom'
+
 import packageJson from '../package.json' with { type: 'json' }
 
 export const availablePlugins = {
@@ -86,7 +88,7 @@ export default class RemoteSources<
   }
 
   override install(): void {
-    this.opts.sources.forEach((pluginId) => {
+    for (const pluginId of this.opts.sources) {
       const { sources, ...rest } = this.opts
       const optsForRemoteSourcePlugin: CompanionPluginOptions = {
         ...rest,
@@ -109,7 +111,7 @@ export default class RemoteSources<
       this.#installedPlugins.add(
         this.uppy.getPlugin(pluginId) as UnknownProviderPlugin<M, B>,
       )
-    })
+    }
   }
 
   override uninstall(): void {

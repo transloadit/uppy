@@ -1,6 +1,7 @@
-import { Links, Meta, Outlet, Scripts, ScrollRestoration } from 'react-router'
 import '@uppy/core/css/style.min.css'
 import '@uppy/dashboard/css/style.min.css'
+
+import { Links, Meta, Outlet, Scripts, ScrollRestoration } from 'react-router'
 
 export function Layout({ children }: { children: React.ReactNode }) {
   return (

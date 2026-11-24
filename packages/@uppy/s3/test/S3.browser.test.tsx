@@ -1,5 +1,23 @@
+import '@uppy/core/css/style.css'
+import '@uppy/core/provider-views/css/style.css'
+import '@uppy/dashboard/css/style.css'
+import '@uppy-dev/msw-setup'
+
+import type {
+  MockS3Companion,
+  MockS3CompanionOptions,
+} from '@uppy-dev/s3-mock-companion'
+
+import type { S3Options } from '../lib/S3.js'
+
+import { network } from 'virtual:msw'
 import Uppy from '@uppy/core'
 import Dashboard from '@uppy/dashboard'
+import {
+  createMockS3Companion,
+  mockGrant,
+  toMswHandlers,
+} from '@uppy-dev/s3-mock-companion'
 import { HttpResponse, http } from 'msw'
 import {
   afterEach,
@@ -11,19 +29,8 @@ import {
   vi,
 } from 'vitest'
 import { page, userEvent } from 'vitest/browser'
-import '@uppy/core/css/style.css'
-import '@uppy/core/provider-views/css/style.css'
-import '@uppy/dashboard/css/style.css'
-import '@uppy-dev/msw-setup'
-import { network } from 'virtual:msw'
-import {
-  createMockS3Companion,
-  type MockS3Companion,
-  type MockS3CompanionOptions,
-  mockGrant,
-  toMswHandlers,
-} from '@uppy-dev/s3-mock-companion'
-import S3, { type S3Options } from '../lib/S3.js'
+
+import S3 from '../lib/S3.js'
 
 const COMPANION = 'http://localhost:3020'
 const TOKEN = 'test-auth-token'
@@ -228,6 +235,120 @@ describe('S3 provider in the browser', () => {
     expect(plugin.rootPrefix).toBe('tenant/')
   })
 
+  it('opens a granted deep folder with one listing and reconstructs its breadcrumbs', async () => {
+    const { plugin } = setup({
+      mode: 'manager',
+      getGrant: async () =>
+        mockGrant({ bucket: 'my-bucket', prefix: 'tenant/' }),
+      companion: {
+        folders: {
+          'tenant/': [{ name: 'photos', isFolder: true }],
+          'tenant/photos/': [{ name: '2026', isFolder: true }],
+          'tenant/photos/2026/': [{ name: 'chair.jpg', isFolder: false }],
+        },
+      },
+    })
+    const list = vi.spyOn(plugin.provider, 'list')
+    expect(await plugin.openFolderPath('tenant/photos/2026/')).toBe(true)
+    expect(list.mock.calls.map(([id]) => id)).toEqual([
+      'tenant%2Fphotos%2F2026%2F',
+    ])
+    expect(names(plugin)).toEqual(['chair.jpg'])
+    expect(itemOf(plugin, 'tenant%2Fphotos%2F2026%2F')).toMatchObject({
+      parentId: 'tenant%2Fphotos%2F',
+      data: { name: '2026' },
+    })
+    expect(itemOf(plugin, 'tenant%2Fphotos%2F')).toMatchObject({
+      parentId: null,
+      data: { name: 'photos' },
+      cached: false,
+    })
+    await plugin.view.openFolder('tenant%2Fphotos%2F')
+    expect(names(plugin)).toEqual(['2026'])
+  })
+
+  it('falls back to the last existing ancestor of a stale granted deep link', async () => {
+    const { plugin } = setup({
+      mode: 'manager',
+      getGrant: async () => mockGrant({ bucket: 'my-bucket' }),
+    })
+    expect(await plugin.openFolderPath('docs/missing/deeper/')).toBe(false)
+    expect(plugin.getPluginState().currentFolderId).toBe('docs%2F')
+    expect(names(plugin)).toContain('hello.txt')
+    expect(
+      plugin
+        .getPluginState()
+        .partialTree.some((node) => node.id === 'docs%2Fmissing%2F'),
+    ).toBe(false)
+  })
+
+  it('validates an empty granted folder through its paginated parent listing', async () => {
+    const { plugin } = setup({
+      mode: 'manager',
+      getGrant: async () => mockGrant({ bucket: 'my-bucket' }),
+      companion: {
+        pageSize: 1,
+        folders: {
+          '': [
+            { name: 'readme.md', isFolder: false },
+            { name: 'empty', isFolder: true },
+          ],
+          'empty/': [],
+        },
+      },
+    })
+    expect(await plugin.openFolderPath('empty/')).toBe(true)
+    expect(plugin.getPluginState().currentFolderId).toBe('empty%2F')
+    expect(names(plugin)).toEqual([])
+  })
+
+  it('rejects paths outside a grant or containing dot segments, showing the root instead', async () => {
+    const { plugin } = setup({
+      mode: 'manager',
+      getGrant: async () =>
+        mockGrant({ bucket: 'my-bucket', prefix: 'tenant/' }),
+      companion: {
+        folders: {
+          'tenant/': [{ name: 'photos', isFolder: true }],
+          'tenant-adjacent/photos/': [{ name: 'secret.jpg', isFolder: false }],
+        },
+      },
+    })
+    const list = vi.spyOn(plugin.provider, 'list')
+    expect(await plugin.openFolderPath('tenant-adjacent/photos/')).toBe(false)
+    expect(await plugin.openFolderPath('tenant/../outside/')).toBe(false)
+    expect(await plugin.openFolderPath('tenant/./photos/')).toBe(false)
+    expect(list.mock.calls.map(([id]) => id)).toEqual([plugin.rootFolderId])
+    expect(plugin.getPluginState().currentFolderId).toBe(plugin.rootFolderId)
+    expect(names(plugin)).toEqual(['photos'])
+  })
+
+  it('lists placeholder ancestors in their parent’s order once the parent is opened', async () => {
+    const { plugin } = setup({
+      mode: 'manager',
+      getGrant: async () =>
+        mockGrant({ bucket: 'my-bucket', prefix: 'tenant/' }),
+      companion: {
+        pageSize: 2,
+        folders: {
+          'tenant/': [{ name: 'photos', isFolder: true }],
+          'tenant/photos/': [
+            { name: '2024', isFolder: true },
+            { name: '2025', isFolder: true },
+            { name: '2026', isFolder: true },
+            { name: '2027', isFolder: true },
+          ],
+          'tenant/photos/2026/': [{ name: 'chair.jpg', isFolder: false }],
+        },
+      },
+    })
+    expect(await plugin.openFolderPath('tenant/photos/2026/')).toBe(true)
+    await plugin.view.openFolder('tenant%2Fphotos%2F')
+    expect(names(plugin)).toEqual(['2024', '2025', '2026'])
+    expect(await plugin.view.loadNextPage()).toBe(true)
+    expect(names(plugin)).toEqual(['2024', '2025', '2026', '2027'])
+  })
+
   it('forgets the session on logout', async () => {
     const { plugin } = setup({
       getGrant: async () =>
@@ -348,33 +469,33 @@ describe('S3 provider in the browser', () => {
   it.for<[string, (plugin: TestPlugin) => Promise<unknown>]>([
     ['deleting', (plugin) => plugin.provider.deleteItem('docs')],
     ['moving', (plugin) => plugin.provider.moveItem('docs', 'x')],
-  ])('the mock preserves a same-named folder when %s a file', async ([
-    ,
-    mutate,
-  ]) => {
-    const { companion, plugin } = setup({
-      companion: {
-        folders: {
-          '': [
-            { name: 'readme.md', isFolder: false },
-            { name: 'docs', isFolder: false },
-            { name: 'docs', isFolder: true },
-          ],
-          'docs/': [],
+  ])(
+    'the mock preserves a same-named folder when %s a file',
+    async ([, mutate]) => {
+      const { companion, plugin } = setup({
+        companion: {
+          folders: {
+            '': [
+              { name: 'readme.md', isFolder: false },
+              { name: 'docs', isFolder: false },
+              { name: 'docs', isFolder: true },
+            ],
+            'docs/': [],
+          },
         },
-      },
-    })
-    await openBucket()
-    await mutate(plugin)
-    expect(companion.folders.get('')).toContainEqual({
-      name: 'docs',
-      isFolder: true,
-    })
-    expect(companion.folders.get('')).not.toContainEqual({
-      name: 'docs',
-      isFolder: false,
-    })
-  })
+      })
+      await openBucket()
+      await mutate(plugin)
+      expect(companion.folders.get('')).toContainEqual({
+        name: 'docs',
+        isFolder: true,
+      })
+      expect(companion.folders.get('')).not.toContainEqual({
+        name: 'docs',
+        isFolder: false,
+      })
+    },
+  )
 
   it('restores a session scoped to a prefix and opens its nested folder', async () => {
     const { plugin } = setup({

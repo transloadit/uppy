@@ -12,14 +12,13 @@ import type {
   Uppy,
   UppyFile,
 } from '@uppy/core'
+import type { RemoteUppyFile } from '@uppy/core/utils'
+import type { TusDetailedError, TusOpts } from '@uppy/tus'
+
 import { BasePlugin } from '@uppy/core'
-import {
-  ErrorWithCause,
-  RateLimitedQueue,
-  type RemoteUppyFile,
-  toError,
-} from '@uppy/core/utils'
-import Tus, { type TusDetailedError, type TusOpts } from '@uppy/tus'
+import { ErrorWithCause, RateLimitedQueue, toError } from '@uppy/core/utils'
+import Tus from '@uppy/tus'
+
 import packageJson from '../package.json' with { type: 'json' }
 import Assembly from './Assembly.js'
 import AssemblyWatcher from './AssemblyWatcher.js'
@@ -255,7 +254,8 @@ const COMPANION_URL = 'https://api2.transloadit.com/companion'
 // Regex matching acceptable postMessage() origins for authentication feedback from companion.
 const COMPANION_ALLOWED_HOSTS = /\.transloadit\.com$/
 // Regex used to check if a Companion address is run by Transloadit.
-const TL_COMPANION = /https?:\/\/api2(?:-\w+)?\.transloadit\.com\/companion/
+const TL_COMPANION =
+  /^https:\/\/api2(?:-[\w-]+)?\.transloadit\.com\/companion\/?$/
 
 /**
  * Upload files to Transloadit using Tus.
@@ -380,7 +380,14 @@ export default class Transloadit<
     if ('remote' in file && file.remote) {
       ;({ remote } = file)
 
-      if (status.companion_url && TL_COMPANION.test(file.remote.companionUrl)) {
+      // Both ends must be Transloadit's: the status comes from whatever server
+      // the Assembly was created on, and the remote file's requests carry its
+      // Companion credentials.
+      if (
+        status.companion_url &&
+        TL_COMPANION.test(status.companion_url) &&
+        TL_COMPANION.test(file.remote.companionUrl)
+      ) {
         const newHost = status.companion_url.replace(/\/$/, '')
         const path = file.remote.url
           .replace(file.remote.companionUrl, '')
@@ -435,9 +442,9 @@ export default class Transloadit<
       const assemblyID = ensureAssemblyId(status)
 
       const updatedFiles: Record<string, UppyFile<M, B>> = {}
-      files.forEach((file) => {
+      for (const file of files) {
         updatedFiles[file.id] = this.#attachAssemblyMetadata(file, status)
-      })
+      }
 
       this.uppy.setState({
         files: {
@@ -478,30 +485,30 @@ export default class Transloadit<
 
     watcher.on('assembly-complete', (id: string) => {
       const files = this.getAssemblyFiles(id)
-      files.forEach((file) => {
+      for (const file of files) {
         this.completedFiles[file.id] = true
         this.uppy.emit('postprocess-complete', file)
-      })
+      }
     })
 
     watcher.on('assembly-error', (id: string, error: Error) => {
       // Clear postprocessing state for all our files.
       const filesFromAssembly = this.getAssemblyFiles(id)
-      filesFromAssembly.forEach((file) => {
+      for (const file of filesFromAssembly) {
         // TODO Maybe make a postprocess-error event here?
 
         this.uppy.emit('upload-error', file, error)
         this.uppy.emit('postprocess-complete', file)
-      })
+      }
 
       // Reset `tus` key in the file state, so when the upload is retried,
       // old tus upload is not re-used — Assebmly expects a new upload, can't currently
       // re-use the old one. See: https://github.com/transloadit/uppy/issues/4412
       // and `onReceiveUploadUrl` in @uppy/tus
       const files = { ...this.uppy.getState().files }
-      filesFromAssembly.forEach((file) => {
+      for (const file of filesFromAssembly) {
         delete files[file.id].tus
-      })
+      }
       this.uppy.setState({ files })
 
       this.uppy.emit('error', error)
@@ -754,19 +761,21 @@ export default class Transloadit<
       }[] = []
       const id = ensureAssemblyId(previousAssembly)
 
-      previousAssembly.uploads?.forEach((uploadedFile) => {
-        const file = this.#findFile(uploadedFile)
-        files[uploadedFile.id] = {
-          id: file!.id,
-          assembly: id,
-          uploadedFile,
+      if (previousAssembly.uploads) {
+        for (const uploadedFile of previousAssembly.uploads) {
+          const file = this.#findFile(uploadedFile)
+          files[uploadedFile.id] = {
+            id: file!.id,
+            assembly: id,
+            uploadedFile,
+          }
         }
-      })
+      }
 
       const state = this.getPluginState()
       const restoredResults = previousAssembly.results ?? {}
 
-      Object.keys(restoredResults).forEach((stepName) => {
+      for (const stepName of Object.keys(restoredResults)) {
         const stepResults = restoredResults[stepName] ?? []
         for (const result of stepResults) {
           if (!('id' in result)) {
@@ -793,7 +802,7 @@ export default class Transloadit<
             assembly: id,
           })
         }
-      })
+      }
 
       const assembly = new Assembly(previousAssembly, this.#rateLimitedQueue)
       this.assembly = assembly
@@ -925,21 +934,21 @@ export default class Transloadit<
       if (this.opts.importFromUploadURLs) {
         await this.#reserveFiles(assembly, fileIDs)
       }
-      fileIDs.forEach((fileID) => {
+      for (const fileID of fileIDs) {
         const file = this.uppy.getFile(fileID)
         this.uppy.emit('preprocess-complete', file)
-      })
+      }
       this.#createAssemblyWatcher(ensureAssemblyId(assembly.status))
       this.assembly = assembly
       this.#connectAssembly(assembly, fileIDs)
     } catch (err) {
-      fileIDs.forEach((fileID) => {
+      for (const fileID of fileIDs) {
         const file = this.uppy.getFile(fileID)
         // Clear preprocessing state when the Assembly could not be created,
         // otherwise the UI gets confused about the lingering progress keys
         this.uppy.emit('preprocess-complete', file)
         this.uppy.emit('upload-error', file, toError(err))
-      })
+      }
       // Reset allowNewUpload on error
       this.uppy.setState({ allowNewUpload: true })
       throw err
@@ -980,15 +989,16 @@ export default class Transloadit<
         return
       }
 
-      const incompleteFiles = files.filter(
-        (file) => !Object.hasOwn(this.completedFiles, file.id),
-      )
-      incompleteFiles.forEach((file) => {
+      for (const file of files) {
+        if (Object.hasOwn(this.completedFiles, file.id)) {
+          continue
+        }
+
         this.uppy.emit('postprocess-progress', file, {
           mode: 'indeterminate',
           message: this.i18n('encoding'),
         })
-      })
+      }
 
       await this.#watcher.promise
       // assembly is now done processing!
@@ -1132,6 +1142,7 @@ export default class Transloadit<
 
 // Re-export type from @transloadit/types so callers can import it from the plugin package.
 export type { AssemblyInstructionsInput } from '@transloadit/types'
+
 // Low-level classes for advanced usage (e.g., creating assemblies without file uploads)
 export { default as Assembly } from './Assembly.js'
 export { AssemblyError, default as Client } from './Client.js'

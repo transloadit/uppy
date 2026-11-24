@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest'
+
 import createSuperFocus from '../../lib/utils/createSuperFocus.js'
 
 describe('createSuperFocus', () => {

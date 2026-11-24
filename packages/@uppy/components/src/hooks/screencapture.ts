@@ -1,6 +1,7 @@
 import type { Uppy, UppyEventMap } from '@uppy/core'
 import type ScreenCapture from '@uppy/screen-capture'
 import type { ScreenCaptureState } from '@uppy/screen-capture'
+
 import { Subscribers } from './utils.js'
 
 type ButtonProps = {
