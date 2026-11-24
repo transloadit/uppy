@@ -2,13 +2,15 @@ import type { TransloaditStorageProviderOptions } from '../src/schemas/companion
 import type { CompanionLike } from '../src/server/provider/Provider.js'
 import type { GrantClaims } from './fixtures/s3.js'
 
-import { createHmac } from 'node:crypto'
+import { createHash, createHmac } from 'node:crypto'
 import { createServer } from 'node:http'
 
 import { expect, onTestFinished, test, vi } from 'vitest'
+import { z } from 'zod'
 
 import { defaultOptions } from '../src/config/companion.js'
 import logger from '../src/server/logger.js'
+import { ProviderAuthError } from '../src/server/provider/error.js'
 import { userError } from '../src/server/provider/errorCodes.js'
 import { parseTransloaditStorageProviderOptions } from '../src/server/provider/s3/config.js'
 import TransloaditStorageProvider from '../src/server/provider/s3/transloadit-storage.js'
@@ -23,23 +25,44 @@ async function fixture(
     status?: number
     body?: unknown
     apiEndpoint?: string
+    contextMode?: boolean
   } = {},
 ) {
   const lookups: string[] = []
   const s3Keys: string[] = []
   const moves: URLSearchParams[] = []
+  const contexts: { workspace: string; grant: string; context: string }[] = []
+  const s3Tokens: (string | string[] | undefined)[] = []
   const server = createServer(async (request, response) => {
     if (request.url === '/internal/file-library/credentials') {
       let body = ''
       for await (const chunk of request) body += chunk
-      const { workspace: requested } = JSON.parse(body)
+      const {
+        workspace: requested,
+        grant,
+        context,
+      } = z
+        .object({
+          workspace: z.string(),
+          grant: z.string().optional(),
+          context: z.string().optional(),
+        })
+        .parse(JSON.parse(body))
+      if (context !== undefined && grant !== undefined)
+        contexts.push({ workspace: requested, grant, context })
       lookups.push(requested)
       const authorization = request.headers.authorization ?? ''
       const [, timestamp, signature] =
         /^FileLibrary (\d+):([a-f0-9]{64})$/.exec(authorization) ?? []
       expect(signature).toBe(
         createHmac('sha256', secret)
-          .update(`file-library-credentials:v1:${timestamp}:${requested}`)
+          .update(
+            context !== undefined
+              ? `file-library-credentials:v2:${timestamp}:${createHash('sha256')
+                  .update(JSON.stringify([requested, grant, context]))
+                  .digest('hex')}`
+              : `file-library-credentials:v1:${timestamp}:${requested}`,
+          )
           .digest('hex'),
       )
       response.writeHead(options.status ?? 200, {
@@ -51,6 +74,10 @@ async function fixture(
             workspace: options.wrongWorkspace ? 'c'.repeat(32) : requested,
             authKey: `key-${requested}`,
             authSecret: 'local-workspace-secret',
+            ...(options.contextMode &&
+              context !== undefined && {
+                sessionToken: `session-token:${context}`,
+              }),
           },
         ),
       )
@@ -72,6 +99,7 @@ async function fixture(
       return
     }
     s3Keys.push(request.headers.authorization ?? '')
+    s3Tokens.push(request.headers['x-amz-security-token'])
     response.writeHead(200, { 'content-type': 'application/xml' })
     response.end(
       '<ListBucketResult xmlns="http://s3.amazonaws.com/doc/2006-03-01/"><IsTruncated>false</IsTruncated><KeyCount>0</KeyCount></ListBucketResult>',
@@ -115,16 +143,29 @@ async function fixture(
     await new Promise<void>((resolve) => server.close(() => resolve()))
   })
   const provider = new TransloaditStorageProvider({ allowLocalUrls: true })
-  const grantSession = (overrides: GrantClaims = {}) =>
+  const grantSession = (
+    overrides: GrantClaims = {},
+    storageContext?: unknown,
+  ) =>
     provider.simpleAuth({
       companion,
       requestBody: {
         form: {
           grant: mint(claims({ bucket: workspace, ...overrides }), secret),
+          ...(storageContext !== undefined && { storageContext }),
         },
       },
     })
-  return { companion, lookups, s3Keys, moves, provider, grantSession }
+  return {
+    companion,
+    lookups,
+    s3Keys,
+    moves,
+    contexts,
+    s3Tokens,
+    provider,
+    grantSession,
+  }
 }
 
 test('new Workspaces need no credential map or restart and get separate S3 signing keys', async () => {
@@ -292,3 +333,97 @@ test.each([
     else expect(parse).toThrow('credentialsSecret needs an https apiEndpoint')
   },
 )
+
+test('binds broker requests to the original grant and separates contexts in the same Workspace', async () => {
+  const { provider, companion, contexts, s3Tokens, grantSession } =
+    await fixture({ contextMode: true })
+  const alice = await grantSession({ sub: 'alice' }, 'alice-context')
+  const bob = await grantSession({ sub: 'bob' }, 'bob-context')
+  await provider.list({ companion, providerUserSession: alice })
+  await provider.list({ companion, providerUserSession: bob })
+  await provider.list({ companion, providerUserSession: alice })
+  expect(contexts).toEqual([
+    { workspace, grant: alice.nativeContext?.grant, context: 'alice-context' },
+    { workspace, grant: bob.nativeContext?.grant, context: 'bob-context' },
+  ])
+  expect(s3Tokens).toEqual([
+    'session-token:alice-context',
+    'session-token:bob-context',
+    'session-token:alice-context',
+  ])
+  expect(companion.s3ProviderClients.size).toBe(2)
+})
+
+test('includes the broker session token in the signed native move parameters', async () => {
+  const { provider, companion, moves, grantSession } = await fixture({
+    contextMode: true,
+  })
+  const session = await grantSession(
+    { scopes: ['read', 'write'] },
+    'alice-context',
+  )
+  await provider.moveItem({
+    companion,
+    providerUserSession: session,
+    id: 'tenant-1/a.jpg',
+    destination: 'tenant-1/b.jpg',
+  })
+  expect(JSON.parse(moves[0]?.get('params') ?? '{}')).toMatchObject({
+    storage_context: 'session-token:alice-context',
+  })
+})
+
+test('context requests fail closed when the broker returns only unscoped credentials', async () => {
+  const { provider, companion, grantSession, s3Keys } = await fixture()
+  const session = await grantSession({}, 'alice-context')
+  await expect(
+    provider.list({ companion, providerUserSession: session }),
+  ).rejects.toMatchObject(outage)
+  expect(s3Keys).toEqual([])
+})
+
+test.each(['', 'x'.repeat(8193), 123, null])(
+  'rejects malformed native context (%s)',
+  async (context) => {
+    const { grantSession, lookups } = await fixture()
+    await expect(grantSession({}, context)).rejects.toEqual(
+      userError('S3_INVALID_GRANT'),
+    )
+    expect(lookups).toEqual([])
+  },
+)
+
+test('destroys expired context clients when a fresh context needs a client', async () => {
+  const { provider, companion, grantSession } = await fixture({
+    contextMode: true,
+  })
+  const session = await grantSession({}, 'alice-context')
+  await provider.list({ companion, providerUserSession: session })
+  const client = [...companion.s3ProviderClients.values()][0]
+  if (!client) throw new Error('Expected cached S3 client')
+  const destroy = vi.spyOn(client, 'destroy')
+  const originalNow = Date.now()
+  const now = vi.spyOn(Date, 'now').mockReturnValue(originalNow + 901_000)
+  onTestFinished(() => now.mockRestore())
+  const fresh = await grantSession(
+    { exp: Math.floor(originalNow / 1000) + 1800 },
+    'new-context',
+  )
+  await provider.list({ companion, providerUserSession: fresh })
+  expect(destroy).toHaveBeenCalledOnce()
+  expect(companion.s3ProviderClients.size).toBe(1)
+})
+
+test('an expired native context is rejected before cached credentials or the broker are used', async () => {
+  const { provider, companion, lookups, grantSession } = await fixture({
+    contextMode: true,
+  })
+  const session = await grantSession({}, 'alice-context')
+  await provider.list({ companion, providerUserSession: session })
+  const now = vi.spyOn(Date, 'now').mockReturnValue(Date.now() + 901_000)
+  onTestFinished(() => now.mockRestore())
+  await expect(
+    provider.list({ companion, providerUserSession: session }),
+  ).rejects.toBeInstanceOf(ProviderAuthError)
+  expect(lookups).toHaveLength(1)
+})

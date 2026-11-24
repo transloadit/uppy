@@ -81,8 +81,22 @@ map or a `credentialsSecret`, never both. Dynamic mode uses the configured `apiE
 credentials for the immutable Workspace ID in a verified browser grant. It requires a matching
 API2 File Library credential resolver, a server-only shared secret of at least 32 characters, and an
 `https:` `apiEndpoint` (plain `http:` is accepted only for `localhost`).
-Do not send this secret or Workspace Auth Secrets to the browser. Browser grants remain the only
-client-supplied authorization, with their existing expiry, prefix and scope checks.
+Do not send this secret or Workspace Auth Secrets to the browser. Browser grants retain their
+existing expiry, prefix and scope checks.
+
+Native simple-auth optionally accepts `form.storageContext` beside `form.grant`. The native provider
+retains both in its signed session and binds both into a v2 credential-broker proof. API2, rather
+than Companion, verifies the opaque context against the authenticated user's live folder session.
+Context-bearing resolver responses must contain `sessionToken`, forwarded by the AWS SDK on S3
+requests and included as signed `storage_context` on native moves. Missing tokens and static
+credential fallback are refused. Clients and download pools are isolated by Workspace and context
+digest, and retired at grant expiry. Context verification never relies on public grant `sub`.
+
+The browser `getGrant` callback can return either its existing JWT string or
+`{ grant, storageContext }`. Context is supplemental authorization, never a replacement grant.
+Deploy the paired broker and access enforcement before enabling folder policies; the paired API2
+transport intentionally refuses context redemption until the complete enforcement inventory is
+ready. Companion must never receive Content's password-command key or API2's context-signing key.
 
 Dynamic credentials are refreshed by the cached S3 client’s credential provider. Enrolling another
 Workspace therefore needs no Companion restart; API2 owns admission and checks it on each request.

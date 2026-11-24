@@ -76,8 +76,10 @@ class S3SimpleAuthProvider<M extends Meta, B extends Body> extends Provider<
   M,
   B
 > {
+  /** Native Companion understands the optional, broker-verified authorization context. */
+  readonly supportsStorageContext = true
   /** Mints a server-issued grant; set by the plugin when `getGrant` is configured. */
-  getGrant?: () => Promise<string>
+  getGrant?: () => Promise<string | { grant: string; storageContext?: string }>
 
   /** Called after a successful login with the grant it sent, if any. */
   onLogin?: (grant: string | undefined) => void
@@ -172,13 +174,15 @@ class S3SimpleAuthProvider<M extends Meta, B extends Body> extends Provider<
     signal = AbortSignal.any([signal, this.#sessionAbort.signal])
     // The client cannot pick a bucket: it asks for a session, with a grant when
     // the integrator mints one, and Companion decides what it sees.
-    const grant = isGrantForm(authFormData)
-      ? authFormData.grant
+    const answer = isGrantForm(authFormData)
+      ? authFormData
       : await this.getGrant?.()
+    const form = typeof answer === 'string' ? { grant: answer } : answer
+    const grant = form?.grant
     signal.throwIfAborted()
     await this.loginSimpleAuth({
       uppyVersions,
-      authFormData: grant === undefined ? {} : { grant },
+      authFormData: form ?? {},
       signal,
     })
     signal.throwIfAborted()
@@ -254,7 +258,9 @@ class S3SimpleAuthProvider<M extends Meta, B extends Body> extends Provider<
   }
 }
 
-const isGrantForm = (data: unknown): data is { grant: string } =>
+const isGrantForm = (
+  data: unknown,
+): data is { grant: string; storageContext?: string } =>
   typeof data === 'object' &&
   data !== null &&
   typeof (data as { grant?: unknown }).grant === 'string'
@@ -299,7 +305,7 @@ export type S3Options<M extends Meta = Meta, B extends Body = Body> = Omit<
    * mutation actions when the grant is read-only, and fetches a new one when
    * Companion reports the session expired.
    */
-  getGrant?: () => Promise<string>
+  getGrant?: () => Promise<string | { grant: string; storageContext?: string }>
   /**
    * 'picker' (default): rows are checkboxes and the selection is added to
    * Uppy; files can be browsed, not changed. 'manager' (file-library UIs,

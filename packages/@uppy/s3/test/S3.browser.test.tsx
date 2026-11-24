@@ -1035,6 +1035,19 @@ describe('S3 provider in the browser', () => {
   })
 
   describe('server-issued grants', () => {
+    it('forwards native session context atomically with its grant', async () => {
+      const grant = mockGrant({ bucket: 'my-bucket' })
+      const { companion } = await setupHeadless({
+        getGrant: async () => ({
+          grant,
+          storageContext: 'opaque-folder-context',
+        }),
+      })
+      expect(companion.lastCall('/s3/simple-auth')?.body).toEqual({
+        form: { grant, storageContext: 'opaque-folder-context' },
+      })
+    })
+
     it('connects with a grant instead of a plain session', async () => {
       const grant = mockGrant({ bucket: 'my-bucket' })
       const getGrant = vi.fn(async () => grant)
