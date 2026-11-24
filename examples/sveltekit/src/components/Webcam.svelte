@@ -1,6 +1,7 @@
 <script lang="ts">
 import { useWebcam } from '@uppy/svelte'
 import { untrack } from 'svelte'
+
 import MediaCapture from './MediaCapture.svelte'
 
 interface Props {

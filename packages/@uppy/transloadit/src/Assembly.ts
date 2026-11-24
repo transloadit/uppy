@@ -2,14 +2,13 @@ import type {
   RateLimitedQueue,
   WrapPromiseFunctionType,
 } from '@uppy/core/utils'
+
+import type { AssemblyFile, AssemblyResponse, AssemblyResult } from './index.js'
+
 import { fetchWithNetworkError, NetworkError, toError } from '@uppy/core/utils'
 import Emitter from 'component-emitter'
-import {
-  type AssemblyFile,
-  type AssemblyResponse,
-  type AssemblyResult,
-  getAssemblyUrlSsl,
-} from './index.js'
+
+import { getAssemblyUrlSsl } from './index.js'
 
 const ASSEMBLY_UPLOADING = 'ASSEMBLY_UPLOADING'
 const ASSEMBLY_EXECUTING = 'ASSEMBLY_EXECUTING'

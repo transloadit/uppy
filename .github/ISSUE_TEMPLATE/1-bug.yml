@@ -11,8 +11,7 @@ body:
             I understand this is a bug report and questions should be posted in
             the [Community Forum](https://community.transloadit.com/)
           required: true
-        - label:
-            I searched
+        - label: I searched
             [issues](https://github.com/transloadit/uppy/issues?q=is%3Aissue)
             and couldn’t find anything (or linked relevant results below)
           required: true
@@ -35,8 +34,7 @@ body:
     id: steps-to-reproduce
     attributes:
       label: Steps to reproduce
-      description:
-        How did this happen? Please provide a [minimal, reproducible
+      description: How did this happen? Please provide a [minimal, reproducible
         example](https://stackoverflow.com/help/minimal-reproducible-example).
     validations:
       required: true

@@ -1,9 +1,9 @@
-import {
-  createRemoteSourceController,
-  type RemoteSourceKeys,
-  type RemoteSourceSnapshot,
-} from '@uppy/components'
-import { onMounted, onUnmounted, type ShallowRef } from 'vue'
+import type { RemoteSourceKeys, RemoteSourceSnapshot } from '@uppy/components'
+import type { ShallowRef } from 'vue'
+
+import { createRemoteSourceController } from '@uppy/components'
+import { onMounted, onUnmounted } from 'vue'
+
 import { injectUppyContext } from './headless/context-provider.js'
 import { useExternalStore } from './useSyncExternalStore.js'
 

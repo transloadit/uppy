@@ -3,12 +3,12 @@
  * parsed once. Companion's startup validation and the providers themselves
  * both go through this, so there is one definition of what a valid block is.
  */
+
+import type { GrantKeys } from './grant.js'
+
 import { z } from 'zod'
-import {
-  type GrantKeys,
-  hasGrantKeys,
-  normalizeStorageGrantPrefix,
-} from './grant.js'
+
+import { hasGrantKeys, normalizeStorageGrantPrefix } from './grant.js'
 
 /**
  * How the S3 provider opens sessions, decided by Companion's configuration

@@ -1,16 +1,21 @@
+import type { Express, NextFunction, Response } from 'express'
+import type { SessionOptions } from 'express-session'
+
+import type { CompanionInitOptions } from '../schemas/companion.js'
+import type { EmitterLike } from '../server/emitter/index.js'
+import type { Request } from '../types/express.js'
+
 import { randomUUID } from 'node:crypto'
 import qs from 'node:querystring'
 import { URL } from 'node:url'
+
 import RedisStore from 'connect-redis'
-import type { Express, NextFunction, Request, Response } from 'express'
 import express from 'express'
-import type { SessionOptions } from 'express-session'
 import session from 'express-session'
 import helmet from 'helmet'
 import morgan from 'morgan'
+
 import * as companion from '../companion.js'
-import type { CompanionInitOptions } from '../schemas/index.js'
-import type { EmitterLike } from '../server/emitter/index.js'
 import { isRecord, toError } from '../server/helpers/type-guards.js'
 import logger from '../server/logger.js'
 import * as redis from '../server/redis.js'
@@ -19,6 +24,7 @@ import {
   generateSecret,
   getCompanionOptions,
 } from './helper.js'
+import { limitPendingRequests } from './request-limit.js'
 
 // Query string keys whose values should not end up in logging output.
 const sensitiveKeys = new Set([
@@ -104,6 +110,7 @@ export default function server(
     companionOptions.preAuthSecret = generateSecret('preAuthSecret')
 
   const app = express()
+  app.use(limitPendingRequests())
 
   const router = express.Router()
 
@@ -153,8 +160,8 @@ export default function server(
 
   const sessionOptions: SessionOptions = {
     secret: companionOptions.secret,
-    resave: true,
-    saveUninitialized: true,
+    resave: false,
+    saveUninitialized: false,
   }
 
   const redisClient = redis.client({
@@ -179,8 +186,18 @@ export default function server(
     maxAge: 10 * 60 * 1000,
   }
 
+  // COMPANION_OAUTH_DOMAIN setups read the session on another subdomain.
   if (process.env['COMPANION_COOKIE_DOMAIN']) {
     cookieOptions.domain = process.env['COMPANION_COOKIE_DOMAIN']
+  }
+
+  if (companionOptions.server.protocol === 'https') {
+    // Secure whenever the request is seen as HTTPS (directly or through
+    // X-Forwarded-Proto). An unconditional Secure flag would make express-session
+    // silently drop the cookie behind a proxy that doesn't send that header.
+    sessionOptions.proxy = true
+    cookieOptions.secure = 'auto'
+    cookieOptions.sameSite = 'lax'
   }
 
   sessionOptions.cookie = cookieOptions
@@ -253,23 +270,14 @@ export default function server(
       res.status(status).json({ message: error.message, requestId: req.id })
       return
     }
-    if (app.get('env') === 'production') {
-      // if the error is a URIError from the requested URL we only log the error message
-      // to avoid uneccessary error alerts
-      if (status === 400 && error.name === 'URIError') {
-        logger.error(error.message, 'root.error', req.id)
-      } else {
-        logger.error(err, 'root.error', req.id)
-      }
-      res
-        .status(500)
-        .json({ message: 'Something went wrong', requestId: req.id })
+    // if the error is a URIError from the requested URL we only log the error message
+    // to avoid uneccessary error alerts
+    if (status === 400 && error.name === 'URIError') {
+      logger.error(error.message, 'root.error', req.id)
     } else {
       logger.error(err, 'root.error', req.id)
-      res
-        .status(500)
-        .json({ message: error.message, error: err, requestId: req.id })
     }
+    res.status(500).json({ message: 'Something went wrong', requestId: req.id })
   })
 
   return { app, companionOptions, emitter }
