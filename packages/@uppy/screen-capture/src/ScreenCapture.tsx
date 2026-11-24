@@ -340,8 +340,11 @@ export default class ScreenCapture<
     this.recordingChunks = []
     const { preferredVideoMimeType } = this.opts
 
+    // `stop()` may run while the picker is open
+    const isStale = this.#staleCheck()
     this.selectVideoStreamSource()
       .then((videoStream) => {
+        if (isStale()) return
         if (videoStream === false) {
           throw new Error('No video stream available')
         }
@@ -386,6 +389,7 @@ export default class ScreenCapture<
         })
       })
       .catch((err) => {
+        if (isStale()) return
         this.uppy.log(err, 'error')
         this.setPluginState({ screenRecError: err, status: 'error' })
       })

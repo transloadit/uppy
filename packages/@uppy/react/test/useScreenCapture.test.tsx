@@ -373,6 +373,34 @@ describe('useScreenCapture', () => {
     expect(plugin.getPluginState().status).toBe('captured')
   })
 
+  it('does not report an error when stop() runs while startRecording() waits for the picker', async () => {
+    let resolve!: () => void
+    display.getDisplayMedia.mockImplementationOnce(async () => {
+      await new Promise<void>((r) => {
+        resolve = r
+      })
+      const stream = document.createElement('canvas').captureStream()
+      display.streams.push(stream)
+      return stream
+    })
+    using uppy = new Uppy().use(ScreenCapture)
+    const plugin = uppy.getPlugin<ScreenCapture<any, any>>('ScreenCapture')!
+
+    plugin.startRecording()
+    plugin.stop()
+    resolve()
+
+    await waitFor(() => expect(display.streams).toHaveLength(1))
+    expect(isLive(display.streams[0]!)).toBe(false)
+    // Let startRecording() settle
+    await new Promise((r) => setTimeout(r, 0))
+    expect(plugin.getPluginState()).toMatchObject({
+      status: 'init',
+      screenRecError: null,
+      recording: false,
+    })
+  })
+
   it('ignores the old stream going inactive after stop() and start()', async () => {
     using rendered = setup(<Capture />)
     const { uppy } = rendered
