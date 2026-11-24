@@ -3,7 +3,16 @@ import type { AddressInfo } from 'node:net'
 import http from 'node:http'
 import { createGzip } from 'node:zlib'
 
-import { afterAll, beforeAll, beforeEach, describe, expect, test } from 'vitest'
+import got from 'got'
+import {
+  afterAll,
+  beforeAll,
+  beforeEach,
+  describe,
+  expect,
+  test,
+  vi,
+} from 'vitest'
 
 import { downloadURL } from '../dist/server/download.js'
 import {
@@ -11,6 +20,7 @@ import {
   openProtectedStream,
   UPSTREAM_TIMEOUTS,
 } from '../dist/server/helpers/request.js'
+import { prepareStream } from '../dist/server/helpers/utils.js'
 
 type Handler = (req: http.IncomingMessage, res: http.ServerResponse) => void
 
@@ -67,6 +77,42 @@ beforeEach(() => {
 const settle = () => new Promise((r) => setTimeout(r, 100))
 
 describe('downloadURL', () => {
+  test.each(['protected', 'provider'])(
+    'rejects and closes an unexpected %s protocol upgrade',
+    async (kind) => {
+      const closed = vi.fn()
+      handler = (req, res) => {
+        req.socket.once('close', closed)
+        res.writeHead(101, { connection: 'Upgrade', upgrade: 'unexpected' })
+        res.end()
+      }
+      const opened =
+        kind === 'protected'
+          ? openProtectedStream(`${baseUrl}/upgrade`, true)
+          : prepareStream(got.stream(`${baseUrl}/upgrade`))
+      await expect(opened).rejects.toThrow('protocol upgrades')
+      await vi.waitFor(() => expect(closed).toHaveBeenCalledTimes(1))
+    },
+  )
+
+  test('refuses compressed source responses without retaining a decoder', async () => {
+    handler = (req, res) => streamGzipBody(req, res, 200)
+    await expect(downloadURL(`${baseUrl}/encoded`, true)).rejects.toThrow(
+      'Encoded upstream',
+    )
+    await settle()
+    expect(streaming.chunksWritten).toBeLessThan(TOTAL_CHUNKS)
+  })
+  test('downloads a Content-Encoding that is no compression as is', async () => {
+    // misconfigured servers send values like `binary` for plain bytes
+    handler = (_req, res) => {
+      res.writeHead(200, { 'content-encoding': 'binary', 'content-length': 5 })
+      res.end('hello')
+    }
+    const { stream } = await downloadURL(`${baseUrl}/binary`, true)
+    expect(Buffer.concat(await stream.toArray()).toString()).toBe('hello')
+  })
+
   test('does not read the body of an error response', async () => {
     handler = (req, res) => streamGzipBody(req, res, 500)
     await expect(downloadURL(`${baseUrl}/err`, true)).rejects.toMatchObject({

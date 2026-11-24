@@ -1171,9 +1171,13 @@ export class Uppy<
           nextFilesState,
         )
 
-        // update state after onBeforeFileAdded
-        existingFiles = this.getState().files
-        nextFilesState = { ...existingFiles, ...nextFilesState }
+        // onBeforeFileAdded may have called setState; if so, merge in its changes.
+        // Only merge when state.files actually changed, to keep this loop linear.
+        const filesAfterHook = this.getState().files
+        if (filesAfterHook !== existingFiles) {
+          existingFiles = filesAfterHook
+          nextFilesState = { ...existingFiles, ...nextFilesState }
+        }
 
         if (
           !onBeforeFileAddedResult &&
