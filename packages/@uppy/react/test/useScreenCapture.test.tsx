@@ -286,6 +286,49 @@ describe('useScreenCapture', () => {
     expect(isLive(display.micStreams[1]!)).toBe(true)
   })
 
+  it('stops the microphone when the screen picker is denied', async () => {
+    display.getDisplayMedia.mockRejectedValueOnce(
+      new DOMException('Permission denied', 'NotAllowedError'),
+    )
+    using uppy = new Uppy().use(ScreenCapture)
+    const plugin = uppy.getPlugin<ScreenCapture<any, any>>('ScreenCapture')!
+
+    await plugin.start()
+
+    expect(display.micStreams).toHaveLength(1)
+    expect(isLive(display.micStreams[0]!)).toBe(false)
+    expect(plugin.audioStream).toBeNull()
+    expect(plugin.getPluginState()).toMatchObject({
+      status: 'error',
+      audioStreamActive: false,
+    })
+  })
+
+  it('stops a microphone stream that resolves after the screen picker was denied', async () => {
+    let grantMic!: () => void
+    display.getUserMedia.mockImplementationOnce(async () => {
+      await new Promise<void>((r) => {
+        grantMic = r
+      })
+      const stream = document.createElement('canvas').captureStream()
+      display.micStreams.push(stream)
+      return stream
+    })
+    display.getDisplayMedia.mockRejectedValueOnce(
+      new DOMException('Permission denied', 'NotAllowedError'),
+    )
+    using uppy = new Uppy().use(ScreenCapture)
+    const plugin = uppy.getPlugin<ScreenCapture<any, any>>('ScreenCapture')!
+
+    await plugin.start()
+    grantMic()
+
+    await waitFor(() => expect(display.micStreams).toHaveLength(1))
+    await waitFor(() => expect(isLive(display.micStreams[0]!)).toBe(false))
+    expect(plugin.audioStream).toBeNull()
+    expect(plugin.getPluginState().audioStreamActive).toBe(false)
+  })
+
   it('ignores the old stream going inactive after stop() and start()', async () => {
     using rendered = setup(<Capture />)
     const { uppy } = rendered

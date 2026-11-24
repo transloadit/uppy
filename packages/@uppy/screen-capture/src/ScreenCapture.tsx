@@ -213,6 +213,11 @@ export default class ScreenCapture<
     return this.selectVideoStreamSource().then((res) => {
       // something happened in start -> return
       if (res === false && !isStale()) {
+        // The picker was denied or failed: release the microphone, which may
+        // still be pending
+        this.#releaseStreams()
+        this.setPluginState({ audioStreamActive: false })
+
         // Close the Dashboard panel if plugin is installed
         // into Dashboard (could be other parent UI plugin)
         // @ts-expect-error we can't know Dashboard types here
