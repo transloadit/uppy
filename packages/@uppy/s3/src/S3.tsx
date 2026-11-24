@@ -88,7 +88,19 @@ class S3SimpleAuthProvider<M extends Meta, B extends Body> extends Provider<
   /** Called when the session ends (`logout()`), before the token is removed. */
   onLogout?: () => void
 
-  /** Bucket of the session, as the latest listing reported it. */
+  /**
+   * Called, after `onSession`, when a listing reports another bucket than the
+   * one before it: a new session was opened without logging out (a renewed
+   * grant for another bucket, a reconnect). Whatever it throws refuses that
+   * listing, so its caller cannot merge it into what the old bucket listed.
+   */
+  onBucketChange?: () => void
+
+  /**
+   * Bucket of the session, as the latest listing reported it. Everything the
+   * plugin still shows was listed in it: a listing reporting another one
+   * starts the plugin over (`onBucketChange`).
+   */
   #bucket: string | undefined
 
   /** True between a successful login and a logout: only then is a 401 an *expired* session. */
@@ -113,6 +125,7 @@ class S3SimpleAuthProvider<M extends Meta, B extends Body> extends Provider<
     // Defensive for a Companion that sends no session: the bucket is still
     // the username, and nothing may be changed.
     const bucket = session?.bucket ?? username
+    const previous = this.#bucket
     if (typeof bucket === 'string') this.#bucket = bucket
     this.onSession?.({
       bucket: typeof bucket === 'string' ? bucket : '',
@@ -120,13 +133,17 @@ class S3SimpleAuthProvider<M extends Meta, B extends Body> extends Provider<
       canWrite: session?.canWrite === true,
       supportsMoveFolder: session?.supportsMoveFolder === true,
     })
+    if (previous !== undefined && previous !== this.#bucket)
+      this.onBucketChange?.()
     return response
   }
 
   /**
    * A queued import outlives the session that selected it: pin the bucket the
    * file was listed in, so Companion can refuse to read the same key from
-   * whatever bucket a later session happens to see.
+   * whatever bucket a later session happens to see. The plugin starts over
+   * whenever the bucket changes, so every file it can still add was listed in
+   * the current one.
    */
   override fileUrl(id: string): string {
     if (!this.#bucket)
@@ -411,8 +428,40 @@ export default class S3<M extends Meta, B extends Body>
       this.#needsLogin = true
       this.#applyActions()
     }
+    this.provider.onBucketChange = () => {
+      throw this.#startOverInNewBucket()
+    }
 
     this.render = this.render.bind(this)
+  }
+
+  /** How often the bucket changed under the plugin: a navigation started before must stop. */
+  #bucketChanges = 0
+
+  /**
+   * A listing reported another bucket than the one everything shown was listed
+   * in. Nothing listed in the old bucket may be added, or opened, in the new
+   * one, where the same key is another file: drop the loaded tree and the
+   * selection, and list the root again. Returns the error that refuses the
+   * listing, and tells the user why their selection is gone.
+   */
+  #startOverInNewBucket(): UserFacingApiError {
+    this.#bucketChanges++
+    this.view.resetPluginState()
+    // Still connected (the listing succeeded): no connect screen, and no
+    // probing render, since the root is listed below.
+    this.setPluginState({ authenticated: true, didFirstRender: true })
+    // Once the refused listing's caller is done with it.
+    setTimeout(() => {
+      const { partialTree, loading } = this.getPluginState()
+      // Removed meanwhile; an operation relists when it ends; or a listing
+      // (a navigation started since) is already under way.
+      if (!partialTree || loading || this.view.canCancelOperation) return
+      const root = partialTree.find((node) => node.id === this.rootFolderId)
+      if (root?.type === 'root' && !root.cached)
+        void this.view.openFolder(this.rootFolderId)
+    })
+    return new UserFacingApiError(this.i18n('bucketChanged'))
   }
 
   /** The S3 object key behind a partial-tree item id (ids are URL-encoded keys). */
@@ -437,6 +486,9 @@ export default class S3<M extends Meta, B extends Body>
     this.setPluginState({ didFirstRender: true })
     await this.#settledListing()
     if (!(await this.#ensureSession())) return false
+    // The bucket changed under this walk: the plugin started over at the root.
+    const bucketChanges = this.#bucketChanges
+    const startedOver = () => this.#bucketChanges !== bucketChanges
     const root = this.rootPrefix
     const prefix = key ? asFolderKey(key) : root
     if (
@@ -487,6 +539,8 @@ export default class S3<M extends Meta, B extends Body>
         this.setPluginState({ partialTree })
       }
       await this.view.openFolder(folderId)
+      // `before` was listed in the old bucket: never restore it.
+      if (startedOver()) return false
       const state = this.getPluginState()
       // Object stores also return an empty listing for a nonexistent prefix. Only the parent
       // listing can distinguish that case from a genuinely empty folder.
@@ -510,6 +564,7 @@ export default class S3<M extends Meta, B extends Body>
       .slice(root.length)
       .split('/')
       .filter(Boolean)) {
+      if (startedOver()) return false
       path += `${segment}/`
       const folderId = encodeURIComponent(path)
       while (
@@ -521,7 +576,7 @@ export default class S3<M extends Meta, B extends Body>
       }
       await this.view.openFolder(folderId)
     }
-    return true
+    return !startedOver()
   }
 
   /**
