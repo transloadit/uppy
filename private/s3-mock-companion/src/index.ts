@@ -94,6 +94,8 @@ export type MockS3CompanionOptions = {
   folders?: Record<string, MockS3Entry[]>
   /** Token handed out by simple-auth; requests must send it back. */
   token?: string
+  /** Simulate a server that acknowledges native context retention. */
+  acceptStorageContext?: boolean
   /**
    * Bucket the mock serves, reported as the "username" of the listing. Like a
    * real Companion, it comes from this configuration or from a grant — never
@@ -239,7 +241,9 @@ export function createMockS3Companion(
 
     if (method === 'POST' && operation === 'simple-auth') {
       // The client sends `{}` or `{ grant }`; the bucket is never its call.
-      const form = (body as { form?: { grant?: string } } | null)?.form
+      const form = (
+        body as { form?: { grant?: string; storageContext?: string } } | null
+      )?.form
       if (typeof form?.grant === 'string') {
         const claims = decodeStorageGrant(form.grant)
         if (!claims) return userError('S3_INVALID_GRANT')
@@ -250,7 +254,13 @@ export function createMockS3Companion(
         session = null
         bucket = configuredBucket
       }
-      return json({ uppyAuthToken: token })
+      return json({
+        uppyAuthToken: token,
+        ...(options.acceptStorageContext &&
+        typeof form?.storageContext === 'string'
+          ? { storageContextAccepted: true }
+          : {}),
+      })
     }
     if (method === 'GET' && operation === 'logout') {
       session = null

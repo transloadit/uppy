@@ -34,8 +34,8 @@ type NativeContext = NonNullable<S3UserSession['nativeContext']>
 
 const contextFormSchema = z.object({
   form: z.object({
-    grant: z.string().min(1).max(16384),
-    storageContext: z.string().min(1).max(8192).optional(),
+    grant: z.string().min(1).max(2048),
+    storageContext: z.string().min(1).max(4096).optional(),
   }),
 })
 
@@ -134,7 +134,7 @@ const fetchCredentials = async (
       workspace: z.literal(workspace),
       authKey: z.string().min(1).max(256),
       authSecret: z.string().min(1).max(1024),
-      sessionToken: z.string().min(1).max(8192).optional(),
+      sessionToken: z.string().min(1).max(4096).optional(),
     })
     .safeParse(response.body)
   if (
@@ -181,10 +181,22 @@ export default class TransloaditStorageProvider extends S3Provider<ParsedTranslo
   ): Promise<S3UserSession> {
     const parsed = contextFormSchema.safeParse(options.requestBody)
     if (!parsed.success) throw userError('S3_INVALID_GRANT')
+    if (
+      parsed.data.form.storageContext !== undefined &&
+      options.companion.options.providerOptions?.['transloadit-storage']
+        ?.credentialsSecret == null
+    )
+      throw userError('S3_INVALID_GRANT')
     const session = await super.simpleAuth(options)
-    if (parsed.data.form.storageContext === undefined) return session
+    if (parsed.data.form.storageContext === undefined)
+      return {
+        ...session,
+        nativeContext: undefined,
+        storageContextAccepted: undefined,
+      }
     return {
       ...session,
+      storageContextAccepted: true,
       nativeContext: {
         grant: parsed.data.form.grant,
         context: parsed.data.form.storageContext,

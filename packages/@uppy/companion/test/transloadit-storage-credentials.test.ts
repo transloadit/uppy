@@ -5,10 +5,13 @@ import type { GrantClaims } from './fixtures/s3.js'
 import { createHash, createHmac } from 'node:crypto'
 import { createServer } from 'node:http'
 
+import express from 'express'
+import request from 'supertest'
 import { expect, onTestFinished, test, vi } from 'vitest'
 import { z } from 'zod'
 
 import { defaultOptions } from '../src/config/companion.js'
+import simpleAuth from '../src/server/controllers/simple-auth.js'
 import logger from '../src/server/logger.js'
 import { ProviderAuthError } from '../src/server/provider/error.js'
 import { userError } from '../src/server/provider/errorCodes.js'
@@ -26,6 +29,7 @@ async function fixture(
     body?: unknown
     apiEndpoint?: string
     contextMode?: boolean
+    staticMode?: boolean
   } = {},
 ) {
   const lookups: string[] = []
@@ -114,7 +118,13 @@ async function fixture(
     // Shared provider map also describes OAuth providers; the native provider ignores this.
     key: undefined,
     grantSecret: secret,
-    credentialsSecret: secret,
+    ...(options.staticMode
+      ? {
+          workspaces: {
+            [workspace]: { key: 'static', secret: 'static-secret' },
+          },
+        }
+      : { credentialsSecret: secret }),
     apiEndpoint: options.apiEndpoint ?? endpoint,
     endpoint,
     region: 'auto',
@@ -393,7 +403,7 @@ test.each(['', 'x'.repeat(8193), 123, null])(
   },
 )
 
-test('destroys expired context clients when a fresh context needs a client', async () => {
+test('retires expired context clients without interrupting in-flight downloads', async () => {
   const { provider, companion, grantSession } = await fixture({
     contextMode: true,
   })
@@ -410,7 +420,7 @@ test('destroys expired context clients when a fresh context needs a client', asy
     'new-context',
   )
   await provider.list({ companion, providerUserSession: fresh })
-  expect(destroy).toHaveBeenCalledOnce()
+  expect(destroy).not.toHaveBeenCalled()
   expect(companion.s3ProviderClients.size).toBe(1)
 })
 
@@ -426,4 +436,44 @@ test('an expired native context is rejected before cached credentials or the bro
     provider.list({ companion, providerUserSession: session }),
   ).rejects.toBeInstanceOf(ProviderAuthError)
   expect(lookups).toHaveLength(1)
+})
+
+test('native simple-auth acknowledges context retention without returning its contents', async () => {
+  const { provider, companion } = await fixture()
+  const app = express()
+  app.use(express.json())
+  app.use((req, _res, next) => {
+    Object.assign(req, {
+      id: 'context-ack-test',
+      companion: {
+        ...companion,
+        provider,
+        providerClass: TransloaditStorageProvider,
+      },
+    })
+    next()
+  })
+  app.post('/:providerName/simple-auth', simpleAuth)
+  const grant = mint(claims({ bucket: workspace }), secret)
+  const accepted = await request(app)
+    .post('/transloadit-storage/simple-auth')
+    .send({ form: { grant, storageContext: 'context' } })
+    .expect(200)
+  expect(accepted.body).toEqual({
+    uppyAuthToken: expect.any(String),
+    storageContextAccepted: true,
+  })
+  const plain = await request(app)
+    .post('/transloadit-storage/simple-auth')
+    .send({ form: { grant } })
+    .expect(200)
+  expect(plain.body).toEqual({ uppyAuthToken: expect.any(String) })
+})
+
+test('refuses context at login when only static Workspace credentials are configured', async () => {
+  const { grantSession, lookups } = await fixture({ staticMode: true })
+  await expect(grantSession({}, 'context')).rejects.toEqual(
+    userError('S3_INVALID_GRANT'),
+  )
+  expect(lookups).toEqual([])
 })

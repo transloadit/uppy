@@ -184,6 +184,7 @@ class S3SimpleAuthProvider<M extends Meta, B extends Body> extends Provider<
       uppyVersions,
       authFormData: form ?? {},
       signal,
+      requireStorageContext: form?.storageContext !== undefined,
     })
     signal.throwIfAborted()
     this.onLogin?.(grant)

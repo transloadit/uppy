@@ -64,7 +64,13 @@ export default async function simpleAuth(
       getTokenMaxAge(providerClass, req.companion.providerUserSession),
     )
 
-    res.send({ uppyAuthToken })
+    res.send({
+      uppyAuthToken,
+      ...('storageContextAccepted' in simpleAuthResponse &&
+      simpleAuthResponse.storageContextAccepted === true
+        ? { storageContextAccepted: true }
+        : {}),
+    })
   } catch (err) {
     if (respondWithError(err, res)) return
     next(err)

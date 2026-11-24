@@ -68,10 +68,11 @@ const userSessionSchema = z.object({
   /** Opaque native Storage authorization, independently verified by its credential broker. */
   nativeContext: z
     .object({
-      grant: z.string().min(1).max(16384),
-      context: z.string().min(1).max(8192),
+      grant: z.string().min(1).max(2048),
+      context: z.string().min(1).max(4096),
     })
     .optional(),
+  storageContextAccepted: z.literal(true).optional(),
 })
 
 export type S3UserSession = z.infer<typeof userSessionSchema>
@@ -318,7 +319,7 @@ export default class S3Provider<
       for (const [cachedKey, cachedClient] of companion.s3ProviderClients) {
         const expiresAt = clientExpirations.get(cachedClient)
         if (expiresAt !== undefined && expiresAt <= Date.now()) {
-          cachedClient.destroy()
+          // Detach expired clients without interrupting streams that were already authorized.
           companion.s3ProviderClients.delete(cachedKey)
         }
       }

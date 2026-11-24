@@ -169,18 +169,24 @@ export default class Provider<
     uppyVersions,
     authFormData,
     signal,
+    requireStorageContext = false,
   }: {
     uppyVersions: string
     authFormData: unknown
     signal: AbortSignal
+    requireStorageContext?: boolean
   }): Promise<void> {
-    type Res = { uppyAuthToken: string }
+    type Res = { uppyAuthToken: string; storageContextAccepted?: boolean }
     const response = await this.post<Res>(
       `${this.id}/simple-auth`,
       { form: authFormData },
       { qs: { uppyVersions }, signal },
     )
     signal.throwIfAborted()
+    if (requireStorageContext && response.storageContextAccepted !== true) {
+      await this.removeAuthToken()
+      throw new Error('Companion did not accept the Storage session context')
+    }
     await this.setAuthToken(response.uppyAuthToken)
     signal.throwIfAborted()
   }

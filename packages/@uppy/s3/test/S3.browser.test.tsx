@@ -1037,7 +1037,8 @@ describe('S3 provider in the browser', () => {
   describe('server-issued grants', () => {
     it('forwards native session context atomically with its grant', async () => {
       const grant = mockGrant({ bucket: 'my-bucket' })
-      const { companion } = await setupHeadless({
+      const { companion, plugin } = await setupHeadless({
+        companion: { acceptStorageContext: true },
         getGrant: async () => ({
           grant,
           storageContext: 'opaque-folder-context',
@@ -1046,6 +1047,20 @@ describe('S3 provider in the browser', () => {
       expect(companion.lastCall('/s3/simple-auth')?.body).toEqual({
         form: { grant, storageContext: 'opaque-folder-context' },
       })
+      expect(names(plugin)).toContain('readme.md')
+    })
+
+    it('refuses a context-bearing login when Companion does not acknowledge retention', async () => {
+      const grant = mockGrant({ bucket: 'my-bucket' })
+      const { plugin } = await setupHeadless({
+        getGrant: async () => ({ grant, storageContext: 'context' }),
+      })
+      await expect(
+        plugin.provider.login({
+          authFormData: undefined,
+          signal: new AbortController().signal,
+        }),
+      ).rejects.toThrow('did not accept the Storage session context')
     })
 
     it('connects with a grant instead of a plain session', async () => {
