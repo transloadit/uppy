@@ -77,7 +77,9 @@ class S3SimpleAuthProvider<M extends Meta, B extends Body> extends Provider<
   B
 > {
   /** Native Companion understands the optional, broker-verified authorization context. */
-  readonly supportsStorageContext = true
+  get supportsStorageContext(): boolean {
+    return this.supportsStorageContextAcknowledgement === true
+  }
   /** Mints a server-issued grant; set by the plugin when `getGrant` is configured. */
   getGrant?: () => Promise<string | { grant: string; storageContext?: string }>
 
@@ -180,6 +182,12 @@ class S3SimpleAuthProvider<M extends Meta, B extends Body> extends Provider<
     const form = typeof answer === 'string' ? { grant: answer } : answer
     const grant = form?.grant
     signal.throwIfAborted()
+    if (form?.storageContext !== undefined && !this.supportsStorageContext) {
+      await this.removeAuthToken()
+      throw new Error(
+        'Uppy Core does not support Storage session context acknowledgement',
+      )
+    }
     await this.loginSimpleAuth({
       uppyVersions,
       authFormData: form ?? {},

@@ -39,6 +39,8 @@ export default class Provider<
   M extends Meta,
   B extends Body,
 > extends RequestClient<M, B> {
+  /** Allows provider packages to refuse context when paired with an older Core release. */
+  protected readonly supportsStorageContextAcknowledgement = true
   #refreshingTokenPromise: Promise<void> | undefined
 
   provider: string

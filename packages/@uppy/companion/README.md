@@ -95,7 +95,8 @@ digest. Expired cache entries are detached lazily without interrupting in-flight
 The browser `getGrant` callback can return either its existing JWT string or
 `{ grant, storageContext }`. Context is supplemental authorization, never a replacement grant. Native simple-auth acknowledges
 context retention; the paired browser refuses missing acknowledgement before storing the session
-token. Older or generic Companion endpoints therefore cannot silently discard context.
+token. Older or generic Companion endpoints therefore cannot silently discard context. The browser also
+refuses context if paired with an older Uppy Core that cannot verify this acknowledgement.
 Deploy the paired broker and access enforcement before enabling folder policies; the paired API2
 transport intentionally refuses context redemption until the complete enforcement inventory is
 ready. Per-request checks remain mandatory even when the AWS SDK caches credentials. The v2 broker

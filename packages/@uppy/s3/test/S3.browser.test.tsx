@@ -1035,6 +1035,24 @@ describe('S3 provider in the browser', () => {
   })
 
   describe('server-issued grants', () => {
+    it('refuses context when paired with a Core release that cannot verify acknowledgement', async () => {
+      const grant = mockGrant({ bucket: 'my-bucket' })
+      const { plugin } = await setupHeadless({ getGrant: async () => grant })
+      Object.defineProperty(
+        plugin.provider,
+        'supportsStorageContextAcknowledgement',
+        { value: false },
+      )
+      await expect(
+        plugin.provider.login({
+          authFormData: { grant, storageContext: 'context' },
+          signal: new AbortController().signal,
+        }),
+      ).rejects.toThrow(
+        'Uppy Core does not support Storage session context acknowledgement',
+      )
+    })
+
     it('forwards native session context atomically with its grant', async () => {
       const grant = mockGrant({ bucket: 'my-bucket' })
       const { companion, plugin } = await setupHeadless({
