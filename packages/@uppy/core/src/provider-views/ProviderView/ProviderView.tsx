@@ -849,7 +849,8 @@ export default class ProviderView<M extends Meta, B extends Body> {
               },
             }
           }
-          newPartialTree.push(node)
+          // no listing has included it yet
+          newPartialTree.push({ ...node, unlisted: true })
           parentId = encodedPath // This node becomes parent for the next iteration
           isParentFolderChecked = status === 'checked'
         })

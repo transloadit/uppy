@@ -89,6 +89,12 @@ export type PartialTreeFile = {
   status: PartialTreeStatusFile
   parentId: PartialTreeId
   data: CompanionFile
+
+  /**
+   * `true` while no listing of its folder has included it: a search result or a
+   * deep link added it first. A folder shows these after its loaded pages.
+   */
+  unlisted?: true
 }
 
 export type PartialTreeFolderNode = {
@@ -111,6 +117,12 @@ export type PartialTreeFolderNode = {
     CompanionFile,
     'name' | 'icon' | 'thumbnail' | 'isFolder' | 'author' | 'custom'
   >
+
+  /**
+   * `true` while no listing of its folder has included it: a search result or a
+   * deep link added it first. A folder shows these after its loaded pages.
+   */
+  unlisted?: true
 }
 
 export type PartialTreeFolderRoot = {

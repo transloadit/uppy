@@ -593,6 +593,54 @@ describe('afterScrollFolder()', () => {
     ])
   })
 
+  it('keeps a child added before the listing after the loaded pages until its page loads', () => {
+    const oldPartialTree: PartialTree = [
+      _root('ourRoot'),
+      _folder('2', { parentId: 'ourRoot', cached: false }),
+      // a search result on page 3
+      _file('2_5', { parentId: '2' }),
+    ]
+    const opened = afterOpenFolder(
+      oldPartialTree,
+      [_cFolder('2_1')],
+      getFolder(oldPartialTree, '2'),
+      'page2',
+      () => null,
+    )
+    // e.g. the user opened '2_1' and came back
+    opened.push(_file('2_1_1', { parentId: '2_1' }))
+    const childIds = (tree: PartialTree) =>
+      tree.flatMap((node) =>
+        node.type !== 'root' && node.parentId === '2' ? [node.id] : [],
+      )
+
+    const page2 = afterScrollFolder(
+      opened,
+      '2',
+      [_cFile('2_2')],
+      'page3',
+      () => null,
+    )
+    expect(childIds(page2)).toEqual(['2_1', '2_2', '2_5'])
+
+    const page3 = afterScrollFolder(
+      page2,
+      '2',
+      [_cFile('2_5'), _cFile('2_6')],
+      'page4',
+      () => null,
+    )
+    const page4 = afterScrollFolder(
+      page3,
+      '2',
+      [_cFile('2_7')],
+      null,
+      () => null,
+    )
+    expect(childIds(page4)).toEqual(['2_1', '2_2', '2_5', '2_6', '2_7'])
+    expect(getFile(page4, '2_5').unlisted).toBeUndefined()
+  })
+
   it('scroll "checked" folder - all discovered files are marked as "checked"', () => {
     const oldPartialTree: PartialTree = [
       _root('ourRoot'),

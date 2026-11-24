@@ -1,7 +1,7 @@
 import type { PartialTree, PartialTreeFolder } from '../../../index.js'
 import type { CompanionFile } from '../../../utils/index.js'
 
-import addListedItems from './addListedItems.js'
+import addListedItems, { showUnlistedLast } from './addListedItems.js'
 
 const afterOpenFolder = (
   oldPartialTree: PartialTree,
@@ -27,16 +27,18 @@ const afterOpenFolder = (
     validateSingleFile,
   )
   // Children added before this listing that it did not include are on a later page: show them
-  // after the first one until that page moves them into place.
+  // after the loaded pages until that page moves them into place.
   const listedIds = new Set(discoveredItems.map((item) => item.requestPath))
-  const isUnlistedChild = (node: PartialTree[number]) =>
-    node.type !== 'root' &&
-    node.parentId === clickedFolder.id &&
-    !listedIds.has(node.id)
-  return [
-    ...listed.filter((node) => !isUnlistedChild(node)),
-    ...listed.filter(isUnlistedChild),
-  ]
+  return showUnlistedLast(
+    listed.map((node) =>
+      node.type !== 'root' &&
+      node.parentId === clickedFolder.id &&
+      !listedIds.has(node.id)
+        ? { ...node, unlisted: true }
+        : node,
+    ),
+    clickedFolder.id,
+  )
 }
 
 export default afterOpenFolder
