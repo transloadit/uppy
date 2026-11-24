@@ -381,7 +381,25 @@ describe('Transloadit Storage in the browser', () => {
     await expect
       .element(page.getByRole('button', { name: 'Upload files' }))
       .not.toBeInTheDocument()
+    const text = new DataTransfer()
+    text.setData('text/plain', 'https://example.com/')
+    page
+      .getByRole('tabpanel')
+      .element()
+      .dispatchEvent(
+        new DragEvent('drop', {
+          bubbles: true,
+          cancelable: true,
+          dataTransfer: text,
+        }),
+      )
+    expect(app.getState().info).toEqual([])
     dropFile('blocked.txt')
+    await expect
+      .element(page.getByRole('alert').first())
+      .toHaveTextContent(
+        'Wait for a writable folder to finish loading before uploading.',
+      )
     expect(app.getFiles()).toEqual([])
     release.resolve()
     await navigation

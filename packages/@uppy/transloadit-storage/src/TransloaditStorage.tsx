@@ -190,6 +190,13 @@ export default class TransloaditStorage<
     )
   }
 
+  /** Explain a rejected file drop without notifying for text drags or admission reads. */
+  onFileDropRejected(): void {
+    if (this.getPluginState().loading && this.canWrite) {
+      this.uppy.info(this.i18n('uploadFolderUnavailable'), 'warning', 4000)
+    }
+  }
+
   override builtInActions(): ProviderAction<M, B>[] {
     const { getSmartCdnUrl, getDownloadUrl } = this.opts
     const actions = super.builtInActions()

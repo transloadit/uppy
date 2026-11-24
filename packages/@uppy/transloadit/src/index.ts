@@ -12,7 +12,7 @@ import type {
   Uppy,
   UppyFile,
 } from '@uppy/core'
-import { BasePlugin } from '@uppy/core'
+import { BasePlugin, UserFacingApiError } from '@uppy/core'
 import {
   ErrorWithCause,
   RateLimitedQueue,
@@ -850,23 +850,24 @@ export default class Transloadit<
     return assembly
   }
 
-  #prepareUpload = async (fileIDs: string[]) => {
+  #prepareUpload = async (fileIDs: string[], uploadID: string) => {
     // Prevent adding/dropping files during upload to avoid creating multiple assemblies
     // TODO we should rewrite to instead infer allowNewUpload based on upload state
     this.uppy.setState({ allowNewUpload: false })
 
-    const assemblyOptions = (
-      typeof this.opts.assemblyOptions === 'function'
-        ? await this.opts.assemblyOptions()
-        : this.opts.assemblyOptions
-    ) as OptionsWithRestructuredFields
-
-    assemblyOptions.fields = {
-      ...(assemblyOptions.fields ?? {}),
-    }
-    validateParams(assemblyOptions.params)
-
+    let optionsPrepared = false
     try {
+      const assemblyOptions = (
+        typeof this.opts.assemblyOptions === 'function'
+          ? await this.opts.assemblyOptions()
+          : this.opts.assemblyOptions
+      ) as OptionsWithRestructuredFields
+
+      assemblyOptions.fields = {
+        ...(assemblyOptions.fields ?? {}),
+      }
+      validateParams(assemblyOptions.params)
+      optionsPrepared = true
       const assembly =
         // this.assembly can already be defined if we recovered files with Golden Retriever (this.#onRestored)
         this.assembly ?? (await this.#createAssembly(fileIDs, assemblyOptions))
@@ -885,6 +886,36 @@ export default class Transloadit<
       this.assembly = assembly
       this.#connectAssembly(assembly, fileIDs)
     } catch (err) {
+      if (!optionsPrepared) {
+        // A rejected retry must remain retryable. Emitting upload-error here would also close
+        // a different running Assembly through the global error handler.
+        if (!this.uppy.getState().currentUploads[uploadID]) throw err
+        const error = toError(err)
+        const message =
+          error instanceof UserFacingApiError
+            ? error.message
+            : this.i18n('creatingAssemblyFailed')
+        for (const fileID of fileIDs) {
+          const file = this.uppy.getFile(fileID)
+          if (!file) continue
+          this.uppy.setFileState(fileID, { error: message })
+          this.uppy.emit('preprocess-complete', file)
+        }
+        this.uppy.setState({ error: message })
+        this.uppy.info(message, 'error')
+        const otherActiveFiles = Object.entries(
+          this.uppy.getState().currentUploads,
+        )
+          .filter(([id]) => id !== uploadID)
+          .some(([, upload]) =>
+            upload.fileIDs.some((id) => {
+              const file = this.uppy.getFile(id)
+              return file != null && file.error == null
+            }),
+          )
+        if (!otherActiveFiles) this.uppy.setState({ allowNewUpload: true })
+        throw err
+      }
       fileIDs.forEach((fileID) => {
         const file = this.uppy.getFile(fileID)
         // Clear preprocessing state when the Assembly could not be created,

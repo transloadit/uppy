@@ -40,6 +40,8 @@ function PickerPanelContent<M extends Meta, B extends Body>({
         // `acceptsFileDrops` is experimental, for the file-management
         // plugins (`@uppy/s3`); it will change.
         acceptsFileDrops?: boolean
+        /** Called only when a file drop on this panel is rejected. */
+        onFileDropRejected?: () => void
       })
     | undefined
   // A picker's panel ignores dropped files: they would not end up where it
@@ -48,8 +50,9 @@ function PickerPanelContent<M extends Meta, B extends Body>({
   // files as it would anywhere else. Not a drag of text or links, nor one over
   // a text field or an open dialog.
   const leaveToDashboard = (event: TargetedDragEvent<HTMLDivElement>) => {
-    const target = event.target as Element
+    const target = event.target
     return (
+      target instanceof Element &&
       Boolean(activePlugin?.acceptsFileDrops) &&
       Boolean(event.dataTransfer?.types.includes('Files')) &&
       target.closest('input, textarea, dialog') == null
@@ -58,6 +61,14 @@ function PickerPanelContent<M extends Meta, B extends Body>({
   const ignoreDrag = (event: TargetedDragEvent<HTMLDivElement>) => {
     if (leaveToDashboard(event)) return
     ignoreEvent(event)
+    if (
+      event.type === 'drop' &&
+      event.dataTransfer?.types.includes('Files') &&
+      event.target instanceof Element &&
+      event.target.closest('input, textarea, dialog') == null
+    ) {
+      activePlugin?.onFileDropRejected?.()
+    }
     // Where that blocked the drop (anywhere but a text field), don't show the
     // copy cursor that promises one.
     if (
