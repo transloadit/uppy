@@ -307,6 +307,48 @@ describe('useScreenCapture', () => {
     expect(streamInactivated).toHaveBeenCalledTimes(1)
   })
 
+  it('stops recording, then the microphone, when screen sharing ends mid-recording', async () => {
+    // A microphone stream with a real audio track, so it is recorded too
+    const audioContext = new AudioContext()
+    onTestFinished(() => audioContext.close())
+    const oscillator = audioContext.createOscillator()
+    const mic = audioContext.createMediaStreamDestination()
+    oscillator.connect(mic)
+    oscillator.start()
+    display.getUserMedia.mockImplementationOnce(() => {
+      display.micStreams.push(mic.stream)
+      return Promise.resolve(mic.stream)
+    })
+    using uppy = new Uppy().use(ScreenCapture)
+    const plugin = uppy.getPlugin<ScreenCapture<any, any>>('ScreenCapture')!
+    await plugin.start()
+    await waitFor(() => expect(plugin.audioStream).toBe(mic.stream))
+
+    plugin.startRecording()
+    await waitFor(() =>
+      expect(plugin.getPluginState().status).toBe('recording'),
+    )
+    expect(plugin.outputStream!.getAudioTracks()).toHaveLength(1)
+    const stopRecorder = vi.spyOn(plugin.recorder!, 'stop')
+    const stopMic = vi.spyOn(mic.stream.getAudioTracks()[0]!, 'stop')
+
+    for (const track of display.streams[0]!.getTracks()) track.stop()
+
+    await waitFor(() =>
+      expect(plugin.getPluginState()).toMatchObject({
+        status: 'captured',
+        recording: false,
+        streamActive: false,
+        audioStreamActive: false,
+      }),
+    )
+    expect(plugin.getPluginState().recordedVideo).toBeTruthy()
+    expect(isLive(mic.stream)).toBe(false)
+    expect(stopRecorder.mock.invocationCallOrder[0]).toBeLessThan(
+      stopMic.mock.invocationCallOrder[0]!,
+    )
+  })
+
   it('stops the microphone when the screen picker is denied', async () => {
     display.getDisplayMedia.mockRejectedValueOnce(
       new DOMException('Permission denied', 'NotAllowedError'),
