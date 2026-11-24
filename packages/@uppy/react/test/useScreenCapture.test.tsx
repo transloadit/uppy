@@ -286,6 +286,27 @@ describe('useScreenCapture', () => {
     expect(isLive(display.micStreams[1]!)).toBe(true)
   })
 
+  it('stops the microphone when the video track ends without an inactive event', async () => {
+    using rendered = setup(<Capture />)
+    const plugin =
+      rendered.uppy.getPlugin<ScreenCapture<any, any>>('ScreenCapture')!
+    await waitForReady()
+    const streamInactivated = vi.spyOn(plugin, 'streamInactivated')
+
+    // Browsers that do not fire `inactive` on the stream still end the track
+    await act(() => {
+      display.streams[0]!.getVideoTracks()[0]!.dispatchEvent(new Event('ended'))
+    })
+
+    await waitFor(() => expect(button('screenshot').disabled).toBe(true))
+    expect(isLive(display.streams[0]!)).toBe(false)
+    expect(isLive(display.micStreams[0]!)).toBe(false)
+
+    // Stopping the tracks fires `inactive` as well; it is handled only once
+    display.streams[0]!.dispatchEvent(new Event('inactive'))
+    expect(streamInactivated).toHaveBeenCalledTimes(1)
+  })
+
   it('stops the microphone when the screen picker is denied', async () => {
     display.getDisplayMedia.mockRejectedValueOnce(
       new DOMException('Permission denied', 'NotAllowedError'),

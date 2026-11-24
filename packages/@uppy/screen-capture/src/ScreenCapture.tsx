@@ -256,12 +256,15 @@ export default class ScreenCapture<
         this.#videoStreamRequest = null
         this.videoStream = videoStream
 
-        // add event listener to stop recording if stream is interrupted.
-        // `stop()` also makes the stream inactive, so ignore streams that
-        // are no longer the current one
-        this.videoStream.addEventListener('inactive', () => {
+        // Stop recording if the user ends sharing. Not every browser fires
+        // `inactive`, so also listen for the video track ending. `stop()` also
+        // makes the stream inactive, so ignore streams that are no longer the
+        // current one; this also handles both events firing
+        const onEnded = () => {
           if (this.videoStream === videoStream) this.streamInactivated()
-        })
+        }
+        videoStream.addEventListener('inactive', onEnded)
+        videoStream.getVideoTracks()[0]?.addEventListener('ended', onEnded)
 
         this.setPluginState({
           streamActive: true,
