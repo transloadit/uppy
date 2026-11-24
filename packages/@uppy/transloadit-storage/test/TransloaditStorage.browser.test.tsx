@@ -1,24 +1,35 @@
-import Uppy, { BasePlugin, type PluginOpts } from '@uppy/core'
+import Uppy, { BasePlugin, type Meta, type PluginOpts } from '@uppy/core'
 import Dashboard from '@uppy/dashboard'
 import {
   createMockS3Companion,
   mockGrant,
   toMswHandlers,
 } from '@uppy-dev/s3-mock-companion'
-import { http } from 'msw'
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
+import { HttpResponse, http } from 'msw'
+import {
+  afterEach,
+  beforeEach,
+  describe,
+  expect,
+  it,
+  onTestFinished,
+  vi,
+} from 'vitest'
 import { page } from 'vitest/browser'
 import '@uppy/core/css/style.css'
 import '@uppy/core/provider-views/css/style.css'
 import '@uppy/dashboard/css/style.css'
 import '@uppy-dev/msw-setup'
 import { network } from 'virtual:msw'
+import type { StoreAssemblyParameters } from '../lib/storeAssemblyOptions.js'
 import TransloaditStorage, {
   type TransloaditStorageOptions,
 } from '../lib/TransloaditStorage.js'
 
 const COMPANION = 'http://localhost:3020'
 const TOKEN = 'test-auth-token'
+// biome-ignore lint/suspicious/noTemplateCurlyInString: Transloadit’s server-side file placeholder.
+const FILE_NAME = '${file.name}'
 
 /**
  * Serves a mock Companion and installs the plugin into an inline Dashboard.
@@ -40,14 +51,102 @@ let uppy: Uppy | undefined
 
 class FixtureUploader extends BasePlugin<
   PluginOpts & { assemblyOptions?: unknown; waitForEncoding?: boolean },
-  Record<string, unknown>,
+  Meta,
   Record<string, never>
 > {
+  failNextUpload = false
+
+  #prepare = async (): Promise<void> => {
+    if (typeof this.opts.assemblyOptions !== 'function')
+      throw new Error('Missing Assembly options')
+    await this.opts.assemblyOptions()
+  }
+
+  #upload = (fileIds: string[]): Promise<void> => {
+    const fail = this.failNextUpload
+    this.failNextUpload = false
+    this.uppy.emit('upload-start', this.uppy.getFilesByIds(fileIds))
+    for (const fileId of fileIds) {
+      const file = this.uppy.getFile(fileId)
+      if (fail)
+        this.uppy.emit('upload-error', file, new Error('Fixture upload failed'))
+      else this.uppy.emit('upload-success', file, { status: 200, body: {} })
+    }
+    return Promise.resolve()
+  }
+
+  override install(): void {
+    this.uppy.addPreProcessor(this.#prepare)
+    this.uppy.addUploader(this.#upload)
+  }
+
+  override uninstall(): void {
+    this.uppy.removePreProcessor(this.#prepare)
+    this.uppy.removeUploader(this.#upload)
+  }
+
   constructor(app: Uppy, options: PluginOpts & { assemblyOptions?: unknown }) {
     super(app, options)
     this.id = options.id ?? 'Transloadit'
     this.type = 'uploader'
   }
+}
+
+function setupUploads(options: Partial<TransloaditStorageOptions> = {}) {
+  const companion = createMockS3Companion({ token: TOKEN })
+  network.use(...toMswHandlers(companion, COMPANION, { http }))
+  const target = document.createElement('div')
+  document.body.appendChild(target)
+  const signAssembly = vi.fn(async (params: StoreAssemblyParameters) => ({
+    params,
+    signature: 'test',
+  }))
+  const app = new Uppy()
+    .use(FixtureUploader, {})
+    .use(Dashboard, { target, inline: true })
+    .use(TransloaditStorage, {
+      companionUrl: COMPANION,
+      storeUploads: { signAssembly },
+      ...options,
+    })
+  uppy = app
+  const plugin =
+    app.getPlugin<TransloaditStorage<Meta, Record<string, never>>>(
+      'TransloaditStorage',
+    )
+  const uploader = app.getPlugin<FixtureUploader>('Transloadit')
+  if (!plugin || !uploader) throw new Error('Missing Storage fixture plugins')
+  return { app, plugin, uploader, signAssembly, companion }
+}
+
+function dropFile(name: string): void {
+  const transfer = new DataTransfer()
+  transfer.items.add(new File(['hello'], name, { type: 'text/plain' }))
+  const panel = page.getByRole('tabpanel').element()
+  panel.dispatchEvent(
+    new DragEvent('dragover', {
+      bubbles: true,
+      cancelable: true,
+      dataTransfer: transfer,
+    }),
+  )
+  panel.dispatchEvent(
+    new DragEvent('drop', {
+      bubbles: true,
+      cancelable: true,
+      dataTransfer: transfer,
+    }),
+  )
+}
+
+function interceptPicker() {
+  const picker: { input: HTMLInputElement | undefined } = { input: undefined }
+  vi.spyOn(HTMLInputElement.prototype, 'click').mockImplementation(function (
+    this: HTMLInputElement,
+  ) {
+    picker.input = this
+  })
+  return picker
 }
 
 beforeEach(() => {
@@ -58,6 +157,7 @@ beforeEach(() => {
 afterEach(() => {
   uppy?.destroy()
   uppy = undefined
+  vi.restoreAllMocks()
 })
 
 describe('Transloadit Storage in the browser', () => {
@@ -248,146 +348,197 @@ describe('Transloadit Storage in the browser', () => {
     expect(companion.folders.has('docs/')).toBe(false)
   })
 
-  it('hides the Upload files button while a folder listing is in flight', async () => {
-    // PR 1: builtInToolbarActions() must return [] when loading is truthy, so
-    // the toolbar button is absent until navigation settles.
-    network.use(
-      ...toMswHandlers(createMockS3Companion({ token: TOKEN }), COMPANION, {
-        http,
-      }),
-    )
-    uppy = new Uppy()
-      .use(FixtureUploader, {})
-      .use(Dashboard, {
-        target: document.createElement('div'),
-        inline: true,
-      })
-      .use(TransloaditStorage, {
-        companionUrl: COMPANION,
-        storeUploads: {
-          signAssembly: async (params) => ({ params, signature: 'test' }),
-        },
-      })
-    document.body.appendChild(
-      uppy.getPlugin<Dashboard<Record<string, unknown>, Record<string, never>>>(
-        'Dashboard',
-      )!.el as Element,
-    )
-
-    const plugin =
-      uppy.getPlugin<TransloaditStorage<any, any>>('TransloaditStorage')!
-
-    // Simulate navigation in flight: set loading to true.
-    plugin.setPluginState({ loading: true })
+  it('blocks actual drops and upload actions during a delayed folder navigation', async () => {
+    const { app, plugin, companion } = setupUploads()
     await page.getByRole('tab', { name: 'Transloadit Storage' }).click()
-
+    await expect.element(page.getByText('readme.md')).toBeVisible()
+    const started = Promise.withResolvers<void>()
+    const release = Promise.withResolvers<void>()
+    onTestFinished(() => release.resolve())
+    network.use(
+      http.get(
+        `${COMPANION}/transloadit-storage/list/*`,
+        async ({ request }) => {
+          started.resolve()
+          await release.promise
+          const reply = companion.handle({
+            method: 'GET',
+            url: request.url,
+            token: request.headers.get('uppy-auth-token'),
+          })
+          if (!reply) throw new Error('Unexpected Companion request')
+          return new HttpResponse(JSON.stringify(reply.body), {
+            status: reply.status,
+            headers: { 'Content-Type': 'application/json' },
+          })
+        },
+      ),
+    )
+    const navigation = plugin.openFolderPath('docs/')
+    await started.promise
     await expect
       .element(page.getByRole('button', { name: 'Upload files' }))
       .not.toBeInTheDocument()
-
-    // Simulate navigation complete: loading back to false.
-    plugin.setPluginState({ loading: false, authenticated: true })
+    dropFile('blocked.txt')
+    expect(app.getFiles()).toEqual([])
+    release.resolve()
+    await navigation
+    await expect.element(page.getByText('hello.txt')).toBeVisible()
     await expect
       .element(page.getByRole('button', { name: 'Upload files' }))
       .toBeVisible()
+    expect(app.getFiles()).toEqual([])
   })
 
-  it('rejects file drops during navigation and does not add files to the queue', () => {
-    // PR 3: acceptsFileDrops must be false while loading is truthy, so a drop
-    // event that arrives during navigation cannot land in the stale folder.
-    network.use(
-      ...toMswHandlers(createMockS3Companion({ token: TOKEN }), COMPANION, {
-        http,
-      }),
-    )
-    const signAssembly = vi.fn(async (params: any) => ({
-      params,
-      signature: 'test',
-    }))
-    uppy = new Uppy()
-      .use(FixtureUploader, {})
-      .use(Dashboard, {
-        target: document.createElement('div'),
-        inline: true,
-      })
-      .use(TransloaditStorage, {
-        companionUrl: COMPANION,
-        storeUploads: { signAssembly },
-      })
-    document.body.appendChild(
-      uppy.getPlugin<Dashboard<Record<string, unknown>, Record<string, never>>>(
-        'Dashboard',
-      )!.el as Element,
-    )
-
-    const plugin =
-      uppy.getPlugin<TransloaditStorage<any, any>>('TransloaditStorage')!
-
-    // Mark navigation as in-flight.
-    plugin.setPluginState({ loading: true })
-
-    // acceptsFileDrops must be false while navigating.
-    expect(plugin.acceptsFileDrops).toBe(false)
-
-    // A drop during navigation must not reach signAssembly.
-    expect(signAssembly).not.toHaveBeenCalled()
-    // No files should be in the queue.
-    expect(uppy.getFiles()).toHaveLength(0)
-  })
-
-  it('clears the pinned destination after all files are removed so the next batch pins fresh', () => {
-    // PR 2 / destination-pin reset: once the queue empties (file-removed or
-    // cancel-all), #pinnedDestination must be null so the next accepted batch
-    // captures the then-current folder rather than the now-stale one.
-    network.use(
-      ...toMswHandlers(createMockS3Companion({ token: TOKEN }), COMPANION, {
-        http,
-      }),
-    )
-    uppy = new Uppy()
-      .use(FixtureUploader, {})
-      .use(Dashboard, {
-        target: document.createElement('div'),
-        inline: true,
-      })
-      .use(TransloaditStorage, {
-        companionUrl: COMPANION,
-        storeUploads: {
-          signAssembly: async (params) => ({ params, signature: 'test' }),
+  it('signs Dashboard drops for their acceptance folder after navigating away', async () => {
+    const { app, plugin, signAssembly } = setupUploads()
+    await page.getByRole('tab', { name: 'Transloadit Storage' }).click()
+    await plugin.openFolderPath('docs/')
+    await expect.element(page.getByText('hello.txt')).toBeVisible()
+    dropFile('accepted.txt')
+    await expect
+      .poll(() => app.getFiles().map((file) => file.source))
+      .toEqual(['Dashboard'])
+    await plugin.openFolderPath('')
+    await app.upload()
+    expect(signAssembly).toHaveBeenCalledWith(
+      expect.objectContaining({
+        steps: {
+          stored: expect.objectContaining({ path: `docs/${FILE_NAME}` }),
         },
-      })
-    document.body.appendChild(
-      uppy.getPlugin<Dashboard<Record<string, unknown>, Record<string, never>>>(
-        'Dashboard',
-      )!.el as Element,
+      }),
     )
+  })
 
-    const plugin =
-      uppy.getPlugin<TransloaditStorage<any, any>>('TransloaditStorage')!
+  it('uses a fresh destination for the next batch while successful files remain queued', async () => {
+    const { app, plugin, signAssembly } = setupUploads()
+    await page.getByRole('tab', { name: 'Transloadit Storage' }).click()
+    await plugin.openFolderPath('docs/')
+    dropFile('first.txt')
+    await expect.poll(() => app.getFiles().length).toBe(1)
+    await app.upload()
+    expect(app.getFiles()[0]?.progress.complete).toBe(true)
+    await page.getByRole('button', { name: 'Add more files' }).click()
+    await page.getByRole('tab', { name: 'Transloadit Storage' }).click()
+    await plugin.openFolderPath('')
+    dropFile('second.txt')
+    await expect.poll(() => app.getFiles().length).toBe(2)
+    await app.upload()
+    expect(signAssembly).toHaveBeenNthCalledWith(
+      1,
+      expect.objectContaining({
+        steps: {
+          stored: expect.objectContaining({ path: `docs/${FILE_NAME}` }),
+        },
+      }),
+    )
+    expect(signAssembly).toHaveBeenNthCalledWith(
+      2,
+      expect.objectContaining({
+        steps: { stored: expect.objectContaining({ path: FILE_NAME }) },
+      }),
+    )
+  })
 
-    // Simulate: user in folderA accepts a file → pin is set to folderA.
-    plugin.setPluginState({ authenticated: true, loading: false })
-    const file = uppy.addFile({
-      name: 'test.txt',
-      type: 'text/plain',
-      data: new Blob(['hello']),
-      source: plugin.id,
+  it('keeps the failed file’s destination when retried from another folder', async () => {
+    const { app, plugin, uploader, signAssembly } = setupUploads({
+      reopenAfterUpload: true,
     })
+    await page.getByRole('tab', { name: 'Transloadit Storage' }).click()
+    await plugin.openFolderPath('docs/')
+    dropFile('retry.txt')
+    await expect.poll(() => app.getFiles().length).toBe(1)
+    uploader.failNextUpload = true
+    expect((await app.upload())?.failed).toHaveLength(1)
+    await plugin.openFolderPath('')
+    expect((await app.retryAll())?.successful).toHaveLength(1)
+    expect(signAssembly).toHaveBeenNthCalledWith(
+      2,
+      expect.objectContaining({
+        steps: {
+          stored: expect.objectContaining({ path: `docs/${FILE_NAME}` }),
+        },
+      }),
+    )
+    await expect.poll(() => app.getFiles().length).toBe(0)
+    await expect.poll(() => plugin.getPluginState().loading).toBe(false)
+  })
 
-    // acceptsFileDrops reflects: folderA is open, not navigating → true.
-    expect(plugin.acceptsFileDrops).toBe(true)
+  it('does not retain a destination when the native picker is cancelled', async () => {
+    const { app, plugin, signAssembly } = setupUploads()
+    const picker = interceptPicker()
+    await page.getByRole('tab', { name: 'Transloadit Storage' }).click()
+    await plugin.openFolderPath('docs/')
+    await page.getByRole('button', { name: 'Upload files' }).click()
+    if (!picker.input) throw new Error('Picker did not open')
+    picker.input.dispatchEvent(new Event('cancel'))
+    await plugin.openFolderPath('')
+    dropFile('after-cancel.txt')
+    await expect.poll(() => app.getFiles().length).toBe(1)
+    await app.upload()
+    expect(signAssembly).toHaveBeenCalledWith(
+      expect.objectContaining({
+        steps: { stored: expect.objectContaining({ path: FILE_NAME }) },
+      }),
+    )
+  })
 
-    // Now remove the only file — queue is empty.
-    uppy.removeFile(file)
-    expect(uppy.getFiles()).toHaveLength(0)
+  it('keeps the picker’s original folder when navigation happens before selection', async () => {
+    const { app, plugin, signAssembly } = setupUploads()
+    const picker = interceptPicker()
+    await page.getByRole('tab', { name: 'Transloadit Storage' }).click()
+    await plugin.openFolderPath('docs/')
+    await page.getByRole('button', { name: 'Upload files' }).click()
+    if (!picker.input) throw new Error('Picker did not open')
+    const input = picker.input
+    await plugin.openFolderPath('')
+    const transfer = new DataTransfer()
+    transfer.items.add(new File(['hello'], 'picked.txt'))
+    input.files = transfer.files
+    input.dispatchEvent(new Event('change'))
+    await app.upload()
+    expect(signAssembly).toHaveBeenCalledWith(
+      expect.objectContaining({
+        steps: {
+          stored: expect.objectContaining({ path: `docs/${FILE_NAME}` }),
+        },
+      }),
+    )
+  })
 
-    // Navigate to folderB. acceptsFileDrops must still be true (not navigating).
-    // The key check: the NEXT added file will pin folderB, not folderA.
-    plugin.setPluginState({
-      authenticated: true,
-      loading: false,
-      currentFolderId: encodeURIComponent('folderB/'),
-    })
-    expect(plugin.acceptsFileDrops).toBe(true)
+  it('forgets a removed file’s destination before accepting the next batch', async () => {
+    const { app, plugin, signAssembly } = setupUploads()
+    await page.getByRole('tab', { name: 'Transloadit Storage' }).click()
+    await plugin.openFolderPath('docs/')
+    dropFile('removed.txt')
+    await expect.poll(() => app.getFiles().length).toBe(1)
+    app.removeFiles(app.getFiles().map((file) => file.id))
+    await page.getByRole('tab', { name: 'Transloadit Storage' }).click()
+    await plugin.openFolderPath('')
+    dropFile('replacement.txt')
+    await expect.poll(() => app.getFiles().length).toBe(1)
+    await app.upload()
+    expect(signAssembly).toHaveBeenCalledWith(
+      expect.objectContaining({
+        steps: { stored: expect.objectContaining({ path: FILE_NAME }) },
+      }),
+    )
+  })
+
+  it('refuses to sign one Assembly for files accepted in different folders', async () => {
+    const { app, plugin, signAssembly } = setupUploads()
+    await page.getByRole('tab', { name: 'Transloadit Storage' }).click()
+    await plugin.openFolderPath('docs/')
+    dropFile('docs.txt')
+    await expect.poll(() => app.getFiles().length).toBe(1)
+    await page.getByRole('button', { name: 'Add more files' }).click()
+    await page.getByRole('tab', { name: 'Transloadit Storage' }).click()
+    await plugin.openFolderPath('')
+    dropFile('root.txt')
+    await expect.poll(() => app.getFiles().length).toBe(2)
+    await expect(app.upload()).rejects.toThrow(
+      'Upload files from one folder at a time',
+    )
+    expect(signAssembly).not.toHaveBeenCalled()
   })
 })

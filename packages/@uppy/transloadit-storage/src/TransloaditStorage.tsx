@@ -3,6 +3,7 @@ import {
   type Meta,
   type UploadResult,
   type Uppy,
+  type UppyFile,
   UserFacingApiError,
 } from '@uppy/core'
 import type {
@@ -113,18 +114,11 @@ export default class TransloaditStorage<
 
   declare opts: TransloaditStorageOptions<M, B>
 
-  /** Tracks the previous loading state so we only rebuild actions on transitions. */
-  #lastLoading: boolean | string = false
-
-  /**
-   * The destination prefix captured when the first file in a batch is accepted.
-   * Signing uses this snapshot instead of reading the current folder, so
-   * navigation after acceptance cannot change the destination.
-   */
-  #pinnedDestination: string | null = null
-
-  /** Tracks whether we already showed the "drop while navigating" toast. */
-  #dropRejectionToastShown = false
+  #lastLoading = false
+  #lastFolderId: string | null | undefined
+  // Keep destinations for the lifetime of queued files, including failed-file retries.
+  readonly #destinations = new Map<string, string | null>()
+  #pickerDestination: string | undefined
 
   constructor(uppy: Uppy<M, B>, opts: TransloaditStorageOptions<M, B>) {
     // Fail before Uppy registers a half-installed provider with no view to tear down.
@@ -154,28 +148,21 @@ export default class TransloaditStorage<
     this.icon = () => <StorageIcon color="#0d8ceb" />
   }
 
-  /**
-   * Re-evaluates toolbar actions whenever the loading state changes so the
-   * "Upload files" button appears or disappears as soon as navigation settles,
-   * without waiting for a session event (which only fires on login/logout).
-   */
   #onStateUpdate = (): void => {
-    const loading = this.getPluginState().loading
-    if (loading !== this.#lastLoading) {
-      const wasLoading = Boolean(this.#lastLoading)
-      this.#lastLoading = loading
-      // Rebuild only the toolbar actions slice that we own.  S3's private
-      // #applyActions cannot be called directly; we update view.opts ourselves
-      // and then trigger a re-render with setPluginState.
-      this.view.opts.toolbarActions = [
-        ...this.builtInToolbarActions(),
-        ...(this.opts.toolbarActions ?? []),
-      ]
-      this.setPluginState({})
-      // Reset the drop-rejection toast flag when navigation settles, so the
-      // next pending navigation can show it again.
-      if (wasLoading && !loading) this.#dropRejectionToastShown = false
-    }
+    const { loading, currentFolderId } = this.getPluginState()
+    if (
+      Boolean(loading) === this.#lastLoading &&
+      currentFolderId === this.#lastFolderId
+    )
+      return
+    this.#lastLoading = Boolean(loading)
+    this.#lastFolderId = currentFolderId
+    // S3 owns the other action lists; only refresh the toolbar supplied by this subclass.
+    this.view.opts.toolbarActions = [
+      ...this.builtInToolbarActions(),
+      ...(this.opts.toolbarActions ?? []),
+    ]
+    this.setPluginState({})
   }
 
   /**
@@ -188,22 +175,9 @@ export default class TransloaditStorage<
    * minor releases.
    */
   override get acceptsFileDrops(): boolean {
-    // Drop admission requires a resolved folder: never accept while a listing
-    // is in flight, otherwise the dropped files would target the old folder.
-    const navigating = Boolean(this.getPluginState().loading)
-    if (
-      navigating &&
-      this.opts.storeUploads &&
-      !this.#dropRejectionToastShown
-    ) {
-      // Show the toast once per pending navigation so the user knows why the
-      // drop cursor changed.
-      this.#dropRejectionToastShown = true
-      this.uppy.info(this.i18n('dropWhileNavigating'), 'warning', 4000)
-    }
     return (
       this.opts.mode !== 'manager' &&
-      !navigating &&
+      !this.getPluginState().loading &&
       (this.opts.storeUploads == null || this.canWrite)
     )
   }
@@ -273,6 +247,8 @@ export default class TransloaditStorage<
         // way files go into the folder that is open (storeUploads builds the
         // Assembly params).
         run: () => {
+          if (this.getPluginState().loading || !this.canWrite)
+            throw new UserFacingApiError(this.i18n('uploadFolderUnavailable'))
           if (onUploadRequest) onUploadRequest({ prefix: openFolderKey(this) })
           else this.#pickFiles()
         },
@@ -283,64 +259,81 @@ export default class TransloaditStorage<
 
   /** Lets the user pick local files and adds them to Uppy. */
   #pickFiles(): void {
-    // Capture the destination before the async file picker, so navigating
-    // while the picker dialog is open does not change the target.
-    this.#pinDestination()
+    const destination = openFolderKey(this)
     const input = document.createElement('input')
     input.type = 'file'
     input.multiple = true
-    input.style.display = 'none'
-    input.addEventListener('change', () => {
-      this.uppy.addFiles(
-        Array.from(input.files ?? [], (file) => ({
-          name: file.name,
-          type: file.type,
-          data: file,
-          source: this.id,
-          isRemote: false,
-        })),
-      )
-      input.remove()
-    })
+    input.hidden = true
+    input.addEventListener('cancel', () => input.remove(), { once: true })
+    input.addEventListener(
+      'change',
+      () => {
+        // Only accepted files acquire a destination; cancelling or rejecting a selection leaves
+        // no shared pin behind. Capture the folder in which this picker was opened.
+        this.#pickerDestination = destination
+        try {
+          this.uppy.addFiles(
+            Array.from(input.files ?? [], (file) => ({
+              name: file.name,
+              type: file.type,
+              data: file,
+              source: this.id,
+              isRemote: false,
+            })),
+          )
+        } finally {
+          this.#pickerDestination = undefined
+          input.remove()
+        }
+      },
+      { once: true },
+    )
     document.body.appendChild(input)
     input.click()
   }
 
-  /**
-   * Capture the destination prefix once, at the moment files are first
-   * accepted.  Every subsequent signing request in this batch uses the
-   * pinned value instead of reading the (potentially changed) current folder.
-   */
-  #pinDestination(): void {
-    if (this.#pinnedDestination === null) {
-      this.#pinnedDestination = openFolderKey(this)
+  #onFileAdded = (file: UppyFile<M, B>): void => {
+    if (!this.opts.storeUploads) return
+    // storeUploads configures the entire uploader, including Dashboard drops and other sources.
+    if (this.#pickerDestination !== undefined) {
+      this.#destinations.set(file.id, this.#pickerDestination)
+    } else if (this.getPluginState().authenticated) {
+      this.#destinations.set(
+        file.id,
+        this.getPluginState().loading ? null : openFolderKey(this),
+      )
     }
   }
 
-  /** Provides the pinned (or current) destination to the signing closure. */
+  #onFileRemoved = (file: UppyFile<M, B>): void => {
+    this.#destinations.delete(file.id)
+  }
+
+  /** Resolve the files being signed, excluding successful files retained from earlier batches. */
   #getDestination = (): string => {
-    return this.#pinnedDestination ?? openFolderKey(this)
-  }
-
-  /**
-   * Pin the destination for any files added from this plugin (dropped or
-   * picked).  Called once via the `file-added` event — one pin per batch.
-   */
-  #onFileAdded = (file: { source?: string | null }): void => {
-    if (
-      this.opts.storeUploads &&
-      file.source === this.id &&
-      this.#pinnedDestination === null
-    ) {
-      this.#pinDestination()
+    const activeIds = Object.values(
+      this.uppy.getState().currentUploads,
+    ).flatMap(({ fileIDs }) => fileIDs)
+    const fileIds =
+      activeIds.length > 0
+        ? activeIds
+        : this.uppy
+            .getFiles()
+            .filter((file) => !file.progress.complete || file.error != null)
+            .map((file) => file.id)
+    const destinations = new Set<string>()
+    for (const fileId of fileIds) {
+      const captured = this.#destinations.get(fileId)
+      if (captured === null)
+        throw new UserFacingApiError(this.i18n('uploadFolderUnavailable'))
+      // Before connection there is no known grant prefix. The signing helper connects first.
+      const destination = captured ?? openFolderKey(this)
+      this.#destinations.set(fileId, destination)
+      destinations.add(destination)
     }
-  }
-
-  /** Clear the pinned destination when the queue is empty or complete. */
-  #onClearDestination = (): void => {
-    if (this.uppy.getFiles().length === 0) {
-      this.#pinnedDestination = null
-    }
+    if (destinations.size > 1)
+      throw new UserFacingApiError(this.i18n('mixedUploadFolders'))
+    return destinations.values().next().value ?? openFolderKey(this)
   }
 
   override install(): void {
@@ -368,16 +361,13 @@ export default class TransloaditStorage<
     // Re-evaluate actions when loading changes so the "Upload files" button
     // disappears while navigation is in flight and reappears when it settles.
     this.uppy.on('state-update', this.#onStateUpdate)
-    // Pin the destination for dropped/picked files.
     this.uppy.on('file-added', this.#onFileAdded)
-    // Clear the pin when the queue empties.
-    this.uppy.on('file-removed', this.#onClearDestination)
-    this.uppy.on('cancel-all', this.#onClearDestination)
+    this.uppy.on('file-removed', this.#onFileRemoved)
   }
 
   override uninstall(): void {
-    this.uppy.off('cancel-all', this.#onClearDestination)
-    this.uppy.off('file-removed', this.#onClearDestination)
+    this.uppy.off('file-removed', this.#onFileRemoved)
+    this.#destinations.clear()
     this.uppy.off('file-added', this.#onFileAdded)
     this.uppy.off('state-update', this.#onStateUpdate)
     this.uppy.off('complete', this.#reopenAfterUpload)
@@ -391,8 +381,6 @@ export default class TransloaditStorage<
    * listeners (Dashboard's own success state) run on the final result first.
    */
   #reopenAfterUpload = (result: UploadResult<M, B>): void => {
-    // Clear the pinned destination regardless of outcome: the batch is done.
-    this.#pinnedDestination = null
     if (result.failed?.length) return
     setTimeout(() => {
       try {

@@ -2,17 +2,12 @@
 "@uppy/transloadit-storage": patch
 ---
 
-fix(transloadit-storage): disable upload actions and drops during folder navigation
+Prevent uploads from silently changing folders during navigation.
 
-Refs #6636
+Hide the upload action and reject panel drops while the destination folder is loading.
+Capture a destination for each accepted file, including Dashboard drops and native picker
+selections. Preserve it through navigation and retries, let later batches use their own
+folder, and refuse to sign one Assembly for files from different folders. Cancelling a
+picker or removing queued files leaves no stale destination behind.
 
-While a folder-listing request is in flight (`loading === true`), the
-toolbar "Upload files" button is now hidden and drag-and-drop is
-rejected with a user-facing toast. This prevents a race where a user
-who acted before `currentFolderId` resolved would upload files to the
-_previous_ folder instead of the one they navigated to.
-
-Additionally, the destination prefix is now pinned the moment files are
-accepted (dropped or picked), so any navigation that happens while an
-async signing request is in flight cannot silently retarget a queued
-batch.
+Refs #6636.

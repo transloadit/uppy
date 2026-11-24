@@ -9,7 +9,9 @@ export default {
     uploadFiles: 'Upload files',
     storing: 'Storing…',
     storageNotConnected: 'Connect to Transloadit Storage before uploading',
-    dropWhileNavigating:
-      'Cannot drop files while the folder is loading — please wait for navigation to finish',
+    uploadFolderUnavailable:
+      'Wait for a writable folder to finish loading before uploading.',
+    mixedUploadFolders:
+      'Upload files from one folder at a time. Remove the other queued files and try again.',
   },
 }
