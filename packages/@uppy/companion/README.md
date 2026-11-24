@@ -86,7 +86,7 @@ existing expiry, prefix and scope checks.
 
 Native simple-auth optionally accepts `form.storageContext` beside `form.grant`. The native provider
 retains both in its encrypted session and binds both into a v2 credential-broker proof. API2, rather
-than Companion, verifies the opaque context against the authenticated user's live folder session.
+than Companion, verifies the opaque context against the authenticated user’s live folder session.
 Context-bearing resolver responses must contain `sessionToken`, forwarded by the AWS SDK on S3
 requests and included as signed `storage_context` on native moves. Missing tokens and static
 credential fallback are refused. Clients and download pools are isolated by Workspace and context
@@ -101,7 +101,7 @@ Deploy the paired broker and access enforcement before enabling folder policies;
 transport intentionally refuses context redemption until the complete enforcement inventory is
 ready. Per-request checks remain mandatory even when the AWS SDK caches credentials. The v2 broker
 reply is provisional until API2 supplies context-bound credentials that cannot become an ordinary
-Workspace key if the token is stripped. Companion must never receive Content's password-command key or API2's context-signing key.
+Workspace key if the token is stripped. Companion must never receive Content’s password-command key or API2’s context-signing key.
 
 Dynamic credentials are refreshed by the cached S3 client’s credential provider. Enrolling another
 Workspace therefore needs no Companion restart; API2 owns admission and checks it on each request.
