@@ -395,18 +395,19 @@ export function App() {
 
   return (
     <UppyContextProvider uppy={uppy}>
-      {editing ? (
-        <Editor file={editing} close={() => setEditing(null)} />
-      ) : (
-        <>
-          <Dropzone />
-          <FilesList
-            editFile={(file) => {
-              if (file.type.startsWith('image/')) setEditing(file)
-            }}
-          />
-        </>
+      {editing && (
+        <Editor
+          key={editing.id}
+          file={editing}
+          close={() => setEditing(null)}
+        />
       )}
+      <Dropzone />
+      <FilesList
+        editFile={(file) => {
+          if (file.type.startsWith('image/')) setEditing(file)
+        }}
+      />
     </UppyContextProvider>
   )
 }

@@ -193,10 +193,9 @@ Render it inside an `UppyContextProvider` whose Uppy instance has the
     {#key editing.id}
       <Editor file={editing} close={() => (editing = null)} />
     {/key}
-  {:else}
-    <Dropzone />
-    <FilesList {editFile} />
   {/if}
+  <Dropzone />
+  <FilesList {editFile} />
 </UppyContextProvider>
 ```
 

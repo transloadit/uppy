@@ -210,10 +210,8 @@ function editFile(file: UppyFile<any, any>) {
       :file="editing"
       @close="editing = null"
     />
-    <template v-else>
-      <Dropzone />
-      <FilesList :edit-file="editFile" />
-    </template>
+    <Dropzone />
+    <FilesList :edit-file="editFile" />
   </UppyContextProvider>
 </template>
 
