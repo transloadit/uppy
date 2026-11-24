@@ -2,6 +2,7 @@ import express from 'express'
 import interceptor from 'express-interceptor'
 import request from 'supertest'
 import { describe, expect, test } from 'vitest'
+
 import { shouldInterceptGrantError } from '../dist/companion.js'
 
 describe('grant error interceptor scope', () => {

@@ -1,5 +1,6 @@
-import { Readable } from 'node:stream'
 import type { ProviderListResponse } from '@uppy/companion'
+
+import { Readable } from 'node:stream'
 
 const BASE_URL = 'https://api.unsplash.com'
 
@@ -10,7 +11,7 @@ function adaptData(items: any[]) {
     nextPagePath: null,
   }
 
-  items.forEach((item) => {
+  for (const item of items) {
     const isFolder = !!item.published_at
     data.items.push({
       isFolder,
@@ -23,7 +24,7 @@ function adaptData(items: any[]) {
       modifiedDate: item.updated_at,
       size: null,
     })
-  })
+  }
 
   return data
 }
