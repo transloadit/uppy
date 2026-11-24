@@ -198,7 +198,7 @@ const uppy = new Uppy().use(ImageEditor)
 const editing = ref<UppyFile<any, any> | null>(null)
 
 function editFile(file: UppyFile<any, any>) {
-  if (file.type.startsWith('image/')) editing.value = file
+  if (uppy.getPlugin('ImageEditor')?.canEditFile(file)) editing.value = file
 }
 </script>
 

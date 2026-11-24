@@ -133,8 +133,8 @@ Manages screen capture functionality for capturing screen image / video.
 
 Builds a custom image editor (crop, rotate, flip, zoom) for an image file. It
 uses the [`@uppy/image-editor`](/docs/image-editor) plugin, which you have to
-add to Uppy with `uppy.use(ImageEditor)`, otherwise the hook throws. The plugin
-does not need a `target` or the Dashboard.
+add to Uppy with `uppy.use(ImageEditor)` and its default `id`, otherwise the
+hook throws. The plugin does not need a `target` or the Dashboard.
 
 Spread `getImageProps()` on an `<img>` element. The editing buttons are disabled
 until that image has loaded. Saving replaces the file’s data in Uppy and emits
@@ -150,7 +150,9 @@ The cropping area needs the editor stylesheet: import
 **Arguments**:
 
 - `file: UppyFile<Meta, Body>`: the file to edit. Its `data` must be a `Blob`,
-  so this works for local files, not for files from remote sources.
+  so this works for local files, not for files from remote sources. The editor
+  supports JPEG, GIF, PNG, BMP and WebP; check a file with the plugin’s
+  `canEditFile(file)` before you open it.
 
 **Returns**:
 
@@ -185,7 +187,9 @@ The cropping area needs the editor stylesheet: import
   `getCropPortraitButtonProps()` set the crop aspect ratio to `1:1`, `16:9` and
   `9:16`.
 - `getRotationSliderProps()` is for an `<input>`: a range from `-45` to `45`
-  degrees for fine rotation.
+  degrees for fine rotation. In React the image turns while the slider moves.
+  In Vue and Svelte the props use the native `change` event, so it turns when
+  the slider is released.
 
 See the [image editor example](#example-image-editor-with-useimageeditor).
 
@@ -195,7 +199,7 @@ Opens Google’s own picker for Google Drive or Google Photos from your own
 button. It reads its settings from the
 [Google Drive Picker](/docs/google-drive-picker) or
 [Google Photos Picker](/docs/google-photos-picker) plugin, so add that plugin to
-Uppy first, otherwise the hook throws. Those plugins need a Google OAuth client
+Uppy first, with its default `id`, otherwise the hook throws. Those plugins need a Google OAuth client
 ID (Google Drive also needs an API key and an app ID) and a
 [Companion](/docs/companion) instance; their docs explain the setup. Picked
 files are added to Uppy as remote files, which Companion downloads.

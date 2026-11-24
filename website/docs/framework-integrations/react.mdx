@@ -405,7 +405,9 @@ export function App() {
       <Dropzone />
       <FilesList
         editFile={(file) => {
-          if (file.type.startsWith('image/')) setEditing(file)
+          if (uppy.getPlugin('ImageEditor')?.canEditFile(file)) {
+            setEditing(file)
+          }
         }}
       />
     </UppyContextProvider>

@@ -184,7 +184,7 @@ Render it inside an `UppyContextProvider` whose Uppy instance has the
   let editing = $state<UppyFile<any, any> | null>(null)
 
   function editFile(file: UppyFile<any, any>) {
-    if (file.type.startsWith('image/')) editing = file
+    if (uppy.getPlugin('ImageEditor')?.canEditFile(file)) editing = file
   }
 </script>
 
