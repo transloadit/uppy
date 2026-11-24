@@ -329,6 +329,29 @@ describe('useScreenCapture', () => {
     expect(plugin.getPluginState().audioStreamActive).toBe(false)
   })
 
+  it('asks for the screen and microphone once when start() is called twice', async () => {
+    using uppy = new Uppy().use(ScreenCapture)
+    const plugin = uppy.getPlugin<ScreenCapture<any, any>>('ScreenCapture')!
+
+    await Promise.all([plugin.start(), plugin.start()])
+
+    expect(display.getDisplayMedia).toHaveBeenCalledTimes(1)
+    expect(display.getUserMedia).toHaveBeenCalledTimes(1)
+    expect(plugin.videoStream).toBe(display.streams[0])
+    expect(plugin.audioStream).toBe(display.micStreams[0])
+  })
+
+  it('asks for the screen once when a screenshot is taken while start() waits for the picker', async () => {
+    using uppy = new Uppy().use(ScreenCapture)
+    const plugin = uppy.getPlugin<ScreenCapture<any, any>>('ScreenCapture')!
+
+    await Promise.all([plugin.start(), plugin.captureScreenshot()])
+
+    expect(display.getDisplayMedia).toHaveBeenCalledTimes(1)
+    expect(plugin.videoStream).toBe(display.streams[0])
+    expect(plugin.getPluginState().status).toBe('captured')
+  })
+
   it('ignores the old stream going inactive after stop() and start()', async () => {
     using rendered = setup(<Capture />)
     const { uppy } = rendered

@@ -131,6 +131,11 @@ export default class ScreenCapture<
   // Bumped by `#releaseStreams()`, so streams that resolve after it are discarded
   #releaseCount = 0
 
+  // Pending stream requests, so repeated calls share one picker/permission prompt
+  #videoStreamRequest: Promise<MediaStream | false> | null = null
+
+  #audioStreamRequest: Promise<MediaStream | false> | null = null
+
   constructor(uppy: Uppy<M, B>, opts?: ScreenCaptureOptions) {
     super(uppy, { ...defaultOptions, ...opts })
     this.mediaDevices = getMediaDevices()
@@ -235,11 +240,12 @@ export default class ScreenCapture<
     if (this.videoStream) {
       return new Promise((resolve) => resolve(this.videoStream!))
     }
+    if (this.#videoStreamRequest) return this.#videoStreamRequest
 
     // ask user to select source to record and get mediastream from that
     const isStale = this.#staleCheck()
 
-    return this.mediaDevices
+    this.#videoStreamRequest = this.mediaDevices
       .getDisplayMedia(this.opts.displayMediaConstraints)
       .then((videoStream) => {
         if (isStale()) {
@@ -247,6 +253,7 @@ export default class ScreenCapture<
           return false
         }
 
+        this.#videoStreamRequest = null
         this.videoStream = videoStream
 
         // add event listener to stop recording if stream is interrupted.
@@ -267,6 +274,7 @@ export default class ScreenCapture<
       .catch((err) => {
         if (isStale()) return false
 
+        this.#videoStreamRequest = null
         this.setPluginState({
           screenRecError: err,
           status: 'error',
@@ -280,6 +288,7 @@ export default class ScreenCapture<
 
         return false
       })
+    return this.#videoStreamRequest
   }
 
   selectAudioStreamSource(): Promise<MediaStream | false> {
@@ -287,11 +296,12 @@ export default class ScreenCapture<
     if (this.audioStream) {
       return new Promise((resolve) => resolve(this.audioStream!))
     }
+    if (this.#audioStreamRequest) return this.#audioStreamRequest
 
     // ask user to select source to record and get mediastream from that
     const isStale = this.#staleCheck()
 
-    return this.mediaDevices
+    this.#audioStreamRequest = this.mediaDevices
       .getUserMedia(this.opts.userMediaConstraints)
       .then((audioStream) => {
         if (isStale()) {
@@ -299,6 +309,7 @@ export default class ScreenCapture<
           return false
         }
 
+        this.#audioStreamRequest = null
         this.audioStream = audioStream
 
         this.setPluginState({
@@ -310,12 +321,14 @@ export default class ScreenCapture<
       .catch((err) => {
         if (isStale()) return false
 
+        this.#audioStreamRequest = null
         if (err.name === 'NotAllowedError') {
           this.uppy.info(this.i18n('micDisabled'), 'error', 5000)
           this.uppy.log(this.i18n('micDisabled'), 'warning')
         }
         return false
       })
+    return this.#audioStreamRequest
   }
 
   startRecording(): void {
@@ -487,6 +500,8 @@ export default class ScreenCapture<
   /** Stops the screen and microphone streams, including pending ones. */
   #releaseStreams(): void {
     this.#releaseCount++
+    this.#videoStreamRequest = null
+    this.#audioStreamRequest = null
     stopTracks(this.videoStream)
     stopTracks(this.audioStream)
     this.videoStream = null
