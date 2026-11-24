@@ -267,6 +267,33 @@ describe('S3 provider in the browser', () => {
     expect(names(plugin)).toEqual(['2026'])
   })
 
+  it('keeps a granted deep folder after the loaded pages of its listed parent', async () => {
+    const { plugin } = setup({
+      mode: 'manager',
+      getGrant: async () =>
+        mockGrant({ bucket: 'my-bucket', prefix: 'tenant/' }),
+      companion: {
+        pageSize: 1,
+        folders: {
+          'tenant/': [
+            { name: 'a', isFolder: true },
+            { name: 'b', isFolder: true },
+            { name: 'photos', isFolder: true },
+          ],
+          'tenant/photos/': [{ name: 'chair.jpg', isFolder: false }],
+        },
+      },
+    })
+    await plugin.openFolderPath(null)
+    expect(names(plugin)).toEqual(['a'])
+    expect(await plugin.openFolderPath('tenant/photos/')).toBe(true)
+    await plugin.view.openFolder(plugin.rootFolderId)
+    expect(await plugin.view.loadNextPage()).toBe(true)
+    expect(names(plugin)).toEqual(['a', 'b', 'photos'])
+    expect(await plugin.view.loadNextPage()).toBe(true)
+    expect(names(plugin)).toEqual(['a', 'b', 'photos'])
+  })
+
   it('falls back to the last existing ancestor of a stale granted deep link', async () => {
     const { plugin } = setup({
       mode: 'manager',
