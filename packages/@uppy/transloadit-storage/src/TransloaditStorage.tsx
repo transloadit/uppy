@@ -1,6 +1,7 @@
 import {
   type Body,
   type Meta,
+  type State,
   type UploadResult,
   type Uppy,
   type UppyFile,
@@ -117,7 +118,7 @@ export default class TransloaditStorage<
   #lastLoading = false
   #lastFolderId: string | null | undefined
   // Keep destinations for the lifetime of queued files, including failed-file retries.
-  readonly #destinations = new Map<string, string | null>()
+  readonly #destinations = new Map<string, string>()
   #pickerDestination: string | undefined
 
   constructor(uppy: Uppy<M, B>, opts: TransloaditStorageOptions<M, B>) {
@@ -148,7 +149,14 @@ export default class TransloaditStorage<
     this.icon = () => <StorageIcon color="#0d8ceb" />
   }
 
-  #onStateUpdate = (): void => {
+  #onStateUpdate = (previous: State<M, B>, next: State<M, B>): void => {
+    if (this.opts.storeUploads && previous.files !== next.files) {
+      // Dashboard closes on file-added; capture before that event can reset its folder.
+      for (const fileId of Object.keys(next.files)) {
+        if (previous.files[fileId] === undefined)
+          this.#captureDestination(next.files[fileId])
+      }
+    }
     const { loading, currentFolderId } = this.getPluginState()
     if (
       Boolean(loading) === this.#lastLoading &&
@@ -292,16 +300,13 @@ export default class TransloaditStorage<
     input.click()
   }
 
-  #onFileAdded = (file: UppyFile<M, B>): void => {
+  #captureDestination(file: UppyFile<M, B>): void {
     if (!this.opts.storeUploads) return
-    // storeUploads configures the entire uploader, including Dashboard drops and other sources.
+    // storeUploads configures every source. A picker can be busy collecting selected files.
     if (this.#pickerDestination !== undefined) {
       this.#destinations.set(file.id, this.#pickerDestination)
     } else if (this.getPluginState().authenticated) {
-      this.#destinations.set(
-        file.id,
-        this.getPluginState().loading ? null : openFolderKey(this),
-      )
+      this.#destinations.set(file.id, openFolderKey(this))
     }
   }
 
@@ -311,9 +316,11 @@ export default class TransloaditStorage<
 
   /** Resolve the files being signed, excluding successful files retained from earlier batches. */
   #getDestination = (): string => {
-    const activeIds = Object.values(
-      this.uppy.getState().currentUploads,
-    ).flatMap(({ fileIDs }) => fileIDs)
+    const uploads = Object.values(this.uppy.getState().currentUploads)
+    // Transloadit has one shared Assembly; forced retries must wait for the running upload.
+    if (uploads.length > 1)
+      throw new UserFacingApiError(this.i18n('concurrentStorageUploads'))
+    const activeIds = uploads[0]?.fileIDs ?? []
     const fileIds =
       activeIds.length > 0
         ? activeIds
@@ -324,8 +331,6 @@ export default class TransloaditStorage<
     const destinations = new Set<string>()
     for (const fileId of fileIds) {
       const captured = this.#destinations.get(fileId)
-      if (captured === null)
-        throw new UserFacingApiError(this.i18n('uploadFolderUnavailable'))
       // Before connection there is no known grant prefix. The signing helper connects first.
       const destination = captured ?? openFolderKey(this)
       this.#destinations.set(fileId, destination)
@@ -361,14 +366,12 @@ export default class TransloaditStorage<
     // Re-evaluate actions when loading changes so the "Upload files" button
     // disappears while navigation is in flight and reappears when it settles.
     this.uppy.on('state-update', this.#onStateUpdate)
-    this.uppy.on('file-added', this.#onFileAdded)
     this.uppy.on('file-removed', this.#onFileRemoved)
   }
 
   override uninstall(): void {
     this.uppy.off('file-removed', this.#onFileRemoved)
     this.#destinations.clear()
-    this.uppy.off('file-added', this.#onFileAdded)
     this.uppy.off('state-update', this.#onStateUpdate)
     this.uppy.off('complete', this.#reopenAfterUpload)
     super.uninstall()

@@ -11,6 +11,8 @@ export default {
     storageNotConnected: 'Connect to Transloadit Storage before uploading',
     uploadFolderUnavailable:
       'Wait for a writable folder to finish loading before uploading.',
+    concurrentStorageUploads:
+      'Wait for the running upload to finish before retrying other files.',
     mixedUploadFolders:
       'Upload files from one folder at a time. Remove the other queued files and try again.',
   },

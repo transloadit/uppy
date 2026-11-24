@@ -55,6 +55,8 @@ class FixtureUploader extends BasePlugin<
   Record<string, never>
 > {
   failNextUpload = false
+  failAllUploads = false
+  uploadGate: Promise<void> | undefined
 
   #prepare = async (): Promise<void> => {
     if (typeof this.opts.assemblyOptions !== 'function')
@@ -62,17 +64,17 @@ class FixtureUploader extends BasePlugin<
     await this.opts.assemblyOptions()
   }
 
-  #upload = (fileIds: string[]): Promise<void> => {
-    const fail = this.failNextUpload
+  #upload = async (fileIds: string[]): Promise<void> => {
+    const fail = this.failNextUpload || this.failAllUploads
     this.failNextUpload = false
     this.uppy.emit('upload-start', this.uppy.getFilesByIds(fileIds))
+    await this.uploadGate
     for (const fileId of fileIds) {
       const file = this.uppy.getFile(fileId)
       if (fail)
         this.uppy.emit('upload-error', file, new Error('Fixture upload failed'))
       else this.uppy.emit('upload-success', file, { status: 200, body: {} })
     }
-    return Promise.resolve()
   }
 
   override install(): void {
@@ -390,6 +392,41 @@ describe('Transloadit Storage in the browser', () => {
     expect(app.getFiles()).toEqual([])
   })
 
+  it('preserves the destination of files selected inside Storage while it collects them', async () => {
+    const { app, plugin, signAssembly } = setupUploads()
+    await page.getByRole('tab', { name: 'Transloadit Storage' }).click()
+    await plugin.openFolderPath('docs/')
+    await page.getByRole('checkbox', { name: 'hello.txt' }).click()
+    await page.getByRole('button', { name: 'Select 1' }).click()
+    await expect.poll(() => app.getFiles().length).toBe(1)
+    await app.upload()
+    expect(signAssembly).toHaveBeenCalledWith(
+      expect.objectContaining({
+        steps: {
+          stored: expect.objectContaining({ path: `docs/${FILE_NAME}` }),
+        },
+      }),
+    )
+  })
+
+  it('captures a Dashboard drop before closing the panel resets its folder', async () => {
+    const { app, plugin, signAssembly } = setupUploads({
+      keepStateOnClose: false,
+    })
+    await page.getByRole('tab', { name: 'Transloadit Storage' }).click()
+    await plugin.openFolderPath('docs/')
+    dropFile('reset-on-close.txt')
+    await expect.poll(() => app.getFiles().length).toBe(1)
+    await app.upload()
+    expect(signAssembly).toHaveBeenCalledWith(
+      expect.objectContaining({
+        steps: {
+          stored: expect.objectContaining({ path: `docs/${FILE_NAME}` }),
+        },
+      }),
+    )
+  })
+
   it('signs Dashboard drops for their acceptance folder after navigating away', async () => {
     const { app, plugin, signAssembly } = setupUploads()
     await page.getByRole('tab', { name: 'Transloadit Storage' }).click()
@@ -462,6 +499,52 @@ describe('Transloadit Storage in the browser', () => {
     )
     await expect.poll(() => app.getFiles().length).toBe(0)
     await expect.poll(() => plugin.getPluginState().loading).toBe(false)
+  })
+
+  it('refuses overlapping retries without signing them for a running batch’s folder', async () => {
+    const { app, plugin, uploader, signAssembly } = setupUploads()
+    await page.getByRole('tab', { name: 'Transloadit Storage' }).click()
+    await plugin.openFolderPath('docs/')
+    dropFile('failed-docs.txt')
+    await expect.poll(() => app.getFiles().length).toBe(1)
+    uploader.failNextUpload = true
+    const first = await app.upload()
+    const failedFile = first?.failed?.[0]
+    if (!failedFile) throw new Error('Expected a failed file')
+    await page.getByRole('button', { name: 'Add more files' }).click()
+    await page.getByRole('tab', { name: 'Transloadit Storage' }).click()
+    await plugin.openFolderPath('')
+    dropFile('running-root.txt')
+    await expect.poll(() => app.getFiles().length).toBe(2)
+    // upload() retries existing failures before starting newly queued files.
+    uploader.failAllUploads = true
+    await app.upload()
+    uploader.failAllUploads = false
+    const rootFile = app
+      .getFiles()
+      .find((file) => file.name === 'running-root.txt')
+    if (!rootFile) throw new Error('Expected the root file')
+    const release = Promise.withResolvers<void>()
+    uploader.uploadGate = release.promise
+    const running = app.retryUpload(rootFile.id)
+    try {
+      await expect.poll(() => signAssembly.mock.calls.length).toBe(4)
+      await expect(app.retryUpload(failedFile.id)).rejects.toThrow(
+        'Wait for the running upload',
+      )
+      expect(signAssembly).toHaveBeenCalledTimes(4)
+    } finally {
+      release.resolve()
+      await running
+    }
+    await app.retryUpload(failedFile.id)
+    expect(signAssembly).toHaveBeenLastCalledWith(
+      expect.objectContaining({
+        steps: {
+          stored: expect.objectContaining({ path: `docs/${FILE_NAME}` }),
+        },
+      }),
+    )
   })
 
   it('does not retain a destination when the native picker is cancelled', async () => {
