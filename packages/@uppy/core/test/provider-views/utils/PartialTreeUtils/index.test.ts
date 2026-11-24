@@ -607,8 +607,6 @@ describe('afterScrollFolder()', () => {
       'page2',
       () => null,
     )
-    // e.g. the user opened '2_1' and came back
-    opened.push(_file('2_1_1', { parentId: '2_1' }))
     const childIds = (tree: PartialTree) =>
       tree.flatMap((node) =>
         node.type !== 'root' && node.parentId === '2' ? [node.id] : [],
@@ -639,6 +637,36 @@ describe('afterScrollFolder()', () => {
     )
     expect(childIds(page4)).toEqual(['2_1', '2_2', '2_5', '2_6', '2_7'])
     expect(getFile(page4, '2_5').unlisted).toBeUndefined()
+  })
+
+  it('keeps a child added to an already listed folder after the next page', () => {
+    const oldPartialTree: PartialTree = [
+      _root('ourRoot'),
+      _folder('2', { parentId: 'ourRoot', nextPagePath: 'page2' }),
+      _file('2_1', { parentId: '2' }),
+      // added by a search after page 1 loaded
+      _file('2_5', { parentId: '2', unlisted: true }),
+      _folder('3', { parentId: 'ourRoot', cached: false }),
+      _file('3_5', { parentId: '3', unlisted: true }),
+    ]
+
+    const newTree = afterScrollFolder(
+      oldPartialTree,
+      '2',
+      [_cFile('2_2')],
+      'page3',
+      () => null,
+    )
+
+    expect(newTree.map((node) => node.id)).toEqual([
+      'ourRoot',
+      '2',
+      '2_1',
+      '3',
+      '3_5',
+      '2_2',
+      '2_5',
+    ])
   })
 
   it('scroll "checked" folder - all discovered files are marked as "checked"', () => {

@@ -2,6 +2,8 @@ import '@uppy/core/css/style.css'
 import '@uppy/dashboard/css/style.css'
 import '@uppy-dev/msw-setup'
 
+import type { Meta } from '@uppy/core'
+
 import { network } from 'virtual:msw'
 import Uppy from '@uppy/core'
 import { ProviderViews } from '@uppy/core/provider-views'
@@ -188,6 +190,13 @@ describe('ProviderView Search E2E', () => {
     await expect
       .element(page.getByRole('button', { name: 'somewhere.pdf', exact: true }))
       .toBeVisible()
+    // so that scrolling its folder keeps it after the loaded pages
+    expect(
+      uppy
+        .getPlugin<Dropbox<Meta, Record<string, never>>>('Dropbox')!
+        .getPluginState()
+        .partialTree.find((node) => node.id === '%2Fsomewhere.pdf'),
+    ).toMatchObject({ unlisted: true })
   })
 
   test('Search results with the same requestPath are shown once', async () => {
@@ -228,6 +237,8 @@ describe('ProviderView Search E2E', () => {
     expect(
       page.getByRole('button', { name: 'first.pdf', exact: true }).elements(),
     ).toHaveLength(1)
+    // the second result has no node of its own, so it is not listed
+    expect(page.getByText('second.pdf').elements()).toHaveLength(0)
   })
 
   test('Search deep folder -> open it -> click ancestor breadcrumb and navigate correctly', async () => {
