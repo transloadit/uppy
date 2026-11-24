@@ -1,9 +1,13 @@
+import type { GrantKeys } from '../src/server/provider/s3/grant.js'
+import type { GrantClaims } from './fixtures/s3.js'
+
 import { generateKeyPairSync } from 'node:crypto'
+
 import jwt from 'jsonwebtoken'
 import { describe, expect, test } from 'vitest'
+
 import {
   GrantExpiredError,
-  type GrantKeys,
   hasGrantKeys,
   InvalidGrantError,
   normalizeStorageGrantPrefix,
@@ -11,7 +15,6 @@ import {
 } from '../src/server/provider/s3/grant.js'
 import {
   claims,
-  type GrantClaims,
   mint,
   nowSeconds,
   GRANT_SECRET as SECRET,

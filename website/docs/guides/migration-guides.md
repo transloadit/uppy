@@ -282,7 +282,7 @@ bucket. A multipart upload only works if your server turns the same input into
 the same key on every request, because Uppy keeps passing the key it generated
 to `signRequest`. A server that generates a unique key at create time fails at
 the first part with `NoSuchUpload`. The
-[Node.js](https://github.com/transloadit/uppy/blob/main/examples/aws-nodejs/routes/presign.js)
+[Node.js](https://github.com/transloadit/uppy/blob/main/examples/aws-nodejs/routes/presign.ts)
 and
 [PHP](https://github.com/transloadit/uppy/blob/main/examples/aws-php/s3-sign.php)
 signer examples show how to return the key correctly.
@@ -437,7 +437,8 @@ functionality but with maximum customization freedom.
 JavaScript framework or build step, such as server-rendered apps (PHP, Rails,
 Django) using the CDN bundle or plain `<script>` tags. Its framework wrappers
 were not restored: in React, Vue, or Svelte, use `Dropzone` or `useDropzone` as
-shown below.
+shown below. In Angular, use the plugin directly with
+`uppy.use(DragDrop, { target })`.
 
 :::
 
@@ -526,7 +527,10 @@ uppy.use(Dashboard, {
 
 **Migration steps:**
 
-1. Remove `@uppy/drag-drop` and `@uppy/file-input` from your dependencies
+1. Remove `@uppy/file-input` from your dependencies. Remove `@uppy/drag-drop`
+   too if you used it through the React, Vue, or Svelte wrapper. Otherwise you
+   can keep it and use it directly with `uppy.use(DragDrop, { target })`, which
+   in Angular replaces `UppyAngularDragDropModule`.
 2. Choose one of these approaches:
    - Use the framework-specific hooks (`@uppy/react`, `@uppy/vue`,
      `@uppy/svelte`) for maximum flexibility
@@ -578,6 +582,15 @@ plugin gave a false promise of flexibility as a standalone plugin but was always
 built tightly coupled for `@uppy/dashboard`. With the new headless components
 and hooks, we want go all in those components and remove the confusing,
 inflexible ones.
+
+:::note Update
+
+`@uppy/status-bar` was later restored and remains supported for Angular and for
+setups without a JavaScript build step, such as server-rendered apps (PHP,
+Rails, Django) using the CDN bundle or plain `<script>` tags. In those setups
+you can keep using it and skip the steps below.
+
+:::
 
 **Migration steps:**
 
@@ -695,10 +708,6 @@ TypeScript complains.
 
 One important thing to note are the new generics on `@uppy/core`.
 
-<!-- eslint-disable @typescript-eslint/no-unused-vars -->
-
-<!-- eslint-disable @typescript-eslint/no-non-null-assertion -->
-
 ```ts
 import Uppy from '@uppy/core'
 // xhr-upload is for uploading to your own backend.
@@ -746,7 +755,7 @@ const { someThingMyBackendReturns } = uppy.getFile(id).response.body!
   would normally do for Companion, so you don’t have to implement that yourself.
 
   As long as you return the JSON for the expected endpoints (see our
-  [server example](https://github.com/transloadit/uppy/blob/main/examples/aws-nodejs/index.js)),
+  [server example](https://github.com/transloadit/uppy/blob/uppy@4.18.3/examples/aws-nodejs/index.js)),
   you only need to set `endpoint`.
 
   If you are using Companion, rename the options. If you have a lot of
@@ -1339,8 +1348,6 @@ uppy.use(Tus, {
 
 Uppy types are now individual exports and should be imported separately.
 
-<!-- eslint-disable @typescript-eslint/no-unused-vars -->
-
 ```ts
 import type { PluginOptions, UIPlugin, PluginTarget } from '@uppy/core'
 ```
@@ -1351,8 +1358,6 @@ import type { PluginOptions, UIPlugin, PluginTarget } from '@uppy/core'
 listen to [events](/docs/uppy/#events). The types for these events were loose
 and allowed for invalid events to be passed, such as
 `uppy.on('upload-errrOOOoooOOOOOrrrr')`.
-
-<!-- eslint-disable @typescript-eslint/no-unused-vars -->
 
 ```ts
 // Before:
@@ -1385,8 +1390,6 @@ Plugins that add their own events can merge with existing ones in `@uppy/core`
 with `declare module '@uppy/core' { ... }`. This is a TypeScript pattern called
 [module augmentation](https://www.typescriptlang.org/docs/handbook/declaration-merging.html#module-augmentation).
 For instance, when using [`@uppy/dashboard`][dashboard]:
-
-<!-- eslint-disable @typescript-eslint/no-unused-vars -->
 
 ```ts
 uppy.on('dashboard:file-edit-start', (file) => {

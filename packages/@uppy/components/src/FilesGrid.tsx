@@ -1,10 +1,13 @@
 import type { Body, Meta, UppyEventMap, UppyFile } from '@uppy/core'
+
+import type { UppyContext } from './types.js'
+
 import { Fragment } from '@uppy/core/utils/preact'
 import { useEffect, useState } from '@uppy/core/utils/preact/hooks'
 import { clsx } from 'clsx'
 import prettyBytes from 'pretty-bytes'
+
 import { Thumbnail } from './index.js'
-import type { UppyContext } from './types.js'
 
 export type FilesGridProps = {
   editFile?: (file: UppyFile<Meta, Body>) => void

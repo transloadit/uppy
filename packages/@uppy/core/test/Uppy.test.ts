@@ -1,17 +1,18 @@
-import { prettierBytes } from '@transloadit/prettier-bytes'
 import type { Body, Meta } from '@uppy/core'
+
+import type { DefinePluginOpts, PluginOpts } from '../lib/BasePlugin.js'
+import type { State } from '../lib/Uppy.js'
+import type { Locale } from '../lib/utils/index.js'
+
+import { prettierBytes } from '@transloadit/prettier-bytes'
 import { afterEach, describe, expect, it, vi } from 'vitest'
+
 import sampleImage from '../../compressor/fixtures/image.jpg'
-import BasePlugin, {
-  type DefinePluginOpts,
-  type PluginOpts,
-} from '../lib/BasePlugin.js'
+import BasePlugin from '../lib/BasePlugin.js'
 import Core from '../lib/index.js'
 import { debugLogger } from '../lib/loggers.js'
 import { RestrictionError } from '../lib/Restricter.js'
 import UIPlugin from '../lib/UIPlugin.js'
-import type { State } from '../lib/Uppy.js'
-import type { Locale } from '../lib/utils/index.js'
 import AcquirerPlugin1 from './mocks/acquirerPlugin1.js'
 import AcquirerPlugin2 from './mocks/acquirerPlugin2.js'
 // @ts-expect-error untyped
@@ -864,6 +865,53 @@ describe('src/Core', () => {
       })
     })
 
+    it('should keep files that onBeforeFileAdded adds via setState during addFiles', () => {
+      let added = false
+      using core = new Core({
+        onBeforeFileAdded: () => {
+          if (!added) {
+            added = true
+            core.addFile({
+              name: 'from-hook.txt',
+              type: 'text/plain',
+              data: new Blob(['x']),
+            })
+          }
+          return true
+        },
+      })
+
+      core.addFiles(
+        ['a.txt', 'b.txt'].map((name) => ({
+          name,
+          type: 'text/plain',
+          data: new Blob([name]),
+        })),
+      )
+
+      expect(
+        core
+          .getFiles()
+          .map((f) => f.name)
+          .sort(),
+      ).toEqual(['a.txt', 'b.txt', 'from-hook.txt'])
+    })
+
+    it('should add many files in linear time', () => {
+      using core = new Core()
+      const files = Array.from({ length: 20000 }, (_, i) => ({
+        name: `file-${i}.txt`,
+        type: 'text/plain',
+        data: new Blob(['x']),
+      }))
+
+      const start = performance.now()
+      core.addFiles(files)
+      // ~0.15s with the linear loop, ~20s when it was quadratic
+      expect(performance.now() - start).toBeLessThan(3000)
+      expect(core.getFiles()).toHaveLength(20000)
+    })
+
     it('should add a file', async () => {
       const fileData = await fetchTestImage()
       const fileAddedEventMock = vi.fn()
@@ -1164,7 +1212,7 @@ describe('src/Core', () => {
         store: DeepFrozenStore(),
       })
       core.addUploader((fileIDs) => {
-        fileIDs.forEach((fileID) => {
+        for (const fileID of fileIDs) {
           const file = core.getFile(fileID)
           if (file.name != null && /bar/.test(file.name)) {
             core.emit(
@@ -1173,8 +1221,7 @@ describe('src/Core', () => {
               new Error('This is bar and I do not like bar'),
             )
           }
-        })
-        return Promise.resolve()
+        }
       })
 
       core.addFile({
@@ -1338,14 +1385,13 @@ describe('src/Core', () => {
       let hasError = false
 
       core.addUploader((fileIDs) => {
-        fileIDs.forEach((fileID) => {
+        for (const fileID of fileIDs) {
           const file = core.getFile(fileID)
           if (!hasError) {
             core.emit('upload-error', file, new Error('foo'))
             hasError = true
           }
-        })
-        return Promise.resolve()
+        }
       })
       core.on('upload', onUpload)
       core.on('retry-all', onRetryAll)
@@ -2528,18 +2574,12 @@ describe('src/Core', () => {
   })
 
   describe('updateOnlineStatus', () => {
-    const RealNavigatorOnline = globalThis.window.navigator.onLine
-
     function mockNavigatorOnline(status: boolean) {
-      Object.defineProperty(globalThis.window.navigator, 'onLine', {
-        value: status,
-        writable: true,
-      })
+      vi.spyOn(window.navigator, 'onLine', 'get').mockReturnValue(status)
     }
 
     afterEach(() => {
-      // @ts-expect-error readonly but whatever
-      globalThis.window.navigator.onLine = RealNavigatorOnline
+      vi.restoreAllMocks()
     })
 
     it('should emit the correct event based on whether there is a network connection', () => {
@@ -2568,6 +2608,36 @@ describe('src/Core', () => {
       expect(onlineEventMock.mock.calls.length).toEqual(2)
       expect(offlineEventMock.mock.calls.length).toEqual(1)
       expect(backOnlineEventMock.mock.calls.length).toEqual(1)
+    })
+  })
+
+  describe('initial online status check', () => {
+    afterEach(() => {
+      vi.useRealTimers()
+    })
+
+    it('should check the online status 3s after creation', () => {
+      vi.useFakeTimers()
+      const statusEventMock = vi.fn()
+      {
+        using core = new Core()
+        core.on('is-offline', statusEventMock)
+        core.on('is-online', statusEventMock)
+        vi.advanceTimersByTime(3000)
+        expect(statusEventMock).toHaveBeenCalledOnce()
+      }
+    })
+
+    it('should not check the online status after destroy', () => {
+      vi.useFakeTimers()
+      const statusEventMock = vi.fn()
+      {
+        using core = new Core()
+        core.on('is-offline', statusEventMock)
+        core.on('is-online', statusEventMock)
+      }
+      vi.advanceTimersByTime(3000)
+      expect(statusEventMock).not.toHaveBeenCalled()
     })
   })
 
@@ -2725,6 +2795,15 @@ describe('src/Core', () => {
         '%{file} exceeds maximum allowed size of %{size}',
       )
       expect(core.i18n('test')).toBe('beep boop')
+    })
+
+    it('has the strings core itself uses without a locale pack', () => {
+      const logger = { debug: vi.fn(), warn: vi.fn(), error: vi.fn() }
+      using core = new Core({ logger })
+
+      // Used by the Google Picker when adding the picked files fails
+      expect(core.i18n('failedToAddFiles')).toBe('Failed to add files')
+      expect(logger.error).not.toHaveBeenCalled()
     })
   })
 

@@ -1,6 +1,8 @@
 import '@uppy-dev/msw-setup'
 
-import Uppy, { type Meta, UserFacingApiError } from '@uppy/core'
+import type { Meta } from '@uppy/core'
+
+import { Uppy, UserFacingApiError } from '@uppy/core'
 import { expect, it, vi } from 'vitest'
 
 import Transloadit from '../lib/index.js'

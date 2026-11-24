@@ -9,9 +9,46 @@ updates:
       interval: 'weekly'
     cooldown:
       default-days: 7
+    groups:
+      Angular:
+        patterns:
+          - '@angular*'
+          - 'ng-*'
+
+      AWS:
+        patterns:
+          - '@aws-sdk/*'
+
+      Docusaurus:
+        patterns:
+          - '@docusaurus/*'
+
+      React:
+        patterns:
+          - 'react'
+          - 'react-dom'
+          - '@types/react'
+          - '@types/react-dom'
+
+      React Router:
+        patterns:
+          - '@react-router/*'
+          - react-router
+
+      Vitest:
+        patterns:
+          - '@testing-library/*'
+          - '@vitest/*'
+          - playwright
+          - vitest
 
   # Maintain dependencies for GitHub Actions
   - package-ecosystem: 'github-actions'
     directory: '/'
     schedule:
       interval: 'weekly'
+
+    groups:
+      Docker:
+        patterns:
+          - docker/*

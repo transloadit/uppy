@@ -28,14 +28,14 @@ function insertReplacement(
   replacement: string,
 ): Array<string | unknown> {
   const newParts: Array<string | unknown> = []
-  source.forEach((chunk) => {
+  for (const chunk of source) {
     // When the source contains multiple placeholders for interpolation,
     // we should ignore chunks that are not strings, because those
     // can be JSX objects and will be otherwise incorrectly turned into strings.
     // Without this condition we’d get this: [object Object] hello [object Object] my <button>
     if (typeof chunk !== 'string') {
       newParts.push(chunk)
-      return
+      continue
     }
 
     rx[Symbol.split](chunk).forEach((raw, i, list) => {
@@ -48,7 +48,7 @@ function insertReplacement(
         newParts.push(replacement)
       }
     })
-  })
+  }
   return newParts
 }
 

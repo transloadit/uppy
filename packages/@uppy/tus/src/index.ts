@@ -6,18 +6,20 @@ import type {
   Uppy,
   UppyFile,
 } from '@uppy/core'
-import { BasePlugin, EventManager } from '@uppy/core'
 import type { RequestClient } from '@uppy/core/companion-client'
+import type { LocalUppyFile } from '@uppy/core/utils'
+
+import { BasePlugin, EventManager } from '@uppy/core'
 import {
   filterFilesToEmitUploadStarted,
   filterFilesToUpload,
   getAllowedMetaFields,
   isNetworkError,
-  type LocalUppyFile,
   NetworkError,
   RateLimitedQueue,
 } from '@uppy/core/utils'
 import * as tus from 'tus-js-client'
+
 import packageJson from '../package.json' with { type: 'json' }
 import getFingerprint from './getFingerprint.js'
 
@@ -164,12 +166,21 @@ export default class Tus<M extends Meta, B extends Body> extends BasePlugin<
    * upload on the Tus server by sending a `DELETE` request. If not, it will just
    * cancel any current upload request and leave the upload in a half-uploaded state.
    *
+   * Terminating is best effort: the server may refuse to delete an upload it
+   * considers finished, which is benign, so a failure is logged as a warning
+   * and never rejects.
+   *
    * @param fileID
    * @param terminate Whether to terminate the upload on the server.
+   * @returns A promise that settles once the abort, including the server-side
+   * terminate, has finished.
    */
-  #abortUploader(fileID: string, terminate?: boolean) {
-    const uploader = this.uploaders[fileID]
-    uploader?.abort(terminate)
+  async #abortUploader(fileID: string, terminate?: boolean): Promise<void> {
+    try {
+      await this.uploaders[fileID]?.abort(terminate)
+    } catch (err) {
+      this.uppy.log(err, 'warning')
+    }
   }
 
   /**
@@ -468,13 +479,13 @@ export default class Tus<M extends Meta, B extends Body> extends BasePlugin<
         opts.allowedMetaFields,
         file.meta,
       )
-      allowedMetaFields.forEach((item) => {
+      for (const item of allowedMetaFields) {
         // tus type definition for metadata only accepts `Record<string, string>`
         // but in reality (at runtime) it accepts `Record<string, unknown>`
         // tus internally converts everything into a string, but let's do it here instead to be explicit.
         // because Uppy can have anything inside meta values, (for example relativePath: null is often sent by uppy)
         meta[item] = String(file.meta[item])
-      })
+      }
 
       // tusd uses metadata fields 'filetype' and 'filename'
       copyProp(meta, 'type', 'filetype')
@@ -594,7 +605,14 @@ export default class Tus<M extends Meta, B extends Body> extends BasePlugin<
       protocol: 'tus',
       size: file.data!.size,
       headers: opts.headers,
-      metadata: file.meta,
+      // the same fields a local upload sends; without `name`/`type` Companion
+      // falls back to a generated name, as tusd does for local uploads
+      metadata: Object.fromEntries(
+        getAllowedMetaFields(opts.allowedMetaFields, file.meta).map((name) => [
+          name,
+          file.meta[name],
+        ]),
+      ),
     }
   }
 

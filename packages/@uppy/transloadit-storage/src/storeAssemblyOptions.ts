@@ -1,5 +1,8 @@
-import { type Body, type Meta, type Uppy, UserFacingApiError } from '@uppy/core'
+import type { Body, Meta, Uppy } from '@uppy/core'
+
 import type TransloaditStorage from './TransloaditStorage.js'
+
+import { UserFacingApiError } from '@uppy/core'
 
 /**
  * The subset of `@uppy/transloadit`'s AssemblyParameters this helper builds.

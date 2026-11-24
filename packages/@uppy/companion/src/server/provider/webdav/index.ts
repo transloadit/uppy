@@ -1,21 +1,112 @@
 import type { Readable } from 'node:stream'
+
+import type { RequestInfo, RequestInit } from 'node-fetch'
+import type { Promisable } from 'type-fest'
 import type { WebDAVClientOptions } from 'webdav'
-import { AuthType, createClient } from 'webdav'
+
+import type {
+  ProviderDownloadOptions,
+  ProviderDownloadResponse,
+  ProviderListOptions,
+  ProviderListResponse,
+  ProviderLogoutResponse,
+  ProviderSimpleAuthOptions,
+} from '../Provider.js'
+
+import fetch, { Headers, Response } from 'node-fetch'
+import { AuthType, createClient, getPatcher } from 'webdav'
+
 import { getProtectedHttpAgent, validateURL } from '../../helpers/request.js'
 import { isRecord } from '../../helpers/type-guards.js'
 import logger from '../../logger.js'
 import { ProviderApiError, ProviderAuthError } from '../error.js'
 import { userError } from '../errorCodes.js'
-import Provider, {
-  type ProviderDownloadOptions,
-  type ProviderDownloadResponse,
-  type ProviderListOptions,
-  type ProviderListResponse,
-  type ProviderLogoutResponse,
-  type ProviderSimpleAuthOptions,
-} from '../Provider.js'
+import Provider from '../Provider.js'
+import { validateResponseXml } from './validateResponseXml.js'
 
 const defaultDirectory = '/'
+
+/**
+ * Upper bound on a WebDAV response that Companion buffers in memory
+ * (PROPFIND listings and stat calls). The `webdav` package reads those with
+ * `response.text()` after decompression and parses them synchronously, so an
+ * anonymous caller pointing simple-auth at a hostile server could inflate a
+ * small gzip body into hundreds of megabytes and abort the process.
+ * node-fetch enforces `size` only when a body is consumed whole, so file
+ * downloads (which stream `response.body`) are not limited by this.
+ *
+ * The webdav patcher is a package-wide singleton, so this applies to every
+ * webdav client in the process. An embedder that replaces this fetch patch
+ * must preserve the same bounds.
+ */
+export const MAX_WEBDAV_RESPONSE_BYTES = 5 * 1024 * 1024
+
+getPatcher().patch('fetch', async (url: unknown, options: unknown) => {
+  // webdav's hot-patcher has no typed fetch boundary.
+  const requestOptions = options as RequestInit
+  const headers = new Headers(requestOptions.headers)
+  // Avoids a decompressor where the server honours it (a server that ignores
+  // it gets one, as on main). A compressed body is still capped by `size`,
+  // which node-fetch counts after decompression.
+  headers.set('accept-encoding', 'identity')
+  const response = await fetch(url as RequestInfo, {
+    ...requestOptions,
+    headers,
+    size: MAX_WEBDAV_RESPONSE_BYTES,
+  })
+  if (response.ok && requestOptions.method?.toUpperCase() === 'PROPFIND') {
+    const xml = await response.text()
+    validateResponseXml(xml)
+    return new Response(xml, {
+      status: response.status,
+      statusText: response.statusText,
+      headers: response.headers,
+    })
+  }
+  return response
+})
+
+// A parsed URL can't contain whitespace, and node-fetch puts a space after it.
+// Don't stop at quotes: `'` stays unencoded in userinfo and paths.
+// Only http(s): WebDAV URLs are validated to those schemes, and a literal
+// prefix keeps the match linear on long messages.
+const urlInText = /https?:\/\/\S+/gi
+
+/**
+ * node-fetch's transport errors (connection refused, DNS, TLS) and
+ * its refusal of a URL with `user:pass@` quote the full request URL in their
+ * message, and a WebDAV URL can be the credential. Keep only each URL's
+ * origin, without userinfo, plus the error's name, code and stack frames.
+ * HTTP status errors pass unchanged, so mapProviderError() still sees their
+ * `status` and `response`: their message never quotes the request URL, only
+ * the server's status text.
+ */
+function redactUrls(err: unknown): unknown {
+  if (
+    !(err instanceof Error) ||
+    err['response' as keyof Error] != null ||
+    err['status' as keyof Error] != null
+  )
+    return err
+  const message = err.message.replace(urlInText, (url) => {
+    try {
+      return `${new URL(url).origin}/[redacted]`
+    } catch {
+      return '[redacted URL]'
+    }
+  })
+  if (message === err.message) return err
+  const redacted = Object.assign(new Error(message), {
+    name: err.name,
+    ...(isRecord(err) &&
+      typeof err['code'] === 'string' && { code: err['code'] }),
+  })
+  const frames = (err.stack ?? '')
+    .split('\n')
+    .filter((line) => line.startsWith('    at '))
+  redacted.stack = [`${redacted.name}: ${message}`, ...frames].join('\n')
+  return redacted
+}
 
 type WebdavUserSession = { webdavUrl?: string }
 type WebdavClient = ReturnType<typeof createClient>
@@ -36,6 +127,7 @@ type WebdavListItem = {
  * Adapter for WebDAV servers that support simple auth (non-OAuth).
  */
 export default class WebdavProvider extends Provider<WebdavUserSession> {
+  requestTimeoutMs = 30_000
   static override get hasSimpleAuth() {
     return true
   }
@@ -107,12 +199,17 @@ export default class WebdavProvider extends Provider<WebdavUserSession> {
 
       const client = await this.getClient({ providerUserSession })
       // call the list operation as a way to validate the url
-      await client.getDirectoryContents(defaultDirectory)
+      await client.getDirectoryContents(defaultDirectory, {
+        signal: AbortSignal.timeout(this.requestTimeoutMs),
+      })
 
       return providerUserSession
     } catch (err) {
-      const errForLog = err instanceof Error ? err : new Error(String(err))
-      logger.error(errForLog, 'provider.webdav.error')
+      // The raw error's `response.url` is the WebDAV URL, which for a share
+      // link is itself the credential, and transport errors quote the URL in
+      // their message. Log and throw the mapped, redacted error instead.
+      const mapped = this.mapProviderError(redactUrls(err))
+      logger.error(mapped, 'provider.webdav.error')
       const code = isRecord(err) ? err['code'] : undefined
       if (
         typeof code === 'string' &&
@@ -120,8 +217,26 @@ export default class WebdavProvider extends Provider<WebdavUserSession> {
       ) {
         throw userError('WEBDAV_CANNOT_CONNECT', 'Cannot connect to server')
       }
-      throw err
+      throw mapped
     }
+  }
+
+  /**
+   * Redact WebDAV URLs from errors before the base class logs and maps them:
+   * the URL may carry the credential (a token in the path or query, or
+   * `user:pass@`).
+   */
+  protected override withErrorHandling<T>(
+    tag: string,
+    fn: () => Promisable<T>,
+  ): Promise<T> {
+    return super.withErrorHandling(tag, async () => {
+      try {
+        return await fn()
+      } catch (err) {
+        throw redactUrls(err)
+      }
+    })
   }
 
   getClientHelper({
@@ -131,6 +246,12 @@ export default class WebdavProvider extends Provider<WebdavUserSession> {
     const { allowLocalUrls } = this
     if (!validateURL(url, allowLocalUrls)) {
       throw new Error('invalid webdav url')
+    }
+    if (
+      decodeURIComponent(new URL(url).pathname).split('/').filter(Boolean)
+        .length > 32
+    ) {
+      throw new Error('WebDAV URL exceeds the maximum folder depth')
     }
     const HttpAgent = getProtectedHttpAgent({
       protocol: 'http',
@@ -151,7 +272,6 @@ export default class WebdavProvider extends Provider<WebdavUserSession> {
   override list({
     providerUserSession,
     query,
-    directory,
   }: ProviderListOptions<WebdavUserSession>): Promise<ProviderListResponse> {
     return this.withErrorHandling('provider.webdav.list.error', async () => {
       if (!this.isAuthenticated({ providerUserSession })) {
@@ -165,13 +285,15 @@ export default class WebdavProvider extends Provider<WebdavUserSession> {
         (typeof query?.['directory'] === 'string'
           ? query?.['directory']
           : undefined) || '/',
+        { signal: AbortSignal.timeout(this.requestTimeoutMs) },
       )
 
-      dir.forEach((item) => {
+      for (const item of dir) {
         const isFolder = item.type === 'directory'
-        const requestPath = encodeURIComponent(
-          `${directory || ''}/${item.basename}`,
-        )
+        // The server's own path for the item. Prefixing the client-supplied
+        // route id instead let one request allocate (id length × item count)
+        // bytes of strings, enough to exhaust the heap.
+        const requestPath = encodeURIComponent(item.filename)
 
         let modifiedDate: string | undefined
         try {
@@ -202,7 +324,7 @@ export default class WebdavProvider extends Provider<WebdavUserSession> {
           }),
         }
         data.items.push(listItem)
-      })
+      }
 
       return data
     })
@@ -216,21 +338,40 @@ export default class WebdavProvider extends Provider<WebdavUserSession> {
       'provider.webdav.download.error',
       async () => {
         const client = await this.getClient({ providerUserSession })
-        const statResult = await client.stat(id)
+        const statResult = await client.stat(id, {
+          signal: AbortSignal.timeout(this.requestTimeoutMs),
+        })
         const stat = 'data' in statResult ? statResult.data : statResult
-        const stream = client.createReadStream(`/${id}`) as Readable
-        return { stream, size: stat.size }
+        // createReadStream() returns a PassThrough before the GET is answered
+        // and reports a refused GET as an 'error' event on it; nothing listens
+        // until the client's progress socket connects, so the event was fatal.
+        // Await the GET instead so a non-2xx rejects here and gets mapped.
+        // Bound only the wait for response headers: a server that accepts the
+        // connection and never answers must not pin the request. The body that
+        // follows is deliberately left unbounded (a real download may be slow),
+        // so clear the timer once headers are in.
+        const ac = new AbortController()
+        const timer = setTimeout(() => ac.abort(), this.requestTimeoutMs)
+        let response: Awaited<ReturnType<typeof client.customRequest>>
+        try {
+          response = await client.customRequest(`/${id}`, {
+            method: 'GET',
+            signal: ac.signal,
+          })
+        } catch (err) {
+          // A refused GET still has its body on the wire, and nothing reads
+          // it: drop the connection rather than let the server trickle on.
+          ac.abort()
+          throw err
+        } finally {
+          clearTimeout(timer)
+        }
+        // webdav types its Response minimally; under Node it is node-fetch's,
+        // whose body is a Readable.
+        const { body } = response as unknown as { body: Readable }
+        return { stream: body, size: stat.size }
       },
     )
-  }
-
-  override thumbnail(): Promise<never> {
-    // not implementing this because a public thumbnail from webdav will be used instead
-    logger.error(
-      'call to thumbnail is not implemented',
-      'provider.webdav.thumbnail.error',
-    )
-    throw new Error('call to thumbnail is not implemented')
   }
 
   protected override mapProviderError(err: unknown): unknown {

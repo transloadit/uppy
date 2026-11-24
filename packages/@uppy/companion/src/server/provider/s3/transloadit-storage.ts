@@ -1,22 +1,22 @@
-import { createHmac } from 'node:crypto'
-import got, { type OptionsInit, type Response } from 'got'
-import { z } from 'zod'
+import type { OptionsInit, Response } from 'got'
+
 import type { S3ClientOptions } from '../../../schemas/companion.js'
+import type { ParsedTransloaditStorageOptions } from './config.js'
+import type { ItemRef, ResolvedConfig, S3Session } from './index.js'
+
+import { createHmac } from 'node:crypto'
+
+import got from 'got'
+import { z } from 'zod'
+
 import logger from '../../logger.js'
 import { ProviderApiError } from '../error.js'
 import { userError } from '../errorCodes.js'
 import {
-  type ParsedTransloaditStorageOptions,
   parseTransloaditStorageProviderOptions,
   S3ConfigError,
 } from './config.js'
-import S3Provider, {
-  type ItemRef,
-  itemRef,
-  type ResolvedConfig,
-  type S3Session,
-  withOwnCredentials,
-} from './index.js'
+import S3Provider, { itemRef, withOwnCredentials } from './index.js'
 
 const moveResponseSchema = z.object({
   ok: z.literal('DAM_ENTRY_MOVED'),
@@ -24,6 +24,9 @@ const moveResponseSchema = z.object({
 })
 
 type Credentials = { key: string; secret: string }
+
+/** Transloadit's native catalog move; `callApi` resolves it against the endpoint's origin. */
+const MOVE_PATH = '/dam/entries/move'
 
 const unavailable = () =>
   new ProviderApiError('Storage is temporarily unavailable', 502)
@@ -189,12 +192,18 @@ export default class TransloaditStorageProvider extends S3Provider<ParsedTranslo
     const { accessKeyId: key, secretAccessKey: secret } =
       await client.config.credentials()
     const params = JSON.stringify({
-      auth: { key, expires: new Date(Date.now() + 60_000).toISOString() },
+      auth: {
+        key,
+        expires: new Date(Date.now() + 60_000).toISOString(),
+        // Storage requests sign the method and path they are made for.
+        method: 'POST',
+        path: MOVE_PATH,
+      },
       source: id,
       destination,
     })
     const signature = `sha256:${createHmac('sha256', secret).update(params, 'utf8').digest('hex')}`
-    const response = await callApi(native.apiEndpoint, '/dam/entries/move', {
+    const response = await callApi(native.apiEndpoint, MOVE_PATH, {
       form: { params, signature },
       timeout: { request: 30_000 },
     })

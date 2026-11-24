@@ -1,12 +1,14 @@
-import type { NextFunction, Request, Response } from 'express'
+import type { NextFunction, Response } from 'express'
 import type { Promisable } from 'type-fest'
-import { z } from 'zod'
-import type { CompanionContext } from '../../types/express.js'
-import { respondWithError } from '../provider/error.js'
+
+import type { CompanionContext, Request } from '../../types/express.js'
 import type Provider from '../provider/Provider.js'
 
-/** Present and non-empty; not trimmed, like the wire format the client sends. */
-const requiredString = z.string().min(1)
+import { z } from 'zod'
+
+import { requiredString } from '../helpers/schemas.js'
+import withProvider from './with-provider.js'
+
 /** Missing, null or empty mean "the root folder"; anything else must be a string. */
 const parentIdField = z
   .string()
@@ -18,7 +20,7 @@ const parentIdField = z
  * mutation and maps provider errors to HTTP responses. That a provider is
  * attached and supports mutations is guaranteed by the middleware chain
  * (`hasSessionAndProvider`, `hasMutationProvider`); provider errors are turned
- * into responses by `respondWithError`, and logged by the provider itself.
+ * into responses by `withProvider`, and logged by the provider itself.
  */
 function mutation<S extends z.ZodType>(
   schema: S,
@@ -31,35 +33,21 @@ function mutation<S extends z.ZodType>(
     input: z.infer<S>,
   ) => Promisable<unknown>,
 ) {
-  return async (
-    req: Request,
-    res: Response,
-    next: NextFunction,
-  ): Promise<void> => {
-    const { provider } = req.companion
-    if (!provider) {
-      res.sendStatus(400)
-      return
-    }
+  return withProvider(async (req, res, provider) => {
     const parsed = schema.safeParse(req.body)
     if (!parsed.success) {
       res.sendStatus(400)
       return
     }
-    try {
-      const { companion } = req
-      const context = {
-        companion,
-        providerUserSession: companion.providerUserSession,
-      }
-      const result = await run(provider, context, parsed.data)
-      if (result === undefined) res.sendStatus(204)
-      else res.json(result)
-    } catch (err) {
-      if (respondWithError(err, res)) return
-      next(err)
+    const { companion } = req
+    const context = {
+      companion,
+      providerUserSession: companion.providerUserSession,
     }
-  }
+    const result = await run(provider, context, parsed.data)
+    if (result === undefined) res.sendStatus(204)
+    else res.json(result)
+  })
 }
 
 const operations = {
@@ -73,7 +61,9 @@ const operations = {
       provider.moveItem({ ...context, id, destination }),
   ),
   'create-folder': mutation(
-    z.object({ name: requiredString, parentId: parentIdField }),
+    // folder names, not paths. Only a bound on the work done per request: the
+    // storage enforces its own limit (S3: keys of at most 1024 bytes).
+    z.object({ name: requiredString.max(1024), parentId: parentIdField }),
     (provider, context, { name, parentId }) =>
       provider.createFolder({ ...context, parentId, name }),
   ),

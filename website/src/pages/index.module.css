@@ -1190,7 +1190,9 @@
   /* The moment the file reaches this station, derived rather than written
      down: how far into the lane's leg it sits, as a share of the loop. */
   animation-delay: calc(
-    (var(--leg-start) + var(--leg-len) * var(--at-frac)) * var(--loop) / 100
+    (var(--leg-start) + var(--leg-len) * var(--at-frac)) *
+    var(--loop) /
+    100
   );
 }
 

@@ -267,7 +267,9 @@ html .uppy-Dashboard-poweredByIcon {
 
 .markdown > h4:not(:first-of-type) {
   margin-top: calc(
-    var(--ifm-heading-vertical-rhythm-top) * var(--ifm-leading) * 2
+    var(--ifm-heading-vertical-rhythm-top) *
+    var(--ifm-leading) *
+    2
   );
 }
 

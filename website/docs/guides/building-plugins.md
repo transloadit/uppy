@@ -234,8 +234,6 @@ See the Preact
 [Getting Started Guide](https://preactjs.com/guide/getting-started) for more on
 Babel and JSX.
 
-<!-- eslint-disable jsdoc/check-tag-names -->
-
 ```jsx
 /** @jsx h */
 import { UIPlugin } from '@uppy/core'
@@ -280,8 +278,6 @@ Below is a full example of a
 compresses images before uploading them. You can replace `compressorjs` method
 with any other work you need to do. This works especially well for async stuff,
 like calling an external API.
-
-<!-- eslint-disable consistent-return -->
 
 ```js
 import { UIPlugin } from '@uppy/core'

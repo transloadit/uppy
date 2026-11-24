@@ -1,11 +1,11 @@
 <!doctype html>
 <html lang="en">
   <head>
-    <title></title>
+    <title>Uppy CDN example</title>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <link
-      href="https://releases.transloadit.com/uppy/v4.18.0/uppy.min.css"
+      href="https://releases.transloadit.com/uppy/v6.0.8/uppy.min.css"
       rel="stylesheet"
     />
   </head>
@@ -19,15 +19,15 @@
         Tus,
         Uppy,
         Webcam,
-      } from 'https://releases.transloadit.com/uppy/v4.18.0/uppy.min.mjs'
+      } from 'https://releases.transloadit.com/uppy/v6.0.8/uppy.min.mjs'
 
       const uppy = new Uppy({ debug: true, autoProceed: false })
         .use(Dashboard, { trigger: '#uppyModalOpener' })
         .use(Webcam, { target: Dashboard })
         .use(Tus, { endpoint: 'https://tusd.tusdemo.net/files/' })
 
-      uppy.on('success', (fileCount) => {
-        console.log(`${fileCount} files uploaded`)
+      uppy.on('complete', (result) => {
+        console.log(`${result.successful.length} files uploaded`)
       })
     </script>
   </body>
