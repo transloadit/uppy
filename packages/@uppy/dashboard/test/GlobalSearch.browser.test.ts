@@ -143,6 +143,93 @@ describe('ProviderView Search E2E', () => {
       .toBeVisible()
   })
 
+  test('Search result whose requestPath has no path segments does not crash', async () => {
+    network.use(
+      http.get('http://companion.test/:provider/search', () =>
+        HttpResponse.json({
+          username: 'test-user@example.com',
+          items: [
+            {
+              isFolder: false,
+              icon: 'file',
+              name: 'nowhere.pdf',
+              mimeType: 'application/pdf',
+              id: 'id:nowhere',
+              thumbnail: null,
+              requestPath: '%2F',
+              size: 1,
+            },
+            {
+              isFolder: false,
+              icon: 'file',
+              name: 'somewhere.pdf',
+              mimeType: 'application/pdf',
+              id: 'id:somewhere',
+              thumbnail: null,
+              requestPath: '%2Fsomewhere.pdf',
+              size: 1,
+            },
+          ],
+          nextPagePath: null,
+        }),
+      ),
+    )
+    uppy = initializeUppy(['Dropbox'])
+    await page.getByRole('tab', { name: 'Dropbox' }).click()
+    await expect
+      .element(page.getByRole('tabpanel').getByText('test-user@example.com'))
+      .toBeVisible()
+
+    const searchInput = document.querySelector(
+      '.uppy-ProviderBrowser-searchFilterInput',
+    ) as HTMLInputElement
+    // before the fix, rendering threw "Partial tree not complete"
+    await userEvent.type(searchInput, 'where')
+    await expect
+      .element(page.getByRole('button', { name: 'somewhere.pdf', exact: true }))
+      .toBeVisible()
+  })
+
+  test('Search results with the same requestPath are shown once', async () => {
+    const item = (name: string) => ({
+      isFolder: false,
+      icon: 'file',
+      name,
+      mimeType: 'application/pdf',
+      id: `id:${name}`,
+      thumbnail: null,
+      // what older Companions sent for Dropbox items without a path
+      requestPath: 'undefined',
+      size: 1,
+    })
+    network.use(
+      http.get('http://companion.test/:provider/search', () =>
+        HttpResponse.json({
+          username: 'test-user@example.com',
+          items: [item('first.pdf'), item('second.pdf')],
+          nextPagePath: null,
+        }),
+      ),
+    )
+    uppy = initializeUppy(['Dropbox'])
+    await page.getByRole('tab', { name: 'Dropbox' }).click()
+    await expect
+      .element(page.getByRole('tabpanel').getByText('test-user@example.com'))
+      .toBeVisible()
+
+    const searchInput = document.querySelector(
+      '.uppy-ProviderBrowser-searchFilterInput',
+    ) as HTMLInputElement
+    await userEvent.type(searchInput, 'pdf')
+    await expect
+      .element(page.getByRole('button', { name: 'first.pdf', exact: true }))
+      .toBeVisible()
+    // before the fix, the first result was listed twice under the same key
+    expect(
+      page.getByRole('button', { name: 'first.pdf', exact: true }).elements(),
+    ).toHaveLength(1)
+  })
+
   test('Search deep folder -> open it -> click ancestor breadcrumb and navigate correctly', async () => {
     uppy = initializeUppy(['Dropbox'])
 
