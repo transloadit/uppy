@@ -45,6 +45,8 @@
     "@types/use-sync-external-store": "^1.5.0",
     "@uppy-dev/tsconfig": "workspace:^",
     "@uppy/core": "workspace:^",
+    "@uppy/dropbox": "workspace:^",
+    "@uppy/unsplash": "workspace:^",
     "@vitest/browser-playwright": "^5.1.0",
     "playwright": "1.65.0",
     "react": "^19.3.1",

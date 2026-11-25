@@ -15,6 +15,7 @@
   "dependencies": {
     "@uppy/core": "workspace:*",
     "@uppy/dashboard": "workspace:*",
+    "@uppy/image-editor": "workspace:*",
     "@uppy/remote-sources": "workspace:*",
     "@uppy/screen-capture": "workspace:*",
     "@uppy/svelte": "workspace:*",
@@ -26,6 +27,7 @@
     "@sveltejs/kit": "^2.70.2",
     "@sveltejs/vite-plugin-svelte": "^7.3.1",
     "@tailwindcss/vite": "^4.3.3",
+    "@uppy/status-bar": "workspace:*",
     "@vitest/browser-playwright": "^5.1.0",
     "msw": "^3.0.3",
     "playwright": "1.65.0",

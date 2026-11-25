@@ -14,6 +14,8 @@ import got from 'got'
 import ipaddr from 'ipaddr.js'
 import validator from 'validator'
 
+import { isCompressed } from './content-encoding.js'
+
 export const FORBIDDEN_IP_ADDRESS = 'Forbidden IP address'
 
 // Example scary IPs that should return false (ipv6-to-ipv4 mapped):
@@ -323,11 +325,31 @@ export async function openProtectedStream(
       ...hopOptions,
       throwHttpErrors: false,
       followRedirect: false,
+      // Imports need the original bytes. Decoders allocate substantial state
+      // even while a progress socket has not connected and the body is paused.
+      decompress: false,
+      headers: Object.assign({}, hopOptions['headers'], {
+        'accept-encoding': 'identity',
+      }),
     })
     const response = await new Promise<Response>((resolve, reject) => {
       stream.once('response', resolve)
       stream.once('error', reject)
+      stream.once('upgrade', (_response, socket: Duplex) => {
+        socket.destroy()
+        const error = new Error('Upstream protocol upgrades are not supported')
+        stream.destroy(error)
+        reject(error)
+      })
     })
+    if (
+      response.statusCode >= 200 &&
+      response.statusCode < 300 &&
+      isCompressed(response.headers['content-encoding'])
+    ) {
+      stream.destroy()
+      throw new Error('Encoded upstream responses are not supported')
+    }
     const { statusCode } = response
     const location = response.headers['location']
     if (statusCode >= 300 && statusCode < 400 && location != null) {

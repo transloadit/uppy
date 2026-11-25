@@ -274,7 +274,7 @@ If your backend generates its own object keys, see the
 [migration guide](/docs/guides/migration-guides/#custom-signing-six-callbacks-become-signrequest)
 for what changed from v5, why, and how to implement the signer correctly. See
 also the
-[Node.js](https://github.com/transloadit/uppy/blob/main/examples/aws-nodejs/routes/presign.js)
+[Node.js](https://github.com/transloadit/uppy/blob/main/examples/aws-nodejs/routes/presign.ts)
 and
 [PHP](https://github.com/transloadit/uppy/blob/main/examples/aws-php/s3-sign.php)
 signer examples.

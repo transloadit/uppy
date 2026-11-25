@@ -8887,6 +8887,8 @@ __metadata:
     "@uppy-dev/tsconfig": "workspace:^"
     "@uppy/components": "workspace:^"
     "@uppy/core": "workspace:^"
+    "@uppy/dropbox": "workspace:^"
+    "@uppy/unsplash": "workspace:^"
     "@vitest/browser-playwright": "npm:^5.1.0"
     playwright: "npm:1.65.0"
     react: "npm:^19.3.1"
@@ -13169,6 +13171,7 @@ __metadata:
   resolution: "example-companion-digitalocean-spaces@workspace:examples/companion-digitalocean-spaces"
   dependencies:
     "@uppy/aws-s3": "workspace:*"
+    "@uppy/companion": "workspace:*"
     "@uppy/core": "workspace:*"
     "@uppy/dashboard": "workspace:*"
     body-parser: "npm:^2.4.0"
@@ -13224,6 +13227,7 @@ __metadata:
     "@uppy/core": "workspace:*"
     "@uppy/google-drive-picker": "workspace:*"
     "@uppy/google-photos-picker": "workspace:*"
+    "@uppy/image-editor": "workspace:*"
     "@uppy/react": "workspace:*"
     "@uppy/remote-sources": "workspace:*"
     "@uppy/screen-capture": "workspace:*"
@@ -13283,8 +13287,10 @@ __metadata:
     "@tailwindcss/vite": "npm:^4.3.3"
     "@uppy/core": "workspace:*"
     "@uppy/dashboard": "workspace:*"
+    "@uppy/image-editor": "workspace:*"
     "@uppy/remote-sources": "workspace:*"
     "@uppy/screen-capture": "workspace:*"
+    "@uppy/status-bar": "workspace:*"
     "@uppy/svelte": "workspace:*"
     "@uppy/tus": "workspace:*"
     "@uppy/webcam": "workspace:*"
@@ -13324,6 +13330,7 @@ __metadata:
   dependencies:
     "@tailwindcss/vite": "npm:^4.3.3"
     "@uppy/core": "workspace:*"
+    "@uppy/image-editor": "workspace:*"
     "@uppy/remote-sources": "workspace:*"
     "@uppy/screen-capture": "workspace:*"
     "@uppy/tus": "workspace:*"
@@ -13644,9 +13651,9 @@ __metadata:
   linkType: hard
 
 "fast-uri@npm:^3.0.1":
-  version: 3.1.8
-  resolution: "fast-uri@npm:3.1.8"
-  checksum: 10/d3dfa29fd2e5fa2371833699f3f78c975b79f65e52e0ce37604db10dffb85b5b448b5075e93453272cb95fb1c6a759495164e60649ffd69e59ec43f20d44f791
+  version: 3.1.9
+  resolution: "fast-uri@npm:3.1.9"
+  checksum: 10/4276cf58661e68b4fefcbc3308a2c8429e5664d2a77b393a79c1cdbe9e5ba80617d27c7ce6685194ae40e4816df73dbd72a0324e5012d94a7e9cf85ee711f658
   languageName: node
   linkType: hard
 

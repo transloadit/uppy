@@ -89,6 +89,12 @@ export type PartialTreeFile = {
   status: PartialTreeStatusFile
   parentId: PartialTreeId
   data: CompanionFile
+
+  /**
+   * `true` while no listing of its folder has included it: a search result or a
+   * deep link added it first. A folder shows these after its loaded pages.
+   */
+  unlisted?: true
 }
 
 export type PartialTreeFolderNode = {
@@ -111,6 +117,12 @@ export type PartialTreeFolderNode = {
     CompanionFile,
     'name' | 'icon' | 'thumbnail' | 'isFolder' | 'author' | 'custom'
   >
+
+  /**
+   * `true` while no listing of its folder has included it: a search result or a
+   * deep link added it first. A folder shows these after its loaded pages.
+   */
+  unlisted?: true
 }
 
 export type PartialTreeFolderRoot = {
@@ -1171,9 +1183,13 @@ export class Uppy<
           nextFilesState,
         )
 
-        // update state after onBeforeFileAdded
-        existingFiles = this.getState().files
-        nextFilesState = { ...existingFiles, ...nextFilesState }
+        // onBeforeFileAdded may have called setState; if so, merge in its changes.
+        // Only merge when state.files actually changed, to keep this loop linear.
+        const filesAfterHook = this.getState().files
+        if (filesAfterHook !== existingFiles) {
+          existingFiles = filesAfterHook
+          nextFilesState = { ...existingFiles, ...nextFilesState }
+        }
 
         if (
           !onBeforeFileAddedResult &&

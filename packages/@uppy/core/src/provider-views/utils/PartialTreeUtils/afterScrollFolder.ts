@@ -5,7 +5,7 @@ import type {
 } from '../../../index.js'
 import type { CompanionFile } from '../../../utils/index.js'
 
-import addListedItems from './addListedItems.js'
+import addListedItems, { showUnlistedLast } from './addListedItems.js'
 
 const afterScrollFolder = (
   oldPartialTree: PartialTree,
@@ -24,11 +24,14 @@ const afterScrollFolder = (
     folder.id === scrolledFolder.id ? scrolledFolder : folder,
   )
 
-  return addListedItems(
-    partialTreeWithUpdatedScrolledFolder,
-    items,
-    scrolledFolder,
-    validateSingleFile,
+  return showUnlistedLast(
+    addListedItems(
+      partialTreeWithUpdatedScrolledFolder,
+      items,
+      scrolledFolder,
+      validateSingleFile,
+    ),
+    scrolledFolder.id,
   )
 }
 

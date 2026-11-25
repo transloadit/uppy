@@ -39,6 +39,7 @@ export {
 export {
   createRemoteSourceController,
   type RemoteSourceKeys,
+  type RemoteSourceOptions,
   type RemoteSourceSnapshot,
   type RemoteSourceStore,
 } from './hooks/remote-source.js'

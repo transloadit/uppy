@@ -9,6 +9,7 @@ import type { CorsOptions } from 'cors'
 import type { Request } from 'express'
 import type { RedisOptions } from 'ioredis'
 
+import type { GrantProviderConfig } from '../server/provider/index.js'
 import type Provider from '../server/provider/Provider.js'
 
 // todo implement zod schema validation and remove manual typeof validation around in the code, also in providers/adapters
@@ -147,7 +148,7 @@ type ProviderConstructor = typeof Provider
 
 export interface CustomProvider {
   module: ProviderConstructor
-  config: ProviderOptions
+  config: ProviderOptions & GrantProviderConfig
 }
 
 export type CredentialsFetchResponse = Pick<
