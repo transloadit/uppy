@@ -238,6 +238,21 @@ describe('Test Provider options', () => {
     ).toEqual(['https://www.googleapis.com/auth/drive.readonly'])
   })
 
+  test('merges providerOptions customParams over the default custom params', () => {
+    const dropbox = companionOptions.providerOptions?.['dropbox']
+    if (dropbox == null) throw new Error('Expected providerOptions.dropbox')
+    dropbox.customParams = { force_reapprove: 'true' }
+    providerManager.addProviderOptions(
+      getAddProviderOptionsArgs(companionOptions),
+      grantConfig,
+      getOauthProvider,
+    )
+
+    expect(
+      requireGrantProviderConfig(grantConfig, 'dropbox')['custom_params'],
+    ).toEqual({ token_access_type: 'offline', force_reapprove: 'true' })
+  })
+
   test('sets a main redirect uri, if oauthDomain is set', () => {
     const server = companionOptions.server
     if (server == null) throw new Error('Expected companionOptions.server')

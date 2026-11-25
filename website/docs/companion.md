@@ -601,6 +601,29 @@ picked; use [`@uppy/google-drive-picker`](/docs/google-drive-picker) for that.
 There is no environment variable for this option: with standalone Companion,
 set it in the JSON configuration file (`companion --config`).
 
+##### `providerOptions[provider].customParams`
+
+Extra query parameters for the provider’s authorization URL (optional), merged
+over the ones Companion sets. For example, Dropbox skips its consent screen once
+the user has approved the app, so a user signed in at dropbox.com can’t switch
+to another Dropbox account; `force_reapprove` shows the screen again:
+
+```js
+providerOptions: {
+  dropbox: {
+    key: '***',
+    secret: '***',
+    customParams: { force_reapprove: 'true' },
+  },
+}
+```
+
+A value replaces Companion’s own parameter of the same name, so keep what it
+needs: for Google, `prompt` must include `consent` to get refresh tokens, so use
+`prompt: 'consent select_account'` to also show Google’s account chooser. Like
+`scope`, this option has no environment variable; set it in the JSON
+configuration file with standalone Companion.
+
 #### `s3`
 
 Companion comes with signature endpoints for AWS S3. These can be used by the

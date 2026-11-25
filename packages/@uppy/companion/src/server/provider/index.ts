@@ -175,6 +175,7 @@ export function addProviderOptions(
         secret?: string | undefined
         credentialsURL?: string | undefined
         scope?: string[] | undefined
+        customParams?: Record<string, string> | undefined
       }
     >
   },
@@ -232,6 +233,12 @@ export function addProviderOptions(
       }
       if (providerOption.scope) {
         grantProviderConfig['scope'] = providerOption.scope
+      }
+      if (providerOption.customParams) {
+        grantProviderConfig['custom_params'] = {
+          ...grantProviderConfig['custom_params'],
+          ...providerOption.customParams,
+        }
       }
 
       // override grant.js redirect uri with companion's custom redirect url
