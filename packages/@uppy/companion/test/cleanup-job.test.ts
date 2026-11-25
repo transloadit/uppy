@@ -19,6 +19,10 @@ import Emitter from '../dist/server/emitter/index.js'
 import { startCleanUpJob } from '../dist/server/jobs.js'
 import Uploader from '../dist/server/Uploader.js'
 
+// A time zone where 29 March 2026 has 23 hours, so the daylight saving change
+// is tested wherever the tests run.
+process.env['TZ'] = 'Europe/Berlin'
+
 afterEach(() => {
   vi.useRealTimers()
   vi.restoreAllMocks()
@@ -44,7 +48,7 @@ test('the clean-up job runs at 23:00 local time, every day', () => {
   expect(runs()).toBe(1)
   expect(new Date()).toEqual(new Date(2026, 2, 28, 23, 0))
 
-  // The next day has 23 hours where clocks go forward on 29 March 2026.
+  // The next day has 23 hours: clocks go forward on 29 March 2026.
   vi.advanceTimersToNextTimer()
   expect(runs()).toBe(2)
   expect(new Date()).toEqual(new Date(2026, 2, 29, 23, 0))
