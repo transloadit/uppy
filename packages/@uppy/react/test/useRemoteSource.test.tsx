@@ -1,7 +1,8 @@
-import { act, cleanup, render, screen, waitFor } from '@testing-library/react'
 import type { RemoteSourceSnapshot } from '@uppy/components'
-import Uppy, { BasePlugin } from '@uppy/core'
 import type { CompanionFile } from '@uppy/core/utils'
+
+import { act, cleanup, render, screen, waitFor } from '@testing-library/react'
+import Uppy, { BasePlugin } from '@uppy/core'
 import Dropbox from '@uppy/dropbox'
 import { UppyContextProvider, useRemoteSource } from '@uppy/react'
 import Unsplash from '@uppy/unsplash'

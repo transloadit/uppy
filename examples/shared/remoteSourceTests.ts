@@ -1,7 +1,10 @@
-import Uppy, { type UnknownProviderPlugin } from '@uppy/core'
+import type { UnknownProviderPlugin } from '@uppy/core'
+import type { LocatorSelectors } from 'vitest/browser'
+
+import Uppy from '@uppy/core'
 import RemoteSources from '@uppy/remote-sources'
 import { describe, expect, test, vi } from 'vitest'
-import { type LocatorSelectors, userEvent } from 'vitest/browser'
+import { userEvent } from 'vitest/browser'
 
 const companionFile = (id: string, isFolder = false) => ({
   id,
