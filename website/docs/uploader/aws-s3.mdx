@@ -5,7 +5,7 @@ slug: /aws-s3
 
 import Tabs from '@theme/Tabs'
 import TabItem from '@theme/TabItem'
-import UppyCdnExample from '/src/components/UppyCdnExample'
+import UppyCdnExample from '@site/src/components/UppyCdnExample'
 
 # AWS S3
 
@@ -246,8 +246,10 @@ send.
 The maximum number of concurrent requests to S3 (`number`, default: `6`).
 
 Single-part uploads and the parts of a multipart upload share this pool, so one
-large file uses up to `limit` connections and several files divide them. A
-remote (Companion) upload takes one slot for its whole duration. `0` means
+large file uses up to `limit` connections and several files divide them.
+Creating a multipart upload and listing its parts on resume take a slot too;
+completing or aborting one does not. A remote (Companion) upload takes one slot
+for its whole duration. `0` means
 unlimited. The default matches the number of connections browsers open per host
 over HTTP/1.1.
 

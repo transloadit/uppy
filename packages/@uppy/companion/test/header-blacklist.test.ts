@@ -1,4 +1,5 @@
 import { describe, expect, test } from 'vitest'
+
 import headerSanitize from '../dist/server/header-blacklist.js'
 
 describe('Header black-list testing', () => {

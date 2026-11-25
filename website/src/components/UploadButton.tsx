@@ -1,3 +1,5 @@
+import '@uppy/react/css/style.css'
+
 import {
   UppyContextProvider,
   UploadButton as UppyUploadButton,
@@ -7,9 +9,6 @@ import { useState } from 'react'
 import { Tus, Uppy } from 'uppy'
 
 import { BrowserWindow } from './BrowserWindow'
-
-import '@uppy/react/css/style.css'
-
 import styles from './button.module.css'
 
 function FileInput() {

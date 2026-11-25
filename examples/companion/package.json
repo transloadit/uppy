@@ -10,7 +10,6 @@
     "vite": "^8.3.5"
   },
   "license": "ISC",
-  "main": "index.js",
   "private": true,
   "scripts": {
     "client": "vite --port 3000 client",

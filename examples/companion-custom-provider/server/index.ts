@@ -1,12 +1,15 @@
+import type { Request, Response } from 'express'
+
 import { mkdtempSync } from 'node:fs'
 import os from 'node:os'
 import path from 'node:path'
 import { styleText } from 'node:util'
+
 import * as companion from '@uppy/companion'
 import bodyParser from 'body-parser'
-import type { Request, Response } from 'express'
 import express from 'express'
 import session from 'express-session'
+
 import MyCustomProvider from './CustomProvider.ts'
 
 // the ../../../packages is just to use the local version
@@ -45,7 +48,6 @@ const companionOptions: companion.CompanionInitOptions = {
   customProviders: {
     myunsplash: {
       config: {
-        // @ts-expect-error TODO solve this type error.
         // your oauth handlers
         authorize_url: AUTHORIZE_URL,
         access_url: ACCESS_URL,

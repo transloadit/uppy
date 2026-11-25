@@ -1,5 +1,8 @@
-import { createWebcamController, type WebcamSnapshot } from '@uppy/components'
+import type { WebcamSnapshot } from '@uppy/components'
+
+import { createWebcamController } from '@uppy/components'
 import { useMemo, useSyncExternalStore } from 'react'
+
 import { useUppyContext } from './headless/UppyContextProvider.js'
 
 type WebcamProps = {

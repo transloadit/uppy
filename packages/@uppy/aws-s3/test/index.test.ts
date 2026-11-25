@@ -1,9 +1,15 @@
 import '@uppy-dev/msw-setup'
+
+import type { Meta, UppyFile } from '@uppy/core'
+
+import type { AwsBody, AwsS3Options } from '../lib/index.js'
+
 import { network } from 'virtual:msw'
-import Core, { type Meta, type UppyFile } from '@uppy/core'
+import Core from '@uppy/core'
 import { HttpResponse, http } from 'msw'
-import { describe, expect, test, vi } from 'vitest'
-import AwsS3, { type AwsBody, type AwsS3Options } from '../lib/index.js'
+import { describe, expect, onTestFinished, test, vi } from 'vitest'
+
+import AwsS3 from '../lib/index.js'
 
 const KB = 1024
 const MB = KB * KB
@@ -438,22 +444,29 @@ describe('AwsS3', () => {
         type: 'application/octet-stream',
         data: new File([new Uint8Array(6 * MB)], 'big.dat'),
       })
+      const onSuccess = vi.fn()
+      core.on('upload-success', onSuccess)
       await core.upload()
 
       const keys = signRequest.mock.calls.map((c: any) => c[0].key)
       expect(keys.length).toBeGreaterThan(1)
       expect(keys.every((k: string) => k === 'client-big.dat')).toBe(true)
+
+      // Every request was signed for the client key, but the reported key comes
+      // from the <Key> S3 echoes on complete, so it is the server's.
+      expect(onSuccess.mock.calls[0][1].body.key).toBe('dir-client-big.dat')
     })
 
-    test.for([
-      '',
-      '   ',
-    ])('ignores a blank key from the signer (%j)', async (key) => {
+    test('single-part: a signer that only returns url reports the client key', async () => {
+      // The counterpart to the multipart case above, with the same signer.
+      // A plain PUT echoes no key back, so there is nothing to correct the
+      // client key with: `upload-success` reports the key Uppy proposed, not
+      // the one the object is stored under. Returning `key` from the signer is
+      // the only way to make both paths agree.
       const { signRequest, registerHandlers } = createMultipartMocks()
       registerHandlers()
-      signRequest.mockImplementation(async (req: any) => ({
-        url: `${bucketUrl}/${req.key}?method=${req.method}`,
-        key,
+      signRequest.mockImplementation((req: any) => ({
+        url: `${bucketUrl}/dir-${req.key}?method=${req.method}`,
       }))
 
       using core = new Core().use(AwsS3, {
@@ -474,8 +487,43 @@ describe('AwsS3', () => {
       core.on('upload-success', onSuccess)
       await core.upload()
 
-      expect(onSuccess.mock.calls[0][1].body.key).toBe('client-photo.jpg')
+      const response = onSuccess.mock.calls[0][1]
+      expect(response.body.key).toBe('client-photo.jpg')
+      // The object really went to `dir-client-photo.jpg`, as the URL shows.
+      expect(response.uploadURL).toBe(`${bucketUrl}/dir-client-photo.jpg`)
     })
+
+    test.for(['', '   '])(
+      'ignores a blank key from the signer (%j)',
+      async (key) => {
+        const { signRequest, registerHandlers } = createMultipartMocks()
+        registerHandlers()
+        signRequest.mockImplementation(async (req: any) => ({
+          url: `${bucketUrl}/${req.key}?method=${req.method}`,
+          key,
+        }))
+
+        using core = new Core().use(AwsS3, {
+          s3Endpoint: bucketUrl,
+          region: 'us-east-1',
+          signRequest,
+          shouldUseMultipart: false,
+          generateObjectKey: () => 'client-photo.jpg',
+        })
+        core.addFile({
+          source: 'test',
+          name: 'photo.jpg',
+          type: 'image/jpeg',
+          data: new File([new Uint8Array(KB)], 'photo.jpg'),
+        })
+
+        const onSuccess = vi.fn()
+        core.on('upload-success', onSuccess)
+        await core.upload()
+
+        expect(onSuccess.mock.calls[0][1].body.key).toBe('client-photo.jpg')
+      },
+    )
   })
 
   describe('signed headers (#6548)', () => {
@@ -786,6 +834,119 @@ describe('AwsS3', () => {
       }
 
       expect(uploadErrorHandler).toHaveBeenCalledTimes(1)
+    })
+
+    test('emits upload-error when the upload fails before it starts', async () => {
+      const signRequest = vi.fn()
+
+      using core = new Core().use(AwsS3, {
+        s3Endpoint: 'https://companion.example.com',
+        region: 'us-east-1',
+        signRequest,
+        shouldUseMultipart: false,
+      })
+
+      core.addFile({
+        source: 'test',
+        name: 'test.txt',
+        type: 'text/plain',
+        data: new File([new Uint8Array(1024)], 'test.txt'),
+      })
+
+      const uploadErrorHandler = vi.fn()
+      core.on('upload-error', uploadErrorHandler)
+
+      // Insecure contexts (plain HTTP on a non-localhost host) have no `crypto.randomUUID`
+      vi.stubGlobal('crypto', {
+        getRandomValues: crypto.getRandomValues.bind(crypto),
+      })
+      onTestFinished(() => {
+        vi.unstubAllGlobals()
+      })
+      const result = await core.upload()
+
+      expect(signRequest).not.toHaveBeenCalled()
+      expect(uploadErrorHandler).toHaveBeenCalledTimes(1)
+      expect(uploadErrorHandler.mock.calls[0][1]).toBeInstanceOf(TypeError)
+      expect(uploadErrorHandler.mock.calls[0][1].message).toMatch(/randomUUID/)
+      expect(result?.successful).toHaveLength(0)
+      expect(result?.failed).toHaveLength(1)
+    })
+  })
+
+  describe('companionEndpoint (#6669)', () => {
+    const companion = 'https://companion.example.com'
+    const bucketUrl = 'https://test-bucket.s3.us-east-1.amazonaws.com'
+
+    function createMultipartCore() {
+      const core = new Core().use(AwsS3, {
+        companionEndpoint: companion,
+        shouldUseMultipart: true,
+      })
+      core.addFile({
+        source: 'test',
+        name: 'big.dat',
+        type: 'application/octet-stream',
+        data: new File([new Uint8Array(6 * MB)], 'big.dat'),
+      })
+      return core
+    }
+
+    test('retries transient Companion failures on create, sign part and complete', async () => {
+      const calls: Record<string, number> = {}
+      /** Answers the first call with `status`, later ones with `body`. */
+      const failFirst = (name: string, status: number, body: object) => () => {
+        calls[name] = (calls[name] ?? 0) + 1
+        return calls[name] === 1
+          ? new HttpResponse(null, { status })
+          : HttpResponse.json(body)
+      }
+      network.use(
+        http.post(
+          `${companion}/s3/multipart`,
+          failFirst('create', 503, { uploadId: 'up-1', key: 'big.dat' }),
+        ),
+        http.get(
+          `${companion}/s3/multipart/up-1/:partNumber`,
+          failFirst('sign', 502, { url: `${bucketUrl}/big.dat` }),
+        ),
+        http.post(
+          `${companion}/s3/multipart/up-1/complete`,
+          failFirst('complete', 429, {
+            location: `${bucketUrl}/big.dat`,
+            key: 'big.dat',
+          }),
+        ),
+        http.put(
+          `${bucketUrl}/big.dat`,
+          () => new HttpResponse('', { headers: { ETag: '"etag-1"' } }),
+        ),
+      )
+
+      using core = createMultipartCore()
+      const onSuccess = vi.fn()
+      core.on('upload-success', onSuccess)
+      await core.upload()
+
+      expect(onSuccess).toHaveBeenCalledTimes(1)
+      // Each first call fails once; signing covers two 5 MB+ parts.
+      expect(calls).toEqual({ create: 2, sign: 3, complete: 2 })
+    })
+
+    test('does not retry Companion client errors', async () => {
+      const create = vi.fn(() => new HttpResponse(null, { status: 400 }))
+      network.use(http.post(`${companion}/s3/multipart`, create))
+
+      using core = createMultipartCore()
+      const onError = vi.fn()
+      core.on('upload-error', onError)
+      await core.upload()
+
+      expect(onError).toHaveBeenCalledTimes(1)
+      const error = onError.mock.calls[0][1]
+      expect(error.message).toBe('Companion request failed with status 400')
+      expect(error.request.status).toBe(400)
+      expect(create).toHaveBeenCalledTimes(1)
     })
   })
 

@@ -1,10 +1,15 @@
-import crypto from 'node:crypto'
+import type { Duplex } from 'node:stream'
+
 import type { ObjectCannedACL, ServerSideEncryption } from '@aws-sdk/client-s3'
-import type { Request } from 'express'
+
 import type {
   GetBucketFn,
   S3ObjectWriteOptions,
 } from '../../schemas/companion.js'
+import type { Request } from '../../types/express.js'
+
+import crypto from 'node:crypto'
+import querystring from 'node:querystring'
 
 const authTagLength = 16
 const nonceLength = 16
@@ -237,9 +242,14 @@ export class HttpError extends Error {
 type ResponseLike = { headers: Record<string, string | string[] | undefined> }
 type StreamLike = NodeJS.ReadableStream & {
   pause: () => void
+  destroy: (error?: Error) => unknown
   on: {
     (event: 'response', handler: (response: ResponseLike) => void): StreamLike
     (event: 'error', handler: (err: unknown) => void): StreamLike
+    (
+      event: 'upgrade',
+      handler: (response: unknown, socket: Duplex) => void,
+    ): StreamLike
   }
 }
 
@@ -290,6 +300,12 @@ export const prepareStream = async (
         }
 
         reject(err)
+      })
+      .on('upgrade', (_response, socket) => {
+        socket.destroy()
+        const error = new Error('Upstream protocol upgrades are not supported')
+        stream.destroy(error)
+        reject(error)
       })
   })
 
@@ -362,6 +378,23 @@ export function s3WriteParams({
     ...(awsSseKmsKeyId != null && { SSEKMSKeyId: awsSseKmsKeyId }),
   }
 }
+
+/** A file size from a provider response (a number or numeric string), else undefined. */
+export const parseSize = (value: unknown): number | undefined => {
+  const size = typeof value === 'string' ? Number.parseInt(value, 10) : value
+  return typeof size === 'number' && Number.isFinite(size) ? size : undefined
+}
+
+/**
+ * The `nextPagePath` of a list response: `path` with the current query and the
+ * provider's cursor for the next page.
+ */
+export const getNextPagePath = (
+  path: string,
+  query: object,
+  cursor: string | number | undefined,
+): string =>
+  `${path}?${querystring.stringify({ ...query, cursor } as querystring.ParsedUrlQueryInput)}`
 
 export const truncateFilename = (
   filename: string,
