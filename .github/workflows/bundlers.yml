@@ -18,7 +18,7 @@ on:
 env:
   # Keep in sync with .node-version: most jobs here work on downloaded
   # artifacts without a checkout, so they can't use `node-version-file`.
-  NODE_VERSION: '26.12.1'
+  NODE_VERSION: '26.13.1'
   YARN_ENABLE_GLOBAL_CACHE: false
 
 jobs:
