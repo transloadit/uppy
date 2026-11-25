@@ -1,6 +1,7 @@
 <script lang="ts">
 import type { PartialTreeFolderNode } from '@uppy/core'
 import type { AvailablePluginsKeys } from '@uppy/remote-sources'
+
 import { useRemoteSource } from '@uppy/svelte'
 
 interface Props {
@@ -18,7 +19,6 @@ const dtf = new Intl.DateTimeFormat('en-US', {
   timeStyle: 'short',
 })
 
-// biome-ignore lint/correctness/noUnusedVariables: used as a Svelte action via use:setFolderCheckboxIndeterminate
 function setFolderCheckboxIndeterminate(
   node: HTMLInputElement,
   item: PartialTreeFolderNode,

@@ -1,5 +1,23 @@
+import '@uppy/core/css/style.css'
+import '@uppy/core/provider-views/css/style.css'
+import '@uppy/dashboard/css/style.css'
+import '@uppy-dev/msw-setup'
+
+import type {
+  MockS3Companion,
+  MockS3CompanionOptions,
+} from '@uppy-dev/s3-mock-companion'
+
+import type { S3Options } from '../lib/S3.js'
+
+import { network } from 'virtual:msw'
 import Uppy from '@uppy/core'
 import Dashboard from '@uppy/dashboard'
+import {
+  createMockS3Companion,
+  mockGrant,
+  toMswHandlers,
+} from '@uppy-dev/s3-mock-companion'
 import { HttpResponse, http } from 'msw'
 import {
   afterEach,
@@ -11,19 +29,8 @@ import {
   vi,
 } from 'vitest'
 import { page, userEvent } from 'vitest/browser'
-import '@uppy/core/css/style.css'
-import '@uppy/core/provider-views/css/style.css'
-import '@uppy/dashboard/css/style.css'
-import '@uppy-dev/msw-setup'
-import { network } from 'virtual:msw'
-import {
-  createMockS3Companion,
-  type MockS3Companion,
-  type MockS3CompanionOptions,
-  mockGrant,
-  toMswHandlers,
-} from '@uppy-dev/s3-mock-companion'
-import S3, { type S3Options } from '../lib/S3.js'
+
+import S3 from '../lib/S3.js'
 
 const COMPANION = 'http://localhost:3020'
 const TOKEN = 'test-auth-token'
@@ -157,6 +164,35 @@ function grantWithPendingRenewal(now: () => number) {
   return { getGrant, finishRenewal }
 }
 
+/**
+ * A `getGrant` that hands out a grant for each of `buckets` in turn, each
+ * expiring 15 minutes (of the mock's clock) after it was fetched: renewing an
+ * expired session opens the next bucket, without a logout.
+ */
+function grantsFor(now: () => number, ...buckets: [string, ...string[]]) {
+  let fetched = 0
+  return vi.fn(async () =>
+    mockGrant({
+      bucket: buckets[Math.min(fetched++, buckets.length - 1)]!,
+      exp: now() + 900,
+    }),
+  )
+}
+
+/** The bucket a file selected now would be imported from. */
+const bucketOf = (plugin: TestPlugin, id: string) =>
+  new URL(plugin.provider.fileUrl(id)).searchParams.get('bucket')
+
+/** Whether a toast says the bucket changed. */
+const toldBucketChanged = (app: Uppy) =>
+  app
+    .getState()
+    .info.some(
+      (info) =>
+        typeof info.details === 'string' &&
+        info.details.includes('another bucket'),
+    )
+
 beforeEach(() => {
   document.body.innerHTML = ''
   localStorage.clear()
@@ -226,6 +262,120 @@ describe('S3 provider in the browser', () => {
     })
     await plugin.openFolderPath('')
     expect(plugin.rootPrefix).toBe('tenant/')
+  })
+
+  it('opens a granted deep folder with one listing and reconstructs its breadcrumbs', async () => {
+    const { plugin } = setup({
+      mode: 'manager',
+      getGrant: async () =>
+        mockGrant({ bucket: 'my-bucket', prefix: 'tenant/' }),
+      companion: {
+        folders: {
+          'tenant/': [{ name: 'photos', isFolder: true }],
+          'tenant/photos/': [{ name: '2026', isFolder: true }],
+          'tenant/photos/2026/': [{ name: 'chair.jpg', isFolder: false }],
+        },
+      },
+    })
+    const list = vi.spyOn(plugin.provider, 'list')
+    expect(await plugin.openFolderPath('tenant/photos/2026/')).toBe(true)
+    expect(list.mock.calls.map(([id]) => id)).toEqual([
+      'tenant%2Fphotos%2F2026%2F',
+    ])
+    expect(names(plugin)).toEqual(['chair.jpg'])
+    expect(itemOf(plugin, 'tenant%2Fphotos%2F2026%2F')).toMatchObject({
+      parentId: 'tenant%2Fphotos%2F',
+      data: { name: '2026' },
+    })
+    expect(itemOf(plugin, 'tenant%2Fphotos%2F')).toMatchObject({
+      parentId: null,
+      data: { name: 'photos' },
+      cached: false,
+    })
+    await plugin.view.openFolder('tenant%2Fphotos%2F')
+    expect(names(plugin)).toEqual(['2026'])
+  })
+
+  it('falls back to the last existing ancestor of a stale granted deep link', async () => {
+    const { plugin } = setup({
+      mode: 'manager',
+      getGrant: async () => mockGrant({ bucket: 'my-bucket' }),
+    })
+    expect(await plugin.openFolderPath('docs/missing/deeper/')).toBe(false)
+    expect(plugin.getPluginState().currentFolderId).toBe('docs%2F')
+    expect(names(plugin)).toContain('hello.txt')
+    expect(
+      plugin
+        .getPluginState()
+        .partialTree.some((node) => node.id === 'docs%2Fmissing%2F'),
+    ).toBe(false)
+  })
+
+  it('validates an empty granted folder through its paginated parent listing', async () => {
+    const { plugin } = setup({
+      mode: 'manager',
+      getGrant: async () => mockGrant({ bucket: 'my-bucket' }),
+      companion: {
+        pageSize: 1,
+        folders: {
+          '': [
+            { name: 'readme.md', isFolder: false },
+            { name: 'empty', isFolder: true },
+          ],
+          'empty/': [],
+        },
+      },
+    })
+    expect(await plugin.openFolderPath('empty/')).toBe(true)
+    expect(plugin.getPluginState().currentFolderId).toBe('empty%2F')
+    expect(names(plugin)).toEqual([])
+  })
+
+  it('rejects paths outside a grant or containing dot segments, showing the root instead', async () => {
+    const { plugin } = setup({
+      mode: 'manager',
+      getGrant: async () =>
+        mockGrant({ bucket: 'my-bucket', prefix: 'tenant/' }),
+      companion: {
+        folders: {
+          'tenant/': [{ name: 'photos', isFolder: true }],
+          'tenant-adjacent/photos/': [{ name: 'secret.jpg', isFolder: false }],
+        },
+      },
+    })
+    const list = vi.spyOn(plugin.provider, 'list')
+    expect(await plugin.openFolderPath('tenant-adjacent/photos/')).toBe(false)
+    expect(await plugin.openFolderPath('tenant/../outside/')).toBe(false)
+    expect(await plugin.openFolderPath('tenant/./photos/')).toBe(false)
+    expect(list.mock.calls.map(([id]) => id)).toEqual([plugin.rootFolderId])
+    expect(plugin.getPluginState().currentFolderId).toBe(plugin.rootFolderId)
+    expect(names(plugin)).toEqual(['photos'])
+  })
+
+  it('lists placeholder ancestors in their parent’s order once the parent is opened', async () => {
+    const { plugin } = setup({
+      mode: 'manager',
+      getGrant: async () =>
+        mockGrant({ bucket: 'my-bucket', prefix: 'tenant/' }),
+      companion: {
+        pageSize: 2,
+        folders: {
+          'tenant/': [{ name: 'photos', isFolder: true }],
+          'tenant/photos/': [
+            { name: '2024', isFolder: true },
+            { name: '2025', isFolder: true },
+            { name: '2026', isFolder: true },
+            { name: '2027', isFolder: true },
+          ],
+          'tenant/photos/2026/': [{ name: 'chair.jpg', isFolder: false }],
+        },
+      },
+    })
+    expect(await plugin.openFolderPath('tenant/photos/2026/')).toBe(true)
+    await plugin.view.openFolder('tenant%2Fphotos%2F')
+    expect(names(plugin)).toEqual(['2024', '2025', '2026'])
+    expect(await plugin.view.loadNextPage()).toBe(true)
+    expect(names(plugin)).toEqual(['2024', '2025', '2026', '2027'])
   })
 
   it('forgets the session on logout', async () => {
@@ -348,33 +498,33 @@ describe('S3 provider in the browser', () => {
   it.for<[string, (plugin: TestPlugin) => Promise<unknown>]>([
     ['deleting', (plugin) => plugin.provider.deleteItem('docs')],
     ['moving', (plugin) => plugin.provider.moveItem('docs', 'x')],
-  ])('the mock preserves a same-named folder when %s a file', async ([
-    ,
-    mutate,
-  ]) => {
-    const { companion, plugin } = setup({
-      companion: {
-        folders: {
-          '': [
-            { name: 'readme.md', isFolder: false },
-            { name: 'docs', isFolder: false },
-            { name: 'docs', isFolder: true },
-          ],
-          'docs/': [],
+  ])(
+    'the mock preserves a same-named folder when %s a file',
+    async ([, mutate]) => {
+      const { companion, plugin } = setup({
+        companion: {
+          folders: {
+            '': [
+              { name: 'readme.md', isFolder: false },
+              { name: 'docs', isFolder: false },
+              { name: 'docs', isFolder: true },
+            ],
+            'docs/': [],
+          },
         },
-      },
-    })
-    await openBucket()
-    await mutate(plugin)
-    expect(companion.folders.get('')).toContainEqual({
-      name: 'docs',
-      isFolder: true,
-    })
-    expect(companion.folders.get('')).not.toContainEqual({
-      name: 'docs',
-      isFolder: false,
-    })
-  })
+      })
+      await openBucket()
+      await mutate(plugin)
+      expect(companion.folders.get('')).toContainEqual({
+        name: 'docs',
+        isFolder: true,
+      })
+      expect(companion.folders.get('')).not.toContainEqual({
+        name: 'docs',
+        isFolder: false,
+      })
+    },
+  )
 
   it('restores a session scoped to a prefix and opens its nested folder', async () => {
     const { plugin } = setup({
@@ -1001,6 +1151,111 @@ describe('S3 provider in the browser', () => {
       expect(
         companion.calls.filter((call) => call.path.endsWith('/s3/simple-auth')),
       ).toHaveLength(2)
+    })
+
+    describe('a renewed grant that opens another bucket', () => {
+      it('starts over at the root, so a file selected in the first bucket is not added from the second', async () => {
+        let now = Math.floor(Date.now() / 1000)
+        const { plugin } = setup({
+          getGrant: grantsFor(() => now, 'bucket-a', 'bucket-b'),
+          companion: { nowSeconds: () => now },
+        })
+        await openBucket()
+        await page.getByRole('checkbox', { name: 'readme.md' }).click()
+        expect(plugin.view.getSelectedAmount()).toBe(1)
+
+        now += 901
+        // This listing renews the grant, which opens bucket-b.
+        await page.getByText('docs', { exact: true }).click()
+
+        await vi.waitFor(() => expect(toldBucketChanged(uppy!)).toBe(true))
+        // bucket-b's root, listed again.
+        await vi.waitFor(() =>
+          expect(names(plugin)).toEqual(['docs', 'readme.md']),
+        )
+        await expect
+          .element(page.getByRole('checkbox', { name: 'readme.md' }))
+          .not.toBeChecked()
+        const state = plugin.getPluginState()
+        expect(state.currentFolderId).toBe(plugin.rootFolderId)
+        expect(plugin.view.getBreadcrumbs()).toHaveLength(1)
+        expect(plugin.view.getSelectedAmount()).toBe(0)
+        // Only what bucket-b listed is left, and it is imported from there.
+        expect(bucketOf(plugin, 'readme.md')).toBe('bucket-b')
+      })
+
+      it('adds nothing on Done when a folder selected in the first bucket would be listed in the second', async () => {
+        let now = Math.floor(Date.now() / 1000)
+        const { plugin } = setup({
+          getGrant: grantsFor(() => now, 'bucket-a', 'bucket-b'),
+          companion: { nowSeconds: () => now },
+        })
+        await openBucket()
+        await page.getByRole('checkbox', { name: /docs/ }).click()
+        await page.getByRole('checkbox', { name: 'readme.md' }).click()
+
+        now += 901
+        // Done lists the selected folder, which renews the grant.
+        await page.getByRole('button', { name: 'Select 2' }).click()
+
+        await vi.waitFor(() =>
+          expect(uppy!.getFiles().length > 0 || toldBucketChanged(uppy!)).toBe(
+            true,
+          ),
+        )
+        expect(uppy!.getFiles().map((file) => file.name)).toEqual([])
+        expect(toldBucketChanged(uppy!)).toBe(true)
+        // The panel shows bucket-b's root, with nothing selected.
+        await vi.waitFor(() =>
+          expect(names(plugin)).toEqual(['docs', 'readme.md']),
+        )
+        await expect
+          .element(page.getByRole('checkbox', { name: 'readme.md' }))
+          .not.toBeChecked()
+        expect(plugin.view.getSelectedAmount()).toBe(0)
+      })
+
+      it("never restores the first bucket's tree when a deep link fails over in the second", async () => {
+        let now = Math.floor(Date.now() / 1000)
+        const { plugin } = await setupHeadless({
+          getGrant: grantsFor(() => now, 'bucket-a', 'bucket-b'),
+          companion: { nowSeconds: () => now },
+        })
+        plugin.view.toggleCheckbox(itemOf(plugin, 'readme.md'), false)
+        expect(plugin.view.getBulkActionItems()).toHaveLength(1)
+
+        now += 901
+        expect(await plugin.openFolderPath('docs/')).toBe(false)
+
+        await vi.waitFor(() =>
+          expect(names(plugin)).toEqual(['docs', 'readme.md']),
+        )
+        expect(plugin.getPluginState().currentFolderId).toBe(
+          plugin.rootFolderId,
+        )
+        expect(plugin.view.getBulkActionItems()).toEqual([])
+        expect(bucketOf(plugin, 'readme.md')).toBe('bucket-b')
+      })
+
+      it('is not a change after a logout, which already started over', async () => {
+        const { plugin } = setup({
+          getGrant: grantsFor(
+            () => Math.floor(Date.now() / 1000),
+            'bucket-a',
+            'bucket-b',
+          ),
+        })
+        await openBucket()
+        await plugin.view.logout()
+        expect(() => plugin.provider.fileUrl('readme.md')).toThrow(
+          'Browse the storage folder',
+        )
+
+        await plugin.view.handleAuth({})
+        await expect.element(page.getByText('readme.md')).toBeVisible()
+        expect(bucketOf(plugin, 'readme.md')).toBe('bucket-b')
+        expect(toldBucketChanged(uppy!)).toBe(false)
+      })
     })
 
     it('hides the mutation actions for a read-only grant', async () => {

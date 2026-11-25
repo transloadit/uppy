@@ -1,5 +1,8 @@
+import type { Locale } from '../../lib/utils/Translator.js'
+
 import { describe, expect, it } from 'vitest'
-import Translator, { type Locale } from '../../lib/utils/Translator.js'
+
+import Translator from '../../lib/utils/Translator.js'
 
 const english: Locale<0 | 1> = {
   strings: {

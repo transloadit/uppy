@@ -1,17 +1,18 @@
-import { prettierBytes } from '@transloadit/prettier-bytes'
 import type { Body, Meta } from '@uppy/core'
+
+import type { DefinePluginOpts, PluginOpts } from '../lib/BasePlugin.js'
+import type { State } from '../lib/Uppy.js'
+import type { Locale } from '../lib/utils/index.js'
+
+import { prettierBytes } from '@transloadit/prettier-bytes'
 import { afterEach, describe, expect, it, vi } from 'vitest'
+
 import sampleImage from '../../compressor/fixtures/image.jpg'
-import BasePlugin, {
-  type DefinePluginOpts,
-  type PluginOpts,
-} from '../lib/BasePlugin.js'
+import BasePlugin from '../lib/BasePlugin.js'
 import Core from '../lib/index.js'
 import { debugLogger } from '../lib/loggers.js'
 import { RestrictionError } from '../lib/Restricter.js'
 import UIPlugin from '../lib/UIPlugin.js'
-import type { State } from '../lib/Uppy.js'
-import type { Locale } from '../lib/utils/index.js'
 import AcquirerPlugin1 from './mocks/acquirerPlugin1.js'
 import AcquirerPlugin2 from './mocks/acquirerPlugin2.js'
 // @ts-expect-error untyped
@@ -862,6 +863,53 @@ describe('src/Core', () => {
         type: 'image/jpeg',
         data: sameFileBlob,
       })
+    })
+
+    it('should keep files that onBeforeFileAdded adds via setState during addFiles', () => {
+      let added = false
+      using core = new Core({
+        onBeforeFileAdded: () => {
+          if (!added) {
+            added = true
+            core.addFile({
+              name: 'from-hook.txt',
+              type: 'text/plain',
+              data: new Blob(['x']),
+            })
+          }
+          return true
+        },
+      })
+
+      core.addFiles(
+        ['a.txt', 'b.txt'].map((name) => ({
+          name,
+          type: 'text/plain',
+          data: new Blob([name]),
+        })),
+      )
+
+      expect(
+        core
+          .getFiles()
+          .map((f) => f.name)
+          .sort(),
+      ).toEqual(['a.txt', 'b.txt', 'from-hook.txt'])
+    })
+
+    it('should add many files in linear time', () => {
+      using core = new Core()
+      const files = Array.from({ length: 20000 }, (_, i) => ({
+        name: `file-${i}.txt`,
+        type: 'text/plain',
+        data: new Blob(['x']),
+      }))
+
+      const start = performance.now()
+      core.addFiles(files)
+      // ~0.15s with the linear loop, ~20s when it was quadratic
+      expect(performance.now() - start).toBeLessThan(3000)
+      expect(core.getFiles()).toHaveLength(20000)
     })
 
     it('should add a file', async () => {
@@ -2747,6 +2795,15 @@ describe('src/Core', () => {
         '%{file} exceeds maximum allowed size of %{size}',
       )
       expect(core.i18n('test')).toBe('beep boop')
+    })
+
+    it('has the strings core itself uses without a locale pack', () => {
+      const logger = { debug: vi.fn(), warn: vi.fn(), error: vi.fn() }
+      using core = new Core({ logger })
+
+      // Used by the Google Picker when adding the picked files fails
+      expect(core.i18n('failedToAddFiles')).toBe('Failed to add files')
+      expect(logger.error).not.toHaveBeenCalled()
     })
   })
 

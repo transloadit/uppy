@@ -9,6 +9,7 @@ import type {
   Meta,
   UppyFileNonGhost,
 } from '../../utils/index.js'
+
 import { getSafeFileId } from '../../utils/index.js'
 import companionFileToUppyFile from './companionFileToUppyFile.js'
 

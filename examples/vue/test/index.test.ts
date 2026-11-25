@@ -1,3 +1,5 @@
+import type { Component } from 'vue'
+
 import { network } from 'virtual:msw'
 import Uppy from '@uppy/core'
 import UppyScreenCapture from '@uppy/screen-capture'
@@ -7,7 +9,8 @@ import { HttpResponse, http } from 'msw'
 import { describe, expect, test, vi } from 'vitest'
 import { userEvent } from 'vitest/browser'
 import { render } from 'vitest-browser-vue'
-import { type Component, defineComponent, h } from 'vue'
+import { defineComponent, h } from 'vue'
+
 import {
   describeModalEsc,
   describeRemoteSource,

@@ -1056,7 +1056,7 @@ The class must also have:
   Companion Provider API.
 
 See also
-[example code with a custom provider](https://github.com/transloadit/uppy/blob/main/examples/custom-provider/server).
+[example code with a custom provider](https://github.com/transloadit/uppy/tree/main/examples/companion-custom-provider/server).
 
 #### list data
 

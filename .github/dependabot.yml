@@ -25,12 +25,15 @@ updates:
 
       React:
         patterns:
-          - 'react*'
-          - '@types/react*'
+          - 'react'
+          - 'react-dom'
+          - '@types/react'
+          - '@types/react-dom'
 
       React Router:
         patterns:
           - '@react-router/*'
+          - react-router
 
       Vitest:
         patterns:

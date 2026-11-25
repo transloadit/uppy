@@ -4,6 +4,7 @@
   "type": "module",
   "dependencies": {
     "@uppy/aws-s3": "workspace:*",
+    "@uppy/companion": "workspace:*",
     "@uppy/core": "workspace:*",
     "@uppy/dashboard": "workspace:*",
     "body-parser": "^2.4.0",

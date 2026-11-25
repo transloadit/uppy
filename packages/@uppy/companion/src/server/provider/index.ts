@@ -1,5 +1,9 @@
-import type { NextFunction, Request, Response } from 'express'
+import type { NextFunction, Response } from 'express'
+
 import type { GrantProviderStaticConfig } from '../../config/grant.js'
+import type { Request } from '../../types/express.js'
+import type { ProviderCtor } from './Provider.js'
+
 import { getRedirectPath, getURLBuilder } from '../helpers/utils.js'
 import * as logger from '../logger.js'
 import box from './box/index.js'
@@ -8,7 +12,7 @@ import dropbox from './dropbox/index.js'
 import facebook from './facebook/index.js'
 import { Drive } from './google/drive/index.js'
 import onedrive from './onedrive/index.js'
-import { isOAuthProvider, type ProviderCtor } from './Provider.js'
+import { isOAuthProvider } from './Provider.js'
 import s3 from './s3/index.js'
 import TransloaditStorageProvider from './s3/transloadit-storage.js'
 import unsplash from './unsplash/index.js'
@@ -210,12 +214,8 @@ export function addProviderOptions(
       grantProviderConfig['key'] = providerOption.key
       grantProviderConfig['secret'] = providerOption.secret
       if (providerOption.credentialsURL) {
-        grantProviderConfig['dynamic'] = [
-          'key',
-          'secret',
-          'redirect_uri',
-          'origins',
-        ]
+        // Credentials from res.locals.grant are trusted; HTTP input is not.
+        grantProviderConfig['dynamic'] = []
       }
 
       const provider =

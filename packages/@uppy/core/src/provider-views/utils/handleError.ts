@@ -1,6 +1,7 @@
+import type Uppy from '../../index.js'
+
 import { isAuthError } from '../../companion-client/AuthError.js'
 import { describeCompanionError } from '../../companion-client/errorCodes.js'
-import type Uppy from '../../index.js'
 import { ErrorWithCause, isAbortError, toError } from '../../utils/index.js'
 
 const handleError =

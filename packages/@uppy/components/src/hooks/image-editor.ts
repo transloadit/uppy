@@ -1,6 +1,7 @@
 import type { Uppy, UppyEventMap, UppyFile } from '@uppy/core'
 import type ImageEditor from '@uppy/image-editor'
 import type { AspectRatio } from '@uppy/image-editor'
+
 import { Subscribers } from './utils.js'
 
 export type { AspectRatio } from '@uppy/image-editor'

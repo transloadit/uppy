@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest'
+
 import truncateString from '../../lib/utils/truncateString.js'
 
 describe('truncateString', () => {

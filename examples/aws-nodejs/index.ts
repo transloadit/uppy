@@ -1,7 +1,9 @@
 import { existsSync, readFile } from 'node:fs'
 import path from 'node:path'
+
 import bodyParser from 'body-parser'
 import express from 'express'
+
 import { presign } from './routes/presign.ts'
 import { sts } from './routes/sts.ts'
 
@@ -52,7 +54,7 @@ app.get('/uppy.min.mjs', (_req, res) => {
       'No local JS bundle found, using the CDN as a fallback. Run `corepack yarn build` to make this warning disappear.',
     )
     res.end(
-      'export * from "https://releases.transloadit.com/uppy/v4.0.0-beta.11/uppy.min.mjs";\n',
+      'export * from "https://releases.transloadit.com/uppy/v6.0.8/uppy.min.mjs";\n',
     )
   }
 })
@@ -71,7 +73,7 @@ app.get('/uppy.min.css', (_req, res) => {
       'No local CSS bundle found, using the CDN as a fallback. Run `corepack yarn build` to make this warning disappear.',
     )
     res.end(
-      '@import "https://releases.transloadit.com/uppy/v4.0.0-beta.11/uppy.min.css";\n',
+      '@import "https://releases.transloadit.com/uppy/v6.0.8/uppy.min.css";\n',
     )
   }
 })
