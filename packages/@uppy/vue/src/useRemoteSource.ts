@@ -1,4 +1,8 @@
-import type { RemoteSourceKeys, RemoteSourceSnapshot } from '@uppy/components'
+import type {
+  RemoteSourceKeys,
+  RemoteSourceOptions,
+  RemoteSourceSnapshot,
+} from '@uppy/components'
 import type { ShallowRef } from 'vue'
 
 import { createRemoteSourceController } from '@uppy/components'
@@ -9,10 +13,11 @@ import { useExternalStore } from './useSyncExternalStore.js'
 
 export function useRemoteSource(
   sourceId: RemoteSourceKeys,
+  options?: RemoteSourceOptions,
 ): ShallowRef<RemoteSourceSnapshot> {
   const ctx = injectUppyContext()
 
-  const controller = createRemoteSourceController(ctx.uppy, sourceId)
+  const controller = createRemoteSourceController(ctx.uppy, sourceId, options)
   const store = useExternalStore<RemoteSourceSnapshot>(
     controller.getSnapshot,
     controller.subscribe,

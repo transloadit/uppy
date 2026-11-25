@@ -8887,6 +8887,8 @@ __metadata:
     "@uppy-dev/tsconfig": "workspace:^"
     "@uppy/components": "workspace:^"
     "@uppy/core": "workspace:^"
+    "@uppy/dropbox": "workspace:^"
+    "@uppy/unsplash": "workspace:^"
     "@vitest/browser-playwright": "npm:^5.1.0"
     playwright: "npm:1.65.0"
     react: "npm:^19.3.1"
