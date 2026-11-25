@@ -1,7 +1,9 @@
+import type { WebcamOptions } from '@uppy/webcam'
+
 import { act, cleanup, render, screen, waitFor } from '@testing-library/react'
 import Uppy from '@uppy/core'
 import { UppyContextProvider, useWebcam } from '@uppy/react'
-import Webcam, { type WebcamOptions } from '@uppy/webcam'
+import Webcam from '@uppy/webcam'
 import { useEffect, useState } from 'react'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 
