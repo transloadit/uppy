@@ -9,6 +9,11 @@ updates:
       interval: 'weekly'
     cooldown:
       default-days: 7
+    ignore:
+      # cropperjs 2 is a rewrite on web components, not a drop-in upgrade:
+      # moving @uppy/image-editor to it is a breaking change of its own.
+      - dependency-name: 'cropperjs'
+        update-types: ['version-update:semver-major']
     groups:
       Angular:
         patterns:
