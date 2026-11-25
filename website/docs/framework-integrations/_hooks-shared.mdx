@@ -128,3 +128,109 @@ Manages screen capture functionality for capturing screen image / video.
   getDiscardButtonProps: Function
 }
 ```
+
+#### `useImageEditor({ file })`
+
+Builds a custom image editor (crop, rotate, flip, zoom) for an image file. It
+uses the [`@uppy/image-editor`](/docs/image-editor) plugin, which you have to
+add to Uppy with `uppy.use(ImageEditor)` and its default `id`, otherwise the
+hook throws. The plugin does not need a `target` or the Dashboard.
+
+Spread `getImageProps()` on an `<img>` element. The editing buttons are disabled
+until that image has loaded. Saving replaces the file’s data in Uppy and emits
+[`file-editor:complete`](/docs/image-editor#file-editorcomplete); cancelling
+emits [`file-editor:cancel`](/docs/image-editor#file-editorcancel). The hook
+doesn’t close your editor, so pass an `onClick` to the save and cancel button
+props to do that.
+
+The cropping area needs the editor stylesheet: import
+`@uppy/react/css/image-editor.css`, `@uppy/vue/css/image-editor.css` or
+`@uppy/svelte/css/image-editor.css`.
+
+**Arguments**:
+
+- `file: UppyFile<Meta, Body>`: the file to edit. Its `data` must be a `Blob`,
+  so this works for local files, not for files from remote sources. The editor
+  supports JPEG, GIF, PNG, BMP and WebP; check a file with the plugin’s
+  `canEditFile(file)` before you open it.
+
+**Returns**:
+
+```typescript
+{
+  state: {
+    angle: number
+    isFlippedHorizontally: boolean
+    aspectRatio: 'free' | '1:1' | '16:9' | '9:16'
+  }
+  getImageProps: Function
+  getSaveButtonProps: Function
+  getCancelButtonProps: Function
+  getRotateButtonProps: Function
+  getFlipHorizontalButtonProps: Function
+  getZoomButtonProps: Function
+  getCropSquareButtonProps: Function
+  getCropLandscapeButtonProps: Function
+  getCropPortraitButtonProps: Function
+  getResetButtonProps: Function
+  getRotationSliderProps: Function
+}
+```
+
+- `getSaveButtonProps({ onClick })` and `getCancelButtonProps({ onClick })`
+  take an optional `onClick`, which runs on click after saving or cancelling has
+  started.
+- `getRotateButtonProps(degrees)` rotates by a step, for example `90` or `-90`.
+- `getZoomButtonProps(ratio)` zooms in for a positive ratio (`0.1`) and out for
+  a negative one (`-0.1`).
+- `getCropSquareButtonProps()`, `getCropLandscapeButtonProps()` and
+  `getCropPortraitButtonProps()` set the crop aspect ratio to `1:1`, `16:9` and
+  `9:16`.
+- `getRotationSliderProps()` is for an `<input>`: a range from `-45` to `45`
+  degrees for fine rotation. In React the image turns while the slider moves.
+  In Vue and Svelte the props use the native `change` event, so it turns when
+  the slider is released.
+
+See the [image editor example](#example-image-editor-with-useimageeditor).
+
+#### `useGooglePicker({ pickerType, storage })`
+
+Opens Google’s own picker for Google Drive or Google Photos from your own
+button. It reads its settings from the
+[Google Drive Picker](/docs/google-drive-picker) or
+[Google Photos Picker](/docs/google-photos-picker) plugin, so add that plugin to
+Uppy first, with its default `id`, otherwise the hook throws. Those plugins need a Google OAuth client
+ID (Google Drive also needs an API key and an app ID) and a
+[Companion](/docs/companion) instance; their docs explain the setup. Picked
+files are added to Uppy as remote files, which Companion downloads.
+
+**Arguments**:
+
+- `pickerType: 'drive' | 'photos'`: `'drive'` uses the `GoogleDrivePicker`
+  plugin, `'photos'` the `GooglePhotosPicker` plugin.
+- `storage?: AsyncStore`: where the Google access token is kept between page
+  loads. Defaults to `localStorage`. The hook doesn’t use the plugin’s
+  [`storage`](/docs/google-drive-picker#storage) option, so pass the same store
+  here if you set one there.
+
+**Returns**:
+
+```typescript
+{
+  loading: boolean
+  accessToken: string | null | undefined
+  show: () => Promise<void>
+  logout: () => Promise<void>
+}
+```
+
+- `show()` asks the user to sign in to Google if needed, then opens the picker.
+  Call it from a click handler, otherwise the browser may block the sign-in
+  popup.
+- `loading` is `true` while the picker opens and, for Google Drive, while picked
+  folders are listed.
+- `accessToken` is set while the user is signed in to Google.
+- `logout()` revokes the access token.
+
+See the
+[Google Drive Picker example](#example-google-drive-picker-with-usegooglepicker).
