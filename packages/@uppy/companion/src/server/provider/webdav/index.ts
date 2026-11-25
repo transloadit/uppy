@@ -165,7 +165,7 @@ export default class WebdavProvider extends Provider<WebdavUserSession> {
     // Is this an ownCloud, Nextcloud or oCIS public link URL? e.g. https://example.com/s/kFy9Lek5sm928xP
     if (isPublicLink(webdavUrl)) {
       const [baseURL, publicLinkToken] = webdavUrl.split('/s/')
-      if (!baseURL) {
+      if (!baseURL || !publicLinkToken) {
         throw new Error('invalid public link url')
       }
       const base = baseURL.replace('/index.php', '')
@@ -175,7 +175,7 @@ export default class WebdavProvider extends Provider<WebdavUserSession> {
           ? `${base}/dav/public-files/${encodeURIComponent(publicLinkToken)}`
           : `${base}/public.php/webdav/`,
         authType: AuthType.Password,
-        username: publicLinkToken!,
+        username: publicLinkToken,
         password: 'null',
       })
     }
