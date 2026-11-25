@@ -982,7 +982,14 @@ export default class ProviderView<M extends Meta, B extends Body> {
   ): Promise<void> {
     await this.#withAbort(async (signal) => {
       this.setLoading(true)
-      await this.provider.login({ authFormData, signal })
+      try {
+        await this.provider.login({ authFormData, signal })
+      } catch (err) {
+        // Not connected: show the connect screen, to try again.
+        if (!isAbortError(err))
+          this.plugin.setPluginState({ authenticated: false })
+        throw err
+      }
       this.plugin.setPluginState({ authenticated: true })
       await Promise.all([
         this.provider.fetchPreAuthToken(),

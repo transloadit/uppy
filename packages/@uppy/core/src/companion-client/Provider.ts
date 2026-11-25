@@ -10,7 +10,11 @@ import type {
 import type { CompanionPluginOptions } from './index.js'
 import type { RequestOptions } from './RequestClient.js'
 
-import { getErrorMessage, getSocketHost } from '../utils/index.js'
+import {
+  ErrorWithCause,
+  getErrorMessage,
+  getSocketHost,
+} from '../utils/index.js'
 import { isAuthError } from './AuthError.js'
 import RequestClient, { authErrorStatusCode } from './RequestClient.js'
 
@@ -128,7 +132,8 @@ export default class Provider<
       await this.fetchPreAuthToken()
 
       if (!this.preAuthToken) {
-        throw new Error(
+        // A failed request: shown as a failed connection.
+        throw new ErrorWithCause(
           'Could not load authentication data required for third-party login. Please try again later.',
         )
       }
