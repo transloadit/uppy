@@ -131,6 +131,11 @@ export default class ScreenCapture<
   // Bumped by `#releaseStreams()`, so streams that resolve after it are discarded
   #releaseCount = 0
 
+  // Pending stream requests, so repeated calls share one picker/permission prompt
+  #videoStreamRequest: Promise<MediaStream | false> | null = null
+
+  #audioStreamRequest: Promise<MediaStream | false> | null = null
+
   constructor(uppy: Uppy<M, B>, opts?: ScreenCaptureOptions) {
     super(uppy, { ...defaultOptions, ...opts })
     this.mediaDevices = getMediaDevices()
@@ -213,6 +218,11 @@ export default class ScreenCapture<
     return this.selectVideoStreamSource().then((res) => {
       // something happened in start -> return
       if (res === false && !isStale()) {
+        // The picker was denied or failed: release the microphone, which may
+        // still be pending
+        this.#releaseStreams()
+        this.setPluginState({ audioStreamActive: false })
+
         // Close the Dashboard panel if plugin is installed
         // into Dashboard (could be other parent UI plugin)
         // @ts-expect-error we can't know Dashboard types here
@@ -230,11 +240,12 @@ export default class ScreenCapture<
     if (this.videoStream) {
       return new Promise((resolve) => resolve(this.videoStream!))
     }
+    if (this.#videoStreamRequest) return this.#videoStreamRequest
 
     // ask user to select source to record and get mediastream from that
     const isStale = this.#staleCheck()
 
-    return this.mediaDevices
+    this.#videoStreamRequest = this.mediaDevices
       .getDisplayMedia(this.opts.displayMediaConstraints)
       .then((videoStream) => {
         if (isStale()) {
@@ -242,14 +253,18 @@ export default class ScreenCapture<
           return false
         }
 
+        this.#videoStreamRequest = null
         this.videoStream = videoStream
 
-        // add event listener to stop recording if stream is interrupted.
-        // `stop()` also makes the stream inactive, so ignore streams that
-        // are no longer the current one
-        this.videoStream.addEventListener('inactive', () => {
+        // Stop recording if the user ends sharing. Not every browser fires
+        // `inactive`, so also listen for the video track ending. `stop()` also
+        // makes the stream inactive, so ignore streams that are no longer the
+        // current one; this also handles both events firing
+        const onEnded = () => {
           if (this.videoStream === videoStream) this.streamInactivated()
-        })
+        }
+        videoStream.addEventListener('inactive', onEnded)
+        videoStream.getVideoTracks()[0]?.addEventListener('ended', onEnded)
 
         this.setPluginState({
           streamActive: true,
@@ -262,6 +277,7 @@ export default class ScreenCapture<
       .catch((err) => {
         if (isStale()) return false
 
+        this.#videoStreamRequest = null
         this.setPluginState({
           screenRecError: err,
           status: 'error',
@@ -275,6 +291,7 @@ export default class ScreenCapture<
 
         return false
       })
+    return this.#videoStreamRequest
   }
 
   selectAudioStreamSource(): Promise<MediaStream | false> {
@@ -282,11 +299,12 @@ export default class ScreenCapture<
     if (this.audioStream) {
       return new Promise((resolve) => resolve(this.audioStream!))
     }
+    if (this.#audioStreamRequest) return this.#audioStreamRequest
 
     // ask user to select source to record and get mediastream from that
     const isStale = this.#staleCheck()
 
-    return this.mediaDevices
+    this.#audioStreamRequest = this.mediaDevices
       .getUserMedia(this.opts.userMediaConstraints)
       .then((audioStream) => {
         if (isStale()) {
@@ -294,6 +312,7 @@ export default class ScreenCapture<
           return false
         }
 
+        this.#audioStreamRequest = null
         this.audioStream = audioStream
 
         this.setPluginState({
@@ -305,12 +324,14 @@ export default class ScreenCapture<
       .catch((err) => {
         if (isStale()) return false
 
+        this.#audioStreamRequest = null
         if (err.name === 'NotAllowedError') {
           this.uppy.info(this.i18n('micDisabled'), 'error', 5000)
           this.uppy.log(this.i18n('micDisabled'), 'warning')
         }
         return false
       })
+    return this.#audioStreamRequest
   }
 
   startRecording(): void {
@@ -319,8 +340,11 @@ export default class ScreenCapture<
     this.recordingChunks = []
     const { preferredVideoMimeType } = this.opts
 
+    // `stop()` may run while the picker is open
+    const isStale = this.#staleCheck()
     this.selectVideoStreamSource()
       .then((videoStream) => {
+        if (isStale()) return
         if (videoStream === false) {
           throw new Error('No video stream available')
         }
@@ -365,6 +389,7 @@ export default class ScreenCapture<
         })
       })
       .catch((err) => {
+        if (isStale()) return
         this.uppy.log(err, 'error')
         this.setPluginState({ screenRecError: err, status: 'error' })
       })
@@ -482,6 +507,8 @@ export default class ScreenCapture<
   /** Stops the screen and microphone streams, including pending ones. */
   #releaseStreams(): void {
     this.#releaseCount++
+    this.#videoStreamRequest = null
+    this.#audioStreamRequest = null
     stopTracks(this.videoStream)
     stopTracks(this.audioStream)
     this.videoStream = null
