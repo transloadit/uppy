@@ -6,7 +6,6 @@ import type { CompanionRuntimeOptions } from '../../types/companion-options.js'
 import type { CompanionExpressLocals, Request } from '../../types/express.js'
 import type Provider from './Provider.js'
 
-import { htmlEscape } from 'escape-goat'
 import got from 'got'
 
 import * as tokenService from '../helpers/jwt.js'
@@ -15,6 +14,16 @@ import { isRecord, toError } from '../helpers/type-guards.js'
 import { getRedirectPath, getURLBuilder } from '../helpers/utils.js'
 import logger from '../logger.js'
 import { ProviderApiError, parseHttpError } from './error.js'
+
+/** Escape text for HTML element content or quoted attribute values. */
+function htmlEscape(string: string): string {
+  return string
+    .replace(/&/g, '&amp;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+}
 
 /**
  * @param url

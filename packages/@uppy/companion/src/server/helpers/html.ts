@@ -1,4 +1,15 @@
-import serialize from 'serialize-javascript'
+/**
+ * A value as a JavaScript literal that is safe inside an inline <script>:
+ * JSON with `<`, `>`, `/` and the line and paragraph separators (U+2028,
+ * U+2029) escaped, as serialize-javascript does for plain data.
+ */
+function serialize(value: unknown): string {
+  if (value === undefined) return 'undefined'
+  return JSON.stringify(value).replace(
+    /[<>/\p{Zl}\p{Zp}]/gu,
+    (c) => `\\u${c.charCodeAt(0).toString(16).toUpperCase().padStart(4, '0')}`,
+  )
+}
 
 export const authCallbackSuccessHtml = () => {
   return `
