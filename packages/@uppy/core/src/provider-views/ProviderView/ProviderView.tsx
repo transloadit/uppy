@@ -849,13 +849,20 @@ export default class ProviderView<M extends Meta, B extends Body> {
               },
             }
           }
-          newPartialTree.push(node)
+          // no listing has included it yet
+          newPartialTree.push({ ...node, unlisted: true })
           parentId = encodedPath // This node becomes parent for the next iteration
           isParentFolderChecked = status === 'checked'
         })
-        // the id the walk gave this file's leaf node (not `file.requestPath`,
-        // which needn't be encoded the same way)
-        searchResults.push(encodeURIComponent(`/${segments.join('/')}`))
+        // `parentId` is now this file's leaf node. A path with no segments has
+        // none, and a path that came twice is one result.
+        if (
+          segments.length > 0 &&
+          parentId != null &&
+          !searchResults.includes(parentId)
+        ) {
+          searchResults.push(parentId)
+        }
       }
 
       this.plugin.setPluginState({ partialTree: newPartialTree, searchResults })

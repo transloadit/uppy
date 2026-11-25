@@ -532,6 +532,8 @@ export default class S3<M extends Meta, B extends Body>
               nextPagePath: null,
               status: checked ? 'checked' : 'unchecked',
               data: { name: segment, icon: 'folder', isFolder: true },
+              // no listing has included it yet
+              unlisted: true,
             })
           }
           parentId = id
