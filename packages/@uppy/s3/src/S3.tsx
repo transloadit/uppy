@@ -76,10 +76,6 @@ class S3SimpleAuthProvider<M extends Meta, B extends Body> extends Provider<
   M,
   B
 > {
-  /** Native Companion understands the optional, broker-verified authorization context. */
-  get supportsStorageContext(): boolean {
-    return this.supportsStorageContextAcknowledgement === true
-  }
   /** Mints a server-issued grant; set by the plugin when `getGrant` is configured. */
   getGrant?: () => Promise<string | { grant: string; storageContext?: string }>
 
@@ -182,18 +178,23 @@ class S3SimpleAuthProvider<M extends Meta, B extends Body> extends Provider<
     const form = typeof answer === 'string' ? { grant: answer } : answer
     const grant = form?.grant
     signal.throwIfAborted()
-    if (form?.storageContext !== undefined && !this.supportsStorageContext) {
+    const response = await this.post<{
+      uppyAuthToken: string
+      storageContextAccepted?: boolean
+    }>(
+      `${this.id}/simple-auth`,
+      { form: form ?? {} },
+      { qs: { uppyVersions }, signal },
+    )
+    signal.throwIfAborted()
+    if (
+      form?.storageContext !== undefined &&
+      response.storageContextAccepted !== true
+    ) {
       await this.removeAuthToken()
-      throw new Error(
-        'Uppy Core does not support Storage session context acknowledgement',
-      )
+      throw new Error('Companion did not accept the Storage session context')
     }
-    await this.loginSimpleAuth({
-      uppyVersions,
-      authFormData: form ?? {},
-      signal,
-      requireStorageContext: form?.storageContext !== undefined,
-    })
+    await this.setAuthToken(response.uppyAuthToken)
     signal.throwIfAborted()
     this.onLogin?.(grant)
     this.#hasSession = true

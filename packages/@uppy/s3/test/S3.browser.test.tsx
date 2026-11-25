@@ -1035,24 +1035,6 @@ describe('S3 provider in the browser', () => {
   })
 
   describe('server-issued grants', () => {
-    it('refuses context when paired with a Core release that cannot verify acknowledgement', async () => {
-      const grant = mockGrant({ bucket: 'my-bucket' })
-      const { plugin } = await setupHeadless({ getGrant: async () => grant })
-      Object.defineProperty(
-        plugin.provider,
-        'supportsStorageContextAcknowledgement',
-        { value: false },
-      )
-      await expect(
-        plugin.provider.login({
-          authFormData: { grant, storageContext: 'context' },
-          signal: new AbortController().signal,
-        }),
-      ).rejects.toThrow(
-        'Uppy Core does not support Storage session context acknowledgement',
-      )
-    })
-
     it('forwards native session context atomically with its grant', async () => {
       const grant = mockGrant({ bucket: 'my-bucket' })
       const { companion, plugin } = await setupHeadless({
@@ -1073,12 +1055,18 @@ describe('S3 provider in the browser', () => {
       const { plugin } = await setupHeadless({
         getGrant: async () => ({ grant, storageContext: 'context' }),
       })
+      await plugin.provider.setAuthToken('previous-login-token')
+      const setToken = vi.spyOn(plugin.provider, 'setAuthToken')
       await expect(
         plugin.provider.login({
           authFormData: undefined,
           signal: new AbortController().signal,
         }),
       ).rejects.toThrow('did not accept the Storage session context')
+      expect(setToken).not.toHaveBeenCalled()
+      expect(await plugin.provider.headers()).not.toHaveProperty(
+        'uppy-auth-token',
+      )
     })
 
     it('connects with a grant instead of a plain session', async () => {

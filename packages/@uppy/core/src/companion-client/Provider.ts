@@ -39,8 +39,6 @@ export default class Provider<
   M extends Meta,
   B extends Body,
 > extends RequestClient<M, B> {
-  /** Allows provider packages to refuse context when paired with an older Core release. */
-  protected readonly supportsStorageContextAcknowledgement = true
   #refreshingTokenPromise: Promise<void> | undefined
 
   provider: string
@@ -171,24 +169,18 @@ export default class Provider<
     uppyVersions,
     authFormData,
     signal,
-    requireStorageContext = false,
   }: {
     uppyVersions: string
     authFormData: unknown
     signal: AbortSignal
-    requireStorageContext?: boolean
   }): Promise<void> {
-    type Res = { uppyAuthToken: string; storageContextAccepted?: boolean }
+    type Res = { uppyAuthToken: string }
     const response = await this.post<Res>(
       `${this.id}/simple-auth`,
       { form: authFormData },
       { qs: { uppyVersions }, signal },
     )
     signal.throwIfAborted()
-    if (requireStorageContext && response.storageContextAccepted !== true) {
-      await this.removeAuthToken()
-      throw new Error('Companion did not accept the Storage session context')
-    }
     await this.setAuthToken(response.uppyAuthToken)
     signal.throwIfAborted()
   }

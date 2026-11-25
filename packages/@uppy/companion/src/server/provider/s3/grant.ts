@@ -4,7 +4,7 @@
  * the scopes they hold. Companion's S3 provider verifies them here.
  *
  * The wire format is fixed (v1): the payload is
- * `{ v: 1, bucket, prefix, scopes, exp, iat?, sub? }`. Grants may be signed
+ * `{ v: 1, bucket, prefix, scopes, exp, iat?, sub?, storageContextHash? }`. Grants may be signed
  * with a shared secret (HS256) or with an asymmetric key, in which case
  * Companion is configured with the public key only.
  */
@@ -24,6 +24,8 @@ export type StorageGrant = {
   write: boolean
   /** Unix seconds. */
   exp: number
+  /** SHA-256 of the opaque native Storage context; the issuer binds it into the grant. */
+  storageContextHash?: string
 }
 
 /**
@@ -83,6 +85,10 @@ const grantClaimsSchema = z.object({
   exp: z.number(),
   iat: z.number().optional(),
   sub: z.string().optional(),
+  storageContextHash: z
+    .string()
+    .regex(/^[a-f0-9]{64}$/)
+    .optional(),
 })
 
 /** Drops unset and blank entries, so a key list is either real keys or empty. */
@@ -178,5 +184,8 @@ export function verifyStorageGrant(
     prefix: normalizeStorageGrantPrefix(claims.prefix),
     write: claims.scopes.includes('write'),
     exp: claims.exp,
+    ...(claims.storageContextHash !== undefined && {
+      storageContextHash: claims.storageContextHash,
+    }),
   }
 }

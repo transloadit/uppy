@@ -84,24 +84,35 @@ API2 File Library credential resolver, a server-only shared secret of at least 3
 Do not send this secret or Workspace Auth Secrets to the browser. Browser grants retain their
 existing expiry, prefix and scope checks.
 
-Native simple-auth optionally accepts `form.storageContext` beside `form.grant`. The native provider
-retains both in its encrypted session and binds both into a v2 credential-broker proof. API2, rather
-than Companion, verifies the opaque context against the authenticated user’s live folder session.
-Context-bearing resolver responses must contain `sessionToken`, forwarded by the AWS SDK on S3
-requests and included as signed `storage_context` on native moves. Missing tokens and static
-credential fallback are refused. Clients and download pools are isolated by Workspace and context
-digest. Expired cache entries are detached lazily without interrupting in-flight streams. Context verification never relies on public grant `sub`.
+Native simple-auth optionally accepts `form.storageContext` beside `form.grant`. A context-bearing
+grant must include a signed `storageContextHash` claim: the lowercase hexadecimal SHA-256 digest
+of the exact UTF-8 context string. The issuer must add this claim to every grant issued for a
+context-bound session. Companion refuses missing or replaced context, context supplied without
+a matching signed hash, and reuse of a bound grant through the generic S3 provider. Existing
+unbound grants remain ordinary Workspace grants; they must never be issued for protected sessions.
+
+The native provider retains the grant and context in its encrypted session and binds both into
+a v2 credential-broker proof. API2 verifies the opaque context against the authenticated user’s
+live folder session. Context-bearing resolver responses must contain `sessionToken`, forwarded
+by the AWS SDK on S3 requests and included as signed `storage_context` on native moves. Missing
+tokens and static credential fallback are refused. Static Workspace credentials discard any
+inherited upload STS token. Context verification never relies on public grant `sub`.
+
+Credentials are isolated by Workspace and grant/context digest. Context clients enter the cache
+only after a successful broker lookup. Contexts share one finite browse socket pool per Workspace
+and a separate download pool. Expired cache entries are detached on access without interrupting
+in-flight streams.
 
 The browser `getGrant` callback can return either its existing JWT string or
-`{ grant, storageContext }`. Context is supplemental authorization, never a replacement grant. Native simple-auth acknowledges
-context retention; the paired browser refuses missing acknowledgement before storing the session
-token. Older or generic Companion endpoints therefore cannot silently discard context. The browser also
-refuses context if paired with an older Uppy Core that cannot verify this acknowledgement.
-Deploy the paired broker and access enforcement before enabling folder policies; the paired API2
-transport intentionally refuses context redemption until the complete enforcement inventory is
-ready. Per-request checks remain mandatory even when the AWS SDK caches credentials. The v2 broker
-reply is provisional until API2 supplies context-bound credentials that cannot become an ordinary
-Workspace key if the token is stripped. Companion must never receive Content’s password-command key or API2’s context-signing key.
+`{ grant, storageContext }`. Native simple-auth acknowledges context retention; `@uppy/s3` verifies
+this acknowledgement before storing the session token, using existing Uppy Core methods.
+Older or generic Companion endpoints therefore cannot silently discard context.
+Deploy the paired grant issuer, broker and access enforcement before enabling folder policies;
+the paired API2 transport intentionally refuses context redemption until the complete enforcement
+inventory is ready. Per-request checks remain mandatory even when the AWS SDK caches credentials.
+The v2 broker reply is provisional until API2 supplies context-bound credentials that cannot become
+an ordinary Workspace key if the token is stripped. Companion must never receive Content’s
+password-command key or API2’s context-signing key.
 
 Dynamic credentials are refreshed by the cached S3 client’s credential provider. Enrolling another
 Workspace therefore needs no Companion restart; API2 owns admission and checks it on each request.

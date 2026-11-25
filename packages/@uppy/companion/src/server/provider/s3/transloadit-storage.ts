@@ -3,6 +3,7 @@ import type { OptionsInit, Response } from 'got'
 import type { S3ClientOptions } from '../../../schemas/companion.js'
 import type { ProviderSimpleAuthOptions } from '../Provider.js'
 import type { ParsedTransloaditStorageOptions } from './config.js'
+import type { StorageGrant } from './grant.js'
 import type {
   ItemRef,
   ResolvedConfig,
@@ -176,6 +177,20 @@ export default class TransloaditStorageProvider extends S3Provider<ParsedTranslo
     return true
   }
 
+  protected override validateGrant(
+    claims: StorageGrant,
+    form: Record<string, unknown>,
+  ): void {
+    const context = form['storageContext']
+    if (context === undefined && claims.storageContextHash === undefined) return
+    if (
+      typeof context !== 'string' ||
+      createHash('sha256').update(context).digest('hex') !==
+        claims.storageContextHash
+    )
+      throw userError('S3_INVALID_GRANT')
+  }
+
   override async simpleAuth(
     options: ProviderSimpleAuthOptions,
   ): Promise<S3UserSession> {
@@ -209,11 +224,16 @@ export default class TransloaditStorageProvider extends S3Provider<ParsedTranslo
     config: ResolvedConfig<ParsedTransloaditStorageOptions>,
     bucket: string,
     session: S3UserSession,
-  ): { cacheKey: string; clientOptions: S3ClientOptions } {
+  ): {
+    cacheKey: string
+    clientOptions: S3ClientOptions
+    connectionPoolKey: string
+  } {
     const { apiEndpoint, credentialsSecret } = config.native
     if (credentialsSecret != null) {
       const ownOptions = withOwnCredentials(config.clientOptions)
       return {
+        connectionPoolKey: bucket,
         cacheKey: session.nativeContext
           ? `${bucket}:${contextDigest(bucket, session.nativeContext)}`
           : bucket,
@@ -245,10 +265,12 @@ export default class TransloaditStorageProvider extends S3Provider<ParsedTranslo
     const { key, secret } = staticCredentials(config.native.workspaces, bucket)
     return {
       cacheKey: bucket,
+      connectionPoolKey: bucket,
       clientOptions: withOwnCredentials({
         ...config.clientOptions,
         key,
         secret,
+        sessionToken: undefined,
       }),
     }
   }
@@ -258,7 +280,11 @@ export default class TransloaditStorageProvider extends S3Provider<ParsedTranslo
    * and keeps asset identity; it never falls back to S3 copy/delete.
    */
   protected override async move(
-    { client, config: { native } }: S3Session<ParsedTransloaditStorageOptions>,
+    {
+      client,
+      config: { native },
+      nativeContext,
+    }: S3Session<ParsedTransloaditStorageOptions>,
     id: string,
     destination: string,
   ): Promise<ItemRef> {
@@ -283,7 +309,7 @@ export default class TransloaditStorageProvider extends S3Provider<ParsedTranslo
       source: id,
       destination,
       file_library: true,
-      ...(sessionToken !== undefined && { storage_context: sessionToken }),
+      storage_context: nativeContext ? sessionToken : undefined,
     })
     const signature = `sha256:${createHmac('sha256', secret).update(params, 'utf8').digest('hex')}`
     const response = await callApi(native.apiEndpoint, MOVE_PATH, {
