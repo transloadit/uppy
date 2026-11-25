@@ -1,0 +1,54 @@
+{
+  "$schema": "https://context7.com/schema/context7.json",
+  "projectTitle": "Uppy",
+  "description": "Modular JavaScript file uploader for web browsers. @uppy/core manages files, state and events; plugins add user interfaces such as the Dashboard, drag and drop, webcam and an image editor, import from remote sources such as Google Drive, Dropbox and URLs through the Companion server, and upload with tus, XHR, Amazon S3 or S3-compatible storage, or Transloadit. Packages integrate Uppy with React, Vue, Svelte and Angular.",
+  "folders": [
+    "website/docs",
+    "examples",
+    "packages/@uppy/s3",
+    "packages/@uppy/transloadit-storage"
+  ],
+  "excludeFolders": [
+    "node_modules",
+    "dist",
+    "lib",
+    "test",
+    "tests",
+    "__tests__",
+    "__screenshots__",
+    "website/blog",
+    "archive",
+    "archived",
+    "old",
+    "docs/old",
+    "deprecated",
+    "legacy",
+    "previous",
+    "outdated",
+    "superseded",
+    "_snaps",
+    "benchmark",
+    "benchmarks",
+    "benches"
+  ],
+  "excludeFiles": [
+    "CHANGELOG.md",
+    "changelog.md",
+    "CHANGELOG.mdx",
+    "changelog.mdx",
+    "LICENSE.md",
+    "license.md",
+    "CODE_OF_CONDUCT.md",
+    "code_of_conduct.md",
+    "NEWS.md",
+    "requirements.txt"
+  ],
+  "rules": [
+    "Import Uppy 6 CSS through each package's exports map, e.g. @uppy/core/css/style.min.css and @uppy/dashboard/css/style.min.css. dist/ paths such as @uppy/core/dist/style.min.css are not exported.",
+    "@uppy/aws-s3 takes one signing option: signRequest (your signer returns a presigned URL), getCredentials with s3Endpoint (SigV4 in the browser with temporary credentials), or companionEndpoint.",
+    "@uppy/aws-s3 uses companionEndpoint for Companion; companionUrl, endpoint, headers and cookiesRule were removed. Remote source plugins such as @uppy/dropbox still use companionUrl.",
+    "@uppy/aws-s3-multipart no longer exists. @uppy/aws-s3 handles single-request and multipart uploads, and by default uses multipart for files larger than 100 MiB (shouldUseMultipart).",
+    "@uppy/golden-retriever keeps local file contents in IndexedDB only up to 10 MiB per file and 300 MiB in total. Larger local files need its serviceWorker option and a service worker.",
+    "@uppy/drag-drop and @uppy/status-bar are published for Uppy 6 and in the CDN bundle as DragDrop and StatusBar. In React, Vue and Svelte, the Dropzone component or useDropzone hook replaces drag-drop."
+  ]
+}

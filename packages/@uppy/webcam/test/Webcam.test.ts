@@ -1,5 +1,6 @@
 import { Uppy } from '@uppy/core'
 import { afterEach, describe, expect, it, vi } from 'vitest'
+
 import Webcam from '../lib/index.js'
 
 describe('Webcam', () => {

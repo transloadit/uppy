@@ -1,5 +1,10 @@
 <script lang="ts">
-import Uppy, { type UppyFile } from '@uppy/core'
+import '@uppy/svelte/css/image-editor.css'
+import '@uppy/svelte/css/style.css'
+
+import type { UppyFile } from '@uppy/core'
+
+import Uppy from '@uppy/core'
 import UppyImageEditor from '@uppy/image-editor'
 import UppyRemoteSources from '@uppy/remote-sources'
 import UppyScreenCapture from '@uppy/screen-capture'
@@ -12,8 +17,6 @@ import {
 } from '@uppy/svelte'
 import Tus from '@uppy/tus'
 import UppyWebcam from '@uppy/webcam'
-import '@uppy/svelte/css/style.css'
-import '@uppy/svelte/css/image-editor.css'
 
 import CustomDropzone from '../components/CustomDropzone.svelte'
 import ImageEditor from '../components/ImageEditor.svelte'

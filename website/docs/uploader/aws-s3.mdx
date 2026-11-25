@@ -5,7 +5,7 @@ slug: /aws-s3
 
 import Tabs from '@theme/Tabs'
 import TabItem from '@theme/TabItem'
-import UppyCdnExample from '/src/components/UppyCdnExample'
+import UppyCdnExample from '@site/src/components/UppyCdnExample'
 
 # AWS S3
 
@@ -336,7 +336,7 @@ an `uploadId` must be signed for exactly the key it arrives with. That key was
 fixed when the upload was created, and a `key` returned on those requests is
 ignored. A server that derives the key again on every request prefixes a key
 that is already prefixed, and S3 answers with `NoSuchUpload`. The
-[Node.js](https://github.com/transloadit/uppy/blob/main/examples/aws-nodejs/routes/presign.js)
+[Node.js](https://github.com/transloadit/uppy/blob/main/examples/aws-nodejs/routes/presign.ts)
 and
 [PHP](https://github.com/transloadit/uppy/blob/main/examples/aws-php/s3-sign.php)
 signer examples show how to do this correctly.

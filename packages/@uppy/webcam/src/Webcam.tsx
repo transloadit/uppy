@@ -7,8 +7,9 @@ import type {
   UIPluginOptions,
   Uppy,
 } from '@uppy/core'
-import { UIPlugin } from '@uppy/core'
 import type { LocaleStrings, LocalUppyFileNonGhost } from '@uppy/core/utils'
+
+import { UIPlugin } from '@uppy/core'
 import {
   canvasToBlob,
   getErrorMessage,
@@ -19,6 +20,7 @@ import {
 // biome-ignore lint/style/useImportType: h is not a type
 import { type ComponentChild, h } from '@uppy/core/utils/preact'
 import { isMobile } from 'is-mobile'
+
 import packageJson from '../package.json' with { type: 'json' }
 import CameraIcon from './CameraIcon.js'
 import CameraScreen from './CameraScreen.js'

@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest'
+
 import getSocketHost from '../../lib/utils/getSocketHost.js'
 
 describe('getSocketHost', () => {

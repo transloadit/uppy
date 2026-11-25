@@ -1,8 +1,8 @@
+import type { GenericState, Listener } from '../../lib/store/index.js'
+
 import { describe, expect, it } from 'vitest'
-import DefaultStore, {
-  type GenericState,
-  type Listener,
-} from '../../lib/store/index.js'
+
+import DefaultStore from '../../lib/store/index.js'
 
 describe('DefaultStore', () => {
   it('cannot be created without new', () => {

@@ -1,6 +1,10 @@
 import type { Readable } from 'node:stream'
-import type { Request, Response } from 'express'
+
+import type { Response } from 'express'
 import type { Promisable } from 'type-fest'
+
+import type { Request } from '../../types/express.js'
+
 import logger from '../logger.js'
 import Uploader from '../Uploader.js'
 import { toError } from './type-guards.js'
@@ -80,9 +84,10 @@ export async function startDownUpload({
       // stream was never handed to tryUploadStream, so destroy it and remove
       // the emitter listeners the Uploader registered (both would otherwise
       // leak until the process restarts).
+      throw err
+    } finally {
       if (!stream.destroyed) stream.destroy()
       uploader.removeEmitterListeners()
-      throw err
     }
   })().catch((err) => logger.error(err))
 
