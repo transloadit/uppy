@@ -172,7 +172,7 @@ export default class WebdavProvider extends Provider<WebdavUserSession> {
 
       return this.getClientHelper({
         url: providerUserSession.ocis
-          ? `${base}/dav/public-files/${publicLinkToken}`
+          ? `${base}/dav/public-files/${encodeURIComponent(publicLinkToken)}`
           : `${base}/public.php/webdav/`,
         authType: AuthType.Password,
         username: publicLinkToken!,
