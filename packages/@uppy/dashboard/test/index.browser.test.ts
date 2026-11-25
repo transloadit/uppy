@@ -327,3 +327,18 @@ test('Non-resumable upload controls identify the affected file', async () => {
     .element(fileCancelButton)
     .toHaveAttribute('title', 'Cancel upload')
 })
+
+test('Only a single Informer is rendered', async () => {
+  render('<div id="uppy"></div>')
+  using uppy = new Uppy().use(Dashboard, {
+    target: '#uppy',
+    inline: true,
+  })
+
+  uppy.info('Hello', 'info', 60000)
+  await expect.element(page.getByText('Hello').first()).toBeVisible()
+
+  // Count the DOM nodes instead of checking visibility because a duplicate
+  // Informer is stacked exactly on top of the first one
+  expect(document.querySelectorAll('.uppy-Informer')).toHaveLength(1)
+})
