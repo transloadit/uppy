@@ -225,6 +225,102 @@ describe('webdav response bounds', () => {
   })
 })
 
+describe('webdav public share links', () => {
+  const shareLink = () => `${webdavUrl}s/TOKEN`
+  const authShare = () =>
+    provider().simpleAuth({
+      requestBody: { form: { webdavUrl: shareLink() } },
+      companion: {} as never,
+    })
+  const paths: string[] = []
+  const auths: (string | undefined)[] = []
+  // Answers WebDAV only on `davPath`; elsewhere an HTML page, as oCIS does.
+  const serveDavAt =
+    (davPath: string): Handler =>
+    (req, res) => {
+      paths.push(req.url!)
+      auths.push(req.headers.authorization)
+      if (req.url!.startsWith(davPath)) {
+        res.writeHead(207, { 'content-type': 'application/xml' })
+        res.end(multistatus(fileResponse(`${davPath}a.txt`)))
+        return
+      }
+      res.writeHead(200, { 'content-type': 'text/html' })
+      res.end('<!doctype html><html></html>')
+    }
+
+  beforeEach(() => {
+    paths.length = 0
+    auths.length = 0
+  })
+
+  test('uses the Nextcloud/ownCloud 10 endpoint when it answers', async () => {
+    handler = serveDavAt('/public.php/webdav/')
+    await expect(authShare()).resolves.toEqual({ webdavUrl: shareLink() })
+    expect(paths).toEqual(['/public.php/webdav/'])
+  })
+
+  test('falls back to the oCIS endpoint, and remembers it', async () => {
+    handler = serveDavAt('/dav/public-files/TOKEN/')
+    const session = await authShare()
+    expect(session).toEqual({ webdavUrl: shareLink(), ocis: true })
+
+    paths.length = 0
+    auths.length = 0
+    const { items } = await provider().list({
+      providerUserSession: session,
+      query: {},
+    } as never)
+    expect(items.map((item) => item.name)).toEqual(['a.txt'])
+    expect(paths).toEqual(['/dav/public-files/TOKEN/'])
+    // The share token is the login on both endpoints.
+    expect(auths).toEqual([
+      `Basic ${Buffer.from('TOKEN:null').toString('base64')}`,
+    ])
+  })
+
+  test('reports the first error when neither endpoint answers', async () => {
+    const html = serveDavAt('/nowhere/')
+    handler = (req, res) => {
+      if (req.url!.startsWith('/dav/')) {
+        paths.push(req.url!)
+        res.writeHead(404).end()
+        return
+      }
+      html(req, res)
+    }
+    // The HTML page, not the oCIS 404.
+    await expect(authShare()).rejects.toThrow('structural limits')
+    expect(paths).toEqual(['/public.php/webdav/', '/dav/public-files/TOKEN/'])
+  })
+
+  test('does not fall back for a plain WebDAV URL', async () => {
+    handler = serveDavAt('/nowhere/')
+    await expect(
+      provider().simpleAuth({
+        requestBody: { form: { webdavUrl: `${webdavUrl}dav/` } },
+        companion: {} as never,
+      }),
+    ).rejects.toThrow()
+    expect(requestCount).toBe(1)
+  })
+
+  test("the fallback shares the first attempt's deadline", async () => {
+    handler = () => {
+      // accept, never respond
+    }
+    const p = new WebdavProvider({ allowLocalUrls: true })
+    p.requestTimeoutMs = 200
+    await expect(
+      p.simpleAuth({
+        requestBody: { form: { webdavUrl: shareLink() } },
+        companion: {} as never,
+      }),
+    ).rejects.toThrow(/abort|timed out|timeout/i)
+    expect(requestCount).toBe(1)
+  })
+})
+
 describe('webdav request timeouts', () => {
   test('simpleAuth times out on a server that never answers', async () => {
     handler = () => {

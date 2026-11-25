@@ -108,8 +108,15 @@ function redactUrls(err: unknown): unknown {
   return redacted
 }
 
-type WebdavUserSession = { webdavUrl?: string }
+/**
+ * `ocis`: the share link is from ownCloud Infinite Scale, which serves public
+ * links at `/dav/public-files/<token>` rather than `/public.php/webdav/`.
+ * Found out once in simpleAuth() and kept in the session.
+ */
+type WebdavUserSession = { webdavUrl?: string; ocis?: boolean }
 type WebdavClient = ReturnType<typeof createClient>
+
+const isPublicLink = (webdavUrl: string) => /\/s\/([^/]+)/.test(webdavUrl)
 
 type WebdavListItem = {
   isFolder: boolean
@@ -155,17 +162,18 @@ export default class WebdavProvider extends Provider<WebdavUserSession> {
       throw new Error('invalid public link url')
     }
 
-    // Is this an ownCloud or Nextcloud public link URL? e.g. https://example.com/s/kFy9Lek5sm928xP
-    // they have specific urls that we can identify
-    // todo not sure if this is the right way to support nextcloud and other webdavs
-    if (/\/s\/([^/]+)/.test(webdavUrl)) {
+    // Is this an ownCloud, Nextcloud or oCIS public link URL? e.g. https://example.com/s/kFy9Lek5sm928xP
+    if (isPublicLink(webdavUrl)) {
       const [baseURL, publicLinkToken] = webdavUrl.split('/s/')
       if (!baseURL) {
         throw new Error('invalid public link url')
       }
+      const base = baseURL.replace('/index.php', '')
 
       return this.getClientHelper({
-        url: `${baseURL.replace('/index.php', '')}/public.php/webdav/`,
+        url: providerUserSession.ocis
+          ? `${base}/dav/public-files/${publicLinkToken}`
+          : `${base}/public.php/webdav/`,
         authType: AuthType.Password,
         username: publicLinkToken!,
         password: 'null',
@@ -195,15 +203,25 @@ export default class WebdavProvider extends Provider<WebdavUserSession> {
         throw new Error('Missing webdavUrl')
       }
 
-      const providerUserSession: WebdavUserSession = { webdavUrl }
-
-      const client = await this.getClient({ providerUserSession })
+      // One deadline for every attempt, so a fallback can't extend it.
+      const signal = AbortSignal.timeout(this.requestTimeoutMs)
       // call the list operation as a way to validate the url
-      await client.getDirectoryContents(defaultDirectory, {
-        signal: AbortSignal.timeout(this.requestTimeoutMs),
-      })
+      const tryListing = async (providerUserSession: WebdavUserSession) => {
+        const client = await this.getClient({ providerUserSession })
+        await client.getDirectoryContents(defaultDirectory, { signal })
+        return providerUserSession
+      }
 
-      return providerUserSession
+      try {
+        return await tryListing({ webdavUrl })
+      } catch (err) {
+        // A share link that isn't Nextcloud/ownCloud 10 may be oCIS. If that
+        // fails too, report the first error.
+        if (!isPublicLink(webdavUrl)) throw err
+        return await tryListing({ webdavUrl, ocis: true }).catch(() => {
+          throw err
+        })
+      }
     } catch (err) {
       // The raw error's `response.url` is the WebDAV URL, which for a share
       // link is itself the credential, and transport errors quote the URL in
