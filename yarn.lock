@@ -6554,16 +6554,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@react-router/dev@npm:^8.5.1":
-  version: 8.5.1
-  resolution: "@react-router/dev@npm:8.5.1"
+"@react-router/dev@npm:^8.5.2":
+  version: 8.5.2
+  resolution: "@react-router/dev@npm:8.5.2"
   dependencies:
     "@babel/core": "npm:^7.29.7"
     "@babel/generator": "npm:^7.29.7"
     "@babel/parser": "npm:^7.29.7"
     "@babel/traverse": "npm:^7.29.7"
     "@babel/types": "npm:^7.29.7"
-    "@react-router/node": "npm:8.5.1"
+    "@react-router/node": "npm:8.5.2"
     "@remix-run/node-fetch-server": "npm:^0.14.1"
     babel-dead-code-elimination: "npm:^1.0.12"
     chokidar: "npm:^5.0.0"
@@ -6579,12 +6579,13 @@ __metadata:
     pkg-types: "npm:^2.3.1"
     react-refresh: "npm:^0.18.0"
     semver: "npm:^7.8.1"
+    signal-exit: "npm:^4.1.0"
     tinyglobby: "npm:^0.2.16"
     valibot: "npm:^1.4.1"
   peerDependencies:
-    "@react-router/serve": ^8.5.1
-    "@vitejs/plugin-rsc": ~0.5.26
-    react-router: ^8.5.1
+    "@react-router/serve": ^8.5.2
+    "@vitejs/plugin-rsc": ~0.5.38
+    react-router: ^8.5.2
     react-server-dom-webpack: ^19.2.7
     typescript: ^5.1.0 || ^6.0.0 || ^7.0.0
     vite: ^7.0.0 || ^8.0.0
@@ -6602,38 +6603,38 @@ __metadata:
       optional: true
   bin:
     react-router: bin.cjs
-  checksum: 10/7b865abcaf0e62b6326069527e956fc111f80f1f80bec26db6127bd4b40d17c227be491f2af9a9cf6c8dafd03bbccb5a88352f755d9f5338bf050157fae0ea15
+  checksum: 10/bffd89b4d2dcae8efb5284db5c4ba06ba2e56cec9e5fa453475ecaf2200b98d70ce235a7b184b8e7a1e1f7891ccf0e312cd8bd26b5122f981c91032dccf1600d
   languageName: node
   linkType: hard
 
-"@react-router/express@npm:^8.5.1":
-  version: 8.5.1
-  resolution: "@react-router/express@npm:8.5.1"
+"@react-router/express@npm:^8.5.2":
+  version: 8.5.2
+  resolution: "@react-router/express@npm:8.5.2"
   dependencies:
-    "@react-router/node": "npm:8.5.1"
+    "@react-router/node": "npm:8.5.2"
   peerDependencies:
     express: ^4.22.2 || ^5
-    react-router: 8.5.1
+    react-router: 8.5.2
     typescript: ^5.1.0 || ^6.0.0 || ^7.0.0
   peerDependenciesMeta:
     typescript:
       optional: true
-  checksum: 10/8e4b8774af7dfee5f84882394b1df83fc91c8b418c29a00c51aa2f27d7a4661824fd83e64cf2d0bfec8ac8bf35298899f6fa6d46880b128c1c4a76a69ffea8da
+  checksum: 10/d936cb338b34ca609c976a1de67cf5de411e3a9e6d69b58d89ce646aba10ad91039ecf337e85b5fae5e4f14b49efb8230023abdf789bd5c280f846fb81844467
   languageName: node
   linkType: hard
 
-"@react-router/node@npm:8.5.1, @react-router/node@npm:^8.5.1":
-  version: 8.5.1
-  resolution: "@react-router/node@npm:8.5.1"
+"@react-router/node@npm:8.5.2, @react-router/node@npm:^8.5.1":
+  version: 8.5.2
+  resolution: "@react-router/node@npm:8.5.2"
   dependencies:
     "@remix-run/node-fetch-server": "npm:^0.14.1"
   peerDependencies:
-    react-router: 8.5.1
+    react-router: 8.5.2
     typescript: ^5.1.0 || ^6.0.0 || ^7.0.0
   peerDependenciesMeta:
     typescript:
       optional: true
-  checksum: 10/51e3edc9a15641a140484127f7a627640d4320fae1c833da7a7accfb44a2fb41f19f51274ef3efd8b317c161eb4c108d9b15608246a4de490cf32ef2d44811ec
+  checksum: 10/22b12b7857783ffa4d2f44e45b6f8116ff5ae4136a269a38cb71703c04964fe5103eb0a0f97d6bc07e64a0612174214128822ac4cdde4b675dbdbbb90a493c72
   languageName: node
   linkType: hard
 
@@ -13253,8 +13254,8 @@ __metadata:
   dependencies:
     "@mjackson/file-storage": "npm:^0.7.0"
     "@mjackson/form-data-parser": "npm:^0.9.1"
-    "@react-router/dev": "npm:^8.5.1"
-    "@react-router/express": "npm:^8.5.1"
+    "@react-router/dev": "npm:^8.5.2"
+    "@react-router/express": "npm:^8.5.2"
     "@react-router/node": "npm:^8.5.1"
     "@tus/file-store": "npm:latest"
     "@tus/server": "npm:latest"
@@ -13271,7 +13272,7 @@ __metadata:
     isbot: "npm:^5.1.40"
     react: "npm:^19.3.1"
     react-dom: "npm:^19.3.1"
-    react-router: "npm:^8.5.1"
+    react-router: "npm:^8.5.2"
     typescript: "npm:^6.0.3"
     vite: "npm:^8.3.5"
   languageName: unknown
@@ -21076,9 +21077,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-router@npm:^8.5.1":
-  version: 8.5.1
-  resolution: "react-router@npm:8.5.1"
+"react-router@npm:^8.5.2":
+  version: 8.5.2
+  resolution: "react-router@npm:8.5.2"
   dependencies:
     "@remix-run/route-pattern": "npm:^0.22.1"
     cookie-es: "npm:^3.1.1"
@@ -21094,7 +21095,7 @@ __metadata:
       optional: true
     react-dom:
       optional: true
-  checksum: 10/a816ea9d47d7b74f60e97ff623f41f42cc0d9591af03f2491cdaaff4ff43a0df9c7a6a37257e05fcaf868e3921a74a03c8674f07d1757f2b439f291961b8c49d
+  checksum: 10/b3fb514b2690ed03458cec39735f3afae1f3a5d8ef3ce0b05d61d79a5da653e352b265cbad596b201810105b865a1cdfa8841e5bb9fd9a34f8560c635269210e
   languageName: node
   linkType: hard
 
