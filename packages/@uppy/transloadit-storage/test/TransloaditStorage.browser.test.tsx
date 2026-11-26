@@ -518,6 +518,159 @@ describe('Transloadit Storage in the browser', () => {
     expect(storage.acceptsFileDrops).toBe(false)
   })
 
+  it('retains the first signed destination for files added before connecting', async () => {
+    const signAssembly = vi.fn(async (params: StoreAssemblyParameters) => ({
+      params,
+      signature: 'test',
+    }))
+    setup({ storeUploads: { signAssembly } })
+    const app = uppy!
+    const storage =
+      app.getPlugin<TransloaditStorage<Meta, Record<string, never>>>(
+        'TransloaditStorage',
+      )!
+    const id = app.addFile({
+      name: 'early.txt',
+      data: new File(['early'], 'early.txt'),
+    })
+    const build = createStoreAssemblyOptions(app, { signAssembly })
+    await build()
+    expect(signAssembly.mock.calls[0]?.[0].steps.stored.path).toBe(FILE_NAME)
+    app.emit('upload-error', app.getFile(id), new Error('Storage failed'))
+    app
+      .getPlugin<Dashboard<Meta, Record<string, never>>>('Dashboard')!
+      .showPanel('TransloaditStorage')
+    await expect.element(page.getByText('readme.md')).toBeVisible()
+    await page.getByText('docs', { exact: true }).click()
+    await expect.element(page.getByText('hello.txt')).toBeVisible()
+    expect(storage.acceptsFileDrops).toBe(false)
+    await build()
+    expect(signAssembly.mock.calls[1]?.[0].steps.stored.path).toBe(FILE_NAME)
+  })
+
+  it('binds files added outside the panel after its folder listing settles', async () => {
+    const signAssembly = vi.fn(async (params: StoreAssemblyParameters) => ({
+      params,
+      signature: 'test',
+    }))
+    const companion = createMockS3Companion({ token: TOKEN })
+    network.use(...toMswHandlers(companion, COMPANION, { http }))
+    uppy = new Uppy().use(FixtureUploader, {}).use(TransloaditStorage, {
+      companionUrl: COMPANION,
+      mode: 'manager',
+      storeUploads: { signAssembly },
+    })
+    const app = uppy!
+    const storage =
+      app.getPlugin<TransloaditStorage<Meta, Record<string, never>>>(
+        'TransloaditStorage',
+      )!
+    await storage.openFolderPath(null)
+    let release = () => {}
+    const held = new Promise<void>((resolve) => {
+      release = resolve
+    })
+    network.use(
+      http.get(`${COMPANION}/transloadit-storage/list/docs%2F`, async () => {
+        await held
+      }),
+    )
+    const opening = storage.view.openFolder('docs%2F')
+    await vi.waitFor(() =>
+      expect(storage.getPluginState().loading).toBeTruthy(),
+    )
+    app.addFile({
+      name: 'outside.txt',
+      data: new File(['outside'], 'outside.txt'),
+    })
+    const build = createStoreAssemblyOptions(app, { signAssembly })
+    await expect(build()).rejects.toThrow(
+      'Wait for the folder to finish loading',
+    )
+    expect(signAssembly).not.toHaveBeenCalled()
+    release()
+    await opening
+    expect(storage.getPluginState().currentFolderId).toBe('docs%2F')
+    await storage.view.openFolder(storage.rootFolderId)
+    await createStoreAssemblyOptions(app, { signAssembly })()
+    expect(signAssembly.mock.calls[0]?.[0].steps.stored.path).toBe(
+      `docs/${FILE_NAME}`,
+    )
+  })
+
+  it('keeps the previous folder when navigation is aborted after an external addition', async () => {
+    const signAssembly = vi.fn(async (params: StoreAssemblyParameters) => ({
+      params,
+      signature: 'test',
+    }))
+    const companion = createMockS3Companion({ token: TOKEN })
+    network.use(...toMswHandlers(companion, COMPANION, { http }))
+    uppy = new Uppy().use(FixtureUploader, {}).use(TransloaditStorage, {
+      companionUrl: COMPANION,
+      storeUploads: { signAssembly },
+    })
+    const app = uppy
+    const storage =
+      app.getPlugin<TransloaditStorage<Meta, Record<string, never>>>(
+        'TransloaditStorage',
+      )!
+    await storage.openFolderPath(null)
+    let release = () => {}
+    const held = new Promise<void>((resolve) => {
+      release = resolve
+    })
+    network.use(
+      http.get(`${COMPANION}/transloadit-storage/list/docs%2F`, async () => {
+        await held
+      }),
+    )
+    const opening = storage.view.openFolder('docs%2F')
+    await vi.waitFor(() =>
+      expect(storage.getPluginState().loading).toBeTruthy(),
+    )
+    app.addFile({
+      name: 'outside.txt',
+      data: new File(['outside'], 'outside.txt'),
+    })
+    app.emit('dashboard:close-panel', 'TransloaditStorage')
+    release()
+    await opening
+    expect(storage.getPluginState().currentFolderId).toBe(storage.rootFolderId)
+    await createStoreAssemblyOptions(app, { signAssembly })()
+    expect(signAssembly.mock.calls[0]?.[0].steps.stored.path).toBe(FILE_NAME)
+  })
+
+  it('binds picker imports before donePicking resets the folder', async () => {
+    const signAssembly = vi.fn(async (params: StoreAssemblyParameters) => ({
+      params,
+      signature: 'test',
+    }))
+    const companion = createMockS3Companion({ token: TOKEN })
+    network.use(...toMswHandlers(companion, COMPANION, { http }))
+    uppy = new Uppy().use(FixtureUploader, {}).use(TransloaditStorage, {
+      companionUrl: COMPANION,
+      storeUploads: { signAssembly },
+    })
+    const app = uppy
+    const storage =
+      app.getPlugin<TransloaditStorage<Meta, Record<string, never>>>(
+        'TransloaditStorage',
+      )!
+    await storage.openFolderPath('docs/')
+    const item = storage.view
+      .getDisplayedPartialTree()
+      .find((node) => node.type === 'file')
+    if (!item) throw new Error('Missing file in docs')
+    storage.view.toggleCheckbox(item, false)
+    expect(await storage.view.donePicking()).toBe(true)
+    expect(app.getFiles()).toHaveLength(1)
+    expect(storage.getPluginState().currentFolderId).toBe(storage.rootFolderId)
+    await createStoreAssemblyOptions(app, { signAssembly })()
+    expect(signAssembly.mock.calls[0]?.[0].steps.stored.path).toBe(
+      `docs/${FILE_NAME}`,
+    )
+  })
+
   it('renames a folder in one native move instead of walking it', async () => {
     // Manager mode is headless, as in a file library using `useS3Manager`.
     const companion = createMockS3Companion({ token: TOKEN })

@@ -29,6 +29,9 @@ function fakeUppy({
     get uploadFolderKey() {
       return openFolderKey(storage as never)
     },
+    reserveUploadFolder() {
+      return this.uploadFolderKey
+    },
   }
   return { getPlugin: () => storage } as unknown as Uppy<Meta, Body>
 }
@@ -55,6 +58,9 @@ describe('createStoreAssemblyOptions', () => {
       }),
       get uploadFolderKey() {
         return openFolderKey(storage as never)
+      },
+      reserveUploadFolder() {
+        return this.uploadFolderKey
       },
     }
     const signAssembly = vi.fn(passthroughSign)
@@ -128,6 +134,7 @@ describe('createStoreAssemblyOptions', () => {
     const storage = {
       getPluginState: () => ({ authenticated: true, currentFolderId: null }),
       uploadFolderKey: 'docs/',
+      reserveUploadFolder: () => 'docs/',
     }
     const build = createStoreAssemblyOptions(
       { getPlugin: () => storage } as unknown as Uppy<Meta, Body>,

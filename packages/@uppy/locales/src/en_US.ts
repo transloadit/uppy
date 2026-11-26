@@ -302,6 +302,8 @@ en_US.strings = {
   uploadComplete: 'Upload complete',
   uploadFailed: 'Upload failed',
   uploadFiles: 'Upload files',
+  uploadFolderLoading:
+    'Wait for the folder to finish loading, then retry the upload',
   uploading: 'Uploading',
   uploadingXFiles: {
     '0': 'Uploading %{smart_count} file',

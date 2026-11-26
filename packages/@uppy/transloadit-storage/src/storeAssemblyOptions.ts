@@ -153,7 +153,7 @@ export function createStoreAssemblyOptions<M extends Meta, B extends Body>(
     }
     return options.signAssembly(
       buildStoreAssemblyParams(
-        storage.uploadFolderKey,
+        storage.reserveUploadFolder(),
         options.conflictStrategy,
       ),
     )

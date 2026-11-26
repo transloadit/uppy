@@ -163,6 +163,8 @@ export default class TransloaditStorage<
   /** The folder the queued files were added in; see `uploadFolderKey`. */
   #addedIn: string | undefined
 
+  #bindAfterLoading = false
+
   #pendingFileDrops = 0
 
   /** Reserves the accepted drop's folder while Dashboard reads its files. */
@@ -200,6 +202,26 @@ export default class TransloaditStorage<
       : openFolderKey(this)
   }
 
+  /** Commits an unbound queue's destination before its Assembly is signed. */
+  reserveUploadFolder(): string {
+    this.#settleQueuedFolder()
+    if (this.#bindAfterLoading) {
+      throw new UserFacingApiError(this.i18n('uploadFolderLoading'))
+    }
+    if (this.#hasQueuedFiles() && this.#addedIn === undefined) {
+      this.#addedIn = openFolderKey(this)
+    }
+    return this.uploadFolderKey
+  }
+
+  #settleQueuedFolder = (): void => {
+    if (!this.#bindAfterLoading || this.getPluginState().loading) return
+    this.#bindAfterLoading = false
+    if (this.getPluginState().authenticated && this.#hasQueuedFiles()) {
+      this.#addedIn = openFolderKey(this)
+    }
+  }
+
   /** Failed processing and active retries still own their destination after transport completes. */
   #hasQueuedFiles(excludedIds?: ReadonlySet<string>): boolean {
     if (this.#pendingFileDrops > 0) return true
@@ -235,11 +257,16 @@ export default class TransloaditStorage<
   #onFilesAdded = (files: UppyFile<M, B>[]): void => {
     const added = new Set(files.map((file) => file.id))
     if (this.#hasQueuedFiles(added) && this.#addedIn !== undefined) return
-    // Before the session is connected its root is unknown: the Assembly
-    // settles it then (see `createStoreAssemblyOptions`).
-    this.#addedIn = this.getPluginState().authenticated
-      ? openFolderKey(this)
-      : undefined
+    // Picker imports are added while donePicking is busy, before it resets
+    // the open folder. External additions must wait for navigation to settle.
+    const pickingHere = files.some(
+      (file) => file.isRemote && file.source === this.id,
+    )
+    const { authenticated, loading } = this.getPluginState()
+    this.#bindAfterLoading = Boolean(loading && !pickingHere)
+    // Before connecting, the first Assembly reserves the now-known root.
+    this.#addedIn =
+      authenticated && !this.#bindAfterLoading ? openFolderKey(this) : undefined
   }
 
   override builtInActions(): ProviderAction<M, B>[] {
@@ -357,12 +384,14 @@ export default class TransloaditStorage<
     }
     super.install()
     this.uppy.on('files-added', this.#onFilesAdded)
+    this.uppy.on('state-update', this.#settleQueuedFolder)
     if (reopenAfterUpload) this.uppy.on('complete', this.#reopenAfterUpload)
   }
 
   override uninstall(): void {
     this.uppy.off('complete', this.#reopenAfterUpload)
     this.uppy.off('files-added', this.#onFilesAdded)
+    this.uppy.off('state-update', this.#settleQueuedFolder)
     super.uninstall()
   }
 

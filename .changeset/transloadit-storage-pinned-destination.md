@@ -12,3 +12,5 @@ Failed storage or encoding attempts keep their destination when retried. Files q
 Manually configured `createStoreAssemblyOptions` pipelines use the same folder-dependent drop guards as `storeUploads`.
 
 The destination is reserved when a drop is accepted, so navigating while Dashboard reads dropped files or folders cannot redirect them.
+
+Uploads added before connecting reserve their first signed destination for retries. Files added outside the panel during navigation bind to the folder once its listing settles.
