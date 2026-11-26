@@ -29,3 +29,7 @@ Picker imports reserve their destination before reading selected directories. He
 Successful uploads invalidate cached destination listings even when the panel has moved to another folder.
 
 Queued destinations reset on logout or a change of bucket or grant prefix. Signing never reuses a destination outside the current session’s root.
+
+Automatic reopening preserves failed files from earlier batches and files added before the deferred cleanup runs.
+
+Refreshing the uploaded destination preserves selections in unrelated folders.

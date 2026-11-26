@@ -1387,6 +1387,130 @@ describe('Transloadit Storage in the browser', () => {
     },
   )
 
+  it('keeps failed files when a later batch completes successfully', async () => {
+    const signAssembly = vi.fn(async (params: StoreAssemblyParameters) => ({
+      params,
+      signature: 'test',
+    }))
+    setup({ storeUploads: { signAssembly }, reopenAfterUpload: true })
+    const app = uppy!
+    const storage =
+      app.getPlugin<TransloaditStorage<Meta, Record<string, never>>>(
+        'TransloaditStorage',
+      )!
+    await page.getByRole('tab', { name: 'Transloadit Storage' }).click()
+    await expect.element(page.getByText('readme.md')).toBeVisible()
+    await page.getByText('docs', { exact: true }).click()
+    await expect.element(page.getByText('hello.txt')).toBeVisible()
+    const failed = app.addFile({
+      name: 'failed.txt',
+      data: new File(['failed'], 'failed.txt'),
+    })
+    app.emit('upload-start', [app.getFile(failed)])
+    app.emit('upload-success', app.getFile(failed), {
+      status: 200,
+      uploadURL: 'https://example.test/failed.txt',
+    })
+    app.emit('upload-error', app.getFile(failed), new Error('Storage failed'))
+    app.emit('postprocess-complete', app.getFile(failed))
+    app.emit('complete', { successful: [], failed: [app.getFile(failed)] })
+    const successful = app.addFile({
+      name: 'stored.txt',
+      data: new File(['stored'], 'stored.txt'),
+    })
+    app.emit('upload-start', [app.getFile(successful)])
+    app.emit('upload-success', app.getFile(successful), {
+      status: 200,
+      uploadURL: 'https://example.test/stored.txt',
+    })
+    app.emit('complete', { successful: [app.getFile(successful)], failed: [] })
+    await new Promise((resolve) => setTimeout(resolve, 10))
+    expect(app.getFile(failed)?.error).toBe('Storage failed')
+    expect(app.getFiles()).toHaveLength(2)
+    await storage.view.openFolder(storage.rootFolderId)
+    await createStoreAssemblyOptions(app, { signAssembly })()
+    expect(signAssembly.mock.calls[0]?.[0].steps.stored.path).toBe(
+      `docs/${FILE_NAME}`,
+    )
+  })
+
+  it('keeps a file added before a scheduled reopen clears the queue', async () => {
+    const signAssembly = vi.fn(async (params: StoreAssemblyParameters) => ({
+      params,
+      signature: 'test',
+    }))
+    setup({ storeUploads: { signAssembly }, reopenAfterUpload: true })
+    const app = uppy!
+    const completed = app.addFile({
+      name: 'stored.txt',
+      data: new File(['stored'], 'stored.txt'),
+    })
+    app.emit('upload-start', [app.getFile(completed)])
+    app.emit('upload-success', app.getFile(completed), {
+      status: 200,
+      uploadURL: 'https://example.test/stored.txt',
+    })
+    app.emit('complete', { successful: [app.getFile(completed)], failed: [] })
+    const pending = app.addFile({
+      name: 'pending.txt',
+      data: new File(['pending'], 'pending.txt'),
+    })
+    await new Promise((resolve) => setTimeout(resolve, 10))
+    expect(app.getFile(pending)?.name).toBe('pending.txt')
+    expect(app.getFiles()).toHaveLength(2)
+  })
+
+  it('preserves selections in sibling folders when reopening after an upload', async () => {
+    const signAssembly = vi.fn(async (params: StoreAssemblyParameters) => ({
+      params,
+      signature: 'test',
+    }))
+    const companion = setup({
+      storeUploads: { signAssembly },
+      reopenAfterUpload: true,
+    })
+    companion.folders.get('')!.push({ name: 'photos', isFolder: true })
+    companion.folders.set('photos/', [
+      { name: 'photo.txt', isFolder: false, size: 1, mimeType: 'text/plain' },
+    ])
+    const app = uppy!
+    const storage =
+      app.getPlugin<TransloaditStorage<Meta, Record<string, never>>>(
+        'TransloaditStorage',
+      )!
+    await page.getByRole('tab', { name: 'Transloadit Storage' }).click()
+    await expect.element(page.getByText('readme.md')).toBeVisible()
+    await page.getByText('docs', { exact: true }).click()
+    await expect.element(page.getByText('hello.txt')).toBeVisible()
+    const stored = app.addFile({
+      name: 'stored.txt',
+      data: new File(['stored'], 'stored.txt'),
+    })
+    app.emit('upload-start', [app.getFile(stored)])
+    app
+      .getPlugin<Dashboard<Meta, Record<string, never>>>('Dashboard')!
+      .showPanel('TransloaditStorage')
+    await storage.view.openFolder(storage.rootFolderId)
+    await storage.view.openFolder('photos%2F')
+    const photo = storage.view
+      .getDisplayedPartialTree()
+      .find((node) => node.type === 'file')
+    if (!photo) throw new Error('Missing photo file')
+    storage.view.toggleCheckbox(photo, false)
+    await storage.view.openFolder(storage.rootFolderId)
+    await storage.view.openFolder('docs%2F')
+    app.emit('upload-success', app.getFile(stored), {
+      status: 200,
+      uploadURL: 'https://example.test/stored.txt',
+    })
+    app.emit('complete', { successful: [app.getFile(stored)], failed: [] })
+    await expect.poll(() => app.getFiles()).toEqual([])
+    await vi.waitFor(() => expect(storage.getPluginState().loading).toBe(false))
+    expect(storage.view.getSelectedAmount()).toBe(1)
+    expect(await storage.view.donePicking()).toBe(true)
+    expect(app.getFiles().map((file) => file.name)).toEqual(['photo.txt'])
+  })
+
   it('renames a folder in one native move instead of walking it', async () => {
     // Manager mode is headless, as in a file library using `useS3Manager`.
     const companion = createMockS3Companion({ token: TOKEN })

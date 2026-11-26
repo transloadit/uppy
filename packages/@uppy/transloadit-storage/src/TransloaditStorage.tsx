@@ -503,9 +503,38 @@ export default class TransloaditStorage<
    * exist by now. Clearing on the next macrotask lets the other `complete`
    * listeners (Dashboard's own success state) run on the final result first.
    */
+  #canReopenAfterUpload(result: UploadResult<M, B>): boolean {
+    if (result.failed?.length || !result.successful?.length) return false
+    // The completing batch is still active while complete handlers run.
+    const successful = new Set(
+      result.successful.flatMap(({ id }) => {
+        const file = this.uppy.getFile(id)
+        return file?.progress.uploadComplete && file.error == null ? [id] : []
+      }),
+    )
+    return !this.#hasQueuedFiles(successful)
+  }
+
   #reopenAfterUpload = (result: UploadResult<M, B>): void => {
-    if (result.failed?.length || !result.successful?.length) return
+    if (!this.#canReopenAfterUpload(result)) return
+    const destination = this.#addedIn ?? this.#openUploadFolder
+    const destinationId =
+      destination === this.#uploadRoot
+        ? this.rootFolderId
+        : encodeURIComponent(destination)
     setTimeout(() => {
+      if (!this.#canReopenAfterUpload(result)) return
+      const { partialTree } = this.getPluginState()
+      if (partialTree == null) return
+      // Relist the uploaded folder when opened again, preserving selections
+      // in other cached folders while the panel refreshes its current view.
+      this.setPluginState({
+        partialTree: partialTree.map((node) =>
+          node.type !== 'file' && node.id === destinationId
+            ? { ...node, cached: false, nextPagePath: null }
+            : node,
+        ),
+      })
       try {
         this.uppy.clear()
       } catch {
@@ -518,7 +547,7 @@ export default class TransloaditStorage<
           | undefined
         dashboard?.showPanel?.(this.id)
       }
-      this.view.refreshCurrentFolder(true)
+      this.view.refreshCurrentFolder()
     }, 0)
   }
 }
