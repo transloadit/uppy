@@ -136,6 +136,7 @@ function PanelTopBar<M extends Meta, B extends Body>(
         <button
           className="uppy-DashboardContent-back"
           type="button"
+          aria-label={i18n('cancelAllUploads')}
           onClick={() => uppy.cancelAll()}
         >
           {i18n('cancel')}

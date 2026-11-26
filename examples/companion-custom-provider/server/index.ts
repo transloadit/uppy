@@ -48,7 +48,6 @@ const companionOptions: companion.CompanionInitOptions = {
   customProviders: {
     myunsplash: {
       config: {
-        // @ts-expect-error TODO solve this type error.
         // your oauth handlers
         authorize_url: AUTHORIZE_URL,
         access_url: ACCESS_URL,

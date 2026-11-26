@@ -85,9 +85,9 @@ jobs:
         # The other jobs use the version in .node-version, which should be the
         # newest one here.
         node-version:
-          - '22.23.4'
-          - '24.22.1'
-          - '26.12.1'
+          - '22.23.5'
+          - '24.22.3'
+          - '26.13.1'
     steps:
       - uses: actions/checkout@v7
       - uses: actions/setup-node@v7
@@ -187,6 +187,30 @@ jobs:
       - run: corepack yarn install --immutable
       - run: corepack yarn run typecheck
 
+  companion_compat:
+    name: Hosted Companion compatibility
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      # To read the current PR description for the opt-out marker.
+      pull-requests: read
+    steps:
+      - name: Checkout sources
+        uses: actions/checkout@v7
+        with:
+          fetch-depth: 2
+          persist-credentials: false
+      - name: Install Node.js
+        uses: actions/setup-node@v7
+        with:
+          node-version: '26.13.1'
+      - name: Test the check
+        run: node --test scripts/check-companion-compat.test.ts
+      - name: Check hosted Companion
+        run: node scripts/check-companion-compat.ts --ci
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+
   lint_js:
     name: Lint
     runs-on: ubuntu-latest
@@ -248,6 +272,19 @@ jobs:
       - run: corepack yarn install --immutable --mode=skip-build
       - name: Check for duplicate dependencies
         run: corepack yarn dedupe --check
+
+  # `yarn version` rewrites the CDN URLs in READMEs, docs and examples on every
+  # release. Running the same script here must leave nothing to change.
+  cdn_versions:
+    name: CDN versions
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version-file: .node-version
+      - run: node scripts/update-readme-versions.mjs
+      - run: git diff --exit-code
 
   # Deploying the site stays in deploy-website.yml, which needs Pages scopes.
   website:

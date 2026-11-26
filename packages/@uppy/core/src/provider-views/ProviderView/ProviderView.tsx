@@ -685,6 +685,7 @@ export default class ProviderView<M extends Meta, B extends Body> {
   }
 
   cancelSelection(): void {
+    this.#cancelDonePicking?.()
     this.#selectionRoots.clear()
     const { partialTree } = this.plugin.getPluginState()
     const newPartialTree: PartialTree = partialTree.map((item) =>
@@ -774,6 +775,7 @@ export default class ProviderView<M extends Meta, B extends Body> {
 
       const { partialTree } = this.plugin.getPluginState()
       const newPartialTree: PartialTree = [...partialTree]
+      const searchResults: string[] = []
 
       for (const file of items) {
         // Decode URI and split into path segments
@@ -848,16 +850,23 @@ export default class ProviderView<M extends Meta, B extends Body> {
               },
             }
           }
-          newPartialTree.push(node)
+          // no listing has included it yet
+          newPartialTree.push({ ...node, unlisted: true })
           parentId = encodedPath // This node becomes parent for the next iteration
           isParentFolderChecked = status === 'checked'
         })
+        // `parentId` is now this file's leaf node. A path with no segments has
+        // none, and a path that came twice is one result.
+        if (
+          segments.length > 0 &&
+          parentId != null &&
+          !searchResults.includes(parentId)
+        ) {
+          searchResults.push(parentId)
+        }
       }
 
-      this.plugin.setPluginState({
-        partialTree: newPartialTree,
-        searchResults: items.map((item) => item.requestPath),
-      })
+      this.plugin.setPluginState({ partialTree: newPartialTree, searchResults })
     }).catch(handleError(this.plugin.uppy))
     this.#doneLoading()
   }
@@ -1042,12 +1051,19 @@ export default class ProviderView<M extends Meta, B extends Body> {
     return result
   }
 
-  async donePicking(): Promise<void> {
+  #cancelDonePicking: (() => void) | undefined
+
+  /** Resolves with whether the files were added and the selection was reset. */
+  async donePicking(): Promise<boolean> {
     const { partialTree } = this.plugin.getPluginState()
 
-    if (this.isLoading) return
+    if (this.isLoading) return false
     this.setLoading(true)
+    let added = false
     await this.#withAbort(async (signal) => {
+      // This operation's controller: a later request replaces the field.
+      const controller = this.#abortController
+      this.#cancelDonePicking = () => controller?.abort()
       // 1. Enrich our partialTree by fetching all 'checked' but not-yet-fetched folders
       const enrichedTree: PartialTree = await PartialTreeUtils.afterFill(
         partialTree,
@@ -1061,6 +1077,7 @@ export default class ProviderView<M extends Meta, B extends Body> {
         },
         signal,
       )
+      if (signal.aborted) return
 
       // 2. Now that we know how many files there are - recheck aggregateRestrictions!
       const aggregateRestrictionError =
@@ -1070,14 +1087,23 @@ export default class ProviderView<M extends Meta, B extends Body> {
         return
       }
 
-      // 3. Add files
+      // 3. Add files, keeping the selection when every file was rejected
       const companionFiles = getCheckedFilesWithPaths(enrichedTree)
-      addFiles(companionFiles, this.plugin, this.provider)
+      if (!addFiles(companionFiles, this.plugin, this.provider)) {
+        this.plugin.setPluginState({ partialTree: enrichedTree })
+        return
+      }
 
       // 4. Reset state
       this.resetPluginState()
-    }).catch(handleError(this.plugin.uppy))
+      added = true
+    })
+      .catch(handleError(this.plugin.uppy))
+      .finally(() => {
+        this.#cancelDonePicking = undefined
+      })
     this.#doneLoading()
+    return added
   }
 
   /**

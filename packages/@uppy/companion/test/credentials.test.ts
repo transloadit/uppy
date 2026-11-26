@@ -156,6 +156,70 @@ test('refreshes Dropbox tokens with request-time credentials instead of configur
   })
 })
 
+test.each([
+  [
+    'https://gateway.example.com',
+    'https://gateway.example.com/companion/onedrive/redirect',
+  ],
+  ['', 'http://localhost:3020/companion/onedrive/redirect'],
+  ['  ', 'http://localhost:3020/companion/onedrive/redirect'],
+  [undefined, 'http://localhost:3020/companion/onedrive/redirect'],
+])(
+  'refreshes OneDrive using its OAuth redirect URI (gateway %j)',
+  async (gateway, redirectUri) => {
+    nock('http://localhost:2111')
+      .post('/onedrive-keys')
+      .reply(200, {
+        credentials: {
+          key: 'runtime-key',
+          secret: 'runtime-secret',
+          transloadit_gateway: gateway,
+        },
+      })
+    let received: unknown
+    const refresh = nock('https://login.live.com')
+      .post('/oauth20_token.srf', (body) => {
+        received = body
+        return true
+      })
+      .reply(200, { access_token: 'refreshed-access-token' })
+    const authToken = tokenService.generateEncryptedAuthToken(
+      {
+        onedrive: {
+          accessToken: 'expired',
+          refreshToken: 'fixture-refresh-token',
+        },
+      },
+      secret,
+    )
+    await request(
+      await getServer({
+        COMPANION_ONEDRIVE_KEY: 'static-key',
+        COMPANION_ONEDRIVE_SECRET: 'static-secret',
+        COMPANION_ONEDRIVE_KEYS_ENDPOINT: 'http://localhost:2111/onedrive-keys',
+        COMPANION_PATH: '/companion',
+      }),
+    )
+      .post('/companion/onedrive/refresh-token')
+      .set('uppy-auth-token', authToken)
+      .set(
+        'uppy-credentials-params',
+        Buffer.from(JSON.stringify({ params: 'runtime-account' })).toString(
+          'base64',
+        ),
+      )
+      .expect(200)
+    expect(refresh.isDone()).toBe(true)
+    expect(received).toEqual({
+      refresh_token: 'fixture-refresh-token',
+      grant_type: 'refresh_token',
+      client_id: 'runtime-key',
+      client_secret: 'runtime-secret',
+      redirect_uri: redirectUri,
+    })
+  },
+)
+
 test('does not follow a redirecting credentials endpoint', async () => {
   const elsewhere = nock('http://localhost:2111')
     .post('/zoom-keys')
@@ -238,6 +302,59 @@ describe('remote credentials with transloadit_gateway', () => {
     expect(decodeURIComponent(res.headers.location ?? '')).toContain(
       'redirect_uri=https://gateway.example.com/',
     )
+  })
+
+  test('unusable credentials are logged and return 424', async () => {
+    const error = vi.spyOn(logger, 'error').mockImplementation(() => {})
+    try {
+      // invalid gateway makes `new URL(path, gateway)` throw
+      const res = await connectWithGateway('not a valid url')
+      expect(res.status).toBe(424)
+      expect(res.text).toContain('Could not fetch credentials')
+      expect(error.mock.calls).toContainEqual([
+        'TypeError: Invalid URL',
+        'credentials.override.fail',
+        undefined,
+      ])
+    } finally {
+      error.mockRestore()
+    }
+  })
+
+  test('a failing credentials service returns 424 and logs its name and message', async () => {
+    const error = vi.spyOn(logger, 'error').mockImplementation(() => {})
+    try {
+      nock('http://localhost:2111').post('/dropbox-keys').reply(500)
+      const res = await request(await getDropboxServer()).get(
+        `/connect/dropbox?state=${encodeURIComponent(state)}`,
+      )
+      expect(res.status).toBe(424)
+      expect(error.mock.calls).toContainEqual([
+        'ProviderApiError: HTTP 500: Could not fetch credentials',
+        'credentials.override.fail',
+        undefined,
+      ])
+    } finally {
+      error.mockRestore()
+    }
+  })
+
+  test("an error of Companion's own returns 500", async () => {
+    vi.spyOn(logger, 'error').mockImplementation(() => {})
+    const getFromState = vi
+      .spyOn(oAuthState, 'getFromState')
+      .mockImplementation(() => {
+        throw new Error('bug')
+      })
+    try {
+      const res = await request(await getDropboxServer()).get(
+        `/connect/dropbox?state=${encodeURIComponent(state)}`,
+      )
+      expect(res.status).toBe(500)
+    } finally {
+      getFromState.mockRestore()
+      vi.restoreAllMocks()
+    }
   })
 })
 

@@ -46,3 +46,15 @@ test('keeps intentional authorization failures at debug level', async () => {
   )
   expect(errors).not.toHaveBeenCalled()
 })
+
+test('logs the original error even when mapping throws', async () => {
+  const provider = new MappingProvider({ allowLocalUrls: false })
+  const original = new Error('SDK failure')
+  const mappingError = new Error('Mapping failed')
+  vi.spyOn(provider, 'mapProviderError').mockImplementation(() => {
+    throw mappingError
+  })
+  const log = vi.spyOn(logger, 'error').mockImplementation(() => {})
+  await expect(provider.fail(original)).rejects.toBe(mappingError)
+  expect(log).toHaveBeenCalledExactlyOnceWith(original, 'test.provider')
+})

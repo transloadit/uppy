@@ -1,7 +1,11 @@
 import type { OptionsInit, Response } from 'got'
 
 import type { S3ClientOptions } from '../../../schemas/companion.js'
-import type { ProviderSimpleAuthOptions } from '../Provider.js'
+import type {
+  ProviderMoveItemOptions,
+  ProviderMoveItemResponse,
+  ProviderSimpleAuthOptions,
+} from '../Provider.js'
 import type { ParsedTransloaditStorageOptions } from './config.js'
 import type { StorageGrant } from './grant.js'
 import type {
@@ -275,6 +279,17 @@ export default class TransloaditStorageProvider extends S3Provider<ParsedTranslo
     }
   }
 
+  /** The catalog uses NFC paths; normalize before the base session and move checks. */
+  override moveItem(
+    options: ProviderMoveItemOptions<S3UserSession>,
+  ): Promise<ProviderMoveItemResponse> {
+    return super.moveItem({
+      ...options,
+      id: options.id.normalize('NFC'),
+      destination: options.destination.normalize('NFC'),
+    })
+  }
+
   /**
    * One signed call to Transloadit's catalog moves a file or a whole folder
    * and keeps asset identity; it never falls back to S3 copy/delete.
@@ -288,9 +303,6 @@ export default class TransloaditStorageProvider extends S3Provider<ParsedTranslo
     id: string,
     destination: string,
   ): Promise<ItemRef> {
-    // The catalog stores NFC paths; compare its response with that representation.
-    id = id.normalize('NFC')
-    destination = destination.normalize('NFC')
     // Sign with the Workspace key pair the session's S3 client uses: in dynamic
     // mode the SDK has it cached, so a move costs no extra resolver call.
     const {

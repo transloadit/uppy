@@ -131,7 +131,8 @@ $ companion
 Standalone configuration can also come from `COMPANION_CONFIG_JSON` (a JSON object),
 `COMPANION_CONFIG_FILE` (a JSON file path), or `companion --config path/to/config.json`
 (`-c` also works). A command-line path takes precedence over `COMPANION_CONFIG_FILE`.
-Choose either inline JSON or a file; setting both is an error. Configuration values
+Empty or whitespace-only inline JSON is treated as unset. Choose either inline JSON
+or a file; setting both is an error. Configuration values
 override environment-derived options, and explicit options passed to `standalone()`
 override both.
 

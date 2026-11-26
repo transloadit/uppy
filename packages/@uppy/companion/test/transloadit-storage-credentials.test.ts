@@ -319,6 +319,55 @@ test('normalizes native move paths before signing and comparing the catalog resp
   })
 })
 
+test('refuses a native folder move into itself across Unicode representations', async () => {
+  const { provider, companion, moves, grantSession } = await fixture()
+  const session = await grantSession({ scopes: ['read', 'write'] })
+  await expect(
+    provider.moveItem({
+      companion,
+      providerUserSession: session,
+      id: 'tenant-1/café/',
+      destination: 'tenant-1/cafe\u0301/sub/',
+    }),
+  ).rejects.toEqual(userError('S3_FOLDER_INTO_ITSELF'))
+  expect(moves).toEqual([])
+})
+
+test('treats equivalent native move paths as a no-op', async () => {
+  const { provider, companion, moves, grantSession } = await fixture()
+  const session = await grantSession({ scopes: ['read', 'write'] })
+  expect(
+    await provider.moveItem({
+      companion,
+      providerUserSession: session,
+      id: 'tenant-1/café/',
+      destination: 'tenant-1/cafe\u0301/',
+    }),
+  ).toEqual({
+    id: 'tenant-1/café/',
+    requestPath: encodeURIComponent('tenant-1/café/'),
+  })
+  expect(moves).toEqual([])
+})
+
+test('checks native session prefixes against normalized move paths', async () => {
+  const { provider, companion, moves, grantSession } = await fixture()
+  const session = await grantSession({
+    scopes: ['read', 'write'],
+    prefix: 'tenant-1/café/',
+  })
+  await provider.moveItem({
+    companion,
+    providerUserSession: session,
+    id: 'tenant-1/cafe\u0301/a.jpg',
+    destination: 'tenant-1/cafe\u0301/b.jpg',
+  })
+  expect(JSON.parse(moves[0]?.get('params') ?? '{}')).toMatchObject({
+    source: 'tenant-1/café/a.jpg',
+    destination: 'tenant-1/café/b.jpg',
+  })
+})
+
 test.each([
   {
     workspaces: { [workspace]: { key: 'k', secret: 's' } },

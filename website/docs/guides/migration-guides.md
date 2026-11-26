@@ -282,7 +282,7 @@ bucket. A multipart upload only works if your server turns the same input into
 the same key on every request, because Uppy keeps passing the key it generated
 to `signRequest`. A server that generates a unique key at create time fails at
 the first part with `NoSuchUpload`. The
-[Node.js](https://github.com/transloadit/uppy/blob/main/examples/aws-nodejs/routes/presign.js)
+[Node.js](https://github.com/transloadit/uppy/blob/main/examples/aws-nodejs/routes/presign.ts)
 and
 [PHP](https://github.com/transloadit/uppy/blob/main/examples/aws-php/s3-sign.php)
 signer examples show how to return the key correctly.
@@ -583,6 +583,15 @@ built tightly coupled for `@uppy/dashboard`. With the new headless components
 and hooks, we want go all in those components and remove the confusing,
 inflexible ones.
 
+:::note Update
+
+`@uppy/status-bar` was later restored and remains supported for Angular and for
+setups without a JavaScript build step, such as server-rendered apps (PHP,
+Rails, Django) using the CDN bundle or plain `<script>` tags. In those setups
+you can keep using it and skip the steps below.
+
+:::
+
 **Migration steps:**
 
 1. Remove `@uppy/status-bar` from your dependencies
@@ -746,7 +755,7 @@ const { someThingMyBackendReturns } = uppy.getFile(id).response.body!
   would normally do for Companion, so you don’t have to implement that yourself.
 
   As long as you return the JSON for the expected endpoints (see our
-  [server example](https://github.com/transloadit/uppy/blob/main/examples/aws-nodejs/index.js)),
+  [server example](https://github.com/transloadit/uppy/blob/uppy@4.18.3/examples/aws-nodejs/index.js)),
   you only need to set `endpoint`.
 
   If you are using Companion, rename the options. If you have a lot of

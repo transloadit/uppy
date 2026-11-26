@@ -865,6 +865,53 @@ describe('src/Core', () => {
       })
     })
 
+    it('should keep files that onBeforeFileAdded adds via setState during addFiles', () => {
+      let added = false
+      using core = new Core({
+        onBeforeFileAdded: () => {
+          if (!added) {
+            added = true
+            core.addFile({
+              name: 'from-hook.txt',
+              type: 'text/plain',
+              data: new Blob(['x']),
+            })
+          }
+          return true
+        },
+      })
+
+      core.addFiles(
+        ['a.txt', 'b.txt'].map((name) => ({
+          name,
+          type: 'text/plain',
+          data: new Blob([name]),
+        })),
+      )
+
+      expect(
+        core
+          .getFiles()
+          .map((f) => f.name)
+          .sort(),
+      ).toEqual(['a.txt', 'b.txt', 'from-hook.txt'])
+    })
+
+    it('should add many files in linear time', () => {
+      using core = new Core()
+      const files = Array.from({ length: 20000 }, (_, i) => ({
+        name: `file-${i}.txt`,
+        type: 'text/plain',
+        data: new Blob(['x']),
+      }))
+
+      const start = performance.now()
+      core.addFiles(files)
+      // ~0.15s with the linear loop, ~20s when it was quadratic
+      expect(performance.now() - start).toBeLessThan(3000)
+      expect(core.getFiles()).toHaveLength(20000)
+    })
+
     it('should add a file', async () => {
       const fileData = await fetchTestImage()
       const fileAddedEventMock = vi.fn()
@@ -1632,6 +1679,100 @@ describe('src/Core', () => {
           expect.objectContaining({ id: fileId3 }),
         )
         expect(onUpload).toHaveBeenCalledTimes(1)
+      })
+    })
+    describe('while the original upload is still running', () => {
+      // Uploader whose files succeed or fail when the test says so.
+      function controlledUploader(core: Core<any, any>) {
+        const pending = new Map<
+          string,
+          { resolve: () => void; reject: (err: Error) => void }
+        >()
+        let releaseUploadStep = () => {}
+        const uploadStepGate = new Promise<void>((resolve) => {
+          releaseUploadStep = resolve
+        })
+        core.addUploader(async (fileIDs) => {
+          await Promise.all(
+            fileIDs.map((id) =>
+              new Promise<void>((resolve, reject) => {
+                pending.set(id, { resolve, reject })
+              }).then(
+                () =>
+                  core.emit('upload-success', core.getFile(id), {
+                    status: 200,
+                    body: {},
+                    uploadURL: 'https://example.com',
+                  }),
+                (err) => core.emit('upload-error', core.getFile(id), err),
+              ),
+            ),
+          )
+          if (fileIDs.length > 1) await uploadStepGate
+        })
+        const settle = async (id: string, err?: Error) => {
+          await vi.waitFor(() => expect(pending.has(id)).toBe(true))
+          const { resolve, reject } = pending.get(id)!
+          pending.delete(id)
+          if (err) reject(err)
+          else resolve()
+        }
+        return { settle, releaseUploadStep }
+      }
+
+      async function addFiles(core: Core<any, any>) {
+        const data = await fetchTestImage()
+        return ['a.jpg', 'b.jpg'].map((name) =>
+          core.addFile({ source: 'vi', name, type: 'image/jpeg', data }),
+        )
+      }
+
+      it('should not report a retried file in the original upload result', async () => {
+        using core = new Core()
+        const { settle, releaseUploadStep } = controlledUploader(core)
+        releaseUploadStep()
+        const [a, b] = await addFiles(core)
+
+        const firstUpload = core.upload()
+        await settle(b, new Error('fail'))
+        const retry = core.retryAll()
+        await settle(a)
+
+        const firstResult = await firstUpload
+        expect(firstResult!.successful!.map((f) => f.id)).toEqual([a])
+        expect(firstResult!.failed).toEqual([])
+
+        await settle(b, new Error('fail again'))
+        const retryResult = await retry
+        expect(retryResult!.successful).toEqual([])
+        expect(retryResult!.failed!.map((f) => f.id)).toEqual([b])
+      })
+
+      it('should move retried files out of the original upload, removing it once empty', async () => {
+        using core = new Core()
+        const { settle, releaseUploadStep } = controlledUploader(core)
+        const [a, b] = await addFiles(core)
+
+        const firstUpload = core.upload()
+        await settle(a, new Error('fail'))
+        await settle(b, new Error('fail'))
+        const [firstUploadID] = Object.keys(core.getState().currentUploads)
+
+        core.retryUpload(a)
+        expect(core.getState().currentUploads[firstUploadID].fileIDs).toEqual([
+          b,
+        ])
+
+        core.retryUpload(b)
+        expect(core.getState().currentUploads[firstUploadID]).toBeUndefined()
+        expect(
+          Object.values(core.getState().currentUploads).map((u) => u.fileIDs),
+        ).toEqual([[a], [b]])
+
+        releaseUploadStep()
+        const firstResult = await firstUpload
+        expect(firstResult!.successful).toEqual([])
+        expect(firstResult!.failed).toEqual([])
       })
     })
   })
@@ -2748,6 +2889,15 @@ describe('src/Core', () => {
         '%{file} exceeds maximum allowed size of %{size}',
       )
       expect(core.i18n('test')).toBe('beep boop')
+    })
+
+    it('has the strings core itself uses without a locale pack', () => {
+      const logger = { debug: vi.fn(), warn: vi.fn(), error: vi.fn() }
+      using core = new Core({ logger })
+
+      // Used by the Google Picker when adding the picked files fails
+      expect(core.i18n('failedToAddFiles')).toBe('Failed to add files')
+      expect(logger.error).not.toHaveBeenCalled()
     })
   })
 

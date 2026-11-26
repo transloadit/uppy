@@ -5,6 +5,7 @@ import type { Request } from '../../types/express.js'
 import { timingSafeEqual } from 'node:crypto'
 
 import { publishAuthCallback } from '../auth-callback.js'
+import emitter from '../emitter/index.js'
 import {
   authCallbackErrorHtml,
   authCallbackSuccessHtml,
@@ -47,6 +48,30 @@ export default async function sendToken(
     next()
     return
   }
+  const allowedOrigins = companion.options.corsOrigins ?? true
+  const currentlyAllowed =
+    typeof allowedOrigins === 'function'
+      ? await new Promise<boolean>((resolve, reject) => {
+          allowedOrigins(clientOrigin, (err, finalOrigins) => {
+            if (err) {
+              reject(err)
+              return
+            }
+            resolve(isOriginAllowed(clientOrigin, finalOrigins))
+          })
+        })
+      : isOriginAllowed(clientOrigin, allowedOrigins)
+  const authCallbackToken = oAuthState.getFromState(
+    state,
+    'authCallbackToken',
+    secret,
+  )
+  if (!currentlyAllowed) {
+    // The pending token is gone: tell a waiting client the login failed.
+    if (authCallbackToken) emitter().emit(authCallbackToken, { error: true })
+    res.sendStatus(403)
+    return
+  }
   const customerDefinedAllowedOrigins = oAuthState.getFromState(
     state,
     'customerDefinedAllowedOrigins',
@@ -57,15 +82,11 @@ export default async function sendToken(
     customerDefinedAllowedOrigins &&
     !isOriginAllowed(clientOrigin, customerDefinedAllowedOrigins)
   ) {
+    if (authCallbackToken) emitter().emit(authCallbackToken, { error: true })
     next()
     return
   }
 
-  const authCallbackToken = oAuthState.getFromState(
-    state,
-    'authCallbackToken',
-    companion.options.secret,
-  )
   // only new Uppy clients will set an authCallbackToken in the state
   // in that case, we send the token through the emitter.
   if (authCallbackToken) {

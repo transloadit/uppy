@@ -7,6 +7,7 @@ import { z } from 'zod'
 
 import { downloadURL } from '../download.js'
 import { validateURL } from '../helpers/request.js'
+import { requiredString } from '../helpers/schemas.js'
 import { startDownUpload } from '../helpers/upload.js'
 import logger from '../logger.js'
 import { respondWithError } from '../provider/error.js'
@@ -19,13 +20,13 @@ const getAuthHeader = (token: string): { authorization: string } => ({
 const googlePickerBodySchema = z.discriminatedUnion('platform', [
   z.object({
     platform: z.literal('drive'),
-    accessToken: z.string().min(1),
-    fileId: z.string().min(1),
+    accessToken: requiredString,
+    fileId: requiredString,
   }),
   z.object({
     platform: z.literal('photos'),
-    accessToken: z.string().min(1),
-    url: z.string().min(1),
+    accessToken: requiredString,
+    url: requiredString,
   }),
 ])
 

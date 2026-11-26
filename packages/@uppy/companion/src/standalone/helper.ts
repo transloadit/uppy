@@ -392,7 +392,7 @@ const getConfigPath = (): string | undefined => {
 
 const getConfigFromFile = () => {
   const path = getConfigPath()
-  const inline = process.env['COMPANION_CONFIG_JSON']
+  const inline = process.env['COMPANION_CONFIG_JSON']?.trim() || undefined
   if (path && inline !== undefined) {
     throw new Error(
       'Choose either a Companion config file or COMPANION_CONFIG_JSON',

@@ -66,6 +66,21 @@ test('rejects conflicting file and inline configuration', () => {
   expect(() => getCompanionOptions()).toThrow('Choose either')
 })
 
+test.each(['', '  \n  '])(
+  'ignores blank inline configuration (%j)',
+  (inline) => {
+    vi.stubEnv('COMPANION_CONFIG_FILE', undefined)
+    vi.stubEnv('COMPANION_CONFIG_JSON', inline)
+    vi.stubEnv('COMPANION_DOMAIN', 'environment.example')
+    expect(getCompanionOptions().server?.host).toBe('environment.example')
+
+    const path = join(directory, 'blank-inline.json')
+    writeFileSync(path, JSON.stringify({ server: { host: 'file.example' } }))
+    vi.stubEnv('COMPANION_CONFIG_FILE', path)
+    expect(getCompanionOptions().server?.host).toBe('file.example')
+  },
+)
+
 test.each(['[]', 'null', '"credential-value"', '{"secret":"credential-value"'])(
   'rejects invalid configuration without echoing it (%s)',
   (inline) => {

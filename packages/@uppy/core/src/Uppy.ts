@@ -89,6 +89,12 @@ export type PartialTreeFile = {
   status: PartialTreeStatusFile
   parentId: PartialTreeId
   data: CompanionFile
+
+  /**
+   * `true` while no listing of its folder has included it: a search result or a
+   * deep link added it first. A folder shows these after its loaded pages.
+   */
+  unlisted?: true
 }
 
 export type PartialTreeFolderNode = {
@@ -111,6 +117,12 @@ export type PartialTreeFolderNode = {
     CompanionFile,
     'name' | 'icon' | 'thumbnail' | 'isFolder' | 'author' | 'custom'
   >
+
+  /**
+   * `true` while no listing of its folder has included it: a search result or a
+   * deep link added it first. A folder shows these after its loaded pages.
+   */
+  unlisted?: true
 }
 
 export type PartialTreeFolderRoot = {
@@ -1171,9 +1183,13 @@ export class Uppy<
           nextFilesState,
         )
 
-        // update state after onBeforeFileAdded
-        existingFiles = this.getState().files
-        nextFilesState = { ...existingFiles, ...nextFilesState }
+        // onBeforeFileAdded may have called setState; if so, merge in its changes.
+        // Only merge when state.files actually changed, to keep this loop linear.
+        const filesAfterHook = this.getState().files
+        if (filesAfterHook !== existingFiles) {
+          existingFiles = filesAfterHook
+          nextFilesState = { ...existingFiles, ...nextFilesState }
+        }
 
         if (
           !onBeforeFileAddedResult &&
@@ -2222,13 +2238,24 @@ export class Uppy<
 
     this.emit('upload', uploadID, this.getFilesByIds(fileIDs))
 
+    // A file belongs to one upload at a time. A retried file may still be
+    // listed in its earlier upload if that one is still running: move it here,
+    // so only this upload reports it, and drop uploads that this leaves empty.
+    const newFileIDs = new Set(fileIDs)
+    const otherUploads: typeof currentUploads = {}
+    for (const [id, upload] of Object.entries(currentUploads)) {
+      const remaining = upload.fileIDs.filter((f) => !newFileIDs.has(f))
+      if (remaining.length > 0)
+        otherUploads[id] = { ...upload, fileIDs: remaining }
+    }
+
     this.setState({
       allowNewUpload:
         this.opts.allowMultipleUploadBatches !== false &&
         this.opts.allowMultipleUploads !== false,
 
       currentUploads: {
-        ...currentUploads,
+        ...otherUploads,
         [uploadID]: {
           fileIDs,
           step: 0,
