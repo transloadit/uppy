@@ -15,6 +15,7 @@ import packageJson from '../package.json' with { type: 'json' }
 import locale from './locale.js'
 import {
   createStoreAssemblyOptions,
+  hasStoreAssemblyOptions,
   openFolderKey,
 } from './storeAssemblyOptions.js'
 
@@ -142,9 +143,9 @@ export default class TransloaditStorage<
   }
 
   /**
-   * With `storeUploads`, files dropped on the panel are stored in the folder
-   * that is open, which only a session that can write may do. Without it they
-   * join the Dashboard's uploads, as with `@uppy/s3`.
+   * With `storeUploads` or `createStoreAssemblyOptions`, files dropped on the
+   * panel are stored in the open folder, which only a session that can write
+   * may do. Otherwise they join the Dashboard's uploads, as with `@uppy/s3`.
    *
    * @experimental `@uppy/transloadit-storage` is experimental: its options,
    * behaviour and Companion endpoints will change incompatibly, also in
@@ -153,13 +154,34 @@ export default class TransloaditStorage<
   override get acceptsFileDrops(): boolean {
     return (
       this.opts.mode !== 'manager' &&
-      (this.opts.storeUploads == null ||
+      ((this.opts.storeUploads == null &&
+        !hasStoreAssemblyOptions(this.uppy, this.id)) ||
         (this.canWrite && this.#storesInOpenFolder()))
     )
   }
 
   /** The folder the queued files were added in; see `uploadFolderKey`. */
   #addedIn: string | undefined
+
+  #pendingFileDrops = 0
+
+  /** Reserves the accepted drop's folder while Dashboard reads its files. */
+  override beginFileDrop = (): (() => void) | undefined => {
+    if (
+      (!this.opts.storeUploads &&
+        !hasStoreAssemblyOptions(this.uppy, this.id)) ||
+      !this.acceptsFileDrops
+    )
+      return
+    this.#onFilesAdded([])
+    this.#pendingFileDrops += 1
+    let finished = false
+    return () => {
+      if (finished) return
+      finished = true
+      this.#pendingFileDrops -= 1
+    }
+  }
 
   /**
    * The storage key prefix uploads are stored under: the folder that was open
@@ -180,6 +202,7 @@ export default class TransloaditStorage<
 
   /** Failed processing and active retries still own their destination after transport completes. */
   #hasQueuedFiles(excludedIds?: ReadonlySet<string>): boolean {
+    if (this.#pendingFileDrops > 0) return true
     const activeFiles = new Set(
       Object.values(this.uppy.getState().currentUploads).flatMap(
         ({ fileIDs }) => fileIDs,

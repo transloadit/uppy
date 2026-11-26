@@ -137,7 +137,8 @@ are always available and use conditional copy/delete headers (`If-None-Match`, `
 preserves its locale overrides, and enables `waitForEncoding` so completion includes the Storage
 Step and reports its failures. If your application already owns an Assembly pipeline, call
 `createStoreAssemblyOptions(uppy, { signAssembly, storagePluginId })` explicitly and compose it
-deliberately; the widget will not overwrite that pipeline. Uploads at the browsing root use the
+deliberately; the widget will not overwrite that pipeline. Both setup paths refuse drops while a
+folder is loading or files queued for another folder wait. Uploads at the browsing root use the
 authenticated grant’s prefix, initializing the session first even if the panel has not been opened.
 An authentication failure stops the upload before requesting a signature. `onUploadRequest` can
 also expose an app-owned upload flow without enabling `storeUploads`.

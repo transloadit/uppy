@@ -53,6 +53,13 @@ class UIPlugin<
 
   title!: string
 
+  /**
+   * Reserves a destination before Dashboard reads a panel drop asynchronously.
+   * The returned cleanup runs after the files are added, even for an empty or
+   * failed drop. Experimental, like the storage panel's `acceptsFileDrops`.
+   */
+  beginFileDrop?: () => (() => void) | undefined
+
   getTargetPlugin<Me extends Meta, Bo extends Body>(
     target: PluginTarget<Me, Bo>,
   ): UIPlugin<any, Me, Bo> | undefined {

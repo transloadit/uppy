@@ -28,6 +28,18 @@ const TOKEN = 'test-auth-token'
 // biome-ignore lint/suspicious/noTemplateCurlyInString: a Transloadit placeholder.
 const FILE_NAME = '${file.name}'
 
+function dropFile(name: string): void {
+  const panel = document.querySelector('[data-uppy-panelType="PickerPanel"]')
+  if (!panel) throw new Error('Missing picker panel')
+  const dataTransfer = new DataTransfer()
+  dataTransfer.items.add(new File(['hi'], name))
+  for (const type of ['dragover', 'drop']) {
+    panel.dispatchEvent(
+      new DragEvent(type, { bubbles: true, cancelable: true, dataTransfer }),
+    )
+  }
+}
+
 /**
  * Serves a mock Companion and installs the plugin into an inline Dashboard.
  * The mock serves the `transloadit-storage` provider under its own path, with
@@ -363,23 +375,6 @@ describe('Transloadit Storage in the browser', () => {
       }>
       return (await build()).params.steps.stored.path
     }
-    const drop = (name: string) => {
-      const panel = document.querySelector(
-        '[data-uppy-panelType="PickerPanel"]',
-      )
-      if (!panel) throw new Error('Missing picker panel')
-      const dataTransfer = new DataTransfer()
-      dataTransfer.items.add(new File(['hi'], name))
-      for (const type of ['dragover', 'drop']) {
-        panel.dispatchEvent(
-          new DragEvent(type, {
-            bubbles: true,
-            cancelable: true,
-            dataTransfer,
-          }),
-        )
-      }
-    }
     const fileNames = () => uppy?.getFiles().map((file) => file.name)
 
     await page.getByRole('tab', { name: 'Transloadit Storage' }).click()
@@ -398,14 +393,14 @@ describe('Transloadit Storage in the browser', () => {
     await page.getByText('docs', { exact: true }).click()
     await vi.waitFor(() => expect(plugin.getPluginState().loading).toBeTruthy())
     expect(plugin.acceptsFileDrops).toBe(false)
-    drop('too-early.txt')
+    dropFile('too-early.txt')
     expect(fileNames()).toEqual([])
     release()
     await expect.element(page.getByText('hello.txt')).toBeVisible()
 
     // Added in docs/: stored there, even when the panel is at the root by
     // the time the upload starts.
-    drop('report.txt')
+    dropFile('report.txt')
     await expect.poll(fileNames).toEqual(['report.txt'])
     dashboard.showPanel('TransloaditStorage')
     await plugin.view.openFolder(plugin.rootFolderId)
@@ -423,10 +418,104 @@ describe('Transloadit Storage in the browser', () => {
     expect(plugin.acceptsFileDrops).toBe(true)
     dashboard.showPanel('TransloaditStorage')
     await expect.element(page.getByText('readme.md')).toBeVisible()
-    drop('root.txt')
+    dropFile('root.txt')
     await expect.poll(fileNames).toEqual(['root.txt'])
     // biome-ignore lint/suspicious/noTemplateCurlyInString: a Transloadit placeholder.
     expect(await storedPath()).toBe('${file.name}')
+  })
+
+  it('guards folder-dependent drops with manually configured Assembly options', async () => {
+    const companion = createMockS3Companion({ token: TOKEN })
+    network.use(...toMswHandlers(companion, COMPANION, { http }))
+    const target = document.createElement('div')
+    document.body.appendChild(target)
+    uppy = new Uppy()
+    const app = uppy
+    const signAssembly = vi.fn(async (params: StoreAssemblyParameters) => ({
+      params,
+      signature: 'test',
+    }))
+    const assemblyOptions = createStoreAssemblyOptions(app, {
+      signAssembly,
+      storagePluginId: 'ManagedStorage',
+    })
+    app
+      .use(FixtureUploader, { assemblyOptions })
+      .use(Dashboard, { target, inline: true })
+      .use(TransloaditStorage, {
+        id: 'ManagedStorage',
+        companionUrl: COMPANION,
+      })
+    const storage =
+      app.getPlugin<TransloaditStorage<Meta, Record<string, never>>>(
+        'ManagedStorage',
+      )!
+    await page.getByRole('tab', { name: 'Transloadit Storage' }).click()
+    await expect.element(page.getByText('readme.md')).toBeVisible()
+    let release = () => {}
+    const held = new Promise<void>((resolve) => {
+      release = resolve
+    })
+    network.use(
+      http.get(`${COMPANION}/transloadit-storage/list/docs%2F`, async () => {
+        await held
+      }),
+    )
+    await page.getByText('docs', { exact: true }).click()
+    await vi.waitFor(() =>
+      expect(storage.getPluginState().loading).toBeTruthy(),
+    )
+    expect(storage.acceptsFileDrops).toBe(false)
+    dropFile('too-early.txt')
+    expect(app.getFiles()).toEqual([])
+    release()
+    await expect.element(page.getByText('hello.txt')).toBeVisible()
+    expect(storage.acceptsFileDrops).toBe(true)
+    dropFile('report.txt')
+    await expect
+      .poll(() => app.getFiles().map((file) => file.name))
+      .toEqual(['report.txt'])
+    app
+      .getPlugin<Dashboard<Meta, Record<string, never>>>('Dashboard')!
+      .showPanel('ManagedStorage')
+    await storage.view.openFolder(storage.rootFolderId)
+    await expect.element(page.getByText('readme.md')).toBeVisible()
+    dropFile('wrong-folder.txt')
+    expect(app.getFiles().map((file) => file.name)).toEqual(['report.txt'])
+    expect(storage.acceptsFileDrops).toBe(false)
+    await assemblyOptions()
+    expect(signAssembly.mock.calls[0]?.[0].steps.stored.path).toBe(
+      `docs/${FILE_NAME}`,
+    )
+  })
+
+  it('pins the destination before Dashboard asynchronously reads dropped files', async () => {
+    const signAssembly = vi.fn(async (params: StoreAssemblyParameters) => ({
+      params,
+      signature: 'test',
+    }))
+    setup({ storeUploads: { signAssembly } })
+    const app = uppy!
+    const storage =
+      app.getPlugin<TransloaditStorage<Meta, Record<string, never>>>(
+        'TransloaditStorage',
+      )!
+    await page.getByRole('tab', { name: 'Transloadit Storage' }).click()
+    await expect.element(page.getByText('readme.md')).toBeVisible()
+    await page.getByText('docs', { exact: true }).click()
+    await expect.element(page.getByText('hello.txt')).toBeVisible()
+
+    dropFile('report.txt')
+    await storage.view.openFolder(storage.rootFolderId)
+    await expect
+      .poll(() => app.getFiles().map((file) => file.name))
+      .toEqual(['report.txt'])
+    await createStoreAssemblyOptions(app, { signAssembly })()
+
+    expect(signAssembly.mock.calls[0]?.[0].steps.stored.path).toBe(
+      `docs/${FILE_NAME}`,
+    )
+    expect(storage.acceptsFileDrops).toBe(false)
   })
 
   it('renames a folder in one native move instead of walking it', async () => {

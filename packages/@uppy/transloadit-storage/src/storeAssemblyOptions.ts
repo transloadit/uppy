@@ -4,6 +4,18 @@ import type TransloaditStorage from './TransloaditStorage.js'
 
 import { UserFacingApiError } from '@uppy/core'
 
+// The helper may be configured before its storage plugin is installed. Track
+// targets by Uppy instance as well as plugin ID so both setup orders work.
+const storageUploadTargets = new WeakMap<object, Set<string>>()
+
+/** Whether this plugin is a destination for manually configured Assembly options. */
+export function hasStoreAssemblyOptions<M extends Meta, B extends Body>(
+  uppy: Uppy<M, B>,
+  pluginId: string,
+): boolean {
+  return storageUploadTargets.get(uppy)?.has(pluginId) ?? false
+}
+
 /**
  * The subset of `@uppy/transloadit`'s AssemblyParameters this helper builds.
  *
@@ -116,6 +128,12 @@ export function createStoreAssemblyOptions<M extends Meta, B extends Body>(
   options: StoreUploadsOptions & { storagePluginId?: string },
 ): () => Promise<SignedAssemblyOptions> {
   const pluginId = options.storagePluginId ?? 'TransloaditStorage'
+  let targets = storageUploadTargets.get(uppy)
+  if (!targets) {
+    targets = new Set()
+    storageUploadTargets.set(uppy, targets)
+  }
+  targets.add(pluginId)
   return async () => {
     const storage = uppy.getPlugin(pluginId) as
       | TransloaditStorage<M, B>
