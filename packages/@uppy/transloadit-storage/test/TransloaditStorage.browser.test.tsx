@@ -1073,6 +1073,36 @@ describe('Transloadit Storage in the browser', () => {
     expect(storage.acceptsFileDrops).toBe(false)
   })
 
+  it('ignores rejected external batches when the pre-connection queue is unbound', async () => {
+    const signAssembly = vi.fn(async (params: StoreAssemblyParameters) => ({
+      params,
+      signature: 'test',
+    }))
+    setup({ storeUploads: { signAssembly } })
+    const app = uppy!
+    const storage =
+      app.getPlugin<TransloaditStorage<Meta, Record<string, never>>>(
+        'TransloaditStorage',
+      )!
+    const early = new File(['early'], 'early.txt')
+    app.addFile({ name: 'early.txt', data: early })
+    app
+      .getPlugin<Dashboard<Meta, Record<string, never>>>('Dashboard')!
+      .showPanel('TransloaditStorage')
+    await expect.element(page.getByText('readme.md')).toBeVisible()
+    await page.getByText('docs', { exact: true }).click()
+    await expect.element(page.getByText('hello.txt')).toBeVisible()
+    const rejected = vi.fn()
+    app.on('restriction-failed', rejected)
+    app.addFiles([{ name: 'early.txt', data: early }])
+    expect(rejected).toHaveBeenCalledOnce()
+    expect(app.getFiles()).toHaveLength(1)
+    await storage.view.openFolder(storage.rootFolderId)
+    expect(storage.acceptsFileDrops).toBe(true)
+    await createStoreAssemblyOptions(app, { signAssembly })()
+    expect(signAssembly.mock.calls[0]?.[0].steps.stored.path).toBe(FILE_NAME)
+  })
+
   it('renames a folder in one native move instead of walking it', async () => {
     // Manager mode is headless, as in a file library using `useS3Manager`.
     const companion = createMockS3Companion({ token: TOKEN })

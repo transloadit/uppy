@@ -308,7 +308,8 @@ export default class TransloaditStorage<
 
   /** A new queue is stored in the folder open when its first files arrive. */
   #onFilesAdded = (files: UppyFile<M, B>[]): void => {
-    if (files.length > 0 && this.#addReservation) {
+    if (files.length === 0) return
+    if (this.#addReservation) {
       this.#addReservation.committed = true
     }
     const added = new Set(files.map((file) => file.id))
