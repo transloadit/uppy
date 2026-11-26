@@ -471,7 +471,7 @@ export default class TransloaditStorage<
    * listeners (Dashboard's own success state) run on the final result first.
    */
   #reopenAfterUpload = (result: UploadResult<M, B>): void => {
-    if (result.failed?.length) return
+    if (result.failed?.length || !result.successful?.length) return
     setTimeout(() => {
       try {
         this.uppy.clear()

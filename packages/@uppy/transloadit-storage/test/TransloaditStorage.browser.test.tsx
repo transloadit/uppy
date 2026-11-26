@@ -1103,6 +1103,108 @@ describe('Transloadit Storage in the browser', () => {
     expect(signAssembly.mock.calls[0]?.[0].steps.stored.path).toBe(FILE_NAME)
   })
 
+  it('reserves picker imports before reading a selected directory asynchronously', async () => {
+    const signAssembly = vi.fn(async (params: StoreAssemblyParameters) => ({
+      params,
+      signature: 'test',
+    }))
+    const companion = createMockS3Companion({
+      token: TOKEN,
+      folders: {
+        '': [{ name: 'docs', isFolder: true }],
+        'docs/': [{ name: 'photos', isFolder: true }],
+        'docs/photos/': [
+          { name: 'a.txt', isFolder: false, size: 1, mimeType: 'text/plain' },
+        ],
+      },
+    })
+    network.use(...toMswHandlers(companion, COMPANION, { http }))
+    uppy = new Uppy().use(FixtureUploader, {}).use(TransloaditStorage, {
+      companionUrl: COMPANION,
+      storeUploads: { signAssembly },
+    })
+    const app = uppy
+    const storage =
+      app.getPlugin<TransloaditStorage<Meta, Record<string, never>>>(
+        'TransloaditStorage',
+      )!
+    await storage.openFolderPath(null)
+    await storage.openFolderPath('docs/')
+    const photos = storage.view
+      .getDisplayedPartialTree()
+      .find((node) => node.type === 'folder')
+    if (!photos) throw new Error('Missing photos folder')
+    storage.view.toggleCheckbox(photos, false)
+    let release = () => {}
+    const held = new Promise<void>((resolve) => {
+      release = resolve
+    })
+    const requested = vi.fn()
+    network.use(
+      http.get(
+        `${COMPANION}/transloadit-storage/list/docs%2Fphotos%2F`,
+        async () => {
+          requested()
+          await held
+        },
+      ),
+    )
+    const picking = storage.view.donePicking()
+    await vi.waitFor(() => expect(requested).toHaveBeenCalledOnce())
+    await storage.view.openFolder(storage.rootFolderId)
+    release()
+    expect(await picking).toBe(true)
+    expect(app.getFiles().map((file) => file.name)).toEqual(['a.txt'])
+    await createStoreAssemblyOptions(app, { signAssembly })()
+    expect(signAssembly.mock.calls[0]?.[0].steps.stored.path).toBe(
+      `docs/${FILE_NAME}`,
+    )
+  })
+
+  it('keeps queued files when retrying a refused signature completes without uploads', async () => {
+    const signAssembly = vi.fn(async (params: StoreAssemblyParameters) => ({
+      params,
+      signature: 'test',
+    }))
+    setup({ storeUploads: { signAssembly }, reopenAfterUpload: true })
+    const app = uppy!
+    const storage =
+      app.getPlugin<TransloaditStorage<Meta, Record<string, never>>>(
+        'TransloaditStorage',
+      )!
+    app.addFile({ name: 'early.txt', data: new File(['early'], 'early.txt') })
+    app
+      .getPlugin<Dashboard<Meta, Record<string, never>>>('Dashboard')!
+      .showPanel('TransloaditStorage')
+    await expect.element(page.getByText('readme.md')).toBeVisible()
+    let release = () => {}
+    const held = new Promise<void>((resolve) => {
+      release = resolve
+    })
+    network.use(
+      http.get(`${COMPANION}/transloadit-storage/list/docs%2F`, async () => {
+        await held
+      }),
+    )
+    await page.getByText('docs', { exact: true }).click()
+    await vi.waitFor(() =>
+      expect(storage.getPluginState().loading).toBeTruthy(),
+    )
+    const build = createStoreAssemblyOptions(app, { signAssembly })
+    app.addPreProcessor(async () => {
+      await build()
+    })
+    await expect(app.upload()).rejects.toThrow(
+      'Wait for the folder to finish loading',
+    )
+    release()
+    await expect.element(page.getByText('hello.txt')).toBeVisible()
+    expect(await app.retryAll()).toMatchObject({ successful: [], failed: [] })
+    await new Promise((resolve) => setTimeout(resolve, 10))
+    expect(app.getFiles().map((file) => file.name)).toEqual(['early.txt'])
+    expect(signAssembly).not.toHaveBeenCalled()
+  })
+
   it('renames a folder in one native move instead of walking it', async () => {
     // Manager mode is headless, as in a file library using `useS3Manager`.
     const companion = createMockS3Companion({ token: TOKEN })

@@ -33,7 +33,7 @@ export type S3ManagerItem = PartialTreeFile | PartialTreeFolderNode
  */
 export type S3ManagerState = {
   authenticated: boolean | undefined
-  /** A string is the progress text of a listing or a long operation. */
+  /** Busy during navigation, listing or a long operation; a string is progress text. */
   loading: boolean | string
   currentFolderId: PartialTreeId
   /** The open folder's items, not the whole tree. */
@@ -175,7 +175,7 @@ export function createS3ManagerController(
 
   const readState = (state: UnknownProviderPluginState): S3ManagerState => ({
     authenticated: state.authenticated,
-    loading: state.loading,
+    loading: state.loading || Boolean(plugin.isNavigating),
     currentFolderId: state.currentFolderId,
     partialTree: view.getDisplayedPartialTree(),
     breadcrumbs: view.getBreadcrumbs(),

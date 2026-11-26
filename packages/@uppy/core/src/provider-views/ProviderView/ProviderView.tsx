@@ -1078,58 +1078,58 @@ export default class ProviderView<M extends Meta, B extends Body> {
     const { partialTree } = this.plugin.getPluginState()
 
     if (this.isLoading || this.plugin.isNavigating) return false
+    const finishAdding = this.plugin.beginAddingFiles?.()
+    if (finishAdding === false) return false
     const loadingId = this.#startLoading()
     let added = false
-    await this.#withAbort(async (signal) => {
-      // This operation's controller: a later request replaces the field.
-      const controller = this.#abortController
-      this.#cancelDonePicking = () => controller?.abort()
-      // 1. Enrich our partialTree by fetching all 'checked' but not-yet-fetched folders
-      const enrichedTree: PartialTree = await PartialTreeUtils.afterFill(
-        partialTree,
-        (path: PartialTreeId, fillSignal) =>
-          this.provider.list(path, { signal: fillSignal }),
-        this.validateSingleFile,
-        (n) => {
-          this.setLoading(
-            this.plugin.uppy.i18n('addedNumFiles', { numFiles: n }),
-          )
-        },
-        signal,
-      )
-      if (signal.aborted) return
+    try {
+      await this.#withAbort(async (signal) => {
+        // This operation's controller: a later request replaces the field.
+        const controller = this.#abortController
+        this.#cancelDonePicking = () => controller?.abort()
+        // 1. Enrich our partialTree by fetching all 'checked' but not-yet-fetched folders
+        const enrichedTree: PartialTree = await PartialTreeUtils.afterFill(
+          partialTree,
+          (path: PartialTreeId, fillSignal) =>
+            this.provider.list(path, { signal: fillSignal }),
+          this.validateSingleFile,
+          (n) => {
+            this.setLoading(
+              this.plugin.uppy.i18n('addedNumFiles', { numFiles: n }),
+            )
+          },
+          signal,
+        )
+        if (signal.aborted) return
 
-      // 2. Now that we know how many files there are - recheck aggregateRestrictions!
-      const aggregateRestrictionError =
-        this.validateAggregateRestrictions(enrichedTree)
-      if (aggregateRestrictionError) {
-        this.plugin.setPluginState({ partialTree: enrichedTree })
-        return
-      }
+        // 2. Now that we know how many files there are - recheck aggregateRestrictions!
+        const aggregateRestrictionError =
+          this.validateAggregateRestrictions(enrichedTree)
+        if (aggregateRestrictionError) {
+          this.plugin.setPluginState({ partialTree: enrichedTree })
+          return
+        }
 
-      // 3. Add files, keeping the selection when every file was rejected
-      const companionFiles = getCheckedFilesWithPaths(enrichedTree)
-      const finishAdding = this.plugin.beginAddingFiles?.()
-      if (finishAdding === false) return
-      try {
+        // 3. Add files, keeping the selection when every file was rejected
+        const companionFiles = getCheckedFilesWithPaths(enrichedTree)
         if (!addFiles(companionFiles, this.plugin, this.provider)) {
           this.plugin.setPluginState({ partialTree: enrichedTree })
           return
         }
-      } finally {
-        finishAdding?.()
-      }
 
-      // 4. Reset state
-      this.resetPluginState()
-      added = true
-    })
-      .catch(handleError(this.plugin.uppy))
-      .finally(() => {
-        this.#cancelDonePicking = undefined
+        // 4. Reset state
+        this.resetPluginState()
+        added = true
       })
-    this.#doneLoading(loadingId)
-    return added
+        .catch(handleError(this.plugin.uppy))
+        .finally(() => {
+          this.#cancelDonePicking = undefined
+        })
+      return added
+    } finally {
+      finishAdding?.()
+      this.#doneLoading(loadingId)
+    }
   }
 
   /**

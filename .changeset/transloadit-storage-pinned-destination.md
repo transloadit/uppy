@@ -1,9 +1,11 @@
 ---
 "@uppy/transloadit-storage": patch
 "@uppy/core": patch
+"@uppy/components": patch
 "@uppy/dashboard": patch
 "@uppy/locales": patch
 "@uppy/s3": patch
+"@uppy/transloadit": patch
 ---
 
 Transloadit Storage: uploads no longer land in the folder the user just left. Toolbar actions (such as "Upload files" and "New folder") are disabled while a folder is still listing, and with `storeUploads` the panel takes no dropped files then. Queued files are stored in the folder they were added in, even if the panel shows another folder by the time they upload; the panel takes no new files in another folder until those are uploaded or removed.
@@ -21,3 +23,5 @@ Multi-folder navigation is treated as one operation. Local selections and picker
 Toolbar actions also wait during paginated path navigation. Dismissing a file picker without a cancel event no longer leaves a folder reservation behind.
 
 Empty or rejected additions do not bind a previously unbound queue; provisional reservations are kept only after adding files or preparing an Assembly signature.
+
+Picker imports reserve their destination before reading selected directories. Headless managers report navigation as busy. Assembly-option failures remain retryable, and empty upload completions do not clear queued files.
