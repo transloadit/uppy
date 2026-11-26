@@ -1,6 +1,6 @@
 {
   "name": "@uppy/svelte",
-  "version": "6.0.0",
+  "version": "6.0.1",
   "description": "Uppy plugin that helps integrate Uppy into your Svelte project.",
   "type": "module",
   "sideEffects": [
@@ -48,19 +48,24 @@
   ],
   "scripts": {
     "build": "svelte-package",
-    "build:css": "mkdir -p dist && cp ../components/dist/styles.css dist/styles.css && cp ../components/dist/image-editor.css dist/image-editor.css",
-    "typecheck": "svelte-check --tsconfig ./tsconfig.json"
+    "build:css": "mkdir -p dist && cp ../components/dist/styles.css dist/styles.css && cp ../components/dist/image-editor.css dist/image-editor.css && cp ../components/dist/image-editor.css.map dist/image-editor.css.map",
+    "typecheck": "svelte-check --tsconfig ./tsconfig.json",
+    "test": "vitest run --silent='passed-only'"
   },
   "dependencies": {
     "@uppy/components": "workspace:^"
   },
   "devDependencies": {
     "@sveltejs/package": "^2.5.7",
+    "@sveltejs/vite-plugin-svelte": "^7.3.1",
     "@uppy/core": "workspace:^",
+    "@vitest/browser-playwright": "^5.1.0",
+    "playwright": "1.65.0",
     "svelte": "^5.56.5",
-    "svelte-check": "^4.7.6",
-    "tslib": "^2.8.1",
-    "typescript": "^6.0.3"
+    "svelte-check": "^4.7.7",
+    "typescript": "^6.0.3",
+    "vitest": "^5.1.0",
+    "vitest-browser-svelte": "^3.1.0"
   },
   "peerDependencies": {
     "@uppy/core": "workspace:^",

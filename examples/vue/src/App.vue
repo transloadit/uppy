@@ -7,6 +7,7 @@
 
       <dialog
         ref="dialogRef"
+        @close="closeModal"
         class="backdrop:bg-gray-500/50 rounded-lg shadow-xl p-0 fixed inset-0 m-auto"
       >
         <Webcam v-if="modalPlugin === 'webcam'" :close="closeModal" />
@@ -40,14 +41,16 @@
 
       <article>
         <h2 class="text-2xl my-4">With custom dropzone</h2>
-        <CustomDropzone :openModal="openModal" />
+        <CustomDropzone :open-modal="openModal" />
       </article>
     </main>
   </UppyContextProvider>
 </template>
 
 <script setup lang="ts">
-import Uppy, { type UppyFile } from '@uppy/core'
+import type { UppyFile } from '@uppy/core'
+
+import Uppy from '@uppy/core'
 import UppyImageEditor from '@uppy/image-editor'
 import UppyRemoteSources from '@uppy/remote-sources'
 import UppyScreenCapture from '@uppy/screen-capture'
@@ -61,6 +64,7 @@ import {
 } from '@uppy/vue'
 import UppyWebcam from '@uppy/webcam'
 import { computed, ref } from 'vue'
+
 import CustomDropzone from './Dropzone.vue'
 import ImageEditor from './ImageEditor.vue'
 import RemoteSource from './RemoteSource.vue'

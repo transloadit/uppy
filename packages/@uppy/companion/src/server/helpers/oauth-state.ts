@@ -1,5 +1,7 @@
+import type { Request } from '../../types/express.js'
+
 import crypto from 'node:crypto'
-import type { Request } from 'express'
+
 import { isRecord } from './type-guards.js'
 import { decrypt, encrypt } from './utils.js'
 
@@ -25,7 +27,10 @@ export const decodeState = (
   secret: string | Buffer,
 ): OAuthState => {
   const encodedState = decrypt(state, secret)
-  const parsed: unknown = JSON.parse(atob(encodedState))
+  // UTF-8, like encodeState (atob() would read each byte as a character)
+  const parsed: unknown = JSON.parse(
+    Buffer.from(encodedState, 'base64').toString(),
+  )
   if (!isOAuthState(parsed)) {
     throw new Error('Invalid OAuth state payload')
   }

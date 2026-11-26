@@ -1,5 +1,13 @@
 // Headless components
 
+// Types and utils
+export type {
+  NonNullableUppyContext,
+  UploadStatus,
+  UppyContext,
+  UppyState,
+} from './types.js'
+
 export {
   createGooglePickerController,
   type GooglePickerOptions,
@@ -31,9 +39,17 @@ export {
 export {
   createRemoteSourceController,
   type RemoteSourceKeys,
+  type RemoteSourceOptions,
   type RemoteSourceSnapshot,
   type RemoteSourceStore,
 } from './hooks/remote-source.js'
+export {
+  createS3ManagerController,
+  type S3ManagerItem,
+  type S3ManagerSnapshot,
+  type S3ManagerState,
+  type S3ManagerStore,
+} from './hooks/s3-manager.js'
 export {
   createScreenCaptureController,
   type ScreenCaptureSnapshot,
@@ -50,13 +66,6 @@ export {
   type ProviderIconProps,
 } from './ProviderIcon.js'
 export { default as Thumbnail, type ThumbnailProps } from './Thumbnail.js'
-// Types and utils
-export type {
-  NonNullableUppyContext,
-  UploadStatus,
-  UppyContext,
-  UppyState,
-} from './types.js'
 export {
   default as UploadButton,
   type UploadButtonProps,

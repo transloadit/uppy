@@ -1,4 +1,3 @@
-import { useEffect, useRef, useState } from 'preact/hooks'
 import type {
   Body,
   Meta,
@@ -6,13 +5,16 @@ import type {
   PartialTreeFolderNode,
 } from '../index.js'
 import type { I18n } from '../utils/index.js'
+import type ProviderView from './ProviderView/ProviderView.js'
+import type { ProviderAction } from './ProviderView/ProviderView.js'
+
+import { useEffect, useRef, useState } from 'preact/hooks'
+
 import { VirtualList } from '../utils/index.js'
 import { getApplicableActions } from './Item/components/ItemActionsMenu.js'
 import ItemActionsPopover from './Item/components/ItemActionsPopover.js'
 import useItemMenu from './Item/components/useItemMenu.js'
 import Item from './Item/index.js'
-import type ProviderView from './ProviderView/ProviderView.js'
-import type { ProviderAction } from './ProviderView/ProviderView.js'
 
 type BrowserProps<M extends Meta, B extends Body> = {
   displayedPartialTree: (PartialTreeFile | PartialTreeFolderNode)[]
@@ -22,16 +24,12 @@ type BrowserProps<M extends Meta, B extends Body> = {
   showTitles: boolean
   i18n: I18n
   isLoading: boolean | string
-  /** Set while a cancellable operation runs; renders a Cancel button. */
-  onCancelLoading?: (() => void) | undefined
   openFolder: ProviderView<M, B>['openFolder']
   noResultsLabel: string
   virtualList: boolean
   utmSource: string
   actions?: ProviderAction<M, B>[]
   runAction?: ProviderView<M, B>['runAction']
-  selectable?: boolean
-  onFileClick?: (file: PartialTreeFile | PartialTreeFolderNode) => void
 }
 
 function Browser<M extends Meta, B extends Body>(props: BrowserProps<M, B>) {
@@ -43,15 +41,12 @@ function Browser<M extends Meta, B extends Body>(props: BrowserProps<M, B>) {
     showTitles,
     i18n,
     isLoading,
-    onCancelLoading,
     openFolder,
     noResultsLabel,
     virtualList,
     utmSource,
     actions = [],
     runAction,
-    selectable = true,
-    onFileClick,
   } = props
 
   const [isShiftKeyPressed, setIsShiftKeyPressed] = useState(false)
@@ -79,30 +74,12 @@ function Browser<M extends Meta, B extends Body>(props: BrowserProps<M, B>) {
     }
   }, [])
 
-  // A long operation replaced the list, and with it whatever had focus: its
-  // Stop button takes over.
-  const stopRef = useRef<HTMLButtonElement>(null)
-  const canStop = Boolean(isLoading && onCancelLoading)
-  useEffect(() => {
-    if (canStop) stopRef.current?.focus()
-  }, [canStop])
-
   if (isLoading) {
     return (
       <div className="uppy-Provider-loading">
         <span role="status">
           {typeof isLoading === 'string' ? isLoading : i18n('loading')}
         </span>
-        {onCancelLoading && (
-          <button
-            ref={stopRef}
-            type="button"
-            className="uppy-u-reset uppy-c-btn uppy-c-btn-link uppy-Provider-loadingCancel"
-            onClick={onCancelLoading}
-          >
-            {i18n('stopOperation')}
-          </button>
-        )}
       </div>
     )
   }
@@ -133,8 +110,6 @@ function Browser<M extends Meta, B extends Body>(props: BrowserProps<M, B>) {
       toggleMenu={
         runAction ? (anchor) => menu.toggle(item.id, anchor) : undefined
       }
-      selectable={selectable}
-      onFileClick={onFileClick}
     />
   )
 

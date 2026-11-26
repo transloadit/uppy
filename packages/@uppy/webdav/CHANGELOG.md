@@ -1,5 +1,18 @@
 # @uppy/webdav
 
+## 2.0.2
+
+### Patch Changes
+
+- f58058d: Only access `localStorage` when a provider plugin's default token storage is used, so the plugins can be constructed during server-side rendering again.
+
+## 2.0.1
+
+### Patch Changes
+
+- 78970b1: Add a README, so the npm page is no longer empty.
+- c054368: Remove invalid `"types"` field from `package.json`.
+
 ## 2.0.0
 
 ### Minor Changes

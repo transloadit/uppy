@@ -2,7 +2,10 @@
  * oAuth callback.  Encrypts the access token and sends the new token with the response,
  */
 
-import type { Request, Response } from 'express'
+import type { Response } from 'express'
+
+import type { Request } from '../../types/express.js'
+
 import emitter from '../emitter/index.js'
 import {
   authCallbackErrorHtml,
@@ -12,9 +15,47 @@ import * as tokenService from '../helpers/jwt.js'
 import * as oAuthState from '../helpers/oauth-state.js'
 import logger from '../logger.js'
 
+/**
+ * Answer a failed login so the Uppy client waiting on this session's login
+ * hears about it. Clients that set an authCallbackToken wait on a socket and
+ * close the login window themselves; older ones get a postMessage. Returns
+ * false, leaving the response to the caller, when the session has no state
+ * of ours.
+ */
+export function sendLoginFailed(
+  req: Request,
+  res: Response,
+  secret: string | Buffer,
+  status = 400,
+): boolean {
+  const { state } = oAuthState.getGrantDynamicFromRequest(req)
+  let decoded: oAuthState.OAuthState | undefined
+  try {
+    decoded = state ? oAuthState.decodeState(state, secret) : undefined
+  } catch {
+    // Grant stores a `state` passed to /connect as is, so it can be anything.
+    return false
+  }
+  if (!decoded) return false
+  if (decoded.authCallbackToken) {
+    emitter().emit(decoded.authCallbackToken, { error: true })
+    res.status(status).send(authCallbackErrorHtml())
+  } else {
+    const { origin } = decoded
+    res
+      .status(status)
+      .send(
+        legacyAuthCallbackHtml(
+          { error: true },
+          typeof origin === 'string' ? origin : undefined,
+        ),
+      )
+  }
+  return true
+}
+
 export default function callback(req: Request, res: Response): void {
   const providerName = req.params['providerName']
-  const { companion } = req
 
   if (typeof providerName !== 'string' || providerName.length === 0) {
     res.sendStatus(400)
@@ -23,13 +64,14 @@ export default function callback(req: Request, res: Response): void {
   const secret = req.companion.options.secret
 
   const grantDynamic = oAuthState.getGrantDynamicFromRequest(req)
-  const origin =
-    grantDynamic.state &&
-    oAuthState.getFromState(grantDynamic.state, 'origin', secret)
-  const originString = typeof origin === 'string' ? origin : undefined
 
-  const accessToken = req.session?.grant?.response?.access_token
-  const refreshToken = req.session?.grant?.response?.refresh_token
+  const grant = req.session?.grant
+  const response = grant?.response
+  // One OAuth response mints one token: a repeated callback must not mint another.
+  if (grant) delete grant.response
+  // Grant passes an error callback's query through as the response, token fields included.
+  const accessToken = response?.error ? undefined : response?.access_token
+  const refreshToken = response?.refresh_token
 
   if (!accessToken) {
     logger.debug(
@@ -37,24 +79,9 @@ export default function callback(req: Request, res: Response): void {
       undefined,
       req.id,
     )
-    logger.debug(req.session?.grant?.response, 'callback.oauth.resp', req.id)
-    const authCallbackToken =
-      grantDynamic.state &&
-      oAuthState.getFromState(
-        grantDynamic.state,
-        'authCallbackToken',
-        companion.options.secret,
-      )
-    // only new Uppy clients will set an authCallbackToken in the state
-    // in that case, we send the token through the emitter.
-    if (authCallbackToken) {
-      emitter().emit(authCallbackToken, { error: true })
-      res.status(400).send(authCallbackErrorHtml())
-    } else {
-      // This is backwards compatible with old Uppy clients:
-      res
-        .status(400)
-        .send(legacyAuthCallbackHtml({ error: true }, originString))
+    logger.debug(response, 'callback.oauth.resp', req.id)
+    if (!sendLoginFailed(req, res, secret)) {
+      res.status(400).send(legacyAuthCallbackHtml({ error: true }, undefined))
     }
 
     return
@@ -77,16 +104,10 @@ export default function callback(req: Request, res: Response): void {
     undefined,
     req.id,
   )
-  const uppyAuthToken = tokenService.generateEncryptedAuthToken(
-    { [providerName]: req.companion.providerUserSession },
-    secret,
-    providerClass.authStateExpiry,
-  )
-
-  tokenService.addToCookiesIfNeeded(
+  const uppyAuthToken = tokenService.issueAuthToken(
     req,
     res,
-    uppyAuthToken,
+    providerName,
     providerClass.authStateExpiry,
   )
 
@@ -94,10 +115,21 @@ export default function callback(req: Request, res: Response): void {
     res.sendStatus(500)
     return
   }
-  res.redirect(
-    req.companion.buildURL(
-      `/${providerName}/send-token?uppyAuthToken=${uppyAuthToken}`,
-      true,
-    ),
+  const sendTokenUrl = req.companion.buildURL(
+    `/${providerName}/send-token?uppyAuthToken=${uppyAuthToken}`,
+    true,
   )
+  // send-token delivers only this token, and only to this session.
+  if (grant) grant.pendingAuthToken = uppyAuthToken
+  // Save before redirecting, like Grant: express-session sends the headers
+  // before its store write finishes, so send-token could miss the token.
+  if (typeof req.session?.save === 'function') {
+    req.session.save((err) => {
+      // send-token may then miss the token; the user can retry the login.
+      if (err) logger.error(err, 'callback.session.save.error', req.id)
+      res.redirect(sendTokenUrl)
+    })
+  } else {
+    res.redirect(sendTokenUrl)
+  }
 }

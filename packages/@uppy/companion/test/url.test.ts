@@ -34,35 +34,44 @@ const invalids = [
   // no url at all or unsupported protocol
   null,
   '',
+  123,
   'ftp://url.myendpoint.com/files',
 ]
 
 describe('url meta', () => {
   test("return a url's meta data", async () => {
-    return request(await getMockServer())
+    const res = await request(await getMockServer())
       .post('/url/meta')
       .set('Content-Type', 'application/json')
       .send({
         url: 'http://url.myendpoint.com/files',
       })
       .expect(200)
-      .then((res) => {
-        expect(res.body.size).toBe(7580)
-        expect(res.body.type).toBe('image/jpg')
-      })
+
+    expect(res.body.size).toBe(7580)
+    expect(res.body.type).toBe('image/jpg')
   })
 
   test.each(invalids)('return 400 for invalid url', async (urlCase) => {
     nockUrl()
 
-    return request(await getMockServer())
+    const res = await request(await getMockServer())
       .post('/url/meta')
       .set('Content-Type', 'application/json')
       .send({
         url: urlCase,
       })
       .expect(400)
-      .then((res) => expect(res.body.error).toBe('Invalid request body'))
+
+    expect(res.body.error).toBe('Invalid request body')
+  })
+
+  test('return 400 when there is no JSON body', async () => {
+    const res = await request(await getMockServer())
+      .post('/url/meta')
+      .expect(400)
+
+    expect(res.body.error).toBe('Invalid request body')
   })
 })
 
@@ -70,7 +79,7 @@ describe('url get', () => {
   test('url download gets instanitated', async () => {
     nockUrl()
 
-    return request(await getMockServer())
+    const res = await request(await getMockServer())
       .post('/url/get')
       .set('Content-Type', 'application/json')
       .send({
@@ -79,23 +88,34 @@ describe('url get', () => {
         protocol: 'tus',
       })
       .expect(200)
-      .then((res) => expect(res.body.token).toBeTruthy())
+
+    expect(res.body.token).toBeTruthy()
   })
 
-  test.each(
-    invalids,
-  )('downloads are not instantiated for invalid urls', async (urlCase) => {
-    nockUrl()
+  test.each(invalids)(
+    'downloads are not instantiated for invalid urls',
+    async (urlCase) => {
+      nockUrl()
 
-    return request(await getMockServer())
+      const res = await request(await getMockServer())
+        .post('/url/get')
+        .set('Content-Type', 'application/json')
+        .send({
+          url: urlCase,
+          endpoint: 'http://tusd.tusdemo.net/files',
+          protocol: 'tus',
+        })
+        .expect(400)
+
+      expect(res.body.error).toBe('Invalid request body')
+    },
+  )
+
+  test('return 400 when there is no JSON body', async () => {
+    const res = await request(await getMockServer())
       .post('/url/get')
-      .set('Content-Type', 'application/json')
-      .send({
-        url: urlCase,
-        endpoint: 'http://tusd.tusdemo.net/files',
-        protocol: 'tus',
-      })
       .expect(400)
-      .then((res) => expect(res.body.error).toBe('Invalid request body'))
+
+    expect(res.body.error).toBe('Invalid request body')
   })
 })

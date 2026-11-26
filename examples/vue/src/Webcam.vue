@@ -15,7 +15,8 @@
 
 <script setup lang="ts">
 import { useWebcam } from '@uppy/vue'
-import { onMounted } from 'vue'
+import { onBeforeUnmount, onMounted } from 'vue'
+
 import MediaCapture from './MediaCapture.vue'
 
 const props = defineProps<{
@@ -26,8 +27,9 @@ const webcam = useWebcam({ onSubmit: props.close })
 
 onMounted(() => {
   webcam.value.start()
-  return () => {
-    webcam.value.stop()
-  }
+})
+
+onBeforeUnmount(() => {
+  webcam.value.stop()
 })
 </script>

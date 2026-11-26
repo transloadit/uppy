@@ -1,22 +1,21 @@
-import {
-  type Body,
-  type Meta,
-  type UploadResult,
-  type Uppy,
-  UserFacingApiError,
-} from '@uppy/core'
+import type { Body, Meta, UploadResult, Uppy } from '@uppy/core'
 import type {
   ProviderAction,
   ProviderToolbarAction,
 } from '@uppy/core/provider-views'
 import type { LocaleStrings } from '@uppy/core/utils'
-import S3, { type S3Options, StorageIcon } from '@uppy/s3'
+import type { S3Options } from '@uppy/s3'
+
+import type { StoreUploadsOptions } from './storeAssemblyOptions.js'
+
+import { UserFacingApiError } from '@uppy/core'
+import S3, { StorageIcon } from '@uppy/s3'
+
 import packageJson from '../package.json' with { type: 'json' }
 import locale from './locale.js'
 import {
   createStoreAssemblyOptions,
   openFolderKey,
-  type StoreUploadsOptions,
 } from './storeAssemblyOptions.js'
 
 /**
@@ -132,8 +131,6 @@ export default class TransloaditStorage<
       ...opts,
       id: opts.id ?? 'TransloaditStorage',
       keepStateOnClose: opts.keepStateOnClose ?? true,
-      // A standalone library is a manager, not a picker, unless told otherwise.
-      mode: opts.mode ?? (opts.standalone ? 'manager' : 'picker'),
     })
     this.defaultLocale = {
       strings: { ...this.defaultLocale?.strings, ...locale.strings },
@@ -153,7 +150,10 @@ export default class TransloaditStorage<
    * minor releases.
    */
   override get acceptsFileDrops(): boolean {
-    return this.opts.storeUploads == null || this.canWrite
+    return (
+      this.opts.mode !== 'manager' &&
+      (this.opts.storeUploads == null || this.canWrite)
+    )
   }
 
   override builtInActions(): ProviderAction<M, B>[] {
@@ -287,10 +287,13 @@ export default class TransloaditStorage<
       } catch {
         // Some uploaders refuse to clear mid-flight; the refresh matters more.
       }
-      const dashboard = this.uppy.getPlugin('Dashboard') as
-        | { showPanel?: (id: string) => void }
-        | undefined
-      dashboard?.showPanel?.(this.id)
+      // A headless manager has no panel to return to.
+      if (this.opts.mode !== 'manager') {
+        const dashboard = this.uppy.getPlugin('Dashboard') as
+          | { showPanel?: (id: string) => void }
+          | undefined
+        dashboard?.showPanel?.(this.id)
+      }
       this.view.refreshCurrentFolder()
     }, 0)
   }

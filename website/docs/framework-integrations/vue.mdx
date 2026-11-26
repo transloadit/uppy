@@ -1,0 +1,258 @@
+---
+slug: /vue
+---
+
+import Tabs from '@theme/Tabs'
+import TabItem from '@theme/TabItem'
+import HeadlessComponentsShared from './_headless-components-shared.mdx'
+import HooksShared from './_hooks-shared.mdx'
+import ContextValue from './_context-value.mdx'
+
+# Vue
+
+[Vue][] components for the Uppy UI plugins.
+
+## Install
+
+<Tabs>
+  <TabItem value="npm" label="NPM" default>
+
+```shell
+npm install @uppy/vue
+```
+
+  </TabItem>
+
+  <TabItem value="yarn" label="Yarn">
+
+```shell
+yarn add @uppy/vue
+```
+
+  </TabItem>
+</Tabs>
+
+:::note
+
+You also need to install the UI plugin you want to use. For instance,
+`@uppy/dashboard`.
+
+:::
+
+To send files to Transloadit, follow the canonical
+[Vue + Uppy + Transloadit guide](/docs/guides/uppy-transloadit#vue). It includes
+the required server-side signing boundary.
+
+## Use
+
+Uppy offers three ways to build user interfaces:
+
+1. **Pre-composed, plug-and-play components.** Mainly `<Dashboard />`. The
+   downside is that you can’t customize the UI.
+2. **Headless components.** Smaller components, easier to override the styles or
+   compose them together with your own components.
+3. **Hooks.** Attach our logic to your own components, no restrictions, create a
+   tailor-made UI.
+
+### Components
+
+Pre-composed, plug-and-play components:
+
+- `<Dashboard />` renders [`@uppy/dashboard`](/docs/dashboard)
+- `<DashboardModal />` renders [`@uppy/dashboard`](/docs/dashboard) as a modal
+- `<StatusBar />` renders [`@uppy/status-bar`](/docs/status-bar)
+
+:::note
+
+`<DragDrop />` and `<ProgressBar />` were removed in Uppy 5.0. Use the headless
+[`<Dropzone />`](#dropzone-) component or the
+[`useDropzone`](#usedropzoneoptions) hook instead. The
+[`@uppy/drag-drop`](/docs/drag-drop) plugin itself is still supported for setups
+without a framework.
+
+:::
+
+### Headless Components
+
+:::tip
+
+Play around with the Vue headless components in StackBlitz
+
+:::
+
+:::note
+
+All components must be placed within a `UppyContextProvider`.
+
+:::
+
+Uppy’s headless components are smaller and more flexible. All components must be
+placed within a `UppyContextProvider`. They come styled as well but you can
+override the styles with data attributes, for example with `UploadButton`:
+
+```css
+button[data-uppy-element='upload-button'][data-state='uploading'] {
+  background-color: lightblue;
+}
+```
+
+#### `UppyContextProvider`
+
+Provides Uppy context to child components and manages global upload
+status/progress.
+
+```vue
+<script>
+import { UppyContextProvider } from '@uppy/vue'
+import Uppy from '@uppy/core'
+
+export default {
+  components: {
+    UppyContextProvider,
+  },
+  data() {
+    return {
+      uppy: new Uppy(),
+    }
+  },
+}
+</script>
+
+<template>
+  <UppyContextProvider :uppy="uppy">
+    <!-- Your components and/or Uppy components -->
+  </UppyContextProvider>
+</template>
+```
+
+<ContextValue />
+
+<HeadlessComponentsShared />
+
+### Hooks
+
+:::tip
+
+Play around with the Vue headless hooks in StackBlitz
+
+:::
+
+:::note
+
+All hooks must be used within a `UppyContextProvider`.
+
+:::
+
+<HooksShared />
+
+## Examples
+
+`useImageEditor` and `useGooglePicker` return a ref. Templates unwrap it, so you
+can write `editor.getImageProps()` there; in `<script>`, use `editor.value`.
+
+### Example: image editor with `useImageEditor`
+
+A minimal editor component. See [`useImageEditor`](#useimageeditor-file-) for
+all the controls. The hook reads `file` once, so give the component a `key`
+when the file can change.
+
+```vue
+<!-- ImageEditor.vue -->
+<script setup lang="ts">
+import type { UppyFile } from '@uppy/core'
+import { useImageEditor } from '@uppy/vue'
+
+const props = defineProps<{ file: UppyFile<any, any> }>()
+const emit = defineEmits<{ close: [] }>()
+
+const editor = useImageEditor({ file: props.file })
+const close = () => emit('close')
+</script>
+
+<template>
+  <img v-bind="editor.getImageProps()" style="max-width: 100%" />
+  <input v-bind="editor.getRotationSliderProps()" />
+  <button v-bind="editor.getRotateButtonProps(90)">Rotate</button>
+  <button v-bind="editor.getFlipHorizontalButtonProps()">Flip</button>
+  <button v-bind="editor.getCropSquareButtonProps()">Square</button>
+  <button v-bind="editor.getResetButtonProps()">Reset</button>
+  <button v-bind="editor.getCancelButtonProps({ onClick: close })">
+    Cancel
+  </button>
+  <button v-bind="editor.getSaveButtonProps({ onClick: close })">Save</button>
+</template>
+```
+
+Render it inside an `UppyContextProvider` whose Uppy instance has the
+`ImageEditor` plugin, for example from `<FilesList />`:
+
+```vue
+<script setup lang="ts">
+import { ref } from 'vue'
+import Uppy, { type UppyFile } from '@uppy/core'
+import ImageEditor from '@uppy/image-editor'
+import { Dropzone, FilesList, UppyContextProvider } from '@uppy/vue'
+import Editor from './ImageEditor.vue'
+
+const uppy = new Uppy().use(ImageEditor)
+const editing = ref<UppyFile<any, any> | null>(null)
+
+function editFile(file: UppyFile<any, any>) {
+  if (uppy.getPlugin('ImageEditor')?.canEditFile(file)) editing.value = file
+}
+</script>
+
+<template>
+  <UppyContextProvider :uppy="uppy">
+    <Editor
+      v-if="editing"
+      :key="editing.id"
+      :file="editing"
+      @close="editing = null"
+    />
+    <Dropzone />
+    <FilesList :edit-file="editFile" />
+  </UppyContextProvider>
+</template>
+
+<style src="@uppy/vue/css/style.css"></style>
+<style src="@uppy/vue/css/image-editor.css"></style>
+```
+
+### Example: Google Drive Picker with `useGooglePicker`
+
+A button that opens Google Drive’s picker. Render it inside an
+`UppyContextProvider` whose Uppy instance has the `GoogleDrivePicker` plugin,
+set up as explained in the [Google Drive Picker docs](/docs/google-drive-picker):
+
+```js
+new Uppy().use(GoogleDrivePicker, {
+  companionUrl: 'https://your-companion.com',
+  clientId: 'From Google Developer Console',
+  apiKey: 'From Google Developer Console',
+  appId: 'From Google Developer Console',
+})
+```
+
+For Google Photos, use `@uppy/google-photos-picker` and
+`pickerType: 'photos'`. Add an uploader plugin, such as
+[`@uppy/tus`](/docs/tus), to upload the picked files.
+
+```vue
+<script setup lang="ts">
+import { useGooglePicker } from '@uppy/vue'
+
+const drive = useGooglePicker({ pickerType: 'drive' })
+</script>
+
+<template>
+  <button type="button" :disabled="drive.loading" @click="drive.show()">
+    Import from Google Drive
+  </button>
+  <button v-if="drive.accessToken" type="button" @click="drive.logout()">
+    Sign out of Google
+  </button>
+</template>
+```
+
+[vue]: https://vuejs.org

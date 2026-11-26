@@ -62,7 +62,7 @@ export async function execDockerCommand(
   }
 }
 
-async function run(cmd: string, args: string[], env?: Record<string, string>) {
+function run(cmd: string, args: string[], env?: Record<string, string>) {
   // console.log('running command:', cmd, args.join(' '))
   return new Promise<void>((res, rej) => {
     const p = spawn(cmd, args, {

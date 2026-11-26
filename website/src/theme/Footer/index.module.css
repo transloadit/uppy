@@ -1,0 +1,140 @@
+/* A tinted ground rather than a hairline, so the footer separates itself on
+   every page — including the homepage, where the CTA above it ends in white. */
+.footer {
+  padding: 4rem 1.5rem 2rem;
+  background: var(--u-ink-50);
+  border-top: 1px solid var(--u-line);
+}
+
+.inner {
+  max-width: var(--u-container);
+  margin: 0 auto;
+  display: grid;
+  gap: 3rem;
+}
+
+@media screen and (min-width: 58rem) {
+  .inner {
+    grid-template-columns: minmax(0, 18rem) minmax(0, 1fr);
+    gap: 4rem;
+  }
+}
+
+/* ------------------------------------------------------------------- Brand */
+
+.lockup {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.625rem;
+  color: var(--u-ink-900);
+  font-size: 1.25rem;
+  font-weight: 600;
+  letter-spacing: -0.015em;
+}
+
+.lockup:hover {
+  color: var(--u-ink-900);
+  text-decoration: none;
+}
+
+.pitch {
+  margin: 1rem 0 1.5rem;
+  font-size: 0.9375rem;
+  line-height: 1.6;
+  color: var(--u-ink-500);
+  max-width: 22rem;
+}
+
+/* The same lockup as the navbar, not a second way of saying the same thing. */
+.parent {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.8125rem;
+  color: var(--u-ink-500);
+  transition: color 150ms var(--u-ease);
+}
+
+.parent:hover {
+  text-decoration: none;
+  color: var(--u-ink-900);
+}
+
+.parent img {
+  display: block;
+  /* Optically level with the lowercase text beside it. */
+  transform: translateY(0.5px);
+}
+
+/* ----------------------------------------------------------------- Columns */
+
+.columns {
+  display: grid;
+  gap: 2.5rem 2rem;
+  grid-template-columns: repeat(auto-fit, minmax(9rem, 1fr));
+}
+
+.columns h2 {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--u-ink-900);
+  margin: 0 0 0.875rem;
+}
+
+.columns ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.625rem;
+}
+
+.columns a {
+  font-size: 0.9375rem;
+  color: var(--u-ink-500);
+  transition: color 150ms var(--u-ease);
+}
+
+.columns a:hover {
+  color: var(--u-ink-900);
+  text-decoration: none;
+}
+
+/* ------------------------------------------------------------------- Legal */
+
+.legal {
+  max-width: var(--u-container);
+  margin: 3.5rem auto 0;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--u-line);
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 0.5rem 1.5rem;
+}
+
+.legal p {
+  margin: 0;
+  display: flex;
+  gap: 1.5rem;
+  font-size: 0.875rem;
+  /* ink-400 fails AA on this ground; ink-500 clears it. */
+  color: var(--u-ink-500);
+}
+
+.legal a {
+  color: var(--u-ink-500);
+}
+
+.legal a:hover {
+  color: var(--u-ink-700);
+  text-decoration: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .parent,
+  .columns a {
+    transition: none;
+  }
+}

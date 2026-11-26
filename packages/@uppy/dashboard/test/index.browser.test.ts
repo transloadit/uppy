@@ -1,9 +1,10 @@
+import '@uppy/core/css/style.css'
+import '@uppy/dashboard/css/style.css'
+
 import Uppy from '@uppy/core'
 import Dashboard from '@uppy/dashboard'
 import { expect, test } from 'vitest'
 import { page, userEvent } from 'vitest/browser'
-import '@uppy/core/css/style.css'
-import '@uppy/dashboard/css/style.css'
 
 // Normally you would use one of vitest's framework renderers, such as vitest-browser-react,
 // but that's overkill for us so we write our own plain HTML renderer.
@@ -23,12 +24,27 @@ test('Basic Dashboard functionality works in the browser', async () => {
     metaFields: [{ id: 'license', name: 'License' }],
   })
 
-  await expect.element(page.getByText('Drop files here')).toBeVisible()
+  await expect
+    .element(page.getByText('Drop files here or browse files'))
+    .toBeVisible()
   const fileInput = document.querySelector(
     '.uppy-Dashboard-input',
   ) as HTMLInputElement
   await userEvent.upload(fileInput, new File(['Hello, World!'], 'test.txt'))
   await expect.element(page.getByText('test.txt')).toBeVisible()
+  // Accessible names are more specific, but visible text and tooltips stay short.
+  const cancelAllButton = page.getByRole('button', {
+    name: 'Cancel all uploads',
+    exact: true,
+  })
+  await expect.element(cancelAllButton).toBeVisible()
+  await expect.element(cancelAllButton).toHaveTextContent('Cancel')
+  const removeButton = page.getByRole('button', {
+    name: 'Remove file test.txt',
+    exact: true,
+  })
+  await expect.element(removeButton).toBeVisible()
+  await expect.element(removeButton).toHaveAttribute('title', 'Remove file')
   await page.getByTitle('Edit file test.txt').click()
   const licenseInput = page.getByLabelText('License')
   await expect.element(licenseInput).toBeVisible()
@@ -47,7 +63,7 @@ test('Upload, pause, and resume functionality', async () => {
   let isPaused = false
   let progress = 0
 
-  const uppy = new Uppy({
+  using uppy = new Uppy({
     // Enable resumable uploads capability for pause/resume functionality
     restrictions: { maxNumberOfFiles: 1 },
   }).use(Dashboard, {
@@ -56,14 +72,14 @@ test('Upload, pause, and resume functionality', async () => {
     hideProgressAfterFinish: false, // Keep StatusBar visible after completion
   })
 
-  uppy.addUploader(async (fileIDs) => {
+  uppy.addUploader((fileIDs) => {
     const files = fileIDs.map((id) => uppy.getFile(id))
 
     // Emit upload-start event
     uppy.emit('upload-start', files)
 
     // Set initial progress state for all files
-    fileIDs.forEach((fileID) => {
+    for (const fileID of fileIDs) {
       const file = uppy.getFile(fileID)
       if (file) {
         uppy.setFileState(fileID, {
@@ -77,21 +93,21 @@ test('Upload, pause, and resume functionality', async () => {
           },
         })
       }
-    })
+    }
 
     // Simulate upload progress with pause/resume support
     const progressInterval = setInterval(() => {
-      fileIDs.forEach((fileID) => {
+      for (const fileID of fileIDs) {
         const file = uppy.getFile(fileID)
         if (!file) {
           clearInterval(progressInterval)
-          return
+          continue
         }
 
         // Check if file is paused
         if (file.isPaused) {
           isPaused = true
-          return
+          continue
         } else if (isPaused) {
           // Resuming from pause
           isPaused = false
@@ -145,7 +161,7 @@ test('Upload, pause, and resume functionality', async () => {
             uploadResolve?.()
           }
         }
-      })
+      }
     }, 200) // 200ms intervals for controlled testing
 
     return uploadPromise
@@ -181,11 +197,48 @@ test('Upload, pause, and resume functionality', async () => {
 
   // Verify upload has started by checking StatusBar state
   await expect(page.getByText(/Uploading: \d+%/)).toBeVisible()
+  const filePauseButton = page.getByRole('button', {
+    name: 'Pause upload test.txt',
+    exact: true,
+  })
+  await expect.element(filePauseButton).toBeVisible()
+  await expect.element(filePauseButton).toHaveAttribute('title', 'Pause upload')
+  const pauseAllButton = page.getByRole('button', {
+    name: 'Pause all uploads',
+    exact: true,
+  })
+  await expect.element(pauseAllButton).toBeVisible()
+  await expect.element(pauseAllButton).toHaveAttribute('title', 'Pause')
+  const cancelAllButtons = page.getByRole('button', {
+    name: 'Cancel all uploads',
+    exact: true,
+  })
+  expect(await cancelAllButtons.all()).toHaveLength(2)
+  // The top bar button keeps its visible text, the StatusBar button its tooltip.
+  await expect.element(cancelAllButtons.first()).toHaveTextContent('Cancel')
+  await expect
+    .element(cancelAllButtons.last())
+    .toHaveAttribute('title', 'Cancel')
 
   // Find and click pause button
   const pauseButton = page.getByTitle('Pause', { exact: true })
   await expect(pauseButton).toBeVisible()
   await pauseButton.click()
+
+  const fileResumeButton = page.getByRole('button', {
+    name: 'Resume upload test.txt',
+    exact: true,
+  })
+  await expect.element(fileResumeButton).toBeVisible()
+  await expect
+    .element(fileResumeButton)
+    .toHaveAttribute('title', 'Resume upload')
+  const resumeAllButton = page.getByRole('button', {
+    name: 'Resume all uploads',
+    exact: true,
+  })
+  await expect.element(resumeAllButton).toBeVisible()
+  await expect.element(resumeAllButton).toHaveAttribute('title', 'Resume')
 
   // Find and click resume button
   const resumeButton = page.getByTitle('Resume', { exact: true })
@@ -203,4 +256,89 @@ test('Upload, pause, and resume functionality', async () => {
 
   // Verify upload completion state using Playwright selector
   await expect(page.getByText('Complete', { exact: true })).toBeVisible()
+})
+
+test('onDrop runs while the drop event is dispatched', async () => {
+  render('<div id="uppy"></div>')
+  let droppedFileCount: number | undefined
+  new Uppy().use(Dashboard, {
+    target: '#uppy',
+    inline: true,
+    onDrop: (event) => {
+      droppedFileCount = event.dataTransfer?.files.length
+    },
+  })
+
+  await expect
+    .element(page.getByText('Drop files here or browse files'))
+    .toBeVisible()
+  const dataTransfer = new DataTransfer()
+  dataTransfer.items.add(new File(['Hello, World!'], 'test.txt'))
+  document
+    .querySelector('.uppy-Dashboard-inner')!
+    .dispatchEvent(
+      new DragEvent('drop', { bubbles: true, cancelable: true, dataTransfer }),
+    )
+
+  // Browsers empty the DataTransfer when dispatch ends,
+  // so onDrop must run before the handler awaits anything.
+  expect(droppedFileCount).toBe(1)
+  await expect.element(page.getByText('test.txt')).toBeVisible()
+})
+
+test('Non-resumable upload controls identify the affected file', async () => {
+  render('<div id="uppy"></div>')
+
+  using uppy = new Uppy().use(Dashboard, {
+    target: '#uppy',
+    inline: true,
+  })
+
+  uppy.setState({
+    capabilities: {
+      ...uppy.getState().capabilities,
+      individualCancellation: true,
+    },
+  })
+
+  const fileInput = document.querySelector(
+    '.uppy-Dashboard-input',
+  ) as HTMLInputElement
+  await userEvent.upload(fileInput, new File(['Hello, World!'], 'test.txt'))
+
+  const file = uppy.getFiles()[0]!
+  uppy.setFileState(file.id, {
+    progress: {
+      ...file.progress,
+      uploadStarted: Date.now(),
+      uploadComplete: false,
+      percentage: 25,
+      bytesUploaded: 3,
+      bytesTotal: file.size,
+    },
+  })
+
+  const fileCancelButton = page.getByRole('button', {
+    name: 'Cancel upload test.txt',
+    exact: true,
+  })
+  await expect.element(fileCancelButton).toBeVisible()
+  await expect
+    .element(fileCancelButton)
+    .toHaveAttribute('title', 'Cancel upload')
+})
+
+test('Only a single Informer is rendered', async () => {
+  render('<div id="uppy"></div>')
+  using uppy = new Uppy().use(Dashboard, {
+    target: '#uppy',
+    inline: true,
+  })
+
+  uppy.info('Hello', 'info', 60000)
+  await expect.element(page.getByText('Hello').first()).toBeVisible()
+
+  // Count the DOM nodes instead of checking visibility because a duplicate
+  // Informer is stacked exactly on top of the first one
+  expect(document.querySelectorAll('.uppy-Informer')).toHaveLength(1)
 })

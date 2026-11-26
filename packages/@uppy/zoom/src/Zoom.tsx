@@ -4,19 +4,22 @@ import type {
   Meta,
   UnknownProviderPlugin,
   UnknownProviderPluginState,
+  Uppy,
   UppyFile,
 } from '@uppy/core'
-import { UIPlugin, type Uppy } from '@uppy/core'
+import type { CompanionPluginOptions } from '@uppy/core/companion-client'
+import type { LocaleStrings } from '@uppy/core/utils'
+
+import { UIPlugin } from '@uppy/core'
 import {
-  type CompanionPluginOptions,
+  defaultStorage,
   getAllowedHosts,
   Provider,
-  tokenStorage,
 } from '@uppy/core/companion-client'
 import { ProviderViews } from '@uppy/core/provider-views'
-import type { LocaleStrings } from '@uppy/core/utils'
 // biome-ignore lint/style/useImportType: h is not a type
 import { type ComponentChild, h } from '@uppy/core/utils/preact'
+
 import packageJson from '../package.json' with { type: 'json' }
 import locale from './locale.js'
 
@@ -46,7 +49,7 @@ export default class Zoom<M extends Meta, B extends Body>
     super(uppy, opts)
     this.type = 'acquirer'
     this.files = []
-    this.storage = this.opts.storage || tokenStorage
+    this.storage = this.opts.storage || defaultStorage
     this.id = this.opts.id || 'Zoom'
     this.icon = () => (
       <svg

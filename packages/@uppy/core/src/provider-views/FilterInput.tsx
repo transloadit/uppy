@@ -1,4 +1,5 @@
 import type { I18n } from '../utils/index.js'
+
 import { useSearchForm } from './useSearchForm.js'
 
 interface FilterInputProps {
@@ -7,7 +8,6 @@ interface FilterInputProps {
   onSubmit: () => void
   inputLabel: string
   i18n: I18n
-  disabled?: boolean
 }
 
 /**
@@ -20,7 +20,6 @@ function FilterInput({
   onSubmit,
   inputLabel,
   i18n,
-  disabled = false,
 }: FilterInputProps) {
   const { formId } = useSearchForm(onSubmit)
 
@@ -34,7 +33,6 @@ function FilterInput({
         value={value}
         onInput={(e) => onChange((e.target as HTMLInputElement).value)}
         form={formId}
-        disabled={disabled}
         data-uppy-super-focusable
       />
       <svg
@@ -52,7 +50,6 @@ function FilterInput({
           className="uppy-u-reset uppy-ProviderBrowser-searchFilterReset"
           type="button"
           aria-label={i18n('resetFilter')}
-          disabled={disabled}
           onClick={() => onChange('')}
         >
           <svg

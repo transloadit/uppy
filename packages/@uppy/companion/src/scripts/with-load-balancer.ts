@@ -2,6 +2,7 @@
 
 import http from 'node:http'
 import process from 'node:process'
+
 import { execa, execaNode } from 'execa'
 import httpProxy from 'http-proxy'
 
@@ -64,8 +65,6 @@ await execa('yarn', ['workspace', '@uppy/companion', 'build'], {
 const startCompanion = ({ name, port }: { name: string; port: number }) =>
   execaNode('packages/@uppy/companion/dist/standalone/start-server.js', {
     nodeOptions: [
-      '-r',
-      'dotenv/config',
       // Watch mode support is limited to Windows and macOS at the time of writing.
       ...(isWindows || isOSX
         ? ['--watch-path', 'packages/@uppy/companion/dist', '--watch']
@@ -110,7 +109,7 @@ try {
   await Promise.all(companions)
 } finally {
   loadBalancer?.close()
-  companions.forEach((companion) => {
+  for (const companion of companions) {
     companion.kill()
-  })
+  }
 }

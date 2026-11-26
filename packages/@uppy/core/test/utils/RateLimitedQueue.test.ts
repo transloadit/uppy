@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest'
+
 import delay from '../../lib/utils/delay.js'
 import { RateLimitedQueue } from '../../lib/utils/RateLimitedQueue.js'
 
@@ -6,7 +7,8 @@ describe('RateLimitedQueue', () => {
   let pending = 0
   async function fn() {
     pending++
-    return delay(15).then(() => pending--)
+    await delay(15)
+    pending--
   }
 
   it('should run at most N promises at the same time', async () => {
@@ -35,7 +37,7 @@ describe('RateLimitedQueue', () => {
     expect(pending).toBe(0)
   })
 
-  it('should accept Infinity as limit', () => {
+  it('should accept Infinity as limit', async () => {
     const queue = new RateLimitedQueue(Infinity)
     const fn2 = queue.wrapPromiseFunction(fn)
 
@@ -54,9 +56,9 @@ describe('RateLimitedQueue', () => {
 
     expect(pending).toBe(10)
 
-    return result.then(() => {
-      expect(pending).toBe(0)
-    })
+    await result
+
+    expect(pending).toBe(0)
   })
 
   it('should accept non-promise function in wrapPromiseFunction()', () => {

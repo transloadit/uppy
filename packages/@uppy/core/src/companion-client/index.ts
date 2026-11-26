@@ -2,10 +2,8 @@
  * Manages communications with Companion
  */
 
-export { isAuthError } from './AuthError.js'
 export type { CompanionPluginOptions } from './CompanionPluginOptions.js'
 export type { CompanionErrorCode } from './errorCodes.js'
-export { default as getAllowedHosts } from './getAllowedHosts.js'
 export type {
   GooglePickerOptions,
   GooglePickerState,
@@ -20,6 +18,10 @@ export type {
   UnspecifiedMediaItem,
   VideoMediaItem,
 } from './googlePicker.js'
+
+export { isAuthError } from './AuthError.js'
+export { defaultStorage } from './defaultStorage.js'
+export { default as getAllowedHosts } from './getAllowedHosts.js'
 export {
   createGooglePickerController,
   createGooglePickerStoreAdapter,
@@ -32,4 +34,11 @@ export {
   type RequestOptions,
 } from './RequestClient.js'
 export { default as SearchProvider } from './SearchProvider.js'
-export * as tokenStorage from './tokenStorage.js'
+
+import * as deprecatedTokenStorage from './tokenStorage.js'
+
+/**
+ * @deprecated
+ *   Use `defaultStorage` instead.
+ */
+export const tokenStorage = deprecatedTokenStorage

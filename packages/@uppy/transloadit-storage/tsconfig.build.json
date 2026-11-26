@@ -8,6 +8,9 @@
   },
   "references": [
     {
+      "path": "../../../private/msw-setup/tsconfig.build.json"
+    },
+    {
       "path": "../../../private/s3-mock-companion/tsconfig.build.json"
     },
     {

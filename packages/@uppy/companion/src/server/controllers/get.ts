@@ -1,4 +1,7 @@
-import type { Request, Response } from 'express'
+import type { Response } from 'express'
+
+import type { Request } from '../../types/express.js'
+
 import { startDownUpload } from '../helpers/upload.js'
 import logger from '../logger.js'
 import { respondWithError } from '../provider/error.js'
@@ -16,7 +19,7 @@ export default async function get(req: Request, res: Response): Promise<void> {
     return
   }
 
-  const getSize = async () =>
+  const getSize = () =>
     provider.size({ id, providerUserSession, query: req.query })
 
   const download = () =>

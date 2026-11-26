@@ -1,7 +1,22 @@
 import type { S3Client } from '@aws-sdk/client-s3'
+import type {
+  Request as ExpressRequest,
+  RequestHandler as ExpressRequestHandler,
+} from 'express'
+import type { Promisable } from 'type-fest'
+
 import type { CredentialsFetchResponse } from '../schemas/companion.js'
 import type Provider from '../server/provider/Provider.js'
 import type { CompanionRuntimeOptions } from './companion-options.js'
+
+/**
+ * Express types `req.body` as `any`, but its contents depend on the client and
+ * on which body parser ran (Express 5 leaves it `undefined` when nothing was
+ * parsed). Type it as `unknown` so it has to be validated before use.
+ */
+type Params = ExpressRequest['params']
+export type Request<P = Params> = ExpressRequest<P, any, unknown>
+export type RequestHandler<P = Params> = ExpressRequestHandler<P, any, unknown>
 
 export type BuildUrl = (
   subPath: string,
@@ -38,7 +53,7 @@ export type CompanionContext = {
   s3ClientCreatePresignedPost?: S3Client
   /** The S3 provider's clients, one per bucket it has served, for the app's lifetime. */
   s3ProviderClients: Map<string, S3Client>
-  getProviderCredentials?: () => Promise<CredentialsFetchResponse | null>
+  getProviderCredentials?: () => Promisable<CredentialsFetchResponse | null>
 }
 
 export interface GrantDynamic {
@@ -69,12 +84,16 @@ declare global {
 declare module 'express-session' {
   export interface Session {
     grant?: {
+      provider?: string
       state?: string | null
       dynamic?: GrantDynamic | null
       response?: {
         access_token?: string
         refresh_token?: string
+        error?: unknown
       }
+      /** The uppyAuthToken callback minted for this session, until send-token delivers it. */
+      pendingAuthToken?: string
     }
   }
 }

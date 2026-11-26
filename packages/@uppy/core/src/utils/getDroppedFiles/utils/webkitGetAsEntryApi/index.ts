@@ -92,41 +92,37 @@ export default async function* getFilesFromDataTransfer(
   // Retrieving the dropped items must happen synchronously
   // otherwise only the first item gets treated and the other ones are garbage collected.
   // https://github.com/transloadit/uppy/pull/3998
-  const fileSystemHandles = await Promise.all(
-    Array.from(dataTransfer.items, async (item) => {
-      // biome-ignore lint/style/useConst: ...
-      let fileSystemHandle:
-        | FileSystemFileHandle
-        | FileSystemDirectoryHandle
-        | null
-        | undefined
+  const fileSystemHandles = Array.from(dataTransfer.items, (item) => {
+    // biome-ignore lint/style/useConst: ...
+    let fileSystemHandle:
+      | FileSystemFileHandle
+      | FileSystemDirectoryHandle
+      | null
+      | undefined
 
-      // TODO enable getAsFileSystemHandle API once we can get it working with subdirectories
-      // IMPORTANT: Need to check isSecureContext *before* calling getAsFileSystemHandle
-      // or else Chrome will crash when running in HTTP: https://github.com/transloadit/uppy/issues/4133
-      // if (window.isSecureContext && item.getAsFileSystemHandle != null)
-      // fileSystemHandle = await item.getAsFileSystemHandle()
+    // TODO enable getAsFileSystemHandle API once we can get it working with subdirectories
+    // IMPORTANT: Need to check isSecureContext *before* calling getAsFileSystemHandle
+    // or else Chrome will crash when running in HTTP: https://github.com/transloadit/uppy/issues/4133
+    // if (window.isSecureContext && item.getAsFileSystemHandle != null)
+    // fileSystemHandle = await item.getAsFileSystemHandle()
 
-      // `webkitGetAsEntry` exists in all popular browsers (including non-WebKit browsers),
-      // however it may be renamed to getAsEntry() in the future, so you should code defensively, looking for both.
-      // from https://developer.mozilla.org/en-US/docs/Web/API/DataTransferItem/webkitGetAsEntry
-      const getAsEntry = (): ReturnType<
-        DataTransferItem['webkitGetAsEntry']
-      > =>
-        typeof (item as any).getAsEntry === 'function'
-          ? (item as any).getAsEntry()
-          : item.webkitGetAsEntry()
-      fileSystemHandle ??= getAsFileSystemHandleFromEntry(
-        getAsEntry(),
-        logDropError,
-      )
+    // `webkitGetAsEntry` exists in all popular browsers (including non-WebKit browsers),
+    // however it may be renamed to getAsEntry() in the future, so you should code defensively, looking for both.
+    // from https://developer.mozilla.org/en-US/docs/Web/API/DataTransferItem/webkitGetAsEntry
+    const getAsEntry = (): ReturnType<DataTransferItem['webkitGetAsEntry']> =>
+      typeof (item as any).getAsEntry === 'function'
+        ? (item as any).getAsEntry()
+        : item.webkitGetAsEntry()
+    fileSystemHandle ??= getAsFileSystemHandleFromEntry(
+      getAsEntry(),
+      logDropError,
+    )
 
-      return {
-        fileSystemHandle,
-        lastResortFile: item.getAsFile(), // can be used as a fallback in case other methods fail
-      }
-    }),
-  )
+    return {
+      fileSystemHandle,
+      lastResortFile: item.getAsFile(), // can be used as a fallback in case other methods fail
+    }
+  })
 
   for (const { lastResortFile, fileSystemHandle } of fileSystemHandles) {
     // fileSystemHandle and lastResortFile can be null when we drop an url.

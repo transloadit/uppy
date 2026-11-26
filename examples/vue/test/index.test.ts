@@ -1,17 +1,63 @@
-import { setupWorker } from 'msw/browser'
-import { afterAll, beforeAll, describe, expect, test } from 'vitest'
+import type { Component } from 'vue'
+
+import { network } from 'virtual:msw'
+import Uppy from '@uppy/core'
+import UppyScreenCapture from '@uppy/screen-capture'
+import { UppyContextProvider } from '@uppy/vue'
+import UppyWebcam from '@uppy/webcam'
+import { HttpResponse, http } from 'msw'
+import { describe, expect, test, vi } from 'vitest'
 import { userEvent } from 'vitest/browser'
 import { render } from 'vitest-browser-vue'
-import { tusHandlers } from '../../shared/tusHandlers.js'
-import App from '../src/App.vue'
+import { defineComponent, h } from 'vue'
 
-const worker = setupWorker(...tusHandlers)
-beforeAll(async () => {
-  await worker.start({ onUnhandledRequest: 'error' })
+import {
+  describeModalEsc,
+  describeRemoteSource,
+} from '../../shared/remoteSourceTests.js'
+import App from '../src/App.vue'
+import RemoteSource from '../src/RemoteSource.vue'
+import ScreenCapture from '../src/ScreenCapture.vue'
+import Webcam from '../src/Webcam.vue'
+
+const TUS_ENDPOINT = 'https://tusd.tusdemo.net/files/'
+
+network.configure({
+  context: { quiet: true },
+  // An unmocked request must fail the test rather than escape to the network.
+  onUnhandledFrame: 'error',
+  // Mock the tus v1 upload flow: https://tus.io/protocols/resumable-upload#protocol
+  handlers: [
+    // Create the upload and return its Location.
+    http.post(TUS_ENDPOINT, ({ request }) => {
+      const uploadLength = request.headers.get('Upload-Length') || '0'
+      return new HttpResponse(null, {
+        status: 201,
+        headers: {
+          Location: `${TUS_ENDPOINT}mock-upload-id`,
+          'Tus-Resumable': '1.0.0',
+          'Upload-Offset': '0',
+          'Upload-Length': uploadLength,
+        },
+      })
+    }),
+    // Accept a chunk and return the new Upload-Offset.
+    http.patch(`${TUS_ENDPOINT}:id`, async ({ request }) => {
+      const uploadOffset = request.headers.get('Upload-Offset') || '0'
+      const body = await request.arrayBuffer()
+      const newOffset = Number.parseInt(uploadOffset, 10) + body.byteLength
+      return new HttpResponse(null, {
+        status: 204,
+        headers: {
+          'Tus-Resumable': '1.0.0',
+          'Upload-Offset': String(newOffset),
+        },
+      })
+    }),
+  ],
 })
-afterAll(() => {
-  worker.stop()
-})
+
+await network.enable()
 
 const createMockFile = (name: string, type: string) => {
   return new File(['test content'], name, { type })
@@ -131,5 +177,46 @@ describe('RemoteSource Component', () => {
     await expect.element(loginButton).toBeInTheDocument()
 
     await loginButton.click()
+  })
+})
+
+const withUppy = (uppy: Uppy<any, any>, child: Component, props: object) =>
+  defineComponent({
+    setup: () => () =>
+      h(UppyContextProvider, { uppy }, { default: () => h(child, props) }),
+  })
+
+describeRemoteSource(async (uppy, close) =>
+  render(withUppy(uppy, RemoteSource, { id: 'Dropbox', close })),
+)
+
+describeModalEsc(async () => render(App))
+
+describe('Media capture lifecycle', () => {
+  test('Webcam stops the camera on unmount', async () => {
+    const uppy = new Uppy().use(UppyWebcam)
+    const plugin = uppy.getPlugin('Webcam') as any
+    const screen = await render(withUppy(uppy, Webcam, { close: () => {} }))
+    await expect
+      .element(screen.getByRole('heading', { name: 'Camera' }))
+      .toBeInTheDocument()
+    // installed after mount, so a stop() from a failed start() can't count
+    const stop = vi.spyOn(plugin, 'stop').mockImplementation(async () => {})
+    await screen.unmount()
+    expect(stop).toHaveBeenCalled()
+  })
+
+  test('ScreenCapture stops the capture on unmount', async () => {
+    const uppy = new Uppy().use(UppyScreenCapture)
+    const plugin = uppy.getPlugin('ScreenCapture') as any
+    const screen = await render(
+      withUppy(uppy, ScreenCapture, { close: () => {} }),
+    )
+    await expect
+      .element(screen.getByRole('heading', { name: 'Screen Capture' }))
+      .toBeInTheDocument()
+    const stop = vi.spyOn(plugin, 'stop').mockImplementation(() => {})
+    await screen.unmount()
+    expect(stop).toHaveBeenCalled()
   })
 })

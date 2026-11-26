@@ -1,18 +1,55 @@
-import { setupWorker } from 'msw/browser'
-import { afterAll, beforeAll, describe, expect, test } from 'vitest'
+import { network } from 'virtual:msw'
+import { HttpResponse, http } from 'msw'
+import { describe, expect, test } from 'vitest'
 import { userEvent } from 'vitest/browser'
 import { render } from 'vitest-browser-svelte'
-import { tusHandlers } from '../../shared/tusHandlers.js'
+
+import {
+  describeModalEsc,
+  describeRemoteSource,
+} from '../../shared/remoteSourceTests.js'
 import PropsReactivity from '../src/components/test/props-reactivity.svelte'
+import RemoteSourceHarness from '../src/components/test/remote-source-harness.svelte'
 import App from '../src/routes/+page.svelte'
 
-const worker = setupWorker(...tusHandlers)
-beforeAll(async () => {
-  await worker.start({ onUnhandledRequest: 'error' })
+const TUS_ENDPOINT = 'https://tusd.tusdemo.net/files/'
+
+network.configure({
+  context: { quiet: true },
+  // An unmocked request must fail the test rather than escape to the network.
+  onUnhandledFrame: 'error',
+  // Mock the tus v1 upload flow: https://tus.io/protocols/resumable-upload#protocol
+  handlers: [
+    // Create the upload and return its Location.
+    http.post(TUS_ENDPOINT, ({ request }) => {
+      const uploadLength = request.headers.get('Upload-Length') || '0'
+      return new HttpResponse(null, {
+        status: 201,
+        headers: {
+          Location: `${TUS_ENDPOINT}mock-upload-id`,
+          'Tus-Resumable': '1.0.0',
+          'Upload-Offset': '0',
+          'Upload-Length': uploadLength,
+        },
+      })
+    }),
+    // Accept a chunk and return the new Upload-Offset.
+    http.patch(`${TUS_ENDPOINT}:id`, async ({ request }) => {
+      const uploadOffset = request.headers.get('Upload-Offset') || '0'
+      const body = await request.arrayBuffer()
+      const newOffset = Number.parseInt(uploadOffset, 10) + body.byteLength
+      return new HttpResponse(null, {
+        status: 204,
+        headers: {
+          'Tus-Resumable': '1.0.0',
+          'Upload-Offset': String(newOffset),
+        },
+      })
+    }),
+  ],
 })
-afterAll(() => {
-  worker.stop()
-})
+
+await network.enable()
 
 const createMockFile = (name: string, type: string) => {
   return new File(['test content'], name, { type })
@@ -158,3 +195,9 @@ test('StatusBar reacts to prop changes', async () => {
     screen.container.querySelector('#statusbar-container .uppy-c-btn-primary'),
   ).toEqual(null)
 })
+
+describeRemoteSource(async (uppy, close) =>
+  render(RemoteSourceHarness, { uppy, close }),
+)
+
+describeModalEsc(async () => render(App))

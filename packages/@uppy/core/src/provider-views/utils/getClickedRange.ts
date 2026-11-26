@@ -12,10 +12,14 @@ const getClickedRange = (
     (item) => item.id === previousCheckbox,
   )
 
-  if (previousCheckboxIndex !== -1 && isShiftKeyPressed) {
-    const newCheckboxIndex = displayedPartialTree.findIndex(
-      (item) => item.id === clickedId,
-    )
+  const newCheckboxIndex = displayedPartialTree.findIndex(
+    (item) => item.id === clickedId,
+  )
+  if (
+    previousCheckboxIndex !== -1 &&
+    newCheckboxIndex !== -1 &&
+    isShiftKeyPressed
+  ) {
     const clickedRange = displayedPartialTree.slice(
       Math.min(previousCheckboxIndex, newCheckboxIndex),
       Math.max(previousCheckboxIndex, newCheckboxIndex) + 1,

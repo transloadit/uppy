@@ -1,5 +1,37 @@
 # @uppy/react
 
+## 6.1.1
+
+### Patch Changes
+
+- dc82e9c: Fix several `useScreenCapture` lifecycle bugs.
+  - Mounted components now show the stopped state after `stop()`.
+  - Submit no longer stops the capture or calls `onSubmit` when restrictions reject the captured file. `ScreenCapture#submit()` now returns whether the file was added.
+  - In React, passing a new inline `onSubmit` no longer recreates `start` and `stop`, so effects that depend on them no longer restart the capture.
+
+- Updated dependencies [dc82e9c]
+- Updated dependencies [a65659e]
+  - @uppy/components@2.1.1
+
+## 6.1.0
+
+### Minor Changes
+
+- a7a7997: Add an experimental `useS3Manager` hook and `createS3ManagerController` for `@uppy/s3` (and `@uppy/transloadit-storage`) in manager mode, so apps can render their own file manager instead of the ProviderView UI. ProviderView now exposes `submitDialog`, `cancelDialog`, `cancelLongOperation`, `canCancelOperation` and `getDetailItem` for headless UIs, and `toggleCheckbox` takes the rows in the order the UI shows them for shift-click ranges. A range can span folders: each folder's checked state is recomputed.
+
+  The hook and the controller are experimental: they can change incompatibly in a minor release of `@uppy/react` or `@uppy/components`. Pin them with `~` if you depend on them.
+
+  In manager mode, selecting every loaded item of a folder no longer marks the folder as fully selected while it has more pages, so the next page doesn't come in selected and a bulk action can't reach files nobody saw.
+
+### Patch Changes
+
+- 715eb80: Move the source map of the minified CSS into a separate file. The `.min.css` files, and `image-editor.css` in `@uppy/components`, `@uppy/react`, `@uppy/vue` and `@uppy/svelte`, embedded it inline and were larger than the unminified CSS. They now link to an external `.css.map` instead, at about half the gzipped size.
+- Updated dependencies [715eb80]
+- Updated dependencies [54d543c]
+- Updated dependencies [78970b1]
+- Updated dependencies [a7a7997]
+  - @uppy/components@2.1.0
+
 ## 6.0.0
 
 ### Minor Changes
@@ -101,7 +133,6 @@
 - c5b51f6: ### Export maps for all packages
 
   All packages now have export maps. This is a breaking change in two cases:
-
   1. The css imports have changed from `@uppy[package]/dist/styles.min.css` to `@uppy[package]/css/styles.min.css`
   2. You were importing something that wasn't exported from the root, for instance `@uppy/core/lib/foo.js`. You can now only import things we explicitly exported.
 

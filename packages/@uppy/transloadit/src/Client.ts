@@ -5,12 +5,15 @@ import type {
   UppyFile,
   WrapPromiseFunctionType,
 } from '@uppy/core/utils'
-import { fetchWithNetworkError } from '@uppy/core/utils'
-import {
-  type AssemblyResponse,
-  getAssemblyUrlSsl,
-  type OptionsWithRestructuredFields,
+
+import type {
+  AssemblyResponse,
+  OptionsWithRestructuredFields,
 } from './index.js'
+
+import { fetchWithNetworkError } from '@uppy/core/utils'
+
+import { getAssemblyUrlSsl } from './index.js'
 
 const ASSEMBLIES_ENDPOINT = '/assemblies'
 
@@ -102,7 +105,7 @@ export default class Client<M extends Meta, B extends Body> {
     return response.json()
   }
 
-  async createAssembly({
+  createAssembly({
     params,
     fields,
     signature,
@@ -119,9 +122,9 @@ export default class Client<M extends Meta, B extends Body> {
       data.append('signature', signature)
     }
 
-    Object.keys(fields).forEach((key) => {
-      data.append(key, String(fields[key]))
-    })
+    for (const [key, value] of Object.entries(fields)) {
+      data.append(key, String(value))
+    }
     data.append('num_expected_upload_files', String(expectedFiles))
 
     const url = new URL(ASSEMBLIES_ENDPOINT, `${this.opts.service}`).href
@@ -135,7 +138,7 @@ export default class Client<M extends Meta, B extends Body> {
   /**
    * Reserve resources for a file in an Assembly. Then addFile can be used later.
    */
-  async reserveFile(
+  reserveFile(
     assembly: AssemblyResponse,
     file: UppyFile<M, B>,
   ): Promise<AssemblyResponse> {
@@ -153,7 +156,7 @@ export default class Client<M extends Meta, B extends Body> {
   /**
    * Import a remote file to an Assembly.
    */
-  async addFile(
+  addFile(
     assembly: AssemblyResponse,
     file: UppyFile<M, B>,
   ): Promise<AssemblyResponse> {
@@ -190,13 +193,13 @@ export default class Client<M extends Meta, B extends Body> {
   /**
    * Get the current status for an assembly.
    */
-  async getAssemblyStatus(url: string): Promise<AssemblyResponse> {
+  getAssemblyStatus(url: string): Promise<AssemblyResponse> {
     return this.#fetchJSON(url, { headers: this.#headers }).catch((err) =>
       this.#reportError(err, { url, type: 'STATUS_ERROR' }),
     )
   }
 
-  async submitError(
+  submitError(
     err: { message?: string; details?: string },
     {
       endpoint,

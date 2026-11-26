@@ -1,12 +1,13 @@
+import type { Meta, UppyFile } from '@uppy/core/utils'
+
 import { act, renderHook } from '@testing-library/react'
 import Uppy from '@uppy/core'
-import type { Meta, UppyFile } from '@uppy/core/utils'
 import { useUppyEvent } from '@uppy/react'
 import { describe, expect, expectTypeOf, it, vi } from 'vitest'
 
 describe('useUppyEvent', () => {
   it('should return and update value with the correct type', () => {
-    const uppy = new Uppy()
+    using uppy = new Uppy()
     const callback = vi.fn()
     const { result, rerender } = renderHook(() =>
       useUppyEvent(uppy, 'file-added', callback),

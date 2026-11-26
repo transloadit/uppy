@@ -1,4 +1,5 @@
 import { readdir, readFile } from 'node:fs/promises'
+
 import { expect, test } from 'vitest'
 
 const ignore = ['angular', 'svelte']
@@ -32,10 +33,17 @@ test('tsconfig.json', async () => {
       { path: './examples/aws-php/tsconfig.json' },
       { path: './examples/companion/tsconfig.json' },
       { path: './examples/companion-custom-provider/tsconfig.json' },
+      { path: './examples/companion-digitalocean-spaces/tsconfig.json' },
+      { path: './examples/nextjs/tsconfig.json' },
+      { path: './examples/react/tsconfig.json' },
+      { path: './examples/reactrouter/tsconfig.json' },
+      { path: './examples/vue/tsconfig.json' },
       { path: './examples/xhr-bundle/tsconfig.json' },
       { path: './examples/xhr-node/tsconfig.json' },
       { path: './examples/xhr-php/tsconfig.json' },
       { path: './examples/xhr-python/tsconfig.json' },
+      { path: './scripts/tsconfig.json' },
+      { path: './website/tsconfig.json' },
     ],
   })
 })

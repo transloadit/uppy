@@ -1,5 +1,6 @@
 import type Uppy from '@uppy/core'
 import type { UppyEventMap } from '@uppy/core'
+
 import type { UploadStatus } from './types.js'
 
 export function createUppyEventAdapter({
@@ -47,6 +48,18 @@ export function createUppyEventAdapter({
   const onProgress = (p: number) => {
     onProgressChange(p)
   }
+
+  // Start from the current state, so a provider that mounts after files were
+  // added (or switches to another Uppy instance) doesn't report 'init'.
+  const { isUploadInProgress, isAllPaused, isAllComplete, isAllErrored } =
+    uppy.getObjectOfFilesPerState()
+  if (uppy.getFiles().length === 0) onStatusChange('init')
+  else if (isUploadInProgress)
+    onStatusChange(isAllPaused ? 'paused' : 'uploading')
+  else if (isAllComplete) onStatusChange('complete')
+  else if (isAllErrored) onStatusChange('error')
+  else onStatusChange('ready')
+  onProgressChange(isUploadInProgress ? uppy.getState().totalProgress : 0)
 
   uppy.on('file-added', onFileAdded)
   uppy.on('file-removed', onFileRemoved)

@@ -1,13 +1,18 @@
 import emitter from '../dist/server/emitter/index.js'
 import { isRecord } from '../dist/server/helpers/type-guards.js'
 
-type UploadMessage = Record<string, unknown> & { action: string }
+export type UploadMessage = Record<string, unknown> & { action: string }
 
 function isUploadMessage(value: unknown): value is UploadMessage {
   return isRecord(value) && typeof value['action'] === 'string'
 }
 
-export const connect = (uploadToken: string): void => {
+// The Redis emitter subscribes asynchronously, and Redis confirms
+// subscriptions in order. Once these resolve, every listener registered
+// earlier for this upload is subscribed, so no event can be missed.
+export const connect = async (uploadToken: string): Promise<void> => {
+  await emitter().once(uploadToken, () => {})
+  await emitter().once(`connection:${uploadToken}`, () => {})
   emitter().emit(`connection:${uploadToken}`)
 }
 

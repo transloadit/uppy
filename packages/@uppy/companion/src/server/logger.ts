@@ -1,8 +1,37 @@
-import { inspect, styleText } from 'node:util'
+import { inspect, stripVTControlCharacters, styleText } from 'node:util'
+
 import escapeStringRegexp from 'escape-string-regexp'
 
 type Colors = Parameters<typeof styleText>[0]
 type LogLevel = 'error' | 'info' | 'warn' | 'debug'
+
+/**
+ * Longest log line we will write. An error that quotes attacker-controlled
+ * data (e.g. a WebDAV XML parse error naming a multi-megabyte entity) could
+ * otherwise write unbounded output to the log.
+ */
+export const MAX_LOG_MESSAGE_LENGTH = 10_000
+
+/**
+ * Render an Error as stack (or name+message) plus a few safe own fields and
+ * its cause chain. Never util.inspect the whole object: got's errors carry the
+ * request options, which hold the Authorization header and uploadHeaders.
+ */
+function formatError(err: Error, depth = 0): string {
+  let out = err.stack ?? `${err.name}: ${err.message}`
+  const code = (err as { code?: unknown }).code
+  if (typeof code === 'string') out += ` {code: ${code}}`
+  const statusCode = (err as { statusCode?: unknown }).statusCode
+  if (typeof statusCode === 'number') out += ` {statusCode: ${statusCode}}`
+  const { cause } = err
+  if (cause != null && depth < 5) {
+    out +=
+      cause instanceof Error
+        ? `\n  [cause]: ${formatError(cause, depth + 1)}`
+        : `\n  [cause]: ${inspect(cause, { depth: 1 })}`
+  }
+  return out
+}
 
 let valuesToMask: string[] = []
 
@@ -25,6 +54,23 @@ function maskMessage(msg: string): string {
   }
   return out
 }
+
+/**
+ * Keep logged data from driving the terminal: drop its escape sequences
+ * (colour codes, which could hide the records that follow, or OSC 52, which
+ * writes the clipboard) and show any other control characters escaped (tabs
+ * aside). The logger's own colours are applied outside this.
+ */
+function escapeControls(text: string): string {
+  return stripVTControlCharacters(text).replace(
+    /[^\P{Cc}\t]/gu,
+    (character) =>
+      `\\u${character.charCodeAt(0).toString(16).padStart(4, '0')}`,
+  )
+}
+
+/** Records one message may take, on top of its MAX_LOG_MESSAGE_LENGTH characters. */
+const MAX_LOG_LINES = 200
 
 let processName = 'companion'
 
@@ -67,18 +113,40 @@ function log(params: {
       return arg.message
     }
     if (typeof arg === 'string') return arg
+    if (arg instanceof Error) return formatError(arg)
     return inspect(arg)
   }
 
   const msgString = msgToString()
-  const masked = maskMessage(msgString)
-  console.log(
-    styleText(
-      color,
+  // Strip escape sequences before masking: one inside a secret would
+  // otherwise keep it from matching, and the later strip rejoin it.
+  const maskedFull = maskMessage(
+    stripVTControlCharacters(msgString.replaceAll('\r', '')),
+  )
+  const masked =
+    maskedFull.length > MAX_LOG_MESSAGE_LENGTH
+      ? `${maskedFull.slice(0, MAX_LOG_MESSAGE_LENGTH)}… [truncated ${
+          maskedFull.length - MAX_LOG_MESSAGE_LENGTH
+        } chars]`
+      : maskedFull
+  const prefix = styleText(
+    color,
+    escapeControls(
       `${processName}: ${time} [${level}] ${traceId}${whitespace}${tag}`,
     ),
-    styleText(color, masked),
   )
+  // One record per line, each with the prefix, so that a line break in logged
+  // data can't pass for a separate record.
+  const lines = masked.split(/[\n\u2028\u2029]/)
+  for (const line of lines.slice(0, MAX_LOG_LINES)) {
+    console.log(prefix, styleText(color, escapeControls(line)))
+  }
+  if (lines.length > MAX_LOG_LINES) {
+    console.log(
+      prefix,
+      styleText(color, `… [${lines.length - MAX_LOG_LINES} more lines]`),
+    )
+  }
 }
 
 /**

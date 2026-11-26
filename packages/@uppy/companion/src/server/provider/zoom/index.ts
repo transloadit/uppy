@@ -1,20 +1,28 @@
+import type {
+  ProviderDeauthorizationCallbackOptions,
+  ProviderDeauthorizationCallbackResponse,
+  ProviderDownloadOptions,
+  ProviderDownloadResponse,
+  ProviderListOptions,
+  ProviderListResponse,
+  ProviderLogoutOptions,
+  ProviderLogoutResponse,
+  ProviderSizeOptions,
+} from '../Provider.js'
+
 import got from 'got'
 import moment from 'moment-timezone'
 import pMap from 'p-map'
+
+import { getProtectedGot } from '../../helpers/request.js'
 import { isRecord } from '../../helpers/type-guards.js'
-import { getBasicAuthHeader, prepareStream } from '../../helpers/utils.js'
-import Provider, {
-  type ProviderDeauthorizationCallbackOptions,
-  type ProviderDeauthorizationCallbackResponse,
-  type ProviderDownloadOptions,
-  type ProviderDownloadResponse,
-  type ProviderListOptions,
-  type ProviderListResponse,
-  type ProviderLogoutOptions,
-  type ProviderLogoutResponse,
-  type ProviderSizeOptions,
-} from '../Provider.js'
-import { withProviderErrorHandling } from '../providerErrors.js'
+import {
+  getBasicAuthHeader,
+  pathSegment,
+  prepareStream,
+} from '../../helpers/utils.js'
+import Provider from '../Provider.js'
+import { jsonStringAt, withProviderErrorHandling } from '../providerErrors.js'
 import adaptData from './adapter.js'
 
 const BASE_URL = 'https://zoom.us/v2'
@@ -51,7 +59,7 @@ async function findFile({
   recordingStart?: string
 }): Promise<ZoomFoundFile | undefined> {
   const body: unknown = await client
-    .get(`meetings/${encodeURIComponent(meetingId)}/recordings`, {
+    .get(`meetings/${pathSegment(meetingId)}/recordings`, {
       responseType: 'json',
     })
     .json()
@@ -108,7 +116,7 @@ export default class Zoom extends Provider<ZoomUserSession> {
     return 'zoom'
   }
 
-  override async list(
+  override list(
     options: ProviderListOptions<ZoomUserSession>,
   ): Promise<ProviderListResponse> {
     return this.#withErrorHandling('provider.zoom.list.error', async () => {
@@ -140,7 +148,7 @@ export default class Zoom extends Provider<ZoomUserSession> {
 
       if (meetingId) {
         const recordingInfo = await client
-          .get(`meetings/${encodeURIComponent(meetingId)}/recordings`, {
+          .get(`meetings/${pathSegment(meetingId)}/recordings`, {
             responseType: 'json',
           })
           .json()
@@ -203,7 +211,22 @@ export default class Zoom extends Provider<ZoomUserSession> {
         ).flat() // this is effectively a flatMap
         // concurrency 3 seems like a sensible number...
 
-        const finalResult = { meetings: allMeetingsInYear }
+        // Zoom filters by whole UTC dates, so outside UTC neighboring month windows share a day, and
+        // January and December reach into the years around this one.
+        const seenUuids = new Set<string>()
+        const meetingsInYear = allMeetingsInYear.filter((meeting) => {
+          if (!isRecord(meeting)) return false
+          const uuid = meeting['uuid']
+          const startTime = meeting['start_time']
+          if (typeof uuid === 'string') {
+            if (seenUuids.has(uuid)) return false
+            seenUuids.add(uuid)
+          }
+          if (typeof startTime !== 'string') return true
+          return moment.tz(startTime, userTz).year() === requestedYear
+        })
+
+        const finalResult = { meetings: meetingsInYear }
         return adaptData(user, finalResult)
       }
 
@@ -254,7 +277,7 @@ export default class Zoom extends Provider<ZoomUserSession> {
     })
   }
 
-  override async download({
+  override download({
     id: meetingId,
     providerUserSession: { accessToken: token },
     query,
@@ -284,8 +307,10 @@ export default class Zoom extends Provider<ZoomUserSession> {
       const url = foundFile?.download_url
       if (!url) throw new Error('Download URL not found')
 
-      const stream = client.stream.get(`${url}?access_token=${token}`, {
-        prefixUrl: '',
+      const stream = getProtectedGot({
+        allowLocalIPs: this.allowLocalUrls,
+      }).stream.get(`${url}?access_token=${token}`, {
+        headers: { authorization: `Bearer ${token}` },
         responseType: 'json',
       })
       const { size } = await prepareStream(stream)
@@ -293,7 +318,7 @@ export default class Zoom extends Provider<ZoomUserSession> {
     })
   }
 
-  override async size({
+  override size({
     id: meetingId,
     providerUserSession: { accessToken: token },
     query,
@@ -322,7 +347,7 @@ export default class Zoom extends Provider<ZoomUserSession> {
     })
   }
 
-  override async logout({
+  override logout({
     companion,
     providerUserSession: { accessToken: token },
   }: ProviderLogoutOptions<ZoomUserSession>): Promise<ProviderLogoutResponse> {
@@ -341,7 +366,7 @@ export default class Zoom extends Provider<ZoomUserSession> {
     })
   }
 
-  override async deauthorizationCallback({
+  override deauthorizationCallback({
     companion,
     body,
     headers,
@@ -384,7 +409,7 @@ export default class Zoom extends Provider<ZoomUserSession> {
     })
   }
 
-  async #withErrorHandling<T>(tag: string, fn: () => Promise<T>): Promise<T> {
+  #withErrorHandling<T>(tag: string, fn: () => Promise<T>): Promise<T> {
     const authErrorCodes = [
       124, // expired token
       401,
@@ -397,10 +422,7 @@ export default class Zoom extends Provider<ZoomUserSession> {
       isAuthError: (response) =>
         typeof response.statusCode === 'number' &&
         authErrorCodes.includes(response.statusCode),
-      getJsonErrorMessage: (body) =>
-        isRecord(body) && typeof body['message'] === 'string'
-          ? body['message']
-          : undefined,
+      getJsonErrorMessage: jsonStringAt('message'),
     })
   }
 }

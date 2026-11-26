@@ -7,8 +7,10 @@ import type {
   Uppy,
   UppyFile,
 } from '@uppy/core'
-import { BasePlugin } from '@uppy/core'
 import type { UppyFileId } from '@uppy/core/utils'
+
+import { BasePlugin } from '@uppy/core'
+
 import packageJson from '../package.json' with { type: 'json' }
 import IndexedDBMetaDataStore from './IndexedDBMetaDataStore.js'
 import IndexedDBStore from './IndexedDBStore.js'
@@ -290,7 +292,7 @@ export default class GoldenRetriever<
   }
 
   async [Symbol.for('uppy test: deleteBlobs')](fileIDs: UppyFileId[]) {
-    return this.#deleteBlobs(fileIDs)
+    await this.#deleteBlobs(fileIDs)
   }
 
   #addBlobToStores = async (file: UppyFile<M, B>): Promise<void> => {
@@ -401,9 +403,9 @@ export default class GoldenRetriever<
     const { currentUploads } = this.uppy.getState()
     if (Object.keys(currentUploads).length > 0) {
       this.uppy.resumeAll()
-      Object.keys(currentUploads).forEach((uploadId) => {
+      for (const uploadId of Object.keys(currentUploads)) {
         this.uppy.restore(uploadId)
-      })
+      }
     } else {
       // if there are no current uploads, but there were files added just start a new upload with the current files
       this.uppy.upload()

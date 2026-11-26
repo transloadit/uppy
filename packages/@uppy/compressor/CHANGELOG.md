@@ -1,5 +1,11 @@
 # @uppy/compressor
 
+## 4.0.1
+
+### Patch Changes
+
+- debe26d: The Compressor plugin now appends the appropriate file extension if the input file had no extension.
+
 ## 4.0.0
 
 ### Patch Changes

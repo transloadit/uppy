@@ -1,13 +1,17 @@
-import got from 'got'
-import { isRecord } from '../../helpers/type-guards.js'
-import { prepareStream } from '../../helpers/utils.js'
-import { ProviderApiError } from '../error.js'
-import Provider, {
-  type ProviderDownloadOptions,
-  type ProviderDownloadResponse,
-  type ProviderListOptions,
-  type ProviderListResponse,
+import type {
+  ProviderDownloadOptions,
+  ProviderDownloadResponse,
+  ProviderListOptions,
+  ProviderListResponse,
 } from '../Provider.js'
+
+import got from 'got'
+
+import { getProtectedGot } from '../../helpers/request.js'
+import { isRecord } from '../../helpers/type-guards.js'
+import { pathSegment, prepareStream } from '../../helpers/utils.js'
+import { ProviderApiError } from '../error.js'
+import Provider from '../Provider.js'
 import { withProviderErrorHandling } from '../providerErrors.js'
 import adaptData from './adapter.js'
 
@@ -25,7 +29,7 @@ const getClient = ({ token }: { token: string }): UnsplashClient =>
 
 const getPhotoMeta = async (client: UnsplashClient, id: string) =>
   client
-    .get(`photos/${id}`, { responseType: 'json' })
+    .get(`photos/${pathSegment(id)}`, { responseType: 'json' })
     .json<{ links: { download_location?: string } }>()
 
 interface UnsplashUserSession {
@@ -36,7 +40,7 @@ interface UnsplashUserSession {
  * Adapter for API https://api.unsplash.com
  */
 export default class Unsplash extends Provider<UnsplashUserSession> {
-  override async list({
+  override list({
     providerUserSession: { accessToken: token },
     query,
   }: ProviderListOptions<UnsplashUserSession>): Promise<ProviderListResponse> {
@@ -58,7 +62,7 @@ export default class Unsplash extends Provider<UnsplashUserSession> {
     })
   }
 
-  override async download({
+  override download({
     id,
     providerUserSession: { accessToken: token },
   }: ProviderDownloadOptions<UnsplashUserSession>): Promise<ProviderDownloadResponse> {
@@ -84,15 +88,23 @@ export default class Unsplash extends Provider<UnsplashUserSession> {
         // because that points at `unsplash.com`, which is behind bot protection
         // and would make us stream a challenge page instead of the image.
         // https://help.unsplash.com/en/articles/2511258-guideline-triggering-a-download
-        const { url } = await client
-          .get(attributionUrl, { prefixUrl: '', responseType: 'json' })
+        // Both URLs come from Unsplash's responses, so they get the same
+        // local-address protection as any other download.
+        const protectedGot = getProtectedGot({
+          allowLocalIPs: this.allowLocalUrls,
+        })
+        const { url } = await protectedGot
+          .get(attributionUrl, {
+            headers: { authorization: `Client-ID ${token}` },
+            responseType: 'json',
+          })
           .json<{ url?: string }>()
 
         if (!url) {
           throw new Error('Unexpected Unsplash response: missing download url')
         }
 
-        const stream = got.stream.get(url)
+        const stream = protectedGot.stream.get(url)
         const { size } = await prepareStream(stream)
 
         // finally, stream on!
@@ -101,7 +113,7 @@ export default class Unsplash extends Provider<UnsplashUserSession> {
     )
   }
 
-  async #withErrorHandling<T>(tag: string, fn: () => Promise<T>): Promise<T> {
+  #withErrorHandling<T>(tag: string, fn: () => Promise<T>): Promise<T> {
     return withProviderErrorHandling({
       fn,
       tag,

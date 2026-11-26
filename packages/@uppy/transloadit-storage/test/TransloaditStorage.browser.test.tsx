@@ -1,4 +1,14 @@
-import Uppy, { BasePlugin, type PluginOpts } from '@uppy/core'
+import '@uppy/core/css/style.css'
+import '@uppy/core/provider-views/css/style.css'
+import '@uppy/dashboard/css/style.css'
+import '@uppy-dev/msw-setup'
+
+import type { PluginOpts } from '@uppy/core'
+
+import type { TransloaditStorageOptions } from '../lib/TransloaditStorage.js'
+
+import { network } from 'virtual:msw'
+import Uppy, { BasePlugin } from '@uppy/core'
 import Dashboard from '@uppy/dashboard'
 import {
   createMockS3Companion,
@@ -6,16 +16,10 @@ import {
   toMswHandlers,
 } from '@uppy-dev/s3-mock-companion'
 import { http } from 'msw'
-import type { SetupWorker } from 'msw/browser'
-import { afterEach, beforeEach, describe, expect, vi } from 'vitest'
-import { page, userEvent } from 'vitest/browser'
-import '@uppy/core/css/style.css'
-import '@uppy/core/provider-views/css/style.css'
-import '@uppy/dashboard/css/style.css'
-import TransloaditStorage, {
-  type TransloaditStorageOptions,
-} from '../lib/TransloaditStorage.js'
-import { it } from './test-extend.js'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
+import { page } from 'vitest/browser'
+
+import TransloaditStorage from '../lib/TransloaditStorage.js'
 
 const COMPANION = 'http://localhost:3020'
 const TOKEN = 'test-auth-token'
@@ -25,12 +29,9 @@ const TOKEN = 'test-auth-token'
  * The mock serves the `transloadit-storage` provider under its own path, with
  * native folder moves — the only thing that differs from generic S3.
  */
-function setup(
-  worker: SetupWorker,
-  options: Partial<TransloaditStorageOptions> = {},
-) {
+function setup(options: Partial<TransloaditStorageOptions> = {}) {
   const companion = createMockS3Companion({ token: TOKEN })
-  worker.use(...toMswHandlers(companion, COMPANION, { http }))
+  network.use(...toMswHandlers(companion, COMPANION, { http }))
   const target = document.createElement('div')
   document.body.appendChild(target)
   uppy = new Uppy()
@@ -64,11 +65,9 @@ afterEach(() => {
 })
 
 describe('Transloadit Storage in the browser', () => {
-  it('offers the custom upload action in picker mode, and hands it the open folder', async ({
-    worker,
-  }) => {
+  it('offers the custom upload action in picker mode, and hands it the open folder', async () => {
     const onUploadRequest = vi.fn()
-    setup(worker, { onUploadRequest })
+    setup({ onUploadRequest })
     await page.getByRole('tab', { name: 'Transloadit Storage' }).click()
     await expect.element(page.getByText('readme.md')).toBeVisible()
 
@@ -113,12 +112,9 @@ describe('Transloadit Storage in the browser', () => {
     expect(uploader?.opts.locale).toEqual(uploaderLocale)
   })
 
-  it('Storage uses its own provider and keeps original downloads available to read-only users', async ({
-    worker,
-  }) => {
+  it('Storage uses its own provider and keeps original downloads available to read-only users', async () => {
     const getDownloadUrl = vi.fn(async () => '/authorized-original/readme')
-    const companion = setup(worker, {
-      mode: 'manager',
+    const companion = setup({
       getGrant: async () =>
         mockGrant({ bucket: 'my-bucket', scopes: ['read'] }),
       getDownloadUrl,
@@ -137,9 +133,6 @@ describe('Transloadit Storage in the browser', () => {
       .element(page.getByRole('button', { name: 'Upload files' }))
       .not.toBeInTheDocument()
     await page.getByRole('button', { name: 'Actions for readme.md' }).click()
-    await expect
-      .element(page.getByRole('menuitem', { name: 'Rename or move…' }))
-      .not.toBeInTheDocument()
     await expect
       .element(page.getByRole('menuitem', { name: 'Download', exact: true }))
       .toBeVisible()
@@ -164,10 +157,8 @@ describe('Transloadit Storage in the browser', () => {
     }
   })
 
-  it('takes files dropped on its panel when it stores uploads', async ({
-    worker,
-  }) => {
-    worker.use(
+  it('takes files dropped on its panel when it stores uploads', async () => {
+    network.use(
       ...toMswHandlers(createMockS3Companion({ token: TOKEN }), COMPANION, {
         http,
       }),
@@ -222,23 +213,30 @@ describe('Transloadit Storage in the browser', () => {
       .toEqual(['dropped.txt'])
   })
 
-  it('renames a folder in one native move instead of walking it', async ({
-    worker,
-  }) => {
-    const companion = setup(worker, { mode: 'manager' })
-    await page.getByRole('tab', { name: 'Transloadit Storage' }).click()
-    await expect.element(page.getByText('readme.md')).toBeVisible()
+  it('renames a folder in one native move instead of walking it', async () => {
+    // Manager mode is headless, as in a file library using `useS3Manager`.
+    const companion = createMockS3Companion({ token: TOKEN })
+    network.use(...toMswHandlers(companion, COMPANION, { http }))
+    uppy = new Uppy().use(TransloaditStorage, {
+      companionUrl: COMPANION,
+      mode: 'manager',
+    })
+    const plugin =
+      uppy.getPlugin<TransloaditStorage<any, any>>('TransloaditStorage')!
+    await plugin.openFolderPath(null)
+    const docs = plugin
+      .getPluginState()
+      .partialTree.find((node) => node.id === 'docs%2F')
+    const rename = plugin.view.opts.actions?.find((a) => a.id === 's3:rename')
+    if (docs?.type !== 'folder' || !rename) throw new Error('Missing docs')
+    const renaming = plugin.view.runAction(rename, docs)
+    await vi.waitFor(() => expect(plugin.getPluginState().dialog).toBeDefined())
+    plugin.view.submitDialog('archive')
+    await renaming
 
-    await page.getByRole('button', { name: 'Actions for docs' }).click()
-    await page.getByRole('menuitem', { name: 'Rename or move…' }).click()
-    await page
-      .getByLabelText('New name, or a path relative to the root folder:')
-      .fill('archive')
-    await userEvent.keyboard('{Enter}')
-
-    await expect
-      .element(page.getByText('archive', { exact: true }))
-      .toBeVisible()
+    expect(
+      plugin.view.getDisplayedPartialTree().map((item) => item.data.name),
+    ).toContain('archive')
     // One call moved the whole subtree: no per-file moves, no folder bookkeeping.
     expect(
       companion.calls

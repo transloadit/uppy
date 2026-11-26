@@ -8,10 +8,13 @@ import type {
   UppyFile,
 } from '@uppy/core'
 import type { I18n, Translator } from '@uppy/core/utils'
-import { isDragDropSupported } from '@uppy/core/utils'
 import type { h } from '@uppy/core/utils/preact'
-import classNames from 'classnames'
+
 import type { DashboardState, TargetWithRender } from '../Dashboard.js'
+
+import { isDragDropSupported } from '@uppy/core/utils'
+import classNames from 'classnames'
+
 import AddFiles from './AddFiles.js'
 import AddFilesPanel from './AddFilesPanel.js'
 import EditorPanel from './EditorPanel.js'
@@ -361,7 +364,6 @@ export default function Dashboard<M extends Meta, B extends Body>(
                 doneButtonHandler={props.doneButtonHandler}
               />
             )}
-            {!props.disableInformer && <Informer uppy={props.uppy} />}
             {props.progressindicators.map((target: TargetWithRender) => {
               // TODO
               // Here we're telling typescript all `this.type = 'progressindicator'` plugins inherit from `UIPlugin`

@@ -15,7 +15,7 @@ function render(html: string) {
 
 test('should return correct file name with URL plugin from remote image with Content-Disposition', async () => {
   render('<div id="uppy"></div>')
-  const uppy = new Uppy().use(Url, {
+  using uppy = new Uppy().use(Url, {
     companionUrl: 'http://localhost:3020',
     target: '#uppy',
   })
@@ -36,7 +36,7 @@ test('should return correct file name with URL plugin from remote image with Con
 
 test('should return correct file name with URL plugin from remote image without Content-Disposition', async () => {
   render('<div id="uppy"></div>')
-  const uppy = new Uppy().use(Url, {
+  using uppy = new Uppy().use(Url, {
     companionUrl: 'http://localhost:3020',
     target: '#uppy',
   })
