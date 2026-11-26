@@ -172,12 +172,28 @@ export default class TransloaditStorage<
    * minor releases.
    */
   get uploadFolderKey(): string {
-    const queued = this.uppy
-      .getFiles()
-      .some((file) => !file.progress.uploadComplete)
+    const queued = this.#hasQueuedFiles()
     return queued && this.#addedIn !== undefined
       ? this.#addedIn
       : openFolderKey(this)
+  }
+
+  /** Failed processing and active retries still own their destination after transport completes. */
+  #hasQueuedFiles(excludedIds?: ReadonlySet<string>): boolean {
+    const activeFiles = new Set(
+      Object.values(this.uppy.getState().currentUploads).flatMap(
+        ({ fileIDs }) => fileIDs,
+      ),
+    )
+    return this.uppy
+      .getFiles()
+      .some(
+        (file) =>
+          !excludedIds?.has(file.id) &&
+          (!file.progress.uploadComplete ||
+            file.error != null ||
+            activeFiles.has(file.id)),
+      )
   }
 
   /**
@@ -195,10 +211,7 @@ export default class TransloaditStorage<
   /** A new queue is stored in the folder open when its first files arrive. */
   #onFilesAdded = (files: UppyFile<M, B>[]): void => {
     const added = new Set(files.map((file) => file.id))
-    const alreadyQueued = this.uppy
-      .getFiles()
-      .some((file) => !added.has(file.id) && !file.progress.uploadComplete)
-    if (alreadyQueued) return
+    if (this.#hasQueuedFiles(added) && this.#addedIn !== undefined) return
     // Before the session is connected its root is unknown: the Assembly
     // settles it then (see `createStoreAssemblyOptions`).
     this.#addedIn = this.getPluginState().authenticated

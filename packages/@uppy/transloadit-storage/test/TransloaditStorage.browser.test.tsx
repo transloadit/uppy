@@ -3,8 +3,9 @@ import '@uppy/core/provider-views/css/style.css'
 import '@uppy/dashboard/css/style.css'
 import '@uppy-dev/msw-setup'
 
-import type { PluginOpts } from '@uppy/core'
+import type { Meta, PluginOpts } from '@uppy/core'
 
+import type { StoreAssemblyParameters } from '../lib/storeAssemblyOptions.js'
 import type { TransloaditStorageOptions } from '../lib/TransloaditStorage.js'
 
 import { network } from 'virtual:msw'
@@ -19,10 +20,13 @@ import { http } from 'msw'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { page } from 'vitest/browser'
 
+import { createStoreAssemblyOptions } from '../lib/storeAssemblyOptions.js'
 import TransloaditStorage from '../lib/TransloaditStorage.js'
 
 const COMPANION = 'http://localhost:3020'
 const TOKEN = 'test-auth-token'
+// biome-ignore lint/suspicious/noTemplateCurlyInString: a Transloadit placeholder.
+const FILE_NAME = '${file.name}'
 
 /**
  * Serves a mock Companion and installs the plugin into an inline Dashboard.
@@ -35,6 +39,8 @@ function setup(options: Partial<TransloaditStorageOptions> = {}) {
   const target = document.createElement('div')
   document.body.appendChild(target)
   uppy = new Uppy()
+  if (options.storeUploads) uppy.use(FixtureUploader, {})
+  uppy
     .use(Dashboard, { target, inline: true })
     .use(TransloaditStorage, { companionUrl: COMPANION, ...options })
   return companion
@@ -211,6 +217,82 @@ describe('Transloadit Storage in the browser', () => {
     await expect
       .poll(() => uppy?.getFiles().map((file) => file.name))
       .toEqual(['dropped.txt'])
+  })
+
+  it('pins files added after connecting even when earlier files are already queued', async () => {
+    const signAssembly = vi.fn(async (params: StoreAssemblyParameters) => ({
+      params,
+      signature: 'test',
+    }))
+    setup({ storeUploads: { signAssembly } })
+    const app = uppy!
+    const storage =
+      app.getPlugin<TransloaditStorage<Meta, Record<string, never>>>(
+        'TransloaditStorage',
+      )!
+    app.addFile({ name: 'early.txt', data: new File(['early'], 'early.txt') })
+    expect(storage.getPluginState().authenticated).toBeUndefined()
+    app
+      .getPlugin<Dashboard<Meta, Record<string, never>>>('Dashboard')!
+      .showPanel('TransloaditStorage')
+    await expect.element(page.getByText('readme.md')).toBeVisible()
+    await page.getByText('docs', { exact: true }).click()
+    await expect.element(page.getByText('hello.txt')).toBeVisible()
+    app.addFile({
+      name: 'report.txt',
+      data: new File(['report'], 'report.txt'),
+    })
+
+    await storage.view.openFolder(storage.rootFolderId)
+    await createStoreAssemblyOptions(app, { signAssembly })()
+
+    expect(signAssembly).toHaveBeenCalledOnce()
+    expect(signAssembly.mock.calls[0]?.[0].steps.stored.path).toBe(
+      `docs/${FILE_NAME}`,
+    )
+    expect(storage.acceptsFileDrops).toBe(false)
+  })
+
+  it('keeps the original folder while retrying a failed postprocessing step', async () => {
+    const signAssembly = vi.fn(async (params: StoreAssemblyParameters) => ({
+      params,
+      signature: 'test',
+    }))
+    setup({ storeUploads: { signAssembly } })
+    const app = uppy!
+    const storage =
+      app.getPlugin<TransloaditStorage<Meta, Record<string, never>>>(
+        'TransloaditStorage',
+      )!
+    app.addPostProcessor(async () => {})
+    await page.getByRole('tab', { name: 'Transloadit Storage' }).click()
+    await expect.element(page.getByText('readme.md')).toBeVisible()
+    await page.getByText('docs', { exact: true }).click()
+    await expect.element(page.getByText('hello.txt')).toBeVisible()
+    const fileId = app.addFile({
+      name: 'report.txt',
+      data: new File(['report'], 'report.txt'),
+    })
+    app.emit('upload-start', [app.getFile(fileId)])
+    app.emit('upload-success', app.getFile(fileId), {
+      status: 200,
+      uploadURL: 'https://example.test/report.txt',
+    })
+    app.emit('upload-error', app.getFile(fileId), new Error('Storage failed'))
+    app.emit('postprocess-complete', app.getFile(fileId))
+    await storage.view.openFolder(storage.rootFolderId)
+    expect(storage.acceptsFileDrops).toBe(false)
+    const assemblyOptions = createStoreAssemblyOptions(app, { signAssembly })
+    app.addPreProcessor(async () => {
+      await assemblyOptions()
+    })
+
+    await app.retryAll()
+
+    expect(signAssembly).toHaveBeenCalledOnce()
+    expect(signAssembly.mock.calls[0]?.[0].steps.stored.path).toBe(
+      `docs/${FILE_NAME}`,
+    )
   })
 
   it('offers no folder-dependent writes while the next folder is still listing', async () => {
