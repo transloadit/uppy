@@ -33,3 +33,5 @@ Queued destinations reset on logout or a change of bucket or grant prefix. Signi
 Automatic reopening preserves failed files from earlier batches and files added before the deferred cleanup runs.
 
 Refreshing the uploaded destination preserves selections in unrelated folders.
+
+Refilling an invalidated checked folder reuses cached child IDs and lists each child folder once, preventing duplicate imports and incorrect file-count restrictions.

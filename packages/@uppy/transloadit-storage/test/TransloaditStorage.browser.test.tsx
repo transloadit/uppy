@@ -1511,6 +1511,65 @@ describe('Transloadit Storage in the browser', () => {
     expect(app.getFiles().map((file) => file.name)).toEqual(['photo.txt'])
   })
 
+  it('imports an invalidated checked destination without counting cached children twice', async () => {
+    const signAssembly = vi.fn(async (params: StoreAssemblyParameters) => ({
+      params,
+      signature: 'test',
+    }))
+    const companion = setup({
+      storeUploads: { signAssembly },
+      reopenAfterUpload: true,
+    })
+    companion.folders.get('')!.push({ name: 'photos', isFolder: true })
+    companion.folders.set('photos/', [])
+    const app = uppy!
+    const storage =
+      app.getPlugin<TransloaditStorage<Meta, Record<string, never>>>(
+        'TransloaditStorage',
+      )!
+    await page.getByRole('tab', { name: 'Transloadit Storage' }).click()
+    await expect.element(page.getByText('readme.md')).toBeVisible()
+    await page.getByText('docs', { exact: true }).click()
+    await expect.element(page.getByText('hello.txt')).toBeVisible()
+    const stored = app.addFile({
+      name: 'stored.txt',
+      data: new File(['stored'], 'stored.txt'),
+    })
+    app.emit('upload-start', [app.getFile(stored)])
+    app
+      .getPlugin<Dashboard<Meta, Record<string, never>>>('Dashboard')!
+      .showPanel('TransloaditStorage')
+    await storage.view.openFolder(storage.rootFolderId)
+    const docs = storage.view
+      .getDisplayedPartialTree()
+      .find((node) => node.type === 'folder' && node.id === 'docs%2F')
+    if (!docs) throw new Error('Missing docs folder')
+    storage.view.toggleCheckbox(docs, false)
+    await storage.view.openFolder('photos%2F')
+    companion.folders.get('docs/')!.push({
+      name: 'stored.txt',
+      isFolder: false,
+      size: 6,
+      mimeType: 'text/plain',
+    })
+    app.emit('upload-success', app.getFile(stored), {
+      status: 200,
+      uploadURL: 'https://example.test/stored.txt',
+    })
+    app.emit('complete', { successful: [app.getFile(stored)], failed: [] })
+    await expect.poll(() => app.getFiles()).toEqual([])
+    await vi.waitFor(() => expect(storage.getPluginState().loading).toBe(false))
+    app.setOptions({ restrictions: { maxNumberOfFiles: 2 } })
+    const added = vi.fn()
+    app.on('file-added', added)
+    expect(await storage.view.donePicking()).toBe(true)
+    expect(app.getFiles().map((file) => file.name)).toEqual([
+      'hello.txt',
+      'stored.txt',
+    ])
+    expect(added).toHaveBeenCalledTimes(2)
+  })
+
   it('renames a folder in one native move instead of walking it', async () => {
     // Manager mode is headless, as in a file library using `useS3Manager`.
     const companion = createMockS3Companion({ token: TOKEN })
