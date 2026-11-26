@@ -9263,15 +9263,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@vitejs/plugin-vue@npm:^6.0.10":
-  version: 6.0.10
-  resolution: "@vitejs/plugin-vue@npm:6.0.10"
+"@vitejs/plugin-vue@npm:^6.0.11":
+  version: 6.0.11
+  resolution: "@vitejs/plugin-vue@npm:6.0.11"
   dependencies:
     "@rolldown/pluginutils": "npm:^1.0.1"
   peerDependencies:
     vite: ^5.0.0 || ^6.0.0 || ^7.0.0 || ^8.0.0
-    vue: ^3.2.25 || ^3.6.0-rc.10
-  checksum: 10/00d1cc7768877045e1fe9976b27aeab96433eaa7a93fc8ca4f4e9d8ce8851c8c29459e3bf61a60eee7e9491684109c32ea61afca176ae4784fdb7c501d1eb629
+    vue: ^3.2.25 || ^3.6.0-rc.15
+  checksum: 10/9bbdb70dcdcf9edc76a765e231fe5347ea5963e6bf8e311501e8351b86a56a3c9bacaa7c98f5160e0f50ac35a6f226da16828a9b7e09b20c5bdb9158c663fb57
   languageName: node
   linkType: hard
 
@@ -13336,7 +13336,7 @@ __metadata:
     "@uppy/tus": "workspace:*"
     "@uppy/vue": "workspace:*"
     "@uppy/webcam": "workspace:*"
-    "@vitejs/plugin-vue": "npm:^6.0.10"
+    "@vitejs/plugin-vue": "npm:^6.0.11"
     "@vitest/browser-playwright": "npm:^5.1.0"
     msw: "npm:^3.0.3"
     playwright: "npm:1.65.0"
