@@ -1,27 +1,27 @@
+import type { GooglePickerState } from '../lib/companion-client/googlePicker.js'
+import type { AsyncStore } from '../lib/index.js'
+
 import { expect, it, onTestFinished, vi } from 'vitest'
+
 import {
   createGooglePickerController,
   createGooglePickerStoreAdapter,
-  type GooglePickerState,
 } from '../lib/companion-client/googlePicker.js'
-import Core, { type AsyncStore } from '../lib/index.js'
+import Core from '../lib/index.js'
 
-it('keeps a new show guarded when a pre-reset show settles', async () => {
-  const uppy = new Core()
-  const firstRead = Promise.withResolvers<string | null>()
-  const secondRead = Promise.withResolvers<string | null>()
-  let state: GooglePickerState = {
-    accessToken: undefined,
-    loading: false,
-  }
-
+function setup(
+  uppy: Core,
+  getItem: AsyncStore['getItem'],
+  pickerType: 'drive' | 'photos' = 'drive',
+) {
+  let state: GooglePickerState = { accessToken: undefined, loading: false }
   const controller = createGooglePickerController({
     uppy,
-    pickerType: 'drive',
+    pickerType,
     clientId: 'client-id',
     apiKey: 'api-key',
     appId: 'app-id',
-    requestClientId: 'GoogleDrivePicker',
+    requestClientId: 'GooglePicker',
     companionUrl: 'https://companion.example.com',
     store: createGooglePickerStoreAdapter({
       uppy,
@@ -30,43 +30,80 @@ it('keeps a new show guarded when a pre-reset show settles', async () => {
         state = { ...state, ...patch }
       },
     }),
-    storage: {
-      getItem: vi
-        .fn<AsyncStore['getItem']>()
-        .mockReturnValueOnce(firstRead.promise)
-        .mockReturnValueOnce(secondRead.promise),
-      setItem: async () => {},
-      removeItem: async () => {},
-    },
+    storage: { getItem, setItem: async () => {}, removeItem: async () => {} },
   })
-  onTestFinished(() => {
-    controller.reset()
-    uppy.destroy()
-  })
+  onTestFinished(() => controller.reset())
+  return { controller, getState: () => state }
+}
+
+it('shares an in-flight show() across overlapping calls and resets', async () => {
+  using uppy = new Core()
+  const firstRead = Promise.withResolvers<string | null>()
+  const secondRead = Promise.withResolvers<string | null>()
+  const reads = [firstRead.promise, secondRead.promise]
+  const { controller } = setup(uppy, () => reads.shift()!)
 
   const firstShow = controller.show()
+  expect(controller.show()).toBe(firstShow)
+
   controller.reset()
   const secondShow = controller.show()
 
-  const oldError = new Error('Old token read failed')
-  firstRead.reject(oldError)
-  await expect(firstShow).rejects.toBe(oldError)
-
-  let duplicateWasIgnored = false
-  const duplicateShow = controller.show().then(
-    () => {
-      duplicateWasIgnored = true
-    },
-    () => {},
-  )
-  await Promise.resolve()
-  const ignoredWhilePending = duplicateWasIgnored
+  // The pre-reset show settling must not release the newer show's guard.
+  firstRead.reject(new Error('Old token read failed'))
+  await expect(firstShow).rejects.toThrow('Old token read failed')
+  expect(controller.show()).toBe(secondShow)
 
   const currentError = new Error('Current token read failed')
   secondRead.reject(currentError)
   await expect(secondShow).rejects.toBe(currentError)
-  await duplicateShow
+  // Released: this call runs again (and gets the cached init failure).
+  const thirdShow = controller.show()
+  expect(thirdShow).not.toBe(secondShow)
+  await expect(thirdShow).rejects.toBe(currentError)
+})
 
-  expect(ignoredWhilePending).toBe(true)
-  await expect(controller.show()).rejects.toBe(currentError)
+it('ignores a token read that settles after reset()', async () => {
+  using uppy = new Core()
+  const firstRead = Promise.withResolvers<string | null>()
+  const reads = [firstRead.promise, new Promise<string | null>(() => {})]
+  const { controller, getState } = setup(uppy, () => reads.shift()!)
+
+  const firstShow = controller.show()
+  controller.reset()
+  controller.show()
+
+  firstRead.resolve('old-token')
+  // Resolves rather than rejects: the hooks call init() unhandled.
+  await expect(firstShow).resolves.toBeUndefined()
+  expect(getState()).toEqual({ accessToken: undefined, loading: false })
+})
+
+it('a show reset while scripts load leaves the next flow alone', async () => {
+  using uppy = new Core()
+  const scripts: HTMLScriptElement[] = []
+  vi.spyOn(document.head, 'appendChild').mockImplementation((node) => {
+    scripts.push(node as HTMLScriptElement)
+    return node
+  })
+  const fetchSpy = vi
+    .spyOn(globalThis, 'fetch')
+    .mockRejectedValue(new Error('no network'))
+  onTestFinished(() => {
+    vi.restoreAllMocks()
+  })
+  const { controller, getState } = setup(uppy, async () => 'token', 'photos')
+
+  const first = controller.show()
+  await vi.waitFor(() => expect(scripts).toHaveLength(2))
+  controller.reset()
+  controller.show() // the next flow, left waiting on its own scripts
+  await vi.waitFor(() => expect(scripts).toHaveLength(4))
+  for (const script of scripts.slice(0, 2)) {
+    script.dispatchEvent(new Event('load'))
+  }
+  await first
+
+  expect(fetchSpy).not.toHaveBeenCalled()
+  expect(getState()).toEqual({ accessToken: 'token', loading: true })
 })
