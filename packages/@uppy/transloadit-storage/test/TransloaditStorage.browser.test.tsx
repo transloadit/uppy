@@ -1205,6 +1205,188 @@ describe('Transloadit Storage in the browser', () => {
     expect(signAssembly).not.toHaveBeenCalled()
   })
 
+  it('refreshes a cached upload destination after completing in a sibling folder', async () => {
+    const signAssembly = vi.fn(async (params: StoreAssemblyParameters) => ({
+      params,
+      signature: 'test',
+    }))
+    const companion = setup({
+      storeUploads: { signAssembly },
+      reopenAfterUpload: true,
+    })
+    companion.folders.get('')!.push({ name: 'photos', isFolder: true })
+    companion.folders.set('photos/', [
+      { name: 'photo.txt', isFolder: false, size: 1, mimeType: 'text/plain' },
+    ])
+    const app = uppy!
+    const storage =
+      app.getPlugin<TransloaditStorage<Meta, Record<string, never>>>(
+        'TransloaditStorage',
+      )!
+    await page.getByRole('tab', { name: 'Transloadit Storage' }).click()
+    await expect.element(page.getByText('readme.md')).toBeVisible()
+    await page.getByText('docs', { exact: true }).click()
+    await expect.element(page.getByText('hello.txt')).toBeVisible()
+    const fileId = app.addFile({
+      name: 'report.txt',
+      data: new File(['report'], 'report.txt'),
+    })
+    app
+      .getPlugin<Dashboard<Meta, Record<string, never>>>('Dashboard')!
+      .showPanel('TransloaditStorage')
+    await storage.view.openFolder(storage.rootFolderId)
+    await storage.view.openFolder('photos%2F')
+    await expect.element(page.getByText('photo.txt')).toBeVisible()
+    companion.folders.get('docs/')!.push({
+      name: 'report.txt',
+      isFolder: false,
+      size: 6,
+      mimeType: 'text/plain',
+    })
+    app.emit('upload-start', [app.getFile(fileId)])
+    app.emit('upload-success', app.getFile(fileId), {
+      status: 200,
+      uploadURL: 'https://example.test/report.txt',
+    })
+    app.emit('complete', { successful: [app.getFile(fileId)], failed: [] })
+    await expect.poll(() => app.getFiles()).toEqual([])
+    await storage.view.openFolder(storage.rootFolderId)
+    await storage.view.openFolder('docs%2F')
+    await expect
+      .element(page.getByText('report.txt', { exact: true }))
+      .toBeVisible()
+  })
+
+  it('rebinds queued files after logout into a different grant prefix', async () => {
+    const signAssembly = vi.fn(async (params: StoreAssemblyParameters) => ({
+      params,
+      signature: 'test',
+    }))
+    const getGrant = vi
+      .fn<() => Promise<string>>()
+      .mockResolvedValueOnce(
+        mockGrant({ bucket: 'my-bucket', prefix: 'users/ana/' }),
+      )
+      .mockResolvedValue(
+        mockGrant({ bucket: 'my-bucket', prefix: 'users/bob/' }),
+      )
+    const companion = createMockS3Companion({
+      token: TOKEN,
+      folders: {
+        'users/ana/': [{ name: 'docs', isFolder: true }],
+        'users/ana/docs/': [],
+        'users/bob/': [],
+      },
+    })
+    network.use(...toMswHandlers(companion, COMPANION, { http }))
+    uppy = new Uppy().use(FixtureUploader, {}).use(TransloaditStorage, {
+      companionUrl: COMPANION,
+      getGrant,
+      storeUploads: { signAssembly },
+    })
+    const app = uppy
+    const storage =
+      app.getPlugin<TransloaditStorage<Meta, Record<string, never>>>(
+        'TransloaditStorage',
+      )!
+    await storage.openFolderPath('users/ana/docs/')
+    app.addFile({
+      name: 'queued.txt',
+      data: new File(['queued'], 'queued.txt'),
+    })
+    expect(storage.uploadFolderKey).toBe('users/ana/docs/')
+    await storage.view.logout()
+    await createStoreAssemblyOptions(app, { signAssembly })()
+    expect(signAssembly.mock.calls[0]?.[0].steps.stored.path).toBe(
+      `users/bob/${FILE_NAME}`,
+    )
+  })
+
+  it.each([
+    {
+      label: 'changes buckets',
+      fromBucket: 'bucket-a',
+      toBucket: 'bucket-b',
+      fromPrefix: '',
+      toPrefix: '',
+      expected: FILE_NAME,
+    },
+    {
+      label: 'changes prefixes',
+      fromBucket: 'my-bucket',
+      toBucket: 'my-bucket',
+      fromPrefix: 'users/ana/',
+      toPrefix: 'users/bob/',
+      expected: `users/bob/${FILE_NAME}`,
+    },
+    {
+      label: 'keeps the same session',
+      fromBucket: 'my-bucket',
+      toBucket: 'my-bucket',
+      fromPrefix: '',
+      toPrefix: '',
+      expected: `docs/${FILE_NAME}`,
+    },
+  ])(
+    'handles an old reservation when a renewed grant $label',
+    async ({ fromBucket, toBucket, fromPrefix, toPrefix, expected }) => {
+      let now = Math.floor(Date.now() / 1000)
+      const signAssembly = vi.fn(async (params: StoreAssemblyParameters) => ({
+        params,
+        signature: 'test',
+      }))
+      const getGrant = vi
+        .fn<() => Promise<string>>()
+        .mockImplementationOnce(async () =>
+          mockGrant({ bucket: fromBucket, prefix: fromPrefix, exp: now + 900 }),
+        )
+        .mockImplementation(async () =>
+          mockGrant({ bucket: toBucket, prefix: toPrefix, exp: now + 900 }),
+        )
+      const companion = createMockS3Companion({
+        token: TOKEN,
+        nowSeconds: () => now,
+        folders: {
+          [fromPrefix]: [{ name: 'docs', isFolder: true }],
+          [`${fromPrefix}docs/`]: [],
+          [toPrefix]: [{ name: 'docs', isFolder: true }],
+          [`${toPrefix}docs/`]: [],
+        },
+      })
+      network.use(...toMswHandlers(companion, COMPANION, { http }))
+      uppy = new Uppy().use(FixtureUploader, {}).use(TransloaditStorage, {
+        companionUrl: COMPANION,
+        mode: 'manager',
+        getGrant,
+        storeUploads: { signAssembly },
+      })
+      const app = uppy
+      const storage =
+        app.getPlugin<TransloaditStorage<Meta, Record<string, never>>>(
+          'TransloaditStorage',
+        )!
+      expect(await storage.openFolderPath(`${fromPrefix}docs/`)).toBe(true)
+      const finish = storage.beginAddingFiles()
+      if (finish === false) throw new Error('Reservation refused')
+      app.addFile({
+        name: 'queued.txt',
+        data: new File(['queued'], 'queued.txt'),
+      })
+      now += 901
+      await storage.view.refreshCurrentFolder()
+      await vi.waitFor(() =>
+        expect(storage.getPluginState().loading).toBe(false),
+      )
+      await storage.openFolderPath(null)
+      finish?.()
+      await createStoreAssemblyOptions(app, { signAssembly })()
+      expect(signAssembly.mock.calls[0]?.[0].steps.stored.path).toBe(expected)
+      expect(companion.session?.bucket).toBe(toBucket)
+      expect(companion.session?.prefix).toBe(toPrefix)
+      expect(app.getFiles()).toHaveLength(1)
+    },
+  )
+
   it('renames a folder in one native move instead of walking it', async () => {
     // Manager mode is headless, as in a file library using `useS3Manager`.
     const companion = createMockS3Companion({ token: TOKEN })

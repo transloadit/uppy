@@ -165,6 +165,17 @@ export default class TransloaditStorage<
 
   #pendingFileAdds = 0
 
+  #destinationGeneration = 0
+
+  protected override onSessionChanged(): void {
+    super.onSessionChanged()
+    this.#destinationGeneration += 1
+    this.#addedIn = undefined
+    this.#bindAfterLoading = false
+    this.#pendingFileAdds = 0
+    this.#addReservation = undefined
+  }
+
   #addReservation:
     | {
         addedIn: string | undefined
@@ -178,6 +189,16 @@ export default class TransloaditStorage<
       this.opts.storeUploads != null ||
       hasStoreAssemblyOptions(this.uppy, this.id)
     )
+  }
+
+  get #uploadRoot(): string {
+    const prefix = this.rootPrefix
+    return prefix && !prefix.endsWith('/') ? `${prefix}/` : prefix
+  }
+
+  get #openUploadFolder(): string {
+    const open = openFolderKey(this)
+    return open.startsWith(this.#uploadRoot) ? open : this.#uploadRoot
   }
 
   #canAddHere(): boolean {
@@ -204,14 +225,16 @@ export default class TransloaditStorage<
       }
     }
     if (this.#addedIn === undefined || !this.#hasQueuedFiles()) {
-      this.#addedIn = openFolderKey(this)
+      this.#addedIn = this.#openUploadFolder
       this.#bindAfterLoading = false
     }
     this.#pendingFileAdds += 1
+    const generation = this.#destinationGeneration
     let finished = false
     return () => {
       if (finished) return
       finished = true
+      if (generation !== this.#destinationGeneration) return
       this.#pendingFileAdds -= 1
       const reservation = this.#addReservation
       if (this.#pendingFileAdds !== 0 || !reservation) return
@@ -236,13 +259,21 @@ export default class TransloaditStorage<
    */
   get uploadFolderKey(): string {
     const queued = this.#hasQueuedFiles()
-    return queued && this.#addedIn !== undefined
+    return queued &&
+      this.#addedIn !== undefined &&
+      this.#addedIn.startsWith(this.#uploadRoot)
       ? this.#addedIn
-      : openFolderKey(this)
+      : this.#openUploadFolder
   }
 
   /** Commits an unbound queue's destination before its Assembly is signed. */
   reserveUploadFolder(): string {
+    if (
+      this.#addedIn !== undefined &&
+      !this.#addedIn.startsWith(this.#uploadRoot)
+    ) {
+      this.onSessionChanged()
+    }
     this.#settleQueuedFolder()
     if (
       this.#hasQueuedFiles() &&
@@ -255,7 +286,7 @@ export default class TransloaditStorage<
       throw new UserFacingApiError(this.i18n('uploadFolderLoading'))
     }
     if (this.#hasQueuedFiles() && this.#addedIn === undefined) {
-      this.#addedIn = openFolderKey(this)
+      this.#addedIn = this.#openUploadFolder
     }
     if (this.#addReservation) this.#addReservation.committed = true
     return this.uploadFolderKey
@@ -270,7 +301,7 @@ export default class TransloaditStorage<
       return
     this.#bindAfterLoading = false
     if (this.getPluginState().authenticated && this.#hasQueuedFiles()) {
-      this.#addedIn = openFolderKey(this)
+      this.#addedIn = this.#openUploadFolder
     }
   }
 
@@ -320,7 +351,9 @@ export default class TransloaditStorage<
     this.#bindAfterLoading = this.isNavigating || Boolean(loading)
     // Before connecting, the first Assembly reserves the now-known root.
     this.#addedIn =
-      authenticated && !this.#bindAfterLoading ? openFolderKey(this) : undefined
+      authenticated && !this.#bindAfterLoading
+        ? this.#openUploadFolder
+        : undefined
   }
 
   override builtInActions(): ProviderAction<M, B>[] {
@@ -485,7 +518,7 @@ export default class TransloaditStorage<
           | undefined
         dashboard?.showPanel?.(this.id)
       }
-      this.view.refreshCurrentFolder()
+      this.view.refreshCurrentFolder(true)
     }, 0)
   }
 }

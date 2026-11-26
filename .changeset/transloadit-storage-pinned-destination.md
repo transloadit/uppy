@@ -25,3 +25,7 @@ Toolbar actions also wait during paginated path navigation. Dismissing a file pi
 Empty or rejected additions do not bind a previously unbound queue; provisional reservations are kept only after adding files or preparing an Assembly signature.
 
 Picker imports reserve their destination before reading selected directories. Headless managers report navigation as busy. Assembly-option failures remain retryable, and empty upload completions do not clear queued files.
+
+Successful uploads invalidate cached destination listings even when the panel has moved to another folder.
+
+Queued destinations reset on logout or a change of bucket or grant prefix. Signing never reuses a destination outside the current session’s root.
