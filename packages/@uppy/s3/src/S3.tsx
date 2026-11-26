@@ -479,6 +479,24 @@ export default class S3<M extends Meta, B extends Body>
    * links).
    */
   async openFolderPath(key: string | null): Promise<boolean> {
+    this.#folderWalks += 1
+    this.setPluginState()
+    try {
+      return await this.#openFolderPath(key)
+    } finally {
+      this.#folderWalks -= 1
+      this.setPluginState()
+    }
+  }
+
+  #folderWalks = 0
+
+  /** A path walk includes the parent's pagination between folder listings. */
+  override get isNavigating(): boolean {
+    return this.#folderWalks > 0
+  }
+
+  async #openFolderPath(key: string | null): Promise<boolean> {
     await this.#sessionReady
     // This call owns the initial navigation even without a rendered panel:
     // prevent a later first render from reopening the root behind our back.

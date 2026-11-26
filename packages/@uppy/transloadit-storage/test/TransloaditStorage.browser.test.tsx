@@ -890,6 +890,98 @@ describe('Transloadit Storage in the browser', () => {
     )
   })
 
+  it('blocks folder-dependent toolbar actions throughout paginated path navigation', async () => {
+    const onUploadRequest = vi.fn()
+    const companion = createMockS3Companion({
+      token: TOKEN,
+      pageSize: 1,
+      folders: {
+        '': [
+          {
+            name: 'readme.md',
+            isFolder: false,
+            size: 1,
+            mimeType: 'text/plain',
+          },
+          { name: 'docs', isFolder: true },
+        ],
+        'docs/': [
+          { name: 'a.txt', isFolder: false, size: 1, mimeType: 'text/plain' },
+        ],
+      },
+    })
+    network.use(...toMswHandlers(companion, COMPANION, { http }))
+    uppy = new Uppy().use(TransloaditStorage, {
+      companionUrl: COMPANION,
+      mode: 'manager',
+      onUploadRequest,
+    })
+    const storage =
+      uppy.getPlugin<TransloaditStorage<Meta, Record<string, never>>>(
+        'TransloaditStorage',
+      )!
+    await storage.openFolderPath(null)
+    let release = () => {}
+    const held = new Promise<void>((resolve) => {
+      release = resolve
+    })
+    const load = storage.view.loadNextPage.bind(storage.view)
+    const paging = vi
+      .spyOn(storage.view, 'loadNextPage')
+      .mockImplementation(async () => {
+        await held
+        return load()
+      })
+    const walking = storage.openFolderPath('docs/')
+    await vi.waitFor(() => expect(paging).toHaveBeenCalled())
+    expect(storage.getPluginState().loading).toBeFalsy()
+    const upload = storage.view.opts.toolbarActions!.find(
+      (action) => action.id === 'transloadit:uploadFiles',
+    )!
+    await storage.view.runToolbarAction(upload)
+    expect(onUploadRequest).not.toHaveBeenCalled()
+    const newFolder = storage.view.opts.toolbarActions!.find(
+      (action) => action.id === 's3:newFolder',
+    )!
+    await storage.view.runToolbarAction(newFolder)
+    expect(storage.getPluginState().dialog).toBeUndefined()
+    release()
+    expect(await walking).toBe(true)
+    paging.mockRestore()
+    await storage.view.runToolbarAction(upload)
+    expect(onUploadRequest).toHaveBeenCalledWith({ prefix: 'docs/' })
+  })
+
+  it('does not pin an empty queue when a file picker closes without a cancel event', async () => {
+    const signAssembly = vi.fn(async (params: StoreAssemblyParameters) => ({
+      params,
+      signature: 'test',
+    }))
+    setup({ storeUploads: { signAssembly } })
+    const app = uppy!
+    const storage =
+      app.getPlugin<TransloaditStorage<Meta, Record<string, never>>>(
+        'TransloaditStorage',
+      )!
+    await page.getByRole('tab', { name: 'Transloadit Storage' }).click()
+    await expect.element(page.getByText('readme.md')).toBeVisible()
+    await page.getByText('docs', { exact: true }).click()
+    await expect.element(page.getByText('hello.txt')).toBeVisible()
+    const picker = vi
+      .spyOn(HTMLInputElement.prototype, 'click')
+      .mockImplementation(() => {})
+    try {
+      await page.getByRole('button', { name: 'Upload files' }).click()
+    } finally {
+      picker.mockRestore()
+    }
+    await storage.view.openFolder(storage.rootFolderId)
+    expect(storage.acceptsFileDrops).toBe(true)
+    app.addFile({ name: 'later.txt', data: new File(['later'], 'later.txt') })
+    await createStoreAssemblyOptions(app, { signAssembly })()
+    expect(signAssembly.mock.calls[0]?.[0].steps.stored.path).toBe(FILE_NAME)
+  })
+
   it('renames a folder in one native move instead of walking it', async () => {
     // Manager mode is headless, as in a file library using `useS3Manager`.
     const companion = createMockS3Companion({ token: TOKEN })

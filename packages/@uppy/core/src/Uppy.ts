@@ -230,7 +230,9 @@ export type UnknownProviderPlugin<
   M extends Meta,
   B extends Body,
 > = UnknownPlugin<M, B, UnknownProviderPluginState> &
-  Pick<UIPlugin<UIPluginOptions, M, B>, 'beginAddingFiles'> &
+  Partial<
+    Pick<UIPlugin<UIPluginOptions, M, B>, 'beginAddingFiles' | 'isNavigating'>
+  > &
   BaseProviderPlugin & {
     rootFolderId: string | null
     files: UppyFile<M, B>[]

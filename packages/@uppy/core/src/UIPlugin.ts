@@ -60,6 +60,11 @@ class UIPlugin<
    */
   beginAddingFiles?: () => (() => void) | false | undefined
 
+  /** Whether a multi-step folder navigation still owns this panel. */
+  get isNavigating(): boolean {
+    return false
+  }
+
   getTargetPlugin<Me extends Meta, Bo extends Body>(
     target: PluginTarget<Me, Bo>,
   ): UIPlugin<any, Me, Bo> | undefined {

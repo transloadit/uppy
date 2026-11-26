@@ -165,8 +165,6 @@ export default class TransloaditStorage<
 
   #pendingFileAdds = 0
 
-  #folderWalks = 0
-
   get #storesUploads(): boolean {
     return (
       this.opts.storeUploads != null ||
@@ -177,7 +175,11 @@ export default class TransloaditStorage<
   /** Reserves the destination before Dashboard can close and reset this panel. */
   override beginAddingFiles = (): (() => void) | false | undefined => {
     if (!this.#storesUploads) return
-    if (this.#folderWalks > 0 || this.uploadFolderKey !== openFolderKey(this)) {
+    if (this.isNavigating) {
+      this.uppy.info(this.i18n('uploadFolderLoading'), 'info', 5000)
+      return false
+    }
+    if (this.uploadFolderKey !== openFolderKey(this)) {
       this.uppy.info(this.i18n('uploadQueuedElsewhere'), 'info', 5000)
       return false
     }
@@ -191,16 +193,6 @@ export default class TransloaditStorage<
       if (finished) return
       finished = true
       this.#pendingFileAdds -= 1
-    }
-  }
-
-  override async openFolderPath(key: string | null): Promise<boolean> {
-    this.#folderWalks += 1
-    try {
-      return await super.openFolderPath(key)
-    } finally {
-      this.#folderWalks -= 1
-      this.#settleQueuedFolder()
     }
   }
 
@@ -227,7 +219,7 @@ export default class TransloaditStorage<
     if (
       this.#hasQueuedFiles() &&
       this.#addedIn === undefined &&
-      (this.getPluginState().loading || this.#folderWalks > 0)
+      (this.getPluginState().loading || this.isNavigating)
     ) {
       this.#bindAfterLoading = true
     }
@@ -244,7 +236,7 @@ export default class TransloaditStorage<
     if (
       !this.#bindAfterLoading ||
       this.getPluginState().loading ||
-      this.#folderWalks > 0
+      this.isNavigating
     )
       return
     this.#bindAfterLoading = false
@@ -280,7 +272,7 @@ export default class TransloaditStorage<
   #storesInOpenFolder(): boolean {
     return (
       !this.getPluginState().loading &&
-      this.#folderWalks === 0 &&
+      !this.isNavigating &&
       this.uploadFolderKey === openFolderKey(this)
     )
   }
@@ -292,7 +284,7 @@ export default class TransloaditStorage<
     // Widget additions reserve their folder before emitting files-added;
     // external additions must wait for navigation to settle.
     const { authenticated, loading } = this.getPluginState()
-    this.#bindAfterLoading = this.#folderWalks > 0 || Boolean(loading)
+    this.#bindAfterLoading = this.isNavigating || Boolean(loading)
     // Before connecting, the first Assembly reserves the now-known root.
     this.#addedIn =
       authenticated && !this.#bindAfterLoading ? openFolderKey(this) : undefined
@@ -357,7 +349,9 @@ export default class TransloaditStorage<
         // way files go into the folder that is open (storeUploads builds the
         // Assembly params). The view does not run it while a folder lists.
         run: () => {
-          if (this.#storesUploads && !this.#storesInOpenFolder()) {
+          if (this.isNavigating || this.getPluginState().loading) {
+            this.uppy.info(this.i18n('uploadFolderLoading'), 'info', 5000)
+          } else if (this.#storesUploads && !this.#storesInOpenFolder()) {
             this.uppy.info(this.i18n('uploadQueuedElsewhere'), 'info', 5000)
           } else if (onUploadRequest) {
             onUploadRequest({ prefix: openFolderKey(this) })
@@ -374,11 +368,17 @@ export default class TransloaditStorage<
   #pickFiles(): void {
     const finishAdding = this.beginAddingFiles()
     if (finishAdding === false) return
+    finishAdding?.()
     const input = document.createElement('input')
     input.type = 'file'
     input.multiple = true
     input.style.display = 'none'
     input.addEventListener('change', () => {
+      const finishSelection = this.beginAddingFiles()
+      if (finishSelection === false) {
+        input.remove()
+        return
+      }
       try {
         this.uppy.addFiles(
           Array.from(input.files ?? [], (file) => ({
@@ -390,12 +390,11 @@ export default class TransloaditStorage<
           })),
         )
       } finally {
-        finishAdding?.()
+        finishSelection?.()
         input.remove()
       }
     })
     input.addEventListener('cancel', () => {
-      finishAdding?.()
       input.remove()
     })
     document.body.appendChild(input)

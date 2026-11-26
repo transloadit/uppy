@@ -457,7 +457,7 @@ export default class ProviderView<M extends Meta, B extends Body> {
     // A toolbar action works on the open folder. While a listing (or a long
     // operation) runs, `currentFolderId` is still the folder being left, not
     // the one the user is opening: run nothing rather than the wrong folder.
-    if (this.plugin.getPluginState().loading) return
+    if (this.plugin.getPluginState().loading || this.plugin.isNavigating) return
     await this.#run(action, () =>
       action.run({
         currentFolderId: this.plugin.getPluginState().currentFolderId,
@@ -1077,7 +1077,7 @@ export default class ProviderView<M extends Meta, B extends Body> {
   async donePicking(): Promise<boolean> {
     const { partialTree } = this.plugin.getPluginState()
 
-    if (this.isLoading) return false
+    if (this.isLoading || this.plugin.isNavigating) return false
     const loadingId = this.#startLoading()
     let added = false
     await this.#withAbort(async (signal) => {
@@ -1311,7 +1311,7 @@ export default class ProviderView<M extends Meta, B extends Body> {
           i18n={i18n}
           toolbarActions={opts.toolbarActions ?? []}
           runToolbarAction={this.runToolbarAction}
-          toolbarDisabled={Boolean(loading)}
+          toolbarDisabled={Boolean(loading || this.plugin.isNavigating)}
         />
         {opts.showFilter && (
           <FilterInput
