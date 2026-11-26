@@ -165,6 +165,14 @@ export default class TransloaditStorage<
 
   #pendingFileAdds = 0
 
+  #addReservation:
+    | {
+        addedIn: string | undefined
+        bindAfterLoading: boolean
+        committed: boolean
+      }
+    | undefined
+
   get #storesUploads(): boolean {
     return (
       this.opts.storeUploads != null ||
@@ -172,16 +180,28 @@ export default class TransloaditStorage<
     )
   }
 
-  /** Reserves the destination before Dashboard can close and reset this panel. */
-  override beginAddingFiles = (): (() => void) | false | undefined => {
-    if (!this.#storesUploads) return
+  #canAddHere(): boolean {
     if (this.isNavigating) {
       this.uppy.info(this.i18n('uploadFolderLoading'), 'info', 5000)
       return false
     }
-    if (this.uploadFolderKey !== openFolderKey(this)) {
+    if (this.#storesUploads && this.uploadFolderKey !== openFolderKey(this)) {
       this.uppy.info(this.i18n('uploadQueuedElsewhere'), 'info', 5000)
       return false
+    }
+    return true
+  }
+
+  /** Reserves the destination before Dashboard can close and reset this panel. */
+  override beginAddingFiles = (): (() => void) | false | undefined => {
+    if (!this.#storesUploads) return
+    if (!this.#canAddHere()) return false
+    if (this.#pendingFileAdds === 0) {
+      this.#addReservation = {
+        addedIn: this.#addedIn,
+        bindAfterLoading: this.#bindAfterLoading,
+        committed: false,
+      }
     }
     if (this.#addedIn === undefined || !this.#hasQueuedFiles()) {
       this.#addedIn = openFolderKey(this)
@@ -193,6 +213,14 @@ export default class TransloaditStorage<
       if (finished) return
       finished = true
       this.#pendingFileAdds -= 1
+      const reservation = this.#addReservation
+      if (this.#pendingFileAdds !== 0 || !reservation) return
+      this.#addReservation = undefined
+      if (!reservation.committed) {
+        this.#addedIn = reservation.addedIn
+        this.#bindAfterLoading = reservation.bindAfterLoading
+        this.#settleQueuedFolder()
+      }
     }
   }
 
@@ -229,6 +257,7 @@ export default class TransloaditStorage<
     if (this.#hasQueuedFiles() && this.#addedIn === undefined) {
       this.#addedIn = openFolderKey(this)
     }
+    if (this.#addReservation) this.#addReservation.committed = true
     return this.uploadFolderKey
   }
 
@@ -279,6 +308,9 @@ export default class TransloaditStorage<
 
   /** A new queue is stored in the folder open when its first files arrive. */
   #onFilesAdded = (files: UppyFile<M, B>[]): void => {
+    if (files.length > 0 && this.#addReservation) {
+      this.#addReservation.committed = true
+    }
     const added = new Set(files.map((file) => file.id))
     if (this.#hasQueuedFiles(added) && this.#addedIn !== undefined) return
     // Widget additions reserve their folder before emitting files-added;
@@ -366,9 +398,7 @@ export default class TransloaditStorage<
 
   /** Lets the user pick local files and adds them to Uppy. */
   #pickFiles(): void {
-    const finishAdding = this.beginAddingFiles()
-    if (finishAdding === false) return
-    finishAdding?.()
+    if (!this.#canAddHere()) return
     const input = document.createElement('input')
     input.type = 'file'
     input.multiple = true
