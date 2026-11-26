@@ -154,9 +154,7 @@ export default class TransloaditStorage<
   override get acceptsFileDrops(): boolean {
     return (
       this.opts.mode !== 'manager' &&
-      ((this.opts.storeUploads == null &&
-        !hasStoreAssemblyOptions(this.uppy, this.id)) ||
-        (this.canWrite && this.#storesInOpenFolder()))
+      (!this.#storesUploads || (this.canWrite && this.#storesInOpenFolder()))
     )
   }
 
@@ -165,23 +163,44 @@ export default class TransloaditStorage<
 
   #bindAfterLoading = false
 
-  #pendingFileDrops = 0
+  #pendingFileAdds = 0
 
-  /** Reserves the accepted drop's folder while Dashboard reads its files. */
-  override beginFileDrop = (): (() => void) | undefined => {
-    if (
-      (!this.opts.storeUploads &&
-        !hasStoreAssemblyOptions(this.uppy, this.id)) ||
-      !this.acceptsFileDrops
+  #folderWalks = 0
+
+  get #storesUploads(): boolean {
+    return (
+      this.opts.storeUploads != null ||
+      hasStoreAssemblyOptions(this.uppy, this.id)
     )
-      return
-    this.#onFilesAdded([])
-    this.#pendingFileDrops += 1
+  }
+
+  /** Reserves the destination before Dashboard can close and reset this panel. */
+  override beginAddingFiles = (): (() => void) | false | undefined => {
+    if (!this.#storesUploads) return
+    if (this.#folderWalks > 0 || this.uploadFolderKey !== openFolderKey(this)) {
+      this.uppy.info(this.i18n('uploadQueuedElsewhere'), 'info', 5000)
+      return false
+    }
+    if (this.#addedIn === undefined || !this.#hasQueuedFiles()) {
+      this.#addedIn = openFolderKey(this)
+      this.#bindAfterLoading = false
+    }
+    this.#pendingFileAdds += 1
     let finished = false
     return () => {
       if (finished) return
       finished = true
-      this.#pendingFileDrops -= 1
+      this.#pendingFileAdds -= 1
+    }
+  }
+
+  override async openFolderPath(key: string | null): Promise<boolean> {
+    this.#folderWalks += 1
+    try {
+      return await super.openFolderPath(key)
+    } finally {
+      this.#folderWalks -= 1
+      this.#settleQueuedFolder()
     }
   }
 
@@ -205,6 +224,13 @@ export default class TransloaditStorage<
   /** Commits an unbound queue's destination before its Assembly is signed. */
   reserveUploadFolder(): string {
     this.#settleQueuedFolder()
+    if (
+      this.#hasQueuedFiles() &&
+      this.#addedIn === undefined &&
+      (this.getPluginState().loading || this.#folderWalks > 0)
+    ) {
+      this.#bindAfterLoading = true
+    }
     if (this.#bindAfterLoading) {
       throw new UserFacingApiError(this.i18n('uploadFolderLoading'))
     }
@@ -215,7 +241,12 @@ export default class TransloaditStorage<
   }
 
   #settleQueuedFolder = (): void => {
-    if (!this.#bindAfterLoading || this.getPluginState().loading) return
+    if (
+      !this.#bindAfterLoading ||
+      this.getPluginState().loading ||
+      this.#folderWalks > 0
+    )
+      return
     this.#bindAfterLoading = false
     if (this.getPluginState().authenticated && this.#hasQueuedFiles()) {
       this.#addedIn = openFolderKey(this)
@@ -224,7 +255,7 @@ export default class TransloaditStorage<
 
   /** Failed processing and active retries still own their destination after transport completes. */
   #hasQueuedFiles(excludedIds?: ReadonlySet<string>): boolean {
-    if (this.#pendingFileDrops > 0) return true
+    if (this.#pendingFileAdds > 0) return true
     const activeFiles = new Set(
       Object.values(this.uppy.getState().currentUploads).flatMap(
         ({ fileIDs }) => fileIDs,
@@ -249,6 +280,7 @@ export default class TransloaditStorage<
   #storesInOpenFolder(): boolean {
     return (
       !this.getPluginState().loading &&
+      this.#folderWalks === 0 &&
       this.uploadFolderKey === openFolderKey(this)
     )
   }
@@ -257,13 +289,10 @@ export default class TransloaditStorage<
   #onFilesAdded = (files: UppyFile<M, B>[]): void => {
     const added = new Set(files.map((file) => file.id))
     if (this.#hasQueuedFiles(added) && this.#addedIn !== undefined) return
-    // Picker imports are added while donePicking is busy, before it resets
-    // the open folder. External additions must wait for navigation to settle.
-    const pickingHere = files.some(
-      (file) => file.isRemote && file.source === this.id,
-    )
+    // Widget additions reserve their folder before emitting files-added;
+    // external additions must wait for navigation to settle.
     const { authenticated, loading } = this.getPluginState()
-    this.#bindAfterLoading = Boolean(loading && !pickingHere)
+    this.#bindAfterLoading = this.#folderWalks > 0 || Boolean(loading)
     // Before connecting, the first Assembly reserves the now-known root.
     this.#addedIn =
       authenticated && !this.#bindAfterLoading ? openFolderKey(this) : undefined
@@ -328,12 +357,12 @@ export default class TransloaditStorage<
         // way files go into the folder that is open (storeUploads builds the
         // Assembly params). The view does not run it while a folder lists.
         run: () => {
-          if (onUploadRequest) {
-            onUploadRequest({ prefix: openFolderKey(this) })
-          } else if (this.#storesInOpenFolder()) {
-            this.#pickFiles()
-          } else {
+          if (this.#storesUploads && !this.#storesInOpenFolder()) {
             this.uppy.info(this.i18n('uploadQueuedElsewhere'), 'info', 5000)
+          } else if (onUploadRequest) {
+            onUploadRequest({ prefix: openFolderKey(this) })
+          } else {
+            this.#pickFiles()
           }
         },
       },
@@ -343,20 +372,30 @@ export default class TransloaditStorage<
 
   /** Lets the user pick local files and adds them to Uppy. */
   #pickFiles(): void {
+    const finishAdding = this.beginAddingFiles()
+    if (finishAdding === false) return
     const input = document.createElement('input')
     input.type = 'file'
     input.multiple = true
     input.style.display = 'none'
     input.addEventListener('change', () => {
-      this.uppy.addFiles(
-        Array.from(input.files ?? [], (file) => ({
-          name: file.name,
-          type: file.type,
-          data: file,
-          source: this.id,
-          isRemote: false,
-        })),
-      )
+      try {
+        this.uppy.addFiles(
+          Array.from(input.files ?? [], (file) => ({
+            name: file.name,
+            type: file.type,
+            data: file,
+            source: this.id,
+            isRemote: false,
+          })),
+        )
+      } finally {
+        finishAdding?.()
+        input.remove()
+      }
+    })
+    input.addEventListener('cancel', () => {
+      finishAdding?.()
       input.remove()
     })
     document.body.appendChild(input)

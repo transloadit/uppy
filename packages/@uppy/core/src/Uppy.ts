@@ -9,6 +9,7 @@ import type SearchProvider from './companion-client/SearchProvider.js'
 import type ProviderView from './provider-views/ProviderView/ProviderView.js'
 import type { Restrictions, ValidateableFile } from './Restricter.js'
 import type { Store } from './store/index.js'
+import type { default as UIPlugin, UIPluginOptions } from './UIPlugin.js'
 import type {
   Body,
   CompanionFile,
@@ -229,6 +230,7 @@ export type UnknownProviderPlugin<
   M extends Meta,
   B extends Body,
 > = UnknownPlugin<M, B, UnknownProviderPluginState> &
+  Pick<UIPlugin<UIPluginOptions, M, B>, 'beginAddingFiles'> &
   BaseProviderPlugin & {
     rootFolderId: string | null
     files: UppyFile<M, B>[]

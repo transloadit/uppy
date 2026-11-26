@@ -1109,9 +1109,15 @@ export default class ProviderView<M extends Meta, B extends Body> {
 
       // 3. Add files, keeping the selection when every file was rejected
       const companionFiles = getCheckedFilesWithPaths(enrichedTree)
-      if (!addFiles(companionFiles, this.plugin, this.provider)) {
-        this.plugin.setPluginState({ partialTree: enrichedTree })
-        return
+      const finishAdding = this.plugin.beginAddingFiles?.()
+      if (finishAdding === false) return
+      try {
+        if (!addFiles(companionFiles, this.plugin, this.provider)) {
+          this.plugin.setPluginState({ partialTree: enrichedTree })
+          return
+        }
+      } finally {
+        finishAdding?.()
       }
 
       // 4. Reset state

@@ -671,6 +671,225 @@ describe('Transloadit Storage in the browser', () => {
     )
   })
 
+  it('binds external additions after an entire multi-folder navigation finishes', async () => {
+    const signAssembly = vi.fn(async (params: StoreAssemblyParameters) => ({
+      params,
+      signature: 'test',
+    }))
+    const companion = createMockS3Companion({
+      token: TOKEN,
+      folders: {
+        '': [{ name: 'docs', isFolder: true }],
+        'docs/': [{ name: 'photos', isFolder: true }],
+        'docs/photos/': [
+          { name: 'a.txt', isFolder: false, size: 1, mimeType: 'text/plain' },
+        ],
+      },
+    })
+    network.use(...toMswHandlers(companion, COMPANION, { http }))
+    uppy = new Uppy().use(FixtureUploader, {}).use(TransloaditStorage, {
+      companionUrl: COMPANION,
+      mode: 'manager',
+      storeUploads: { signAssembly },
+    })
+    const app = uppy
+    const storage =
+      app.getPlugin<TransloaditStorage<Meta, Record<string, never>>>(
+        'TransloaditStorage',
+      )!
+    await storage.openFolderPath(null)
+    let release = () => {}
+    const held = new Promise<void>((resolve) => {
+      release = resolve
+    })
+    network.use(
+      http.get(`${COMPANION}/transloadit-storage/list/docs%2F`, async () => {
+        await held
+      }),
+    )
+    const walking = storage.openFolderPath('docs/photos/')
+    await vi.waitFor(() =>
+      expect(storage.getPluginState().loading).toBeTruthy(),
+    )
+    app.addFile({
+      name: 'outside.txt',
+      data: new File(['outside'], 'outside.txt'),
+    })
+    release()
+    expect(await walking).toBe(true)
+    expect(storage.getPluginState().currentFolderId).toBe('docs%2Fphotos%2F')
+    await createStoreAssemblyOptions(app, { signAssembly })()
+    expect(signAssembly.mock.calls[0]?.[0].steps.stored.path).toBe(
+      `docs/photos/${FILE_NAME}`,
+    )
+  })
+
+  it('refuses a custom upload callback when its shared queue targets another folder', async () => {
+    const signAssembly = vi.fn(async (params: StoreAssemblyParameters) => ({
+      params,
+      signature: 'test',
+    }))
+    const onUploadRequest = vi.fn()
+    setup({ storeUploads: { signAssembly }, onUploadRequest })
+    const app = uppy!
+    const storage =
+      app.getPlugin<TransloaditStorage<Meta, Record<string, never>>>(
+        'TransloaditStorage',
+      )!
+    await page.getByRole('tab', { name: 'Transloadit Storage' }).click()
+    await expect.element(page.getByText('readme.md')).toBeVisible()
+    await page.getByText('docs', { exact: true }).click()
+    await expect.element(page.getByText('hello.txt')).toBeVisible()
+    app.addFile({
+      name: 'queued.txt',
+      data: new File(['queued'], 'queued.txt'),
+    })
+    app
+      .getPlugin<Dashboard<Meta, Record<string, never>>>('Dashboard')!
+      .showPanel('TransloaditStorage')
+    await storage.view.openFolder(storage.rootFolderId)
+    await page.getByRole('button', { name: 'Upload files' }).click()
+    expect(onUploadRequest).not.toHaveBeenCalled()
+    expect(app.getState().info.map((info) => info.message)).toContain(
+      'Upload or remove the queued files first: they go to another folder',
+    )
+  })
+
+  it('reserves local selections before closing a panel that resets its folder', async () => {
+    const signAssembly = vi.fn(async (params: StoreAssemblyParameters) => ({
+      params,
+      signature: 'test',
+    }))
+    setup({ storeUploads: { signAssembly }, keepStateOnClose: false })
+    const app = uppy!
+    await page.getByRole('tab', { name: 'Transloadit Storage' }).click()
+    await expect.element(page.getByText('readme.md')).toBeVisible()
+    await page.getByText('docs', { exact: true }).click()
+    await expect.element(page.getByText('hello.txt')).toBeVisible()
+    const picker = vi
+      .spyOn(HTMLInputElement.prototype, 'click')
+      .mockImplementation(function (this: HTMLInputElement) {
+        const transfer = new DataTransfer()
+        transfer.items.add(new File(['picked'], 'picked.txt'))
+        this.files = transfer.files
+        this.dispatchEvent(new Event('change'))
+      })
+    try {
+      await page.getByRole('button', { name: 'Upload files' }).click()
+    } finally {
+      picker.mockRestore()
+    }
+    expect(app.getFiles().map((file) => file.name)).toEqual(['picked.txt'])
+    await createStoreAssemblyOptions(app, { signAssembly })()
+    expect(signAssembly.mock.calls[0]?.[0].steps.stored.path).toBe(
+      `docs/${FILE_NAME}`,
+    )
+  })
+
+  it('reserves imported files before closing a panel that resets its folder', async () => {
+    const signAssembly = vi.fn(async (params: StoreAssemblyParameters) => ({
+      params,
+      signature: 'test',
+    }))
+    setup({ storeUploads: { signAssembly }, keepStateOnClose: false })
+    const app = uppy!
+    const storage =
+      app.getPlugin<TransloaditStorage<Meta, Record<string, never>>>(
+        'TransloaditStorage',
+      )!
+    await page.getByRole('tab', { name: 'Transloadit Storage' }).click()
+    await expect.element(page.getByText('readme.md')).toBeVisible()
+    await page.getByText('docs', { exact: true }).click()
+    await expect.element(page.getByText('hello.txt')).toBeVisible()
+    const item = storage.view
+      .getDisplayedPartialTree()
+      .find((node) => node.type === 'file')
+    if (!item) throw new Error('Missing file in docs')
+    storage.view.toggleCheckbox(item, false)
+    expect(await storage.view.donePicking()).toBe(true)
+    await createStoreAssemblyOptions(app, { signAssembly })()
+    expect(signAssembly.mock.calls[0]?.[0].steps.stored.path).toBe(
+      `docs/${FILE_NAME}`,
+    )
+  })
+
+  it('refuses picker imports when the shared queue targets another folder', async () => {
+    const signAssembly = vi.fn(async (params: StoreAssemblyParameters) => ({
+      params,
+      signature: 'test',
+    }))
+    setup({ storeUploads: { signAssembly } })
+    const app = uppy!
+    const storage =
+      app.getPlugin<TransloaditStorage<Meta, Record<string, never>>>(
+        'TransloaditStorage',
+      )!
+    await page.getByRole('tab', { name: 'Transloadit Storage' }).click()
+    await expect.element(page.getByText('readme.md')).toBeVisible()
+    app.addFile({
+      name: 'queued.txt',
+      data: new File(['queued'], 'queued.txt'),
+    })
+    app
+      .getPlugin<Dashboard<Meta, Record<string, never>>>('Dashboard')!
+      .showPanel('TransloaditStorage')
+    await page.getByText('docs', { exact: true }).click()
+    await expect.element(page.getByText('hello.txt')).toBeVisible()
+    const item = storage.view
+      .getDisplayedPartialTree()
+      .find((node) => node.type === 'file')
+    if (!item) throw new Error('Missing file in docs')
+    storage.view.toggleCheckbox(item, false)
+    expect(await storage.view.donePicking()).toBe(false)
+    expect(app.getFiles().map((file) => file.name)).toEqual(['queued.txt'])
+    expect(storage.view.getSelectedAmount()).toBe(1)
+    expect(app.getState().info.map((info) => info.message)).toContain(
+      'Upload or remove the queued files first: they go to another folder',
+    )
+  })
+
+  it('refuses to sign a pre-connection queue during navigation', async () => {
+    const signAssembly = vi.fn(async (params: StoreAssemblyParameters) => ({
+      params,
+      signature: 'test',
+    }))
+    setup({ storeUploads: { signAssembly } })
+    const app = uppy!
+    const storage =
+      app.getPlugin<TransloaditStorage<Meta, Record<string, never>>>(
+        'TransloaditStorage',
+      )!
+    app.addFile({ name: 'early.txt', data: new File(['early'], 'early.txt') })
+    app
+      .getPlugin<Dashboard<Meta, Record<string, never>>>('Dashboard')!
+      .showPanel('TransloaditStorage')
+    await expect.element(page.getByText('readme.md')).toBeVisible()
+    let release = () => {}
+    const held = new Promise<void>((resolve) => {
+      release = resolve
+    })
+    network.use(
+      http.get(`${COMPANION}/transloadit-storage/list/docs%2F`, async () => {
+        await held
+      }),
+    )
+    await page.getByText('docs', { exact: true }).click()
+    await vi.waitFor(() =>
+      expect(storage.getPluginState().loading).toBeTruthy(),
+    )
+    const build = createStoreAssemblyOptions(app, { signAssembly })
+    await expect(build()).rejects.toThrow(
+      'Wait for the folder to finish loading',
+    )
+    expect(signAssembly).not.toHaveBeenCalled()
+    release()
+    await expect.element(page.getByText('hello.txt')).toBeVisible()
+    await build()
+    expect(signAssembly.mock.calls[0]?.[0].steps.stored.path).toBe(
+      `docs/${FILE_NAME}`,
+    )
+  })
+
   it('renames a folder in one native move instead of walking it', async () => {
     // Manager mode is headless, as in a file library using `useS3Manager`.
     const companion = createMockS3Companion({ token: TOKEN })

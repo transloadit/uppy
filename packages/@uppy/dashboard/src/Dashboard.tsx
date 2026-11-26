@@ -879,8 +879,9 @@ export default class Dashboard<M extends Meta, B extends Body> extends UIPlugin<
     const finishDrop =
       event.target instanceof Element &&
       event.target.closest('[data-uppy-panelType="PickerPanel"]')
-        ? activePlugin?.beginFileDrop?.()
+        ? activePlugin?.beginAddingFiles?.()
         : undefined
+    if (finishDrop === false) return
     try {
       // Browsers empty `event.dataTransfer` once this handler yields
       this.opts.onDrop(event)

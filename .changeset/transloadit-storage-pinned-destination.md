@@ -14,3 +14,5 @@ Manually configured `createStoreAssemblyOptions` pipelines use the same folder-d
 The destination is reserved when a drop is accepted, so navigating while Dashboard reads dropped files or folders cannot redirect them.
 
 Uploads added before connecting reserve their first signed destination for retries. Files added outside the panel during navigation bind to the folder once its listing settles.
+
+Multi-folder navigation is treated as one operation. Local selections and picker imports reserve their folder before the panel can reset, and all panel upload actions honor an existing queue’s destination.
