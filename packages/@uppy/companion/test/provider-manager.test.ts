@@ -98,6 +98,7 @@ describe('Test Provider options', () => {
       authorize_url: 'https://www.dropbox.com/oauth2/authorize',
       access_url: 'https://api.dropbox.com/oauth2/token',
       callback: '/dropbox/callback',
+      scope_delimiter: ' ',
       custom_params: {
         token_access_type: 'offline',
       },
@@ -236,6 +237,21 @@ describe('Test Provider options', () => {
     expect(
       requireGrantProviderConfig(grantConfig, 'googledrive')['scope'],
     ).toEqual(['https://www.googleapis.com/auth/drive.readonly'])
+  })
+
+  test('separates Dropbox scopes with spaces', () => {
+    const dropbox = companionOptions.providerOptions?.['dropbox']
+    if (dropbox == null) throw new Error('Expected providerOptions.dropbox')
+    dropbox.scope = ['files.content.read', 'account_info.read']
+    providerManager.addProviderOptions(
+      getAddProviderOptionsArgs(companionOptions),
+      grantConfig,
+      getOauthProvider,
+    )
+
+    const config = requireGrantProviderConfig(grantConfig, 'dropbox')
+    expect(config['scope']).toEqual(['files.content.read', 'account_info.read'])
+    expect(config['scope_delimiter']).toBe(' ')
   })
 
   test('merges providerOptions customParams over the default custom params', () => {
