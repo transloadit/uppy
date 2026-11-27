@@ -27,12 +27,12 @@
     "@types/react": "^19.3.0",
     "@types/react-dom": "^19.3.0",
     "@vitejs/plugin-react": "^6.1.2",
-    "@vitest/browser-playwright": "^5.1.0",
+    "@vitest/browser-playwright": "^5.1.1",
     "msw": "^3.0.3",
-    "playwright": "1.65.0",
+    "playwright": "1.65.1",
     "typescript": "^6.0.3",
     "vite": "^8.3.5",
-    "vitest": "^5.1.0",
+    "vitest": "^5.1.1",
     "vitest-browser-react": "^2.3.0"
   }
 }

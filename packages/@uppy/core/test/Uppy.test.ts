@@ -1681,6 +1681,100 @@ describe('src/Core', () => {
         expect(onUpload).toHaveBeenCalledTimes(1)
       })
     })
+    describe('while the original upload is still running', () => {
+      // Uploader whose files succeed or fail when the test says so.
+      function controlledUploader(core: Core<any, any>) {
+        const pending = new Map<
+          string,
+          { resolve: () => void; reject: (err: Error) => void }
+        >()
+        let releaseUploadStep = () => {}
+        const uploadStepGate = new Promise<void>((resolve) => {
+          releaseUploadStep = resolve
+        })
+        core.addUploader(async (fileIDs) => {
+          await Promise.all(
+            fileIDs.map((id) =>
+              new Promise<void>((resolve, reject) => {
+                pending.set(id, { resolve, reject })
+              }).then(
+                () =>
+                  core.emit('upload-success', core.getFile(id), {
+                    status: 200,
+                    body: {},
+                    uploadURL: 'https://example.com',
+                  }),
+                (err) => core.emit('upload-error', core.getFile(id), err),
+              ),
+            ),
+          )
+          if (fileIDs.length > 1) await uploadStepGate
+        })
+        const settle = async (id: string, err?: Error) => {
+          await vi.waitFor(() => expect(pending.has(id)).toBe(true))
+          const { resolve, reject } = pending.get(id)!
+          pending.delete(id)
+          if (err) reject(err)
+          else resolve()
+        }
+        return { settle, releaseUploadStep }
+      }
+
+      async function addFiles(core: Core<any, any>) {
+        const data = await fetchTestImage()
+        return ['a.jpg', 'b.jpg'].map((name) =>
+          core.addFile({ source: 'vi', name, type: 'image/jpeg', data }),
+        )
+      }
+
+      it('should not report a retried file in the original upload result', async () => {
+        using core = new Core()
+        const { settle, releaseUploadStep } = controlledUploader(core)
+        releaseUploadStep()
+        const [a, b] = await addFiles(core)
+
+        const firstUpload = core.upload()
+        await settle(b, new Error('fail'))
+        const retry = core.retryAll()
+        await settle(a)
+
+        const firstResult = await firstUpload
+        expect(firstResult!.successful!.map((f) => f.id)).toEqual([a])
+        expect(firstResult!.failed).toEqual([])
+
+        await settle(b, new Error('fail again'))
+        const retryResult = await retry
+        expect(retryResult!.successful).toEqual([])
+        expect(retryResult!.failed!.map((f) => f.id)).toEqual([b])
+      })
+
+      it('should move retried files out of the original upload, removing it once empty', async () => {
+        using core = new Core()
+        const { settle, releaseUploadStep } = controlledUploader(core)
+        const [a, b] = await addFiles(core)
+
+        const firstUpload = core.upload()
+        await settle(a, new Error('fail'))
+        await settle(b, new Error('fail'))
+        const [firstUploadID] = Object.keys(core.getState().currentUploads)
+
+        core.retryUpload(a)
+        expect(core.getState().currentUploads[firstUploadID].fileIDs).toEqual([
+          b,
+        ])
+
+        core.retryUpload(b)
+        expect(core.getState().currentUploads[firstUploadID]).toBeUndefined()
+        expect(
+          Object.values(core.getState().currentUploads).map((u) => u.fileIDs),
+        ).toEqual([[a], [b]])
+
+        releaseUploadStep()
+        const firstResult = await firstUpload
+        expect(firstResult!.successful).toEqual([])
+        expect(firstResult!.failed).toEqual([])
+      })
+    })
   })
 
   describe('restoring a file', () => {

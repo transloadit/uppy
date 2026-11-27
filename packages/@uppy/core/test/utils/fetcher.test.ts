@@ -44,4 +44,13 @@ describe('fetcher', () => {
       ['X-Custom', 'kept'],
     ])
   })
+
+  it('keeps the status of a finished request when its signal aborts later', async () => {
+    const controller = new AbortController()
+    const xhr = await fetcher(window.location.href, {
+      signal: controller.signal,
+    })
+    controller.abort()
+    expect(xhr.status).toBe(200)
+  })
 })

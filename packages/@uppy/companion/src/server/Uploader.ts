@@ -100,6 +100,16 @@ export interface UploadResult {
   extraData?: UploadExtraData | undefined
 }
 
+function isJson(text: unknown): text is string {
+  if (typeof text !== 'string' || text === '') return false
+  try {
+    JSON.parse(text)
+    return true
+  } catch {
+    return false
+  }
+}
+
 function exceedsMaxFileSize(
   maxFileSize: number | undefined,
   size: number | undefined,
@@ -1194,8 +1204,22 @@ export default class Uploader {
         onProgress(bytesUploaded, bytesTotal) {
           uploader.onProgress(bytesUploaded, bytesTotal)
         },
-        onSuccess() {
-          resolve({ url: uploader.tus?.url ?? null })
+        onSuccess({ lastResponse }) {
+          const url = uploader.tus?.url ?? null
+          // Pass on the destination's answer, as multipart does, but only a
+          // JSON one: clients JSON.parse responseText and would fail the upload
+          // on anything else. tus servers usually answer without a body.
+          const responseText = lastResponse.getBody()
+          if (!isJson(responseText)) {
+            resolve({ url })
+            return
+          }
+          resolve({
+            url,
+            extraData: {
+              response: { status: lastResponse.getStatus(), responseText },
+            },
+          })
         },
       }
 

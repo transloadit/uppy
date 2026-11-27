@@ -132,4 +132,105 @@ Svelte 5.
 
 <HooksShared />
 
+## Examples
+
+The prop getters of `useImageEditor` return Svelte event attributes
+(`onclick`, `onchange`, `onload`), so you can spread them on elements. Don’t
+destructure what `useImageEditor` and `useGooglePicker` return: their values are
+reactive through getters, which destructuring reads only once.
+
+### Example: image editor with `useImageEditor`
+
+A minimal editor component. See [`useImageEditor`](#useimageeditor-file-) for
+all the controls. The hook reads `file` once, so wrap the component in a
+`{#key}` block when the file can change.
+
+```svelte
+<!-- ImageEditor.svelte -->
+<script lang="ts">
+  import type { UppyFile } from '@uppy/core'
+  import { useImageEditor } from '@uppy/svelte'
+
+  const { file, close }: { file: UppyFile<any, any>; close: () => void } =
+    $props()
+
+  const editor = useImageEditor({ file })
+</script>
+
+<img {...editor.getImageProps()} style="max-width: 100%" />
+<input {...editor.getRotationSliderProps()} />
+<button {...editor.getRotateButtonProps(90)}>Rotate</button>
+<button {...editor.getFlipHorizontalButtonProps()}>Flip</button>
+<button {...editor.getCropSquareButtonProps()}>Square</button>
+<button {...editor.getResetButtonProps()}>Reset</button>
+<button {...editor.getCancelButtonProps({ onClick: close })}>Cancel</button>
+<button {...editor.getSaveButtonProps({ onClick: close })}>Save</button>
+```
+
+Render it inside an `UppyContextProvider` whose Uppy instance has the
+`ImageEditor` plugin, for example from `<FilesList />`:
+
+```svelte
+<script lang="ts">
+  import '@uppy/svelte/css/style.css'
+  import '@uppy/svelte/css/image-editor.css'
+
+  import Uppy, { type UppyFile } from '@uppy/core'
+  import ImageEditor from '@uppy/image-editor'
+  import { Dropzone, FilesList, UppyContextProvider } from '@uppy/svelte'
+  import Editor from './ImageEditor.svelte'
+
+  const uppy = new Uppy().use(ImageEditor)
+  let editing = $state<UppyFile<any, any> | null>(null)
+
+  function editFile(file: UppyFile<any, any>) {
+    if (uppy.getPlugin('ImageEditor')?.canEditFile(file)) editing = file
+  }
+</script>
+
+<UppyContextProvider {uppy}>
+  {#if editing}
+    {#key editing.id}
+      <Editor file={editing} close={() => (editing = null)} />
+    {/key}
+  {/if}
+  <Dropzone />
+  <FilesList {editFile} />
+</UppyContextProvider>
+```
+
+### Example: Google Drive Picker with `useGooglePicker`
+
+A button that opens Google Drive’s picker. Render it inside an
+`UppyContextProvider` whose Uppy instance has the `GoogleDrivePicker` plugin,
+set up as explained in the [Google Drive Picker docs](/docs/google-drive-picker):
+
+```js
+new Uppy().use(GoogleDrivePicker, {
+  companionUrl: 'https://your-companion.com',
+  clientId: 'From Google Developer Console',
+  apiKey: 'From Google Developer Console',
+  appId: 'From Google Developer Console',
+})
+```
+
+For Google Photos, use `@uppy/google-photos-picker` and
+`pickerType: 'photos'`. Add an uploader plugin, such as
+[`@uppy/tus`](/docs/tus), to upload the picked files.
+
+```svelte
+<script lang="ts">
+  import { useGooglePicker } from '@uppy/svelte'
+
+  const drive = useGooglePicker({ pickerType: 'drive' })
+</script>
+
+<button type="button" disabled={drive.loading} onclick={() => drive.show()}>
+  Import from Google Drive
+</button>
+{#if drive.accessToken}
+  <button type="button" onclick={() => drive.logout()}>Sign out of Google</button>
+{/if}
+```
+
 [svelte]: https://svelte.dev
