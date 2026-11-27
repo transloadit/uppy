@@ -100,6 +100,16 @@ export interface UploadResult {
   extraData?: UploadExtraData | undefined
 }
 
+function isJson(text: unknown): text is string {
+  if (typeof text !== 'string' || text === '') return false
+  try {
+    JSON.parse(text)
+    return true
+  } catch {
+    return false
+  }
+}
+
 function exceedsMaxFileSize(
   maxFileSize: number | undefined,
   size: number | undefined,
@@ -466,10 +476,10 @@ export default class Uploader {
     emitter().on(`cancel:${this.token}`, () => {
       logger.debug('Received from client: cancel', 'uploader', this.shortToken)
       if (this.tus) {
-        const shouldTerminate =
+        this.#abortTus(
           this.tus.url != null &&
-          whatwgUrl(this.tus.url) === this.#createdTusUrl
-        this.tus.abort(shouldTerminate).catch(() => {})
+            whatwgUrl(this.tus.url) === this.#createdTusUrl,
+        )
       }
       this.#canceled = true
       this.abortReadStream(new Error('Canceled'))
@@ -785,8 +795,33 @@ export default class Uploader {
     if (!this.tmpPath) return
     try {
       await unlink(this.tmpPath)
-    } catch {}
+    } catch (err) {
+      // The file may never have been created (e.g. canceled before download)
+      if (!(isRecord(err) && err['code'] === 'ENOENT')) {
+        // Not the error itself: its message and stack name the path, which
+        // holds the full upload token.
+        const code = isRecord(err) ? err['code'] : undefined
+        const kind = typeof code === 'string' ? code : toError(err).name
+        logger.warn(
+          `Could not delete the temp file: ${kind}`,
+          'uploader.cleanup.error',
+          this.shortToken,
+        )
+      }
+    }
     Uploader.#tmpFilesInUse.delete(this.fileName)
+  }
+
+  #abortTus(shouldTerminate: boolean): void {
+    this.tus?.abort(shouldTerminate).catch((err) => {
+      // a tus DetailedError holds the request, upload headers included
+      const { name, message } = toError(err)
+      logger.warn(
+        `${name}: ${message}`,
+        'uploader.tus.abort.error',
+        this.shortToken,
+      )
+    })
   }
 
   async tryUploadStream(
@@ -1169,8 +1204,22 @@ export default class Uploader {
         onProgress(bytesUploaded, bytesTotal) {
           uploader.onProgress(bytesUploaded, bytesTotal)
         },
-        onSuccess() {
-          resolve({ url: uploader.tus?.url ?? null })
+        onSuccess({ lastResponse }) {
+          const url = uploader.tus?.url ?? null
+          // Pass on the destination's answer, as multipart does, but only a
+          // JSON one: clients JSON.parse responseText and would fail the upload
+          // on anything else. tus servers usually answer without a body.
+          const responseText = lastResponse.getBody()
+          if (!isJson(responseText)) {
+            resolve({ url })
+            return
+          }
+          resolve({
+            url,
+            extraData: {
+              response: { status: lastResponse.getStatus(), responseText },
+            },
+          })
         },
       }
 

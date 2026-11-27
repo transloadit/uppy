@@ -27,6 +27,7 @@ import { defaultOptions } from '../dist/config/companion.js'
 import Emitter from '../dist/server/emitter/index.js'
 import { isRecord } from '../dist/server/helpers/type-guards.js'
 import { startDownUpload } from '../dist/server/helpers/upload.js'
+import * as logger from '../dist/server/logger.js'
 import Uploader, {
   PAUSED_TIMEOUT_MS,
   STALL_TIMEOUT_MS,
@@ -85,6 +86,14 @@ function resetTusMockState(): void {
     throw new Error('Expected tus mock to expose __resetTusMockState()')
   }
   reset()
+}
+
+function setTusLastResponseBody(body: string): void {
+  const setter = Reflect.get(tusClient, '__setLastResponseBody')
+  if (typeof setter !== 'function') {
+    throw new Error('Expected tus mock to expose __setLastResponseBody()')
+  }
+  setter(body)
 }
 
 function setNextTusRequestUrl(url: string | undefined): void {
@@ -400,6 +409,71 @@ describe('uploader', () => {
     )
   })
 
+  test('a failed tus abort is logged without its request headers', async () => {
+    const warn = vi.spyOn(logger, 'warn').mockImplementation(() => {})
+    try {
+      const uploader = new Uploader({
+        companionOptions,
+        endpoint: 'http://url.myendpoint.com/files',
+        protocol: 'tus',
+        size: 1,
+        pathPrefix,
+        metadata: { name: 'file.txt', type: 'text/plain' },
+      })
+      // what tus-js-client rejects with: a DetailedError holding the request
+      const failure = Object.assign(new Error('tus: failed to terminate'), {
+        name: 'DetailedError',
+        originalRequest: { headers: { Authorization: 'Bearer secret-token' } },
+      })
+      uploader.tus = {
+        url: 'https://tus.endpoint/files/foo-bar',
+        abort: () => Promise.reject(failure),
+      } as never
+      // With Redis the uploader subscribes asynchronously; subscriptions on
+      // one connection complete in order, so once ours is in, so is its.
+      await Emitter().on(`cancel:${uploader.token}`, () => {})
+      Emitter().emit(`cancel:${uploader.token}`)
+      await vi.waitFor(() =>
+        expect(warn).toHaveBeenCalledWith(
+          'DetailedError: tus: failed to terminate',
+          'uploader.tus.abort.error',
+          uploader.shortToken,
+        ),
+      )
+      expect(JSON.stringify(warn.mock.calls)).not.toContain('secret-token')
+    } finally {
+      warn.mockRestore()
+    }
+  })
+
+  test('a failed temp file delete is logged without the upload token', async () => {
+    const warn = vi.spyOn(logger, 'warn').mockImplementation(() => {})
+    const uploader = new Uploader({
+      companionOptions,
+      endpoint: 'http://url.myendpoint.com/files',
+      protocol: 'tus',
+      size: 1,
+      pathPrefix,
+      metadata: { name: 'file.txt', type: 'text/plain' },
+    })
+    // a directory cannot be unlinked, so the delete fails with something other than ENOENT
+    const tmpPath = `${pathPrefix}/${uploader.fileName}`
+    fs.mkdirSync(tmpPath)
+    try {
+      uploader.tmpPath = tmpPath
+      await uploader.tryDeleteTmpPath()
+      expect(warn).toHaveBeenCalledWith(
+        expect.stringMatching(/^Could not delete the temp file: E[A-Z]+$/),
+        'uploader.cleanup.error',
+        uploader.shortToken,
+      )
+      expect(JSON.stringify(warn.mock.calls)).not.toContain(uploader.token)
+    } finally {
+      fs.rmdirSync(tmpPath)
+      warn.mockRestore()
+    }
+  })
+
   test('upload functions with tus protocol', async () => {
     const fileContent = Buffer.from('Some file content')
     const stream = Readable.from([fileContent])
@@ -485,6 +559,48 @@ describe('uploader', () => {
       payload: expectedPayload,
     })
   })
+
+  test.each([
+    [
+      'a JSON body',
+      '{"id":"abc"}',
+      { status: 200, responseText: '{"id":"abc"}' },
+    ],
+    ['no body', '', undefined],
+    ['a body that is not JSON', 'OK', undefined],
+  ])(
+    'a tus upload passes on %s of the last response',
+    async (_, body, response) => {
+      setTusLastResponseBody(body)
+      const uploader = new Uploader({
+        companionOptions: { ...companionOptions, streamingUpload: false },
+        endpoint: 'http://url.myendpoint.com/files',
+        protocol: 'tus',
+        size: 17,
+        pathPrefix,
+        metadata: { name: 'file.txt', type: 'text/plain' },
+      })
+      // with the Redis emitter, messages arrive asynchronously
+      const success = new Promise<unknown>((resolve) => {
+        socketClient.onUploadSuccess(uploader.token, resolve)
+      })
+      const ready = uploader.awaitReady(60000)
+      await socketClient.connect(uploader.token)
+      await ready
+      await uploader.tryUploadStream(
+        Readable.from([Buffer.from('Some file content')]),
+        requireMockReq(),
+      )
+      expect(await success).toEqual({
+        action: 'success',
+        payload: {
+          url: 'https://tus.endpoint/files/foo-bar',
+          complete: true,
+          ...(response && { response }),
+        },
+      })
+    },
+  )
 
   test('a tus upload paused while downloading the file first waits for resume', async () => {
     const uploader = new Uploader({

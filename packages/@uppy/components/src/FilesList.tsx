@@ -16,10 +16,14 @@ export type FilesListProps = {
 }
 
 export default function FilesList(props: FilesListProps) {
-  const [files, setFiles] = useState<UppyFile<any, any>[]>(() => [])
+  const [files, setFiles] = useState<UppyFile<any, any>[]>(
+    () => props.ctx.uppy?.getFiles() ?? [],
+  )
   const { ctx, editFile, imageThumbnail } = props
 
   useEffect(() => {
+    // Files added before this component mounted, or on a new Uppy instance
+    setFiles(ctx.uppy?.getFiles() ?? [])
     const onStateUpdate: UppyEventMap<any, any>['state-update'] = (
       _prev,
       _next,

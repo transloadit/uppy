@@ -17,7 +17,9 @@ export type FilesGridProps = {
 }
 
 export default function FilesGrid(props: FilesGridProps) {
-  const [files, setFiles] = useState<UppyFile<Meta, Body>[]>(() => [])
+  const [files, setFiles] = useState<UppyFile<Meta, Body>[]>(
+    () => props.ctx.uppy?.getFiles() ?? [],
+  )
   const { ctx, editFile, imageThumbnail = true } = props
 
   function gridColsClass() {
@@ -34,6 +36,8 @@ export default function FilesGrid(props: FilesGridProps) {
   }
 
   useEffect(() => {
+    // Files added before this component mounted, or on a new Uppy instance
+    setFiles(ctx.uppy?.getFiles() ?? [])
     const onStateUpdate: UppyEventMap<any, any>['state-update'] = (
       _prev,
       _next,

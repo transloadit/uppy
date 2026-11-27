@@ -6,7 +6,6 @@ import type { CompanionRuntimeOptions } from '../../types/companion-options.js'
 import type { CompanionExpressLocals, Request } from '../../types/express.js'
 import type Provider from './Provider.js'
 
-import { htmlEscape } from 'escape-goat'
 import got from 'got'
 
 import * as tokenService from '../helpers/jwt.js'
@@ -15,6 +14,16 @@ import { isRecord, toError } from '../helpers/type-guards.js'
 import { getRedirectPath, getURLBuilder } from '../helpers/utils.js'
 import logger from '../logger.js'
 import { ProviderApiError, parseHttpError } from './error.js'
+
+/** Escape text for HTML element content or quoted attribute values. */
+function htmlEscape(string: string): string {
+  return string
+    .replace(/&/g, '&amp;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+}
 
 /**
  * @param url
@@ -121,6 +130,7 @@ export const getCredentialsOverrideMiddleware = (
     res: Response<unknown, CompanionExpressLocals>,
     next: NextFunction,
   ) => {
+    let fromCredentialsService = false
     try {
       const { oauthProvider, override } = req.params
       if (oauthProvider == null || oauthProvider.length === 0) {
@@ -172,6 +182,9 @@ export const getCredentialsOverrideMiddleware = (
         return
       }
 
+      // From here on a failure is the credentials service's: it could not be
+      // reached, or sent credentials we cannot use. Anything else is ours.
+      fromCredentialsService = true
       const credentials = await fetchProviderKeys(
         providerName,
         companionOptions,
@@ -232,10 +245,18 @@ export const getCredentialsOverrideMiddleware = (
         }
       }
 
+      fromCredentialsService = false
       next()
     } catch (keyErr) {
       const error = toError(keyErr)
-      res.send(`
+      // the name and message only: a got error holds the request and response
+      logger.error(
+        `${error.name}: ${error.message}`,
+        'credentials.override.fail',
+        req.id,
+      )
+      // 424 Failed Dependency, as ProviderApiError reports remote credentials
+      res.status(fromCredentialsService ? 424 : 500).send(`
         <!DOCTYPE html>
         <html>
         <head>

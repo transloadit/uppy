@@ -68,6 +68,88 @@ const getFile = (tree: PartialTree, id: string) =>
   tree.find((i) => i.id === id) as PartialTreeFile
 
 describe('afterFill()', () => {
+  it('refreshes known cached subfolders when their checked parent is invalidated', async () => {
+    const tree: PartialTree = [
+      _root('ourRoot'),
+      _folder('2', { parentId: 'ourRoot', cached: false, status: 'checked' }),
+      _folder('child', { parentId: '2', cached: true, status: 'checked' }),
+      _file('old', { parentId: 'child', status: 'checked' }),
+    ]
+    const list = vi.fn<ApiList>(async (path) => ({
+      nextPagePath: null,
+      items:
+        path === 'child' ? [_cFile('old'), _cFile('new')] : [_cFolder('child')],
+    }))
+    const enriched = await afterFill(
+      tree,
+      list,
+      () => null,
+      () => {},
+    )
+    expect(list).toHaveBeenCalledTimes(2)
+    expect(
+      enriched.filter((node) => node.type === 'file').map((node) => node.id),
+    ).toEqual(['old', 'new'])
+  })
+
+  it('updates cached child IDs when an invalidated checked folder is filled again', async () => {
+    const tree: PartialTree = [
+      _root('ourRoot'),
+      _folder('2', { parentId: 'ourRoot', cached: false, status: 'checked' }),
+      _file('old', { parentId: '2', status: 'checked' }),
+    ]
+    const list = vi.fn<ApiList>(async () => ({
+      nextPagePath: null,
+      items: [_cFile('old'), _cFile('new')],
+    }))
+    const enriched = await afterFill(
+      tree,
+      list,
+      () => null,
+      () => {},
+    )
+    expect(
+      enriched.filter((node) => node.type === 'file').map((node) => node.id),
+    ).toEqual(['old', 'new'])
+    expect(list).toHaveBeenCalledOnce()
+    expect(tree).toHaveLength(3)
+  })
+
+  it('lists a known checked child once while its parent is also filled', async () => {
+    const tree: PartialTree = [
+      _root('ourRoot'),
+      _folder('2', { parentId: 'ourRoot', cached: false, status: 'checked' }),
+      _folder('child', { parentId: '2', cached: false, status: 'checked' }),
+      _file('old', { parentId: 'child', status: 'checked' }),
+    ]
+    let release = () => {}
+    const child = new Promise<Awaited<ReturnType<ApiList>>>((resolve) => {
+      release = () =>
+        resolve({ nextPagePath: null, items: [_cFile('old'), _cFile('new')] })
+    })
+    const list = vi.fn<ApiList>(async (path) =>
+      path === 'child'
+        ? child
+        : { nextPagePath: null, items: [_cFolder('child')] },
+    )
+    const filling = afterFill(
+      tree,
+      list,
+      () => null,
+      () => {},
+    )
+    await vi.waitFor(() => expect(list).toHaveBeenCalled())
+    release()
+    const enriched = await filling
+    expect(list).toHaveBeenCalledTimes(2)
+    expect(
+      enriched.filter((node) => node.type === 'file').map((node) => node.id),
+    ).toEqual(['old', 'new'])
+    expect(enriched.find((node) => node.id === 'child')).toMatchObject({
+      cached: true,
+    })
+  })
+
   it('preserves .checked files in an already .cached folder', async () => {
     const tree: PartialTree = [
       _root('ourRoot'),
@@ -590,6 +672,82 @@ describe('afterScrollFolder()', () => {
       '2_1',
       '2_2',
       '2_3',
+    ])
+  })
+
+  it('keeps a child added before the listing after the loaded pages until its page loads', () => {
+    const oldPartialTree: PartialTree = [
+      _root('ourRoot'),
+      _folder('2', { parentId: 'ourRoot', cached: false }),
+      // a search result on page 3
+      _file('2_5', { parentId: '2' }),
+    ]
+    const opened = afterOpenFolder(
+      oldPartialTree,
+      [_cFolder('2_1')],
+      getFolder(oldPartialTree, '2'),
+      'page2',
+      () => null,
+    )
+    const childIds = (tree: PartialTree) =>
+      tree.flatMap((node) =>
+        node.type !== 'root' && node.parentId === '2' ? [node.id] : [],
+      )
+
+    const page2 = afterScrollFolder(
+      opened,
+      '2',
+      [_cFile('2_2')],
+      'page3',
+      () => null,
+    )
+    expect(childIds(page2)).toEqual(['2_1', '2_2', '2_5'])
+
+    const page3 = afterScrollFolder(
+      page2,
+      '2',
+      [_cFile('2_5'), _cFile('2_6')],
+      'page4',
+      () => null,
+    )
+    const page4 = afterScrollFolder(
+      page3,
+      '2',
+      [_cFile('2_7')],
+      null,
+      () => null,
+    )
+    expect(childIds(page4)).toEqual(['2_1', '2_2', '2_5', '2_6', '2_7'])
+    expect(getFile(page4, '2_5').unlisted).toBeUndefined()
+  })
+
+  it('keeps a child added to an already listed folder after the next page', () => {
+    const oldPartialTree: PartialTree = [
+      _root('ourRoot'),
+      _folder('2', { parentId: 'ourRoot', nextPagePath: 'page2' }),
+      _file('2_1', { parentId: '2' }),
+      // added by a search after page 1 loaded
+      _file('2_5', { parentId: '2', unlisted: true }),
+      _folder('3', { parentId: 'ourRoot', cached: false }),
+      _file('3_5', { parentId: '3', unlisted: true }),
+    ]
+
+    const newTree = afterScrollFolder(
+      oldPartialTree,
+      '2',
+      [_cFile('2_2')],
+      'page3',
+      () => null,
+    )
+
+    expect(newTree.map((node) => node.id)).toEqual([
+      'ourRoot',
+      '2',
+      '2_1',
+      '3',
+      '3_5',
+      '2_2',
+      '2_5',
     ])
   })
 

@@ -47,7 +47,8 @@ const addListedItems = (
         return []
       }
       moved.add(existing.id)
-      return [{ ...existing, data: item }]
+      const { unlisted, ...node } = existing
+      return [{ ...node, data: item }]
     })
   const files: PartialTreeFile[] = items
     .filter((item) => item.isFolder === false)
@@ -73,13 +74,30 @@ const addListedItems = (
         return []
       }
       moved.add(existing.id)
-      return [{ ...existing, data: item }]
+      const { unlisted, ...node } = existing
+      return [{ ...node, data: item }]
     })
 
   return [
     ...partialTree.filter((node) => !moved.has(node.id)),
     ...folders,
     ...files,
+  ]
+}
+
+/**
+ * Moves the children of `folderId` that no listing has included yet to the end, after its loaded
+ * pages. Once a page includes one, `addListedItems` gives it its listed position.
+ */
+export const showUnlistedLast = (
+  partialTree: PartialTree,
+  folderId: PartialTreeId,
+): PartialTree => {
+  const isUnlisted = (node: PartialTree[number]) =>
+    node.type !== 'root' && node.parentId === folderId && node.unlisted === true
+  return [
+    ...partialTree.filter((node) => !isUnlisted(node)),
+    ...partialTree.filter(isUnlisted),
   ]
 }
 

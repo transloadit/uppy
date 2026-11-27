@@ -573,6 +573,57 @@ the secret, nothing else.
 | OneDrive     | `onedrive` | `COMPANION_ONEDRIVE_KEY`, `COMPANION_ONEDRIVE_SECRET`, `COMPANION_ONEDRIVE_SECRET_FILE`, `COMPANION_ONEDRIVE_DOMAIN_VALIDATION` (Settings this variable to `true` enables a route that can be used to validate your app with OneDrive) |
 | Zoom         | `zoom`     | `COMPANION_ZOOM_KEY`, `COMPANION_ZOOM_SECRET`, `COMPANION_ZOOM_SECRET_FILE`, `COMPANION_ZOOM_VERIFICATION_TOKEN`                                                                                                                       |
 
+##### `providerOptions[provider].scope`
+
+The OAuth scopes Companion requests for that provider (optional). It replaces
+the provider’s default scopes; Dropbox, Box and Zoom have none, as their apps’
+scopes are set in their developer consoles. Use it to ask for less than the
+default, for example OneDrive without access to files shared with the user:
+
+```js
+providerOptions: {
+  onedrive: {
+    key: '***',
+    secret: '***',
+    scope: ['Files.Read', 'offline_access', 'User.Read'],
+  },
+}
+```
+
+The list replaces the defaults, so include every scope Companion still needs,
+such as `offline_access` for OneDrive refresh tokens. Companion’s provider code
+calls the same APIs whatever the scope, so anything the narrower scope does not
+cover fails when the user browses to it (with the OneDrive scope above, files
+shared from other drives). Google Drive’s `drive.file` scope does not work with
+the Drive provider, because it only exposes files the app created or the user
+picked; use [`@uppy/google-drive-picker`](/docs/google-drive-picker) for that.
+
+There is no environment variable for this option: with standalone Companion,
+set it in the JSON configuration file (`companion --config`).
+
+##### `providerOptions[provider].customParams`
+
+Extra query parameters for the provider’s authorization URL (optional), merged
+over the ones Companion sets. For example, Dropbox skips its consent screen once
+the user has approved the app, so a user signed in at dropbox.com can’t switch
+to another Dropbox account; `force_reapprove` shows the screen again:
+
+```js
+providerOptions: {
+  dropbox: {
+    key: '***',
+    secret: '***',
+    customParams: { force_reapprove: 'true' },
+  },
+}
+```
+
+A value replaces Companion’s own parameter of the same name, so keep what it
+needs: for Google, `prompt` must include `consent` to get refresh tokens, so use
+`prompt: 'consent select_account'` to also show Google’s account chooser. Like
+`scope`, this option has no environment variable; set it in the JSON
+configuration file with standalone Companion.
+
 #### `s3`
 
 Companion comes with signature endpoints for AWS S3. These can be used by the
@@ -1056,7 +1107,7 @@ The class must also have:
   Companion Provider API.
 
 See also
-[example code with a custom provider](https://github.com/transloadit/uppy/blob/main/examples/custom-provider/server).
+[example code with a custom provider](https://github.com/transloadit/uppy/tree/main/examples/companion-custom-provider/server).
 
 #### list data
 

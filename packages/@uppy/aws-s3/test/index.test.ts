@@ -982,6 +982,56 @@ describe('AwsS3', () => {
       expect(result?.successful).toHaveLength(0)
     })
 
+    test('skips a file removed by an upload-start listener', async () => {
+      const { signRequest, registerHandlers } = createMultipartMocks()
+      registerHandlers()
+
+      const core = new Core().use(AwsS3, {
+        s3Endpoint: 'https://companion.example.com',
+        region: 'us-east-1',
+        signRequest,
+        shouldUseMultipart: false,
+      })
+      const fileId = core.addFile({
+        source: 'test',
+        name: 'test.txt',
+        type: 'text/plain',
+        data: new File([new Uint8Array(KB)], 'test.txt'),
+      })
+      core.on('upload-start', () => core.removeFile(fileId))
+
+      const result = await core.upload()
+      expect(result?.successful).toHaveLength(0)
+      expect(signRequest).not.toHaveBeenCalled()
+    })
+
+    test('uses file changes made by an upload-start listener', async () => {
+      const { signRequest, registerHandlers } = createMultipartMocks()
+      registerHandlers()
+
+      const core = new Core().use(AwsS3, {
+        s3Endpoint: 'https://companion.example.com',
+        region: 'us-east-1',
+        signRequest,
+        shouldUseMultipart: false,
+        generateObjectKey: (file) =>
+          `${String(file.meta['folder'] ?? 'none')}-${file.name}`,
+      })
+      core.addFile({
+        source: 'test',
+        name: 'photo.jpg',
+        type: 'image/jpeg',
+        data: new File([new Uint8Array(KB)], 'photo.jpg'),
+      })
+      core.on('upload-start', (files) => {
+        for (const file of files)
+          core.setFileMeta(file.id, { folder: 'chosen' })
+      })
+
+      await core.upload()
+      expect(signRequest.mock.calls[0][0].key).toBe('chosen-photo.jpg')
+    })
+
     test('aborts when cancelAll is called', async () => {
       const signRequest = vi
         .fn()
@@ -1010,6 +1060,294 @@ describe('AwsS3', () => {
       // When cancelAll is called, no files should complete successfully
       expect(result).toBeDefined()
       expect(result?.successful).toHaveLength(0)
+    })
+  })
+
+  describe('concurrency', { timeout: 15_000 }, () => {
+    test('uploads parts in parallel, bounded by limit', async () => {
+      const { signRequest, registerHandlers } = createMultipartMocks()
+      registerHandlers()
+
+      const held: (() => void)[] = []
+      let inFlight = 0
+      let peak = 0
+      let completedParts: number[] = []
+      network.use(
+        // Records the part list sent to CompleteMultipartUpload, then falls
+        // through to the handler installed above.
+        http.post(s3Url, async ({ request }) => {
+          if (!new URL(request.url).searchParams.has('uploadId')) return
+          const body = await request.clone().text()
+          completedParts = [
+            ...body.matchAll(/<PartNumber>(\d+)<\/PartNumber>/g),
+          ].map((m) => Number(m[1]))
+        }),
+        // Holds the first `limit` parts; later parts pass straight through.
+        http.put(s3Url, async () => {
+          inFlight += 1
+          peak = Math.max(peak, inFlight)
+          try {
+            if (held.length < 2) {
+              await new Promise<void>((resolve) => held.push(resolve))
+            }
+            return new HttpResponse('', {
+              status: 200,
+              headers: { ETag: '"etag-1"' },
+            })
+          } finally {
+            inFlight -= 1
+          }
+        }),
+      )
+
+      const core = new Core().use(AwsS3, {
+        s3Endpoint: 'https://companion.example.com',
+        region: 'us-east-1',
+        signRequest,
+        shouldUseMultipart: true,
+        limit: 2,
+      })
+      core.addFile({
+        source: 'test',
+        name: 'big.dat',
+        type: 'application/octet-stream',
+        // Parts are at least 5 MB: three parts, two in flight, one waiting.
+        data: new File([new Uint8Array(11 * MB)], 'big.dat'),
+      })
+
+      const uploadPromise = core.upload()
+      await vi.waitFor(() => expect(held).toHaveLength(2), { timeout: 10_000 })
+      // Reverse so parts finish out of order.
+      for (const release of held.reverse()) release()
+      const result = await uploadPromise
+
+      expect(result?.successful).toHaveLength(1)
+      expect(peak).toBe(2)
+      // The completion list must be ascending whatever the finish order.
+      expect(completedParts).toEqual([1, 2, 3])
+    })
+
+    test('a hung signer does not pin a queue slot after cancel', async () => {
+      const { signRequest, registerHandlers } = createMultipartMocks()
+      registerHandlers()
+      signRequest.mockImplementationOnce(() => new Promise(() => {}))
+
+      const core = new Core().use(AwsS3, {
+        s3Endpoint: 'https://companion.example.com',
+        region: 'us-east-1',
+        signRequest,
+        shouldUseMultipart: false,
+        limit: 1,
+      })
+      core.addFile({
+        source: 'test',
+        name: 'hung.txt',
+        type: 'text/plain',
+        data: new File([new Uint8Array(KB)], 'hung.txt'),
+      })
+
+      const uploadPromise = core.upload()
+      // Cancel only once the request is parked inside the hung signer.
+      await vi.waitFor(() => expect(signRequest).toHaveBeenCalledTimes(1))
+      core.cancelAll()
+      await uploadPromise
+
+      core.addFile({
+        source: 'test',
+        name: 'second.txt',
+        type: 'text/plain',
+        data: new File([new Uint8Array(KB)], 'second.txt'),
+      })
+      const result = await core.upload()
+      expect(result?.successful).toHaveLength(1)
+    })
+
+    test('a failed part aborts its in-flight siblings', async () => {
+      const { signRequest, registerHandlers } = createMultipartMocks()
+      registerHandlers()
+
+      const held: { part: string; release: () => void }[] = []
+      network.use(
+        http.put(s3Url, async ({ request }) => {
+          const part = new URL(request.url).searchParams.get('partNumber')!
+          await new Promise<void>((release) => held.push({ part, release }))
+          return part === '1'
+            ? new HttpResponse('', { status: 403 })
+            : new HttpResponse('', {
+                status: 200,
+                headers: { ETag: '"etag-1"' },
+              })
+        }),
+      )
+
+      const core = new Core().use(AwsS3, {
+        s3Endpoint: 'https://companion.example.com',
+        region: 'us-east-1',
+        signRequest,
+        shouldUseMultipart: true,
+      })
+      core.addFile({
+        source: 'test',
+        name: 'big.dat',
+        type: 'application/octet-stream',
+        data: new File([new Uint8Array(11 * MB)], 'big.dat'),
+      })
+
+      const onError = vi.fn()
+      const partUploaded = vi.fn()
+      core.on('upload-error', onError)
+      core.on('s3-multipart:part-uploaded', partUploaded)
+      const uploadPromise = core.upload()
+
+      // Fail part 1 only once its siblings are in flight.
+      await vi.waitFor(() => expect(held).toHaveLength(3), { timeout: 10_000 })
+      held.find((h) => h.part === '1')!.release()
+      await uploadPromise
+      expect(onError).toHaveBeenCalledTimes(1)
+
+      // The siblings were aborted with the failed attempt, so releasing
+      // their responses now must not complete any part.
+      for (const { release } of held) release()
+      await new Promise((resolve) => setTimeout(resolve, 50))
+      expect(partUploaded).not.toHaveBeenCalled()
+    })
+
+    test('pause then immediate resume does not abort the new attempt', async () => {
+      const { signRequest, operations, registerHandlers } =
+        createMultipartMocks()
+      registerHandlers()
+
+      // Holds the first attempt's two parts; the pause aborts those fetches,
+      // so they are never released. The resumed attempt's parts pass through.
+      const held: (() => void)[] = []
+      network.use(
+        http.put(s3Url, async () => {
+          if (held.length < 2) {
+            await new Promise<void>((resolve) => held.push(resolve))
+          }
+          return new HttpResponse('', {
+            status: 200,
+            headers: { ETag: '"etag-1"' },
+          })
+        }),
+      )
+
+      const core = new Core().use(AwsS3, {
+        s3Endpoint: 'https://companion.example.com',
+        region: 'us-east-1',
+        signRequest,
+        shouldUseMultipart: true,
+      })
+      const fileId = core.addFile({
+        source: 'test',
+        name: 'big.dat',
+        type: 'application/octet-stream',
+        data: new File([new Uint8Array(6 * MB)], 'big.dat'),
+      })
+
+      const uploadPromise = core.upload()
+      await vi.waitFor(() => expect(held).toHaveLength(2), { timeout: 10_000 })
+      core.pauseResume(fileId)
+      core.pauseResume(fileId)
+      const result = await uploadPromise
+
+      expect(result?.successful).toHaveLength(1)
+      expect(operations.filter((o) => o === 'createMultipart')).toHaveLength(1)
+      expect(operations.filter((o) => o === 'listParts')).toHaveLength(1)
+    })
+
+    test('a retry started from an upload-error listener stays abortable', async () => {
+      const { signRequest, registerHandlers } = createMultipartMocks()
+      registerHandlers()
+      signRequest
+        .mockRejectedValueOnce(new Error('first attempt fails'))
+        .mockImplementationOnce(() => new Promise(() => {}))
+
+      const core = new Core().use(AwsS3, {
+        s3Endpoint: 'https://companion.example.com',
+        region: 'us-east-1',
+        signRequest,
+        shouldUseMultipart: false,
+      })
+      const fileId = core.addFile({
+        source: 'test',
+        name: 'test.txt',
+        type: 'text/plain',
+        data: new File([new Uint8Array(KB)], 'test.txt'),
+      })
+
+      // Retry synchronously, while the failed attempt is still unwinding.
+      let retry: Promise<unknown> | undefined
+      core.once('upload-error', () => {
+        retry = core.retryUpload(fileId)
+      })
+      await core.upload()
+      await vi.waitFor(() => expect(signRequest).toHaveBeenCalledTimes(2))
+
+      // The retry hangs in its signer; removing the plugin must still abort it.
+      core.removePlugin(core.getPlugin('AwsS3')!)
+      await expect(retry).resolves.toBeDefined()
+    })
+
+    test('removing the plugin mid-upload settles the upload as failed', async () => {
+      const { signRequest, registerHandlers } = createMultipartMocks()
+      registerHandlers({ hangNonCreate: true })
+
+      const core = new Core().use(AwsS3, {
+        s3Endpoint: 'https://companion.example.com',
+        region: 'us-east-1',
+        signRequest,
+        shouldUseMultipart: false,
+      })
+      core.addFile({
+        source: 'test',
+        name: 'test.txt',
+        type: 'text/plain',
+        data: new File([new Uint8Array(KB)], 'test.txt'),
+      })
+
+      const uploadPromise = core.upload()
+      // Remove only once the request is in flight, so an uploader exists.
+      await vi.waitFor(() => expect(signRequest).toHaveBeenCalledTimes(1))
+      core.removePlugin(core.getPlugin('AwsS3')!)
+      const result = await uploadPromise
+      expect(result?.successful).toHaveLength(0)
+      expect(result?.failed).toHaveLength(1)
+    })
+
+    test('removing the plugin mid-multipart drops the resume state it aborted', async () => {
+      const { signRequest, operations, registerHandlers } =
+        createMultipartMocks()
+      registerHandlers({ hangNonCreate: true })
+
+      const core = new Core().use(AwsS3, {
+        s3Endpoint: 'https://companion.example.com',
+        region: 'us-east-1',
+        signRequest,
+        shouldUseMultipart: true,
+      })
+      const fileId = core.addFile({
+        source: 'test',
+        name: 'big.dat',
+        type: 'application/octet-stream',
+        data: new File([new Uint8Array(6 * MB)], 'big.dat'),
+      })
+
+      const uploadPromise = core.upload()
+      await vi.waitFor(
+        () => expect(core.getFile(fileId).s3Multipart).toBeDefined(),
+        { timeout: 10_000 },
+      )
+      core.removePlugin(core.getPlugin('AwsS3')!)
+      await uploadPromise
+
+      // The upload is gone in S3, so a retry has to start a new one.
+      expect(core.getFile(fileId).s3Multipart).toBeUndefined()
+      // The abort request is sent without being awaited, and on CI it has
+      // taken longer than waitFor's default 1s to reach the mock server.
+      await vi.waitFor(() => expect(operations).toContain('abortMultipart'), {
+        timeout: 10_000,
+      })
     })
   })
 

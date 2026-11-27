@@ -20,6 +20,13 @@ export interface ProviderOptions {
   secret?: string | undefined
   credentialsURL?: string | undefined
   verificationToken?: string | undefined
+  /** Replaces the OAuth scopes Companion requests from the provider. */
+  scope?: string[] | undefined
+  /**
+   * Extra query parameters for the provider's authorization URL, merged over
+   * Companion's own (e.g. Dropbox `force_reapprove`).
+   */
+  customParams?: Record<string, string> | undefined
 }
 
 /**

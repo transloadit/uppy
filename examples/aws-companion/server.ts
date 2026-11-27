@@ -3,7 +3,6 @@ import path from 'node:path'
 
 import * as companion from '@uppy/companion'
 import bodyParser from 'body-parser'
-import cookieParser from 'cookie-parser'
 import cors from 'cors'
 import express from 'express'
 import session from 'express-session'
@@ -22,7 +21,6 @@ app.use(
     credentials: true,
   }),
 )
-app.use(cookieParser())
 app.use(bodyParser.json())
 app.use(
   session({
