@@ -451,13 +451,20 @@ export default class ProviderView<M extends Meta, B extends Body> {
    * @experimental Part of the file-management API added for `@uppy/s3`: it
    * will change incompatibly, also in minor releases.
    */
-  runToolbarAction = (action: ProviderToolbarAction<M, B>): Promise<void> =>
-    this.#run(action, () =>
+  runToolbarAction = async (
+    action: ProviderToolbarAction<M, B>,
+  ): Promise<void> => {
+    // A toolbar action works on the open folder. While a listing (or a long
+    // operation) runs, `currentFolderId` is still the folder being left, not
+    // the one the user is opening: run nothing rather than the wrong folder.
+    if (this.plugin.getPluginState().loading || this.plugin.isNavigating) return
+    await this.#run(action, () =>
       action.run({
         currentFolderId: this.plugin.getPluginState().currentFolderId,
         ...this.#actionContext(),
       }),
     )
+  }
 
   #actionContext = () => {
     const { uppy } = this.plugin
@@ -523,17 +530,20 @@ export default class ProviderView<M extends Meta, B extends Body> {
       setProgress: (label: string) => void
     }) => Promise<void>,
   ): Promise<void> {
+    const loadingId = this.#startLoading()
+    let cancel: (() => void) | undefined
     try {
       await this.#withAbort(async (signal) => {
         // This operation's controller: a later request replaces the field.
         const controller = this.#abortController
-        this.#cancelLongOperation = () => controller?.abort()
-        this.setLoading(true)
+        cancel = () => controller?.abort()
+        this.#cancelLongOperation = cancel
         await op({ signal, setProgress: (label) => this.setLoading(label) })
       })
     } finally {
-      this.#cancelLongOperation = undefined
-      this.setLoading(false)
+      if (this.#cancelLongOperation === cancel)
+        this.#cancelLongOperation = undefined
+      this.#doneLoading(loadingId)
     }
   }
 
@@ -735,13 +745,23 @@ export default class ProviderView<M extends Meta, B extends Body> {
     }
   }
 
+  #loadingId = 0
+
+  /** Starts an operation's loading state; pass the result to `#doneLoading`. */
+  #startLoading(): number {
+    this.setLoading(true)
+    this.#loadingId += 1
+    return this.#loadingId
+  }
+
   /**
-   * Ends a listing's loading state, unless a long operation (`runWithProgress`)
-   * has started meanwhile: the listing it aborted must not wipe the
-   * operation's progress text on its way out.
+   * Ends an operation's loading state, unless a newer one has started
+   * meanwhile: an aborted listing must not end a newer listing's loading
+   * state (toolbar actions use the open folder) or wipe a long operation's
+   * progress text on its way out.
    */
-  #doneLoading(): void {
-    if (this.#cancelLongOperation === undefined) this.setLoading(false)
+  #doneLoading(loadingId: number): void {
+    if (loadingId === this.#loadingId) this.setLoading(false)
   }
 
   async #search(): Promise<void> {
@@ -756,7 +776,7 @@ export default class ProviderView<M extends Meta, B extends Body> {
       return
     }
 
-    this.setLoading(true)
+    const loadingId = this.#startLoading()
     await this.#withAbort(async (signal) => {
       const scopePath =
         currentFolder.type === 'root' ? undefined : currentFolderId
@@ -868,7 +888,7 @@ export default class ProviderView<M extends Meta, B extends Body> {
 
       this.plugin.setPluginState({ partialTree: newPartialTree, searchResults })
     }).catch(handleError(this.plugin.uppy))
-    this.#doneLoading()
+    this.#doneLoading(loadingId)
   }
 
   // debounced search function is initialized in the constructor
@@ -907,7 +927,7 @@ export default class ProviderView<M extends Meta, B extends Body> {
       return
     }
 
-    this.setLoading(true)
+    const loadingId = this.#startLoading()
     await this.#withAbort(async (signal) => {
       let currentPagePath = folderId
       let currentItems: CompanionFile[] = []
@@ -943,7 +963,7 @@ export default class ProviderView<M extends Meta, B extends Body> {
       })
     }).catch(handleError(this.plugin.uppy))
 
-    this.#doneLoading()
+    this.#doneLoading(loadingId)
   }
 
   /**
@@ -981,8 +1001,8 @@ export default class ProviderView<M extends Meta, B extends Body> {
     authFormData?: unknown,
     { skipInitialListing = false }: { skipInitialListing?: boolean } = {},
   ): Promise<void> {
+    const loadingId = this.#startLoading()
     await this.#withAbort(async (signal) => {
-      this.setLoading(true)
       await this.provider.login({ authFormData, signal })
       this.plugin.setPluginState({ authenticated: true })
       await Promise.all([
@@ -992,7 +1012,7 @@ export default class ProviderView<M extends Meta, B extends Body> {
           : this.openFolder(this.plugin.rootFolderId),
       ])
     }).catch(handleError(this.plugin.uppy))
-    this.#doneLoading()
+    this.#doneLoading(loadingId)
   }
 
   async handleScroll(event: Event): Promise<void> {
@@ -1057,53 +1077,59 @@ export default class ProviderView<M extends Meta, B extends Body> {
   async donePicking(): Promise<boolean> {
     const { partialTree } = this.plugin.getPluginState()
 
-    if (this.isLoading) return false
-    this.setLoading(true)
+    if (this.isLoading || this.plugin.isNavigating) return false
+    const finishAdding = this.plugin.beginAddingFiles?.()
+    if (finishAdding === false) return false
+    const loadingId = this.#startLoading()
     let added = false
-    await this.#withAbort(async (signal) => {
-      // This operation's controller: a later request replaces the field.
-      const controller = this.#abortController
-      this.#cancelDonePicking = () => controller?.abort()
-      // 1. Enrich our partialTree by fetching all 'checked' but not-yet-fetched folders
-      const enrichedTree: PartialTree = await PartialTreeUtils.afterFill(
-        partialTree,
-        (path: PartialTreeId, fillSignal) =>
-          this.provider.list(path, { signal: fillSignal }),
-        this.validateSingleFile,
-        (n) => {
-          this.setLoading(
-            this.plugin.uppy.i18n('addedNumFiles', { numFiles: n }),
-          )
-        },
-        signal,
-      )
-      if (signal.aborted) return
+    try {
+      await this.#withAbort(async (signal) => {
+        // This operation's controller: a later request replaces the field.
+        const controller = this.#abortController
+        this.#cancelDonePicking = () => controller?.abort()
+        // 1. Enrich our partialTree by fetching all 'checked' but not-yet-fetched folders
+        const enrichedTree: PartialTree = await PartialTreeUtils.afterFill(
+          partialTree,
+          (path: PartialTreeId, fillSignal) =>
+            this.provider.list(path, { signal: fillSignal }),
+          this.validateSingleFile,
+          (n) => {
+            this.setLoading(
+              this.plugin.uppy.i18n('addedNumFiles', { numFiles: n }),
+            )
+          },
+          signal,
+        )
+        if (signal.aborted) return
 
-      // 2. Now that we know how many files there are - recheck aggregateRestrictions!
-      const aggregateRestrictionError =
-        this.validateAggregateRestrictions(enrichedTree)
-      if (aggregateRestrictionError) {
-        this.plugin.setPluginState({ partialTree: enrichedTree })
-        return
-      }
+        // 2. Now that we know how many files there are - recheck aggregateRestrictions!
+        const aggregateRestrictionError =
+          this.validateAggregateRestrictions(enrichedTree)
+        if (aggregateRestrictionError) {
+          this.plugin.setPluginState({ partialTree: enrichedTree })
+          return
+        }
 
-      // 3. Add files, keeping the selection when every file was rejected
-      const companionFiles = getCheckedFilesWithPaths(enrichedTree)
-      if (!addFiles(companionFiles, this.plugin, this.provider)) {
-        this.plugin.setPluginState({ partialTree: enrichedTree })
-        return
-      }
+        // 3. Add files, keeping the selection when every file was rejected
+        const companionFiles = getCheckedFilesWithPaths(enrichedTree)
+        if (!addFiles(companionFiles, this.plugin, this.provider)) {
+          this.plugin.setPluginState({ partialTree: enrichedTree })
+          return
+        }
 
-      // 4. Reset state
-      this.resetPluginState()
-      added = true
-    })
-      .catch(handleError(this.plugin.uppy))
-      .finally(() => {
-        this.#cancelDonePicking = undefined
+        // 4. Reset state
+        this.resetPluginState()
+        added = true
       })
-    this.#doneLoading()
-    return added
+        .catch(handleError(this.plugin.uppy))
+        .finally(() => {
+          this.#cancelDonePicking = undefined
+        })
+      return added
+    } finally {
+      finishAdding?.()
+      this.#doneLoading(loadingId)
+    }
   }
 
   /**
@@ -1285,6 +1311,7 @@ export default class ProviderView<M extends Meta, B extends Body> {
           i18n={i18n}
           toolbarActions={opts.toolbarActions ?? []}
           runToolbarAction={this.runToolbarAction}
+          toolbarDisabled={Boolean(loading || this.plugin.isNavigating)}
         />
         {opts.showFilter && (
           <FilterInput

@@ -912,18 +912,18 @@ export default class Transloadit<
     // TODO we should rewrite to instead infer allowNewUpload based on upload state
     this.uppy.setState({ allowNewUpload: false })
 
-    const assemblyOptions = (
-      typeof this.opts.assemblyOptions === 'function'
-        ? await this.opts.assemblyOptions()
-        : this.opts.assemblyOptions
-    ) as OptionsWithRestructuredFields
-
-    assemblyOptions.fields = {
-      ...(assemblyOptions.fields ?? {}),
-    }
-    validateParams(assemblyOptions.params)
-
     try {
+      const assemblyOptions = (
+        typeof this.opts.assemblyOptions === 'function'
+          ? await this.opts.assemblyOptions()
+          : this.opts.assemblyOptions
+      ) as OptionsWithRestructuredFields
+
+      assemblyOptions.fields = {
+        ...(assemblyOptions.fields ?? {}),
+      }
+      validateParams(assemblyOptions.params)
+
       const assembly =
         // this.assembly can already be defined if we recovered files with Golden Retriever (this.#onRestored)
         this.assembly ?? (await this.#createAssembly(fileIDs, assemblyOptions))
