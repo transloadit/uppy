@@ -156,24 +156,24 @@ export default class AwsS3<M extends Meta, B extends Body> extends BasePlugin<
     this.uppy.off('cancel-all', this.#handleCancelAll)
     this.#queue.clear()
     // Abort and clean up any in-flight uploads
-    for (const fileId of Object.keys(this.#uploaders)) {
-      const uploader = this.#uploaders[fileId]
-      if (uploader) {
-        // The file stays in Uppy but never finished. Without an error the
-        // settled upload would count it as successful.
-        const file = this.uppy.getFile(fileId)
-        if (file) {
-          this.uppy.emit(
-            'upload-error',
-            file,
-            new Error('Upload aborted: the AwsS3 plugin was removed'),
-          )
-        }
-        uploader.abort()
-        // abort() deletes the multipart upload in S3, so a retry of this file
-        // must not try to resume it.
-        if (file) this.uppy.setFileState(fileId, { s3Multipart: undefined })
-      }
+    for (const [fileId, uploader] of Object.entries(this.#uploaders)) {
+      const file = this.uppy.getFile(fileId)
+      // Removed from an upload-success listener: the file is done, keep it.
+      if (!uploader || file?.progress.uploadComplete) continue
+      // Abort first, so an upload-error listener (which may remove or retry
+      // the file) runs against an uploader that is already stopped.
+      uploader.abort()
+      if (!file) continue
+      // abort() deletes the multipart upload in S3, so a retry of this file
+      // must not try to resume it.
+      this.uppy.setFileState(fileId, { s3Multipart: undefined })
+      // The file stays in Uppy but never finished. Without an error the
+      // settled upload would count it as successful.
+      this.uppy.emit(
+        'upload-error',
+        this.uppy.getFile(fileId),
+        new Error('Upload aborted: the AwsS3 plugin was removed'),
+      )
     }
   }
 

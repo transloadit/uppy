@@ -1349,6 +1349,111 @@ describe('AwsS3', () => {
         timeout: 10_000,
       })
     })
+
+    test('a file added later does not wait behind every part of a big file', async () => {
+      const { signRequest, registerHandlers } = createMultipartMocks()
+      registerHandlers()
+      const held: (() => void)[] = []
+      const puts: string[] = []
+      network.use(
+        http.put(s3Url, async ({ request }) => {
+          const { pathname } = new URL(request.url)
+          puts.push(pathname)
+          // Hold the big file's first two parts.
+          if (puts.length <= 2) {
+            await new Promise<void>((resolve) => held.push(resolve))
+          }
+          return new HttpResponse('', {
+            status: 200,
+            headers: { ETag: '"etag-1"' },
+          })
+        }),
+      )
+
+      const core = new Core().use(AwsS3, {
+        signRequest,
+        limit: 2,
+        generateObjectKey: (file) => file.name!,
+        shouldUseMultipart: (file) => file.size! > MB,
+      })
+      core.addFile({
+        source: 'test',
+        name: 'big.dat',
+        type: 'application/octet-stream',
+        // Five parts: two in flight, three still to go.
+        data: new File([new Uint8Array(21 * MB)], 'big.dat'),
+      })
+      const bigUpload = core.upload()
+      await vi.waitFor(() => expect(held).toHaveLength(2), { timeout: 10_000 })
+
+      core.addFile({
+        source: 'test',
+        name: 'small.txt',
+        type: 'text/plain',
+        data: new File([new Uint8Array(KB)], 'small.txt'),
+      })
+      const started = new Promise((resolve) =>
+        core.once('upload-start', resolve),
+      )
+      const smallUpload = core.upload()
+      await started
+
+      // The first free slot goes to the small file, not to the big file's
+      // third part.
+      held.shift()!()
+      await vi.waitFor(() => expect(puts.length).toBeGreaterThanOrEqual(3))
+      expect(puts[2]).toBe('/small.txt')
+
+      for (const release of held) release()
+      expect((await smallUpload)?.successful).toHaveLength(1)
+      expect((await bigUpload)?.successful).toHaveLength(1)
+    })
+
+    test('removing the plugin survives an upload-error listener that removes the file', async () => {
+      const { signRequest, registerHandlers } = createMultipartMocks()
+      registerHandlers({ hangNonCreate: true })
+
+      const core = new Core().use(AwsS3, {
+        signRequest,
+        shouldUseMultipart: false,
+      })
+      for (const name of ['a.txt', 'b.txt']) {
+        core.addFile({
+          source: 'test',
+          name,
+          type: 'text/plain',
+          data: new File([new Uint8Array(KB)], name),
+        })
+      }
+      core.on('upload-error', (file) => core.removeFile(file!.id))
+
+      const uploadPromise = core.upload()
+      await vi.waitFor(() => expect(signRequest).toHaveBeenCalledTimes(2))
+      expect(() => core.removePlugin(core.getPlugin('AwsS3')!)).not.toThrow()
+      // Both uploaders were aborted, so the upload settles.
+      await expect(uploadPromise).resolves.toBeDefined()
+      expect(core.getFiles()).toHaveLength(0)
+    })
+
+    test('removing the plugin from an upload-success listener keeps the file successful', async () => {
+      const { signRequest, registerHandlers } = createMultipartMocks()
+      registerHandlers()
+
+      const core = new Core().use(AwsS3, { signRequest })
+      core.addFile({
+        source: 'test',
+        name: 'test.txt',
+        type: 'text/plain',
+        data: new File([new Uint8Array(KB)], 'test.txt'),
+      })
+      core.once('upload-success', () =>
+        core.removePlugin(core.getPlugin('AwsS3')!),
+      )
+
+      const result = await core.upload()
+      expect(result?.successful).toHaveLength(1)
+      expect(result?.failed).toHaveLength(0)
+    })
   })
 
   describe('Golden Retriever resume state (s3Multipart)', () => {

@@ -178,21 +178,19 @@ export default class S3Uploader<M extends Meta, B extends Body> {
    */
   #queued<T>(signal: AbortSignal, task: () => Promise<T>): Promise<T> {
     signal.throwIfAborted()
+    // The queue never starts a task whose signal already aborted.
     return this.#options.queue
-      .add(async () => {
-        signal.throwIfAborted()
-        let onAbort!: () => void
-        const aborted = new Promise<never>((_, reject) => {
-          onAbort = () =>
-            reject(signal.reason ?? new DOMException('Aborted', 'AbortError'))
-          signal.addEventListener('abort', onAbort, { once: true })
-        })
-        try {
-          return await Promise.race([task(), aborted])
-        } finally {
-          signal.removeEventListener('abort', onAbort)
-        }
-      })
+      .add(
+        () =>
+          new Promise<T>((resolve, reject) => {
+            const onAbort = () => reject(signal.reason)
+            signal.addEventListener('abort', onAbort)
+            Promise.resolve()
+              .then(task)
+              .then(resolve, reject)
+              .finally(() => signal.removeEventListener('abort', onAbort))
+          }),
+      )
       .abortOn(signal)
   }
 
@@ -341,40 +339,47 @@ export default class S3Uploader<M extends Meta, B extends Body> {
       throw new Error('Missing S3 object key or uploadId for uploading parts')
     }
 
-    await Promise.all(
-      this.#chunks
-        .filter((chunk) => !this.#chunkState[chunk.index].etag)
-        .map((chunk) =>
-          this.#queued(signal, async () => {
-            const { etag } = await this.#options.s3Client.uploadPart({
-              key,
-              uploadId,
-              // Sliced here, not up front, so only admitted parts exist.
-              data: this.#data.slice(chunk.start, chunk.end),
-              partNumber: chunk.index + 1,
-              onProgress: (bytesUploaded: number) => {
-                this.#chunkState[chunk.index].uploaded = bytesUploaded
-                this.#onProgress()
-              },
-              signal,
-            })
-
-            this.#chunkState[chunk.index] = { uploaded: chunk.size, etag }
-            this.#onProgress()
-            this.#options.onPartComplete?.({
-              PartNumber: chunk.index + 1,
-              ETag: etag,
-            })
-          }),
-        ),
+    const pending = this.#chunks.filter(
+      (chunk) => !this.#chunkState[chunk.index].etag,
     )
+    // Keep at most `limit` of this file's parts in the shared queue, so
+    // requests other files enqueue later wait behind that many, not behind
+    // every remaining part. ceil, since the queue runs one task at limit 0.5.
+    const workers = Math.min(
+      Math.ceil(this.#options.queue.concurrency),
+      pending.length,
+    )
+    const uploadNextParts = async () => {
+      for (let chunk = pending.shift(); chunk; chunk = pending.shift()) {
+        const { index, start, end, size } = chunk
+        await this.#queued(signal, async () => {
+          const { etag } = await this.#options.s3Client.uploadPart({
+            key,
+            uploadId,
+            // Sliced here, not up front, so only admitted parts exist.
+            data: this.#data.slice(start, end),
+            partNumber: index + 1,
+            onProgress: (bytesUploaded: number) => {
+              this.#chunkState[index].uploaded = bytesUploaded
+              this.#onProgress()
+            },
+            signal,
+          })
+
+          this.#chunkState[index] = { uploaded: size, etag }
+          this.#onProgress()
+          this.#options.onPartComplete?.({ PartNumber: index + 1, ETag: etag })
+        })
+      }
+    }
+    await Promise.all(Array.from({ length: workers }, uploadNextParts))
 
     const parts = this.#chunkState.flatMap((state, i) =>
       state.etag ? [{ partNumber: i + 1, etag: state.etag }] : [],
     )
 
     // Not queued: it is a tiny request, and queueing it would park this file's
-    // success behind every part other files enqueued in the meantime.
+    // success behind the parts other files have queued.
     const { location, key: completedKey } =
       await this.#options.s3Client.completeMultipartUpload({
         key,
