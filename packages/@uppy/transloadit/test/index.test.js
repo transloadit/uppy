@@ -19,13 +19,12 @@ network.resetHandlers(
 )
 
 describe('Transloadit', () => {
-  it('Does not leave lingering progress if getAssemblyOptions fails', async () => {
+  it('keeps files retryable without lingering progress if getAssemblyOptions fails', async () => {
     const error = new Error('expected failure')
+    const assemblyOptions = vi.fn(() => Promise.reject(error))
     using uppy = new Core()
     uppy.use(Transloadit, {
-      assemblyOptions() {
-        return Promise.reject(error)
-      },
+      assemblyOptions,
     })
 
     uppy.addFile({
@@ -39,6 +38,10 @@ describe('Transloadit', () => {
     const fileID = Object.keys(uppy.getState().files)[0]
 
     expect(uppy.getFile(fileID).progress.uploadStarted).toBe(null)
+    expect(uppy.getFile(fileID).error).toBe('expected failure')
+    await expect(uppy.retryAll()).rejects.toBe(error)
+    expect(assemblyOptions).toHaveBeenCalledTimes(2)
+    expect(uppy.getFiles()).toHaveLength(1)
   })
 
   it('Does not leave lingering progress if creating assembly fails', async () => {

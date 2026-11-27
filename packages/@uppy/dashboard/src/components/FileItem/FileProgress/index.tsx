@@ -152,10 +152,6 @@ export default function FileProgress<M extends Meta, B extends Body>(
     return null
   }
 
-  if (props.file.progress.percentage === undefined) {
-    return null
-  }
-
   // Green checkmark when complete
   if (props.isUploaded) {
     return (
@@ -197,6 +193,11 @@ export default function FileProgress<M extends Meta, B extends Body>(
         </svg>
       </ProgressIndicatorButton>
     )
+  }
+
+  // Nothing more to show while progress is unknown
+  if (props.file.progress.percentage === undefined) {
+    return null
   }
 
   // Pause/resume button for resumable uploads

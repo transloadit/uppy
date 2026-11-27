@@ -1,3 +1,5 @@
+import type { Meta } from '@uppy/core'
+
 import { network } from 'virtual:msw'
 import { createS3ManagerController } from '@uppy/components'
 import Uppy, { BasePlugin } from '@uppy/core'
@@ -276,6 +278,52 @@ it('emits for its own plugin only, and survives the plugin being removed', async
   const last = manager.getSnapshot()
   uppy.removePlugin(uppy.getPlugin('S3')!)
   expect(manager.getSnapshot()).toBe(last)
+  manager.unmount()
+})
+
+it('reports busy throughout a paginated folder navigation', async () => {
+  const companion = createMockS3Companion({
+    token: 'test-token',
+    pageSize: 1,
+    folders: {
+      '': [
+        { name: 'readme.md', isFolder: false, size: 1, mimeType: 'text/plain' },
+        { name: 'docs', isFolder: true },
+      ],
+      'docs/': [
+        { name: 'a.txt', isFolder: false, size: 1, mimeType: 'text/plain' },
+      ],
+    },
+  })
+  network.use(...toMswHandlers(companion, COMPANION, { http }))
+  uppy = new Uppy().use(S3, { companionUrl: COMPANION, mode: 'manager' })
+  const plugin = uppy.getPlugin<S3<Meta, Record<string, never>>>('S3')!
+  await plugin.openFolderPath(null)
+  const manager = createS3ManagerController(uppy, 'S3')
+  manager.mount()
+  await vi.waitFor(() =>
+    expect(manager.getSnapshot().state.loading).toBe(false),
+  )
+  let release = () => {}
+  const held = new Promise<void>((resolve) => {
+    release = resolve
+  })
+  const load = plugin.view.loadNextPage.bind(plugin.view)
+  const paging = vi
+    .spyOn(plugin.view, 'loadNextPage')
+    .mockImplementation(async () => {
+      await held
+      return load()
+    })
+  const walking = manager.getSnapshot().openPath('docs/')
+  await vi.waitFor(() => expect(paging).toHaveBeenCalled())
+  expect(plugin.getPluginState().loading).toBe(false)
+  expect(manager.getSnapshot().state.loading).toBe(true)
+  release()
+  expect(await walking).toBe(true)
+  expect(manager.getSnapshot().state.loading).toBe(false)
+  expect(manager.getSnapshot().state.currentFolderId).toBe('docs%2F')
+  paging.mockRestore()
   manager.unmount()
 })
 

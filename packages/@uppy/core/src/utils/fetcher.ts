@@ -159,7 +159,9 @@ export function fetcher(
       }
 
       function abort() {
-        xhr.abort()
+        // Aborting a finished request would reset its status to 0, also on the
+        // xhr that an error or a caller still holds (e.g. while a retry waits).
+        if (xhr.readyState !== XMLHttpRequest.DONE) xhr.abort()
         // Using DOMException for abort errors aligns with
         // the convention established by the Fetch API.
         reject(new DOMException('Aborted', 'AbortError'))

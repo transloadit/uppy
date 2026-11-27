@@ -68,6 +68,88 @@ const getFile = (tree: PartialTree, id: string) =>
   tree.find((i) => i.id === id) as PartialTreeFile
 
 describe('afterFill()', () => {
+  it('refreshes known cached subfolders when their checked parent is invalidated', async () => {
+    const tree: PartialTree = [
+      _root('ourRoot'),
+      _folder('2', { parentId: 'ourRoot', cached: false, status: 'checked' }),
+      _folder('child', { parentId: '2', cached: true, status: 'checked' }),
+      _file('old', { parentId: 'child', status: 'checked' }),
+    ]
+    const list = vi.fn<ApiList>(async (path) => ({
+      nextPagePath: null,
+      items:
+        path === 'child' ? [_cFile('old'), _cFile('new')] : [_cFolder('child')],
+    }))
+    const enriched = await afterFill(
+      tree,
+      list,
+      () => null,
+      () => {},
+    )
+    expect(list).toHaveBeenCalledTimes(2)
+    expect(
+      enriched.filter((node) => node.type === 'file').map((node) => node.id),
+    ).toEqual(['old', 'new'])
+  })
+
+  it('updates cached child IDs when an invalidated checked folder is filled again', async () => {
+    const tree: PartialTree = [
+      _root('ourRoot'),
+      _folder('2', { parentId: 'ourRoot', cached: false, status: 'checked' }),
+      _file('old', { parentId: '2', status: 'checked' }),
+    ]
+    const list = vi.fn<ApiList>(async () => ({
+      nextPagePath: null,
+      items: [_cFile('old'), _cFile('new')],
+    }))
+    const enriched = await afterFill(
+      tree,
+      list,
+      () => null,
+      () => {},
+    )
+    expect(
+      enriched.filter((node) => node.type === 'file').map((node) => node.id),
+    ).toEqual(['old', 'new'])
+    expect(list).toHaveBeenCalledOnce()
+    expect(tree).toHaveLength(3)
+  })
+
+  it('lists a known checked child once while its parent is also filled', async () => {
+    const tree: PartialTree = [
+      _root('ourRoot'),
+      _folder('2', { parentId: 'ourRoot', cached: false, status: 'checked' }),
+      _folder('child', { parentId: '2', cached: false, status: 'checked' }),
+      _file('old', { parentId: 'child', status: 'checked' }),
+    ]
+    let release = () => {}
+    const child = new Promise<Awaited<ReturnType<ApiList>>>((resolve) => {
+      release = () =>
+        resolve({ nextPagePath: null, items: [_cFile('old'), _cFile('new')] })
+    })
+    const list = vi.fn<ApiList>(async (path) =>
+      path === 'child'
+        ? child
+        : { nextPagePath: null, items: [_cFolder('child')] },
+    )
+    const filling = afterFill(
+      tree,
+      list,
+      () => null,
+      () => {},
+    )
+    await vi.waitFor(() => expect(list).toHaveBeenCalled())
+    release()
+    const enriched = await filling
+    expect(list).toHaveBeenCalledTimes(2)
+    expect(
+      enriched.filter((node) => node.type === 'file').map((node) => node.id),
+    ).toEqual(['old', 'new'])
+    expect(enriched.find((node) => node.id === 'child')).toMatchObject({
+      cached: true,
+    })
+  })
+
   it('preserves .checked files in an already .cached folder', async () => {
     const tree: PartialTree = [
       _root('ourRoot'),

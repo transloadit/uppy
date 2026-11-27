@@ -59,9 +59,9 @@
   "devDependencies": {
     "@uppy-dev/tsconfig": "workspace:^",
     "@uppy/core": "workspace:^",
-    "@vitest/browser-playwright": "^5.1.0",
-    "playwright": "1.65.0",
+    "@vitest/browser-playwright": "^5.1.1",
+    "playwright": "1.65.1",
     "typescript": "^6.0.3",
-    "vitest": "^5.1.0"
+    "vitest": "^5.1.1"
   }
 }

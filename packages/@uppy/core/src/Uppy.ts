@@ -9,6 +9,7 @@ import type SearchProvider from './companion-client/SearchProvider.js'
 import type ProviderView from './provider-views/ProviderView/ProviderView.js'
 import type { Restrictions, ValidateableFile } from './Restricter.js'
 import type { Store } from './store/index.js'
+import type { default as UIPlugin, UIPluginOptions } from './UIPlugin.js'
 import type {
   Body,
   CompanionFile,
@@ -229,6 +230,9 @@ export type UnknownProviderPlugin<
   M extends Meta,
   B extends Body,
 > = UnknownPlugin<M, B, UnknownProviderPluginState> &
+  Partial<
+    Pick<UIPlugin<UIPluginOptions, M, B>, 'beginAddingFiles' | 'isNavigating'>
+  > &
   BaseProviderPlugin & {
     rootFolderId: string | null
     files: UppyFile<M, B>[]
@@ -2238,13 +2242,24 @@ export class Uppy<
 
     this.emit('upload', uploadID, this.getFilesByIds(fileIDs))
 
+    // A file belongs to one upload at a time. A retried file may still be
+    // listed in its earlier upload if that one is still running: move it here,
+    // so only this upload reports it, and drop uploads that this leaves empty.
+    const newFileIDs = new Set(fileIDs)
+    const otherUploads: typeof currentUploads = {}
+    for (const [id, upload] of Object.entries(currentUploads)) {
+      const remaining = upload.fileIDs.filter((f) => !newFileIDs.has(f))
+      if (remaining.length > 0)
+        otherUploads[id] = { ...upload, fileIDs: remaining }
+    }
+
     this.setState({
       allowNewUpload:
         this.opts.allowMultipleUploadBatches !== false &&
         this.opts.allowMultipleUploads !== false,
 
       currentUploads: {
-        ...currentUploads,
+        ...otherUploads,
         [uploadID]: {
           fileIDs,
           step: 0,
