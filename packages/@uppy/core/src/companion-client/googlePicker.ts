@@ -731,7 +731,7 @@ export function createGooglePickerController({
       // after a newer init has replaced `abortController`.
       abortController = new AbortController()
       const { signal } = abortController
-      initPromise = (async () => {
+      const promise = (async () => {
         const storedToken = await persistentStore.getItem(storageKey)
         // Reset while reading: the next init owns the state now. Resolve, since
         // the hooks call init() without handling a rejection.
@@ -752,6 +752,11 @@ export function createGooglePickerController({
           })
         }
       })()
+      initPromise = promise
+      // A failed read must not stick: the next init() reads again.
+      promise.catch(() => {
+        if (initPromise === promise) initPromise = undefined
+      })
     }
     await initPromise
   }

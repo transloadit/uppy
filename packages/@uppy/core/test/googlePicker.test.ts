@@ -40,7 +40,8 @@ it('shares an in-flight show() across overlapping calls and resets', async () =>
   using uppy = new Core()
   const firstRead = Promise.withResolvers<string | null>()
   const secondRead = Promise.withResolvers<string | null>()
-  const reads = [firstRead.promise, secondRead.promise]
+  const thirdRead = Promise.withResolvers<string | null>()
+  const reads = [firstRead.promise, secondRead.promise, thirdRead.promise]
   const { controller } = setup(uppy, () => reads.shift()!)
 
   const firstShow = controller.show()
@@ -53,14 +54,20 @@ it('shares an in-flight show() across overlapping calls and resets', async () =>
   firstRead.reject(new Error('Old token read failed'))
   await expect(firstShow).rejects.toThrow('Old token read failed')
   expect(controller.show()).toBe(secondShow)
+  // Nor clear the newer read: init() joins it instead of reading again.
+  const sameInit = controller.init()
+  expect(reads).toHaveLength(1)
 
   const currentError = new Error('Current token read failed')
   secondRead.reject(currentError)
   await expect(secondShow).rejects.toBe(currentError)
-  // Released: this call runs again (and gets the cached init failure).
+  await expect(sameInit).rejects.toBe(currentError)
+  // Released, and the failed read isn't cached: this call reads again.
   const thirdShow = controller.show()
   expect(thirdShow).not.toBe(secondShow)
-  await expect(thirdShow).rejects.toBe(currentError)
+  const retryError = new Error('Retried token read failed')
+  thirdRead.reject(retryError)
+  await expect(thirdShow).rejects.toBe(retryError)
 })
 
 it('ignores a token read that settles after reset()', async () => {
