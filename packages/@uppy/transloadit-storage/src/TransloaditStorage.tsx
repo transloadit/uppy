@@ -1,4 +1,4 @@
-import type { Body, Meta, UploadResult, Uppy } from '@uppy/core'
+import type { Body, Meta, UploadResult, Uppy, UppyFile } from '@uppy/core'
 import type {
   ProviderAction,
   ProviderToolbarAction,
@@ -15,6 +15,7 @@ import packageJson from '../package.json' with { type: 'json' }
 import locale from './locale.js'
 import {
   createStoreAssemblyOptions,
+  hasStoreAssemblyOptions,
   openFolderKey,
 } from './storeAssemblyOptions.js'
 
@@ -41,7 +42,8 @@ export type TransloaditStorageOptions<
   /** Server-authorized, version-pinned original URL with Content-Disposition: attachment. */
   getDownloadUrl?: (key: string) => Promise<string>
   /**
-   * Store uploads in the folder that is open in this panel, through an
+   * Store uploads in the folder that was open in this panel when they were
+   * added (see `uploadFolderKey`), through an
    * `@uppy/transloadit` plugin installed on the same Uppy instance. You sign
    * the Assembly params (server-side, ideally); see `createStoreAssemblyOptions`
    * to wire it yourself instead.
@@ -141,9 +143,9 @@ export default class TransloaditStorage<
   }
 
   /**
-   * With `storeUploads`, files dropped on the panel are stored in the folder
-   * that is open, which only a session that can write may do. Without it they
-   * join the Dashboard's uploads, as with `@uppy/s3`.
+   * With `storeUploads` or `createStoreAssemblyOptions`, files dropped on the
+   * panel are stored in the open folder, which only a session that can write
+   * may do. Otherwise they join the Dashboard's uploads, as with `@uppy/s3`.
    *
    * @experimental `@uppy/transloadit-storage` is experimental: its options,
    * behaviour and Companion endpoints will change incompatibly, also in
@@ -152,8 +154,206 @@ export default class TransloaditStorage<
   override get acceptsFileDrops(): boolean {
     return (
       this.opts.mode !== 'manager' &&
-      (this.opts.storeUploads == null || this.canWrite)
+      (!this.#storesUploads || (this.canWrite && this.#storesInOpenFolder()))
     )
+  }
+
+  /** The folder the queued files were added in; see `uploadFolderKey`. */
+  #addedIn: string | undefined
+
+  #bindAfterLoading = false
+
+  #pendingFileAdds = 0
+
+  #destinationGeneration = 0
+
+  protected override onSessionChanged(): void {
+    super.onSessionChanged()
+    this.#destinationGeneration += 1
+    this.#addedIn = undefined
+    this.#bindAfterLoading = false
+    this.#pendingFileAdds = 0
+    this.#addReservation = undefined
+  }
+
+  #addReservation:
+    | {
+        addedIn: string | undefined
+        bindAfterLoading: boolean
+        committed: boolean
+      }
+    | undefined
+
+  get #storesUploads(): boolean {
+    return (
+      this.opts.storeUploads != null ||
+      hasStoreAssemblyOptions(this.uppy, this.id)
+    )
+  }
+
+  get #uploadRoot(): string {
+    const prefix = this.rootPrefix
+    return prefix && !prefix.endsWith('/') ? `${prefix}/` : prefix
+  }
+
+  get #openUploadFolder(): string {
+    const open = openFolderKey(this)
+    return open.startsWith(this.#uploadRoot) ? open : this.#uploadRoot
+  }
+
+  #canAddHere(): boolean {
+    if (this.isNavigating) {
+      this.uppy.info(this.i18n('uploadFolderLoading'), 'info', 5000)
+      return false
+    }
+    if (this.#storesUploads && this.uploadFolderKey !== openFolderKey(this)) {
+      this.uppy.info(this.i18n('uploadQueuedElsewhere'), 'info', 5000)
+      return false
+    }
+    return true
+  }
+
+  /** Reserves the destination before Dashboard can close and reset this panel. */
+  override beginAddingFiles = (): (() => void) | false | undefined => {
+    if (!this.#storesUploads) return
+    if (!this.#canAddHere()) return false
+    if (this.#pendingFileAdds === 0) {
+      this.#addReservation = {
+        addedIn: this.#addedIn,
+        bindAfterLoading: this.#bindAfterLoading,
+        committed: false,
+      }
+    }
+    if (this.#addedIn === undefined || !this.#hasQueuedFiles()) {
+      this.#addedIn = this.#openUploadFolder
+      this.#bindAfterLoading = false
+    }
+    this.#pendingFileAdds += 1
+    const generation = this.#destinationGeneration
+    let finished = false
+    return () => {
+      if (finished) return
+      finished = true
+      if (generation !== this.#destinationGeneration) return
+      this.#pendingFileAdds -= 1
+      const reservation = this.#addReservation
+      if (this.#pendingFileAdds !== 0 || !reservation) return
+      this.#addReservation = undefined
+      if (!reservation.committed) {
+        this.#addedIn = reservation.addedIn
+        this.#bindAfterLoading = reservation.bindAfterLoading
+        this.#settleQueuedFolder()
+      }
+    }
+  }
+
+  /**
+   * The storage key prefix uploads are stored under: the folder that was open
+   * when the first of the queued files was added, so navigating meanwhile (or
+   * reopening the panel elsewhere) does not move them. With nothing queued,
+   * the open folder.
+   *
+   * @experimental `@uppy/transloadit-storage` is experimental: its options,
+   * behaviour and Companion endpoints will change incompatibly, also in
+   * minor releases.
+   */
+  get uploadFolderKey(): string {
+    const queued = this.#hasQueuedFiles()
+    return queued &&
+      this.#addedIn !== undefined &&
+      this.#addedIn.startsWith(this.#uploadRoot)
+      ? this.#addedIn
+      : this.#openUploadFolder
+  }
+
+  /** Commits an unbound queue's destination before its Assembly is signed. */
+  reserveUploadFolder(): string {
+    if (
+      this.#addedIn !== undefined &&
+      !this.#addedIn.startsWith(this.#uploadRoot)
+    ) {
+      this.onSessionChanged()
+    }
+    this.#settleQueuedFolder()
+    if (
+      this.#hasQueuedFiles() &&
+      this.#addedIn === undefined &&
+      (this.getPluginState().loading || this.isNavigating)
+    ) {
+      this.#bindAfterLoading = true
+    }
+    if (this.#bindAfterLoading) {
+      throw new UserFacingApiError(this.i18n('uploadFolderLoading'))
+    }
+    if (this.#hasQueuedFiles() && this.#addedIn === undefined) {
+      this.#addedIn = this.#openUploadFolder
+    }
+    if (this.#addReservation) this.#addReservation.committed = true
+    return this.uploadFolderKey
+  }
+
+  #settleQueuedFolder = (): void => {
+    if (
+      !this.#bindAfterLoading ||
+      this.getPluginState().loading ||
+      this.isNavigating
+    )
+      return
+    this.#bindAfterLoading = false
+    if (this.getPluginState().authenticated && this.#hasQueuedFiles()) {
+      this.#addedIn = this.#openUploadFolder
+    }
+  }
+
+  /** Failed processing and active retries still own their destination after transport completes. */
+  #hasQueuedFiles(excludedIds?: ReadonlySet<string>): boolean {
+    if (this.#pendingFileAdds > 0) return true
+    const activeFiles = new Set(
+      Object.values(this.uppy.getState().currentUploads).flatMap(
+        ({ fileIDs }) => fileIDs,
+      ),
+    )
+    return this.uppy
+      .getFiles()
+      .some(
+        (file) =>
+          !excludedIds?.has(file.id) &&
+          (!file.progress.uploadComplete ||
+            file.error != null ||
+            activeFiles.has(file.id)),
+      )
+  }
+
+  /**
+   * Whether files added now would be stored in the folder the panel shows:
+   * not while the next folder is still listing (`currentFolderId` is still
+   * the previous one), nor while files queued in another folder wait.
+   */
+  #storesInOpenFolder(): boolean {
+    return (
+      !this.getPluginState().loading &&
+      !this.isNavigating &&
+      this.uploadFolderKey === openFolderKey(this)
+    )
+  }
+
+  /** A new queue is stored in the folder open when its first files arrive. */
+  #onFilesAdded = (files: UppyFile<M, B>[]): void => {
+    if (files.length === 0) return
+    if (this.#addReservation) {
+      this.#addReservation.committed = true
+    }
+    const added = new Set(files.map((file) => file.id))
+    if (this.#hasQueuedFiles(added) && this.#addedIn !== undefined) return
+    // Widget additions reserve their folder before emitting files-added;
+    // external additions must wait for navigation to settle.
+    const { authenticated, loading } = this.getPluginState()
+    this.#bindAfterLoading = this.isNavigating || Boolean(loading)
+    // Before connecting, the first Assembly reserves the now-known root.
+    this.#addedIn =
+      authenticated && !this.#bindAfterLoading
+        ? this.#openUploadFolder
+        : undefined
   }
 
   override builtInActions(): ProviderAction<M, B>[] {
@@ -213,10 +413,17 @@ export default class TransloaditStorage<
         // The host app can take over (e.g. a full Dashboard modal with remote
         // sources); otherwise a plain file picker owned by the widget. Either
         // way files go into the folder that is open (storeUploads builds the
-        // Assembly params).
+        // Assembly params). The view does not run it while a folder lists.
         run: () => {
-          if (onUploadRequest) onUploadRequest({ prefix: openFolderKey(this) })
-          else this.#pickFiles()
+          if (this.isNavigating || this.getPluginState().loading) {
+            this.uppy.info(this.i18n('uploadFolderLoading'), 'info', 5000)
+          } else if (this.#storesUploads && !this.#storesInOpenFolder()) {
+            this.uppy.info(this.i18n('uploadQueuedElsewhere'), 'info', 5000)
+          } else if (onUploadRequest) {
+            onUploadRequest({ prefix: openFolderKey(this) })
+          } else {
+            this.#pickFiles()
+          }
         },
       },
       ...actions,
@@ -225,20 +432,33 @@ export default class TransloaditStorage<
 
   /** Lets the user pick local files and adds them to Uppy. */
   #pickFiles(): void {
+    if (!this.#canAddHere()) return
     const input = document.createElement('input')
     input.type = 'file'
     input.multiple = true
     input.style.display = 'none'
     input.addEventListener('change', () => {
-      this.uppy.addFiles(
-        Array.from(input.files ?? [], (file) => ({
-          name: file.name,
-          type: file.type,
-          data: file,
-          source: this.id,
-          isRemote: false,
-        })),
-      )
+      const finishSelection = this.beginAddingFiles()
+      if (finishSelection === false) {
+        input.remove()
+        return
+      }
+      try {
+        this.uppy.addFiles(
+          Array.from(input.files ?? [], (file) => ({
+            name: file.name,
+            type: file.type,
+            data: file,
+            source: this.id,
+            isRemote: false,
+          })),
+        )
+      } finally {
+        finishSelection?.()
+        input.remove()
+      }
+    })
+    input.addEventListener('cancel', () => {
       input.remove()
     })
     document.body.appendChild(input)
@@ -265,11 +485,15 @@ export default class TransloaditStorage<
       })
     }
     super.install()
+    this.uppy.on('files-added', this.#onFilesAdded)
+    this.uppy.on('state-update', this.#settleQueuedFolder)
     if (reopenAfterUpload) this.uppy.on('complete', this.#reopenAfterUpload)
   }
 
   override uninstall(): void {
     this.uppy.off('complete', this.#reopenAfterUpload)
+    this.uppy.off('files-added', this.#onFilesAdded)
+    this.uppy.off('state-update', this.#settleQueuedFolder)
     super.uninstall()
   }
 
@@ -279,9 +503,38 @@ export default class TransloaditStorage<
    * exist by now. Clearing on the next macrotask lets the other `complete`
    * listeners (Dashboard's own success state) run on the final result first.
    */
+  #canReopenAfterUpload(result: UploadResult<M, B>): boolean {
+    if (result.failed?.length || !result.successful?.length) return false
+    // The completing batch is still active while complete handlers run.
+    const successful = new Set(
+      result.successful.flatMap(({ id }) => {
+        const file = this.uppy.getFile(id)
+        return file?.progress.uploadComplete && file.error == null ? [id] : []
+      }),
+    )
+    return !this.#hasQueuedFiles(successful)
+  }
+
   #reopenAfterUpload = (result: UploadResult<M, B>): void => {
-    if (result.failed?.length) return
+    if (!this.#canReopenAfterUpload(result)) return
+    const destination = this.#addedIn ?? this.#openUploadFolder
+    const destinationId =
+      destination === this.#uploadRoot
+        ? this.rootFolderId
+        : encodeURIComponent(destination)
     setTimeout(() => {
+      if (!this.#canReopenAfterUpload(result)) return
+      const { partialTree } = this.getPluginState()
+      if (partialTree == null) return
+      // Relist the uploaded folder when opened again, preserving selections
+      // in other cached folders while the panel refreshes its current view.
+      this.setPluginState({
+        partialTree: partialTree.map((node) =>
+          node.type !== 'file' && node.id === destinationId
+            ? { ...node, cached: false, nextPagePath: null }
+            : node,
+        ),
+      })
       try {
         this.uppy.clear()
       } catch {

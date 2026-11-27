@@ -53,6 +53,18 @@ class UIPlugin<
 
   title!: string
 
+  /**
+   * Reserves a destination before reading dropped files or adding selected files.
+   * Return false to refuse the addition; otherwise cleanup runs after files are
+   * added, including empty or failed additions. Experimental storage panel API.
+   */
+  beginAddingFiles?: () => (() => void) | false | undefined
+
+  /** Whether a multi-step folder navigation still owns this panel. */
+  get isNavigating(): boolean {
+    return false
+  }
+
   getTargetPlugin<Me extends Meta, Bo extends Body>(
     target: PluginTarget<Me, Bo>,
   ): UIPlugin<any, Me, Bo> | undefined {

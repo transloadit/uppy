@@ -302,12 +302,16 @@ en_US.strings = {
   uploadComplete: 'Upload complete',
   uploadFailed: 'Upload failed',
   uploadFiles: 'Upload files',
+  uploadFolderLoading:
+    'Wait for the folder to finish loading, then retry the upload',
   uploading: 'Uploading',
   uploadingXFiles: {
     '0': 'Uploading %{smart_count} file',
     '1': 'Uploading %{smart_count} files',
   },
   uploadPaused: 'Upload paused',
+  uploadQueuedElsewhere:
+    'Upload or remove the queued files first: they go to another folder',
   uploadStalled:
     'Upload has not made any progress for %{seconds} seconds. You may want to retry it.',
   uploadXFiles: {

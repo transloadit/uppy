@@ -12,7 +12,6 @@ import { URL } from 'node:url'
 import RedisStore from 'connect-redis'
 import express from 'express'
 import session from 'express-session'
-import helmet from 'helmet'
 import morgan from 'morgan'
 
 import * as companion from '../companion.js'
@@ -150,11 +149,17 @@ export default function server(
     return '-'
   })
 
-  // Use helmet to secure Express headers
-  router.use(helmet.frameguard())
-  router.use(helmet.xssFilter())
-  router.use(helmet.noSniff())
-  router.use(helmet.ieNoOpen())
+  router.use((_req, res, next) => {
+    // Only pages of the same origin may show Companion in a frame.
+    res.setHeader('x-frame-options', 'SAMEORIGIN')
+    // Turn off the XSS filter of old browsers, which could itself be abused.
+    res.setHeader('x-xss-protection', '0')
+    // Browsers must use the declared content type, not guess one.
+    res.setHeader('x-content-type-options', 'nosniff')
+    // Old Internet Explorer must not open downloads in the site's context.
+    res.setHeader('x-download-options', 'noopen')
+    next()
+  })
 
   app.disable('x-powered-by')
 

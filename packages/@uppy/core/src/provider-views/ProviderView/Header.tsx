@@ -21,6 +21,8 @@ type HeaderProps<M extends Meta, B extends Body> = {
   i18n: I18n
   toolbarActions?: ProviderToolbarAction<M, B>[]
   runToolbarAction?: (action: ProviderToolbarAction<M, B>) => void
+  /** A listing or long operation runs: the open folder is not settled yet. */
+  toolbarDisabled?: boolean
 }
 
 export default function Header<M extends Meta, B extends Body>(
@@ -51,6 +53,7 @@ export default function Header<M extends Meta, B extends Body>(
                 key={action.id}
                 type="button"
                 className="uppy-u-reset uppy-c-btn uppy-ProviderBrowser-toolbarBtn"
+                disabled={props.toolbarDisabled}
                 onClick={() => props.runToolbarAction?.(action)}
               >
                 {action.label}

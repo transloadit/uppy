@@ -1334,19 +1334,19 @@ describe('AwsS3', () => {
       })
 
       const uploadPromise = core.upload()
-      // Generous timeouts: the default 1s flakes on slow CI runners.
       await vi.waitFor(
         () => expect(core.getFile(fileId).s3Multipart).toBeDefined(),
-        { timeout: 5000 },
+        { timeout: 10_000 },
       )
       core.removePlugin(core.getPlugin('AwsS3')!)
       await uploadPromise
 
       // The upload is gone in S3, so a retry has to start a new one.
       expect(core.getFile(fileId).s3Multipart).toBeUndefined()
-      // The abort request is sent without being awaited.
+      // The abort request is sent without being awaited, and on CI it has
+      // taken longer than waitFor's default 1s to reach the mock server.
       await vi.waitFor(() => expect(operations).toContain('abortMultipart'), {
-        timeout: 5000,
+        timeout: 10_000,
       })
     })
 
