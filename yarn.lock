@@ -8440,7 +8440,7 @@ __metadata:
     "@changesets/cli": "npm:^3.0.2"
     mdast-comment-marker: "npm:^3.0.0"
     mdxlint: "npm:^1.0.0"
-    npm-run-all2: "npm:^9.0.3"
+    npm-run-all2: "npm:^9.0.4"
     remark-cli: "npm:^12.0.1"
     remark-directive: "npm:^4.0.0"
     remark-frontmatter: "npm:^5.0.0"
@@ -13090,7 +13090,7 @@ __metadata:
     cors: "npm:^2.8.5"
     express: "npm:^5.2.1"
     express-session: "npm:^1.17.3"
-    npm-run-all2: "npm:^9.0.3"
+    npm-run-all2: "npm:^9.0.4"
     vite: "npm:^8.3.5"
   languageName: unknown
   linkType: soft
@@ -13137,7 +13137,7 @@ __metadata:
     body-parser: "npm:^2.4.0"
     express: "npm:^5.2.1"
     express-session: "npm:^1.15.6"
-    npm-run-all2: "npm:^9.0.3"
+    npm-run-all2: "npm:^9.0.4"
     preact: "npm:^10.29.2"
     vite: "npm:^8.3.5"
   languageName: unknown
@@ -13296,7 +13296,7 @@ __metadata:
     "@uppy/transloadit": "workspace:*"
     "@uppy/webcam": "workspace:*"
     he: "npm:^1.2.0"
-    npm-run-all2: "npm:^9.0.3"
+    npm-run-all2: "npm:^9.0.4"
     vite: "npm:^8.3.5"
   languageName: unknown
   linkType: soft
@@ -13337,7 +13337,7 @@ __metadata:
     cors: "npm:^2.8.5"
     express: "npm:^5.2.1"
     multer: "npm:^2.5.0"
-    npm-run-all2: "npm:^9.0.3"
+    npm-run-all2: "npm:^9.0.4"
     vite: "npm:^8.3.5"
   languageName: unknown
   linkType: soft
@@ -13352,7 +13352,7 @@ __metadata:
     "@uppy/webcam": "workspace:*"
     "@uppy/xhr-upload": "workspace:*"
     formidable: "npm:^3.2.4"
-    npm-run-all2: "npm:^9.0.3"
+    npm-run-all2: "npm:^9.0.4"
     vite: "npm:^8.3.5"
   languageName: unknown
   linkType: soft
@@ -13365,7 +13365,7 @@ __metadata:
     "@uppy/dashboard": "workspace:*"
     "@uppy/webcam": "workspace:*"
     "@uppy/xhr-upload": "workspace:*"
-    npm-run-all2: "npm:^9.0.3"
+    npm-run-all2: "npm:^9.0.4"
     vite: "npm:^8.3.5"
   languageName: unknown
   linkType: soft
@@ -13378,7 +13378,7 @@ __metadata:
     "@uppy/dashboard": "workspace:*"
     "@uppy/webcam": "workspace:*"
     "@uppy/xhr-upload": "workspace:*"
-    npm-run-all2: "npm:^9.0.3"
+    npm-run-all2: "npm:^9.0.4"
     vite: "npm:^8.3.5"
   languageName: unknown
   linkType: soft
@@ -18376,9 +18376,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"npm-run-all2@npm:^9.0.3":
-  version: 9.0.3
-  resolution: "npm-run-all2@npm:9.0.3"
+"npm-run-all2@npm:^9.0.4":
+  version: 9.0.4
+  resolution: "npm-run-all2@npm:9.0.4"
   dependencies:
     ansi-styles: "npm:^7.0.0"
     cross-spawn: "npm:^7.0.6"
@@ -18386,14 +18386,14 @@ __metadata:
     picomatch: "npm:^4.0.2"
     pidtree: "npm:^1.0.0"
     read-package-json-fast: "npm:^6.0.0"
-    shell-quote: "npm:^1.8.4"
+    shell-quote: "npm:^1.12.0"
     which: "npm:^7.0.0"
   bin:
     npm-run-all: bin/npm-run-all/index.js
     npm-run-all2: bin/npm-run-all/index.js
     run-p: bin/run-p/index.js
     run-s: bin/run-s/index.js
-  checksum: 10/4b67957c871edee07d4cd30404b99dbd009094a2722bf1829657d5f13688752000fad1ede202dc76ae0cfbbc7b9d17df7b624904454062d53552db8030cc03e9
+  checksum: 10/0039df7d43103967ca33b38b6ddc2c0646380573134309303baef19d610673f0d3bf419aa11ecbde974b10ee19abaefa9dc5ab1dafb7076a71cf6a04dedd86f2
   languageName: node
   linkType: hard
 
@@ -22740,7 +22740,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"shell-quote@npm:^1.10.0, shell-quote@npm:^1.8.4":
+"shell-quote@npm:^1.10.0, shell-quote@npm:^1.12.0":
   version: 1.12.0
   resolution: "shell-quote@npm:1.12.0"
   checksum: 10/18b3e382272804e79fd3187c18877cfd4e736b5afb576bf1ab66a561b0a0e26eada4b7c8eb45473d1f17268ffcf12d0aaa90b9235132123eb673df5d0a5df943
