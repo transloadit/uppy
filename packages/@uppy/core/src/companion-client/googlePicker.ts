@@ -703,6 +703,7 @@ export function createGooglePickerController({
   let abortController = new AbortController()
   let initPromise: Promise<void> | undefined
   let pickingSession: PickingSession | undefined
+  let pendingShow: Promise<void> | undefined
 
   const handleFilesPicked = (files: PickedItem[], accessToken: string) => {
     uppy.addFiles(
@@ -726,12 +727,16 @@ export function createGooglePickerController({
 
   async function init() {
     if (initPromise == null) {
-      initPromise = (async () => {
-        abortController = new AbortController()
-
-        setAccessToken(await persistentStore.getItem(storageKey))
-
-        abortController.signal.throwIfAborted()
+      // Each init gets its own controller, so reset() stops this flow even
+      // after a newer init has replaced `abortController`.
+      abortController = new AbortController()
+      const { signal } = abortController
+      const promise = (async () => {
+        const storedToken = await persistentStore.getItem(storageKey)
+        // Reset while reading: the next init owns the state now. Resolve, since
+        // the hooks call init() without handling a rejection.
+        if (signal.aborted) return
+        setAccessToken(storedToken)
 
         // For google photos we need to continuously poll the current picking session
         if (pickerType === 'photos') {
@@ -741,22 +746,46 @@ export function createGooglePickerController({
             onPickingSessionClear: () => {
               pickingSession = undefined
             },
-            signal: abortController.signal,
+            signal,
             onFilesPicked: handleFilesPicked,
             onError: (err) => uppy.log(err),
           })
         }
       })()
+      initPromise = promise
+      // A failed read must not stick: the next init() reads again.
+      promise.catch(() => {
+        if (initPromise === promise) initPromise = undefined
+      })
     }
     await initPromise
   }
 
-  async function showPicker() {
-    await init()
+  // Not async, so overlapping calls get the same promise. GooglePickerView
+  // calls show() on mount and its button can call it again before `loading`
+  // renders; without this, each call opens its own picker. The guard ends once
+  // the picker is shown, so it can be opened again after it closes.
+  function showPicker(): Promise<void> {
+    if (pendingShow) return pendingShow
+    const show = runShowPicker().finally(() => {
+      if (pendingShow === show) pendingShow = undefined
+    })
+    pendingShow = show
+    return show
+  }
+
+  async function runShowPicker() {
+    const ready = init()
+    // init() has set this flow's controller synchronously by now.
+    const { signal } = abortController
+    await ready
+    if (signal.aborted) return
 
     let newAccessToken = store.getSnapshot().accessToken
 
     const doShowPicker = async (token: string) => {
+      // reset() may have run while the user authorized.
+      signal.throwIfAborted()
       if (pickerType === 'drive') {
         if (apiKey == null || appId == null)
           throw new TypeError(
@@ -767,7 +796,7 @@ export function createGooglePickerController({
           apiKey,
           appId,
           onFilesPicked: handleFilesPicked,
-          signal: abortController.signal,
+          signal,
           onLoadingChange: (isLoading: boolean) => setLoading(isLoading),
           onError: (err: unknown) => {
             uppy.log(err)
@@ -790,7 +819,7 @@ export function createGooglePickerController({
           token,
           pickingSession,
           onPickingSessionChange,
-          signal: abortController.signal,
+          signal,
         })
       }
     }
@@ -799,6 +828,8 @@ export function createGooglePickerController({
     try {
       try {
         await ensureScriptsInjected(pickerType)
+        // Don't open an auth popup for a flow reset while the scripts loaded.
+        signal.throwIfAborted()
 
         if (newAccessToken == null) {
           newAccessToken = await authorize({ clientId, pickerType })
@@ -823,6 +854,8 @@ export function createGooglePickerController({
         }
       }
     } catch (err) {
+      // This flow was reset; the state now belongs to the next one.
+      if (signal.aborted) return
       if (
         err instanceof Error &&
         'type' in err &&
@@ -834,7 +867,7 @@ export function createGooglePickerController({
         uppy.log(err)
       }
     } finally {
-      setLoading(false)
+      if (!signal.aborted) setLoading(false)
     }
   }
 
@@ -852,6 +885,7 @@ export function createGooglePickerController({
 
     pickingSession = undefined
     initPromise = undefined
+    pendingShow = undefined
     store.setState((s) => ({ ...s, accessToken: undefined, loading: false }))
   }
 
