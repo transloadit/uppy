@@ -31,6 +31,7 @@ import {
   Provider,
 } from '@uppy/core/companion-client'
 import { ProviderViews } from '@uppy/core/provider-views'
+import { ErrorWithCause } from '@uppy/core/utils'
 // biome-ignore lint/style/useImportType: h is not a type
 import { type ComponentChild, h } from '@uppy/core/utils/preact'
 
@@ -191,7 +192,13 @@ class S3SimpleAuthProvider<M extends Meta, B extends Body> extends Provider<
     // the integrator mints one, and Companion decides what it sees.
     const grant = isGrantForm(authFormData)
       ? authFormData.grant
-      : await this.getGrant?.()
+      : await this.getGrant?.().catch((cause: unknown) => {
+          signal.throwIfAborted()
+          if (cause instanceof UserFacingApiError) throw cause
+          // Any other message is not for the user: show it as a failed
+          // connection, like a failed request.
+          throw new ErrorWithCause('Could not get a grant', { cause })
+        })
     signal.throwIfAborted()
     await this.loginSimpleAuth({
       uppyVersions,
