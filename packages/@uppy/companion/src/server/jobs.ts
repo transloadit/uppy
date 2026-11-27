@@ -56,7 +56,7 @@ const cleanUpFinishedUploads = (dirPath: string): void => {
 }
 
 /**
- * Runs a function every 24 hours, to clean up stale, upload related files.
+ * Cleans up stale, upload related files daily at 23:00 local time.
  *
  * @param dirPath path to the directory which you want to clean
  */

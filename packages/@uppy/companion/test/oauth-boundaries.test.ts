@@ -216,7 +216,7 @@ describe('OAuth request boundaries', () => {
       .get('/connect/dropbox/callback?code=a&code=b')
       .expect(400)
     expect(response.text).toContain('postMessage')
-    // serialize-javascript escapes the slashes
+    // the serializer escapes the slashes
     expect(response.text).toContain('tenant-a.test')
   })
 

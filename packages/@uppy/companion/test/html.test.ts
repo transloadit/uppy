@@ -1,4 +1,5 @@
 import { expect, test } from 'vitest'
+
 import { legacyAuthCallbackHtml } from '../dist/server/helpers/html.js'
 
 test('data and origin cannot break out of the inline script', () => {
