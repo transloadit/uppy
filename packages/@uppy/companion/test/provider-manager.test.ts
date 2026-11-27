@@ -98,6 +98,7 @@ describe('Test Provider options', () => {
       authorize_url: 'https://www.dropbox.com/oauth2/authorize',
       access_url: 'https://api.dropbox.com/oauth2/token',
       callback: '/dropbox/callback',
+      scope_delimiter: ' ',
       custom_params: {
         token_access_type: 'offline',
       },
@@ -217,6 +218,55 @@ describe('Test Provider options', () => {
 
     expect(getGrantProviderField(grantConfig, 'zoom', 'key')).toBeUndefined()
     expect(getGrantProviderField(grantConfig, 'zoom', 'secret')).toBeUndefined()
+  })
+
+  test('replaces the OAuth scope with providerOptions scope', () => {
+    const onedrive = companionOptions.providerOptions?.['onedrive']
+    if (onedrive == null) throw new Error('Expected providerOptions.onedrive')
+    onedrive.scope = ['Files.Read', 'offline_access', 'User.Read']
+    providerManager.addProviderOptions(
+      getAddProviderOptionsArgs(companionOptions),
+      grantConfig,
+      getOauthProvider,
+    )
+
+    expect(
+      requireGrantProviderConfig(grantConfig, 'microsoft')['scope'],
+    ).toEqual(['Files.Read', 'offline_access', 'User.Read'])
+    // other providers keep their default scope
+    expect(
+      requireGrantProviderConfig(grantConfig, 'googledrive')['scope'],
+    ).toEqual(['https://www.googleapis.com/auth/drive.readonly'])
+  })
+
+  test('separates Dropbox scopes with spaces', () => {
+    const dropbox = companionOptions.providerOptions?.['dropbox']
+    if (dropbox == null) throw new Error('Expected providerOptions.dropbox')
+    dropbox.scope = ['files.content.read', 'account_info.read']
+    providerManager.addProviderOptions(
+      getAddProviderOptionsArgs(companionOptions),
+      grantConfig,
+      getOauthProvider,
+    )
+
+    const config = requireGrantProviderConfig(grantConfig, 'dropbox')
+    expect(config['scope']).toEqual(['files.content.read', 'account_info.read'])
+    expect(config['scope_delimiter']).toBe(' ')
+  })
+
+  test('merges providerOptions customParams over the default custom params', () => {
+    const dropbox = companionOptions.providerOptions?.['dropbox']
+    if (dropbox == null) throw new Error('Expected providerOptions.dropbox')
+    dropbox.customParams = { force_reapprove: 'true' }
+    providerManager.addProviderOptions(
+      getAddProviderOptionsArgs(companionOptions),
+      grantConfig,
+      getOauthProvider,
+    )
+
+    expect(
+      requireGrantProviderConfig(grantConfig, 'dropbox')['custom_params'],
+    ).toEqual({ token_access_type: 'offline', force_reapprove: 'true' })
   })
 
   test('sets a main redirect uri, if oauthDomain is set', () => {

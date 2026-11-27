@@ -8,12 +8,12 @@ export type GrantProviderStaticConfig = Pick<
   | 'oauth'
   | 'scope_delimiter'
   | 'callback'
-  | 'scope'
   | 'custom_params'
 > & {
   dynamic?: string[]
   transport?: 'session' | 'state' | undefined // more specific types
   custom_params?: Record<string, string> | undefined // we want more specific types than grant's `any`
+  scope?: string[] | undefined
 }
 export type GrantStaticConfig = Record<string, GrantProviderStaticConfig>
 
@@ -49,6 +49,8 @@ export default function grantConfig(): GrantStaticConfig {
       authorize_url: 'https://www.dropbox.com/oauth2/authorize',
       access_url: 'https://api.dropbox.com/oauth2/token',
       callback: '/dropbox/callback',
+      // Dropbox takes space-separated scopes; Grant defaults to commas.
+      scope_delimiter: ' ',
       custom_params: { token_access_type: 'offline' },
     },
     box: {
