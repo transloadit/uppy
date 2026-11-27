@@ -8,6 +8,7 @@ import type {
   RequestHandler,
 } from '../types/express.js'
 
+import { parse as parseCookies } from 'cookie'
 import corsImport from 'cors'
 import promBundle from 'express-prom-bundle'
 
@@ -184,6 +185,15 @@ export const gentleVerifyToken: RequestHandler = (req, _res, next) => {
       )
     }
   }
+  next()
+}
+
+/**
+ * Set `req.cookies` from the Cookie header. A map set earlier, e.g. by the
+ * cookie parser of an app embedding Companion, is kept.
+ */
+export const cookies: RequestHandler = (req, _res, next) => {
+  req.cookies ??= parseCookies(req.headers.cookie ?? '')
   next()
 }
 

@@ -23,6 +23,7 @@ export type ApiList = (
 
 const recursivelyFetch = async (
   poorTree: PartialTree,
+  positions: Map<PartialTreeId, number>,
   poorFolder: PartialTreeFolderNode,
   apiList: ApiList,
   signal: AbortSignal,
@@ -43,17 +44,33 @@ const recursivelyFetch = async (
   const newFolders = items.filter((i) => i.isFolder === true)
   const newFiles = items.filter((i) => i.isFolder === false)
 
-  const folders: PartialTreeFolderNode[] = newFolders.map((folder) => ({
-    type: 'folder',
-    id: folder.requestPath,
-
-    cached: false,
-    nextPagePath: null,
-
-    status: 'checked',
-    parentId: poorFolder.id,
-    data: folder,
-  }))
+  const folders: PartialTreeFolderNode[] = newFolders.map((folder) => {
+    const position = positions.get(folder.requestPath)
+    const existing = position === undefined ? undefined : poorTree[position]
+    if (existing?.type === 'folder') {
+      // Preserve the object a concurrent fill may already be updating.
+      existing.data = folder
+      existing.parentId = poorFolder.id
+      existing.status = 'checked'
+      return existing
+    }
+    const node: PartialTreeFolderNode = {
+      type: 'folder',
+      id: folder.requestPath,
+      cached: false,
+      nextPagePath: null,
+      status: 'checked',
+      parentId: poorFolder.id,
+      data: folder,
+    }
+    if (position === undefined) {
+      positions.set(node.id, poorTree.length)
+      poorTree.push(node)
+    } else {
+      poorTree[position] = node
+    }
+    return node
+  })
   const files: PartialTreeFile[] = newFiles.map((file) => {
     const restrictionError = validateSingleFile(file)
     return {
@@ -70,7 +87,15 @@ const recursivelyFetch = async (
 
   poorFolder.cached = true
   poorFolder.nextPagePath = null
-  poorTree.push(...files, ...folders)
+  for (const file of files) {
+    const position = positions.get(file.id)
+    if (position === undefined) {
+      positions.set(file.id, poorTree.length)
+      poorTree.push(file)
+    } else {
+      poorTree[position] = file
+    }
+  }
 
   return folders
 }
@@ -87,6 +112,7 @@ const afterFill = async (
 
   // fill up the missing parts of a partialTree!
   const poorTree: PartialTree = shallowClone(partialTree)
+  const positions = new Map(poorTree.map((node, index) => [node.id, index]))
 
   // One failed listing fails the whole fill, or Done would add only part of the
   // selection. So the first failure aborts the fill, as a cancel via `signal`
@@ -97,19 +123,27 @@ const afterFill = async (
   signal?.addEventListener('abort', cancel)
   // Recorded inside the task, so it is set before `onIdle()` resolves.
   let firstError: unknown
-  const enqueue = (folder: PartialTreeFolderNode) => {
+  const scheduled = new Set<PartialTreeId>()
+  const enqueue = (folder: PartialTreeFolderNode, refresh = false) => {
+    if (scheduled.has(folder.id)) return
+    scheduled.add(folder.id)
+    if (refresh) {
+      folder.cached = false
+      folder.nextPagePath = null
+    }
     queue
       .add(
         async () => {
           try {
             const subfolders = await recursivelyFetch(
               poorTree,
+              positions,
               folder,
               apiList,
               fill.signal,
               validateSingleFile,
             )
-            subfolders.forEach(enqueue)
+            for (const subfolder of subfolders) enqueue(subfolder, true)
           } catch (err) {
             if (fill.signal.aborted) return
             firstError = err
@@ -130,7 +164,7 @@ const afterFill = async (
       (item.cached === false || item.nextPagePath),
   ) as PartialTreeFolderNode[]
   // per each poor folder, recursively fetch all files and make them .checked!
-  poorFolders.forEach(enqueue)
+  for (const folder of poorFolders) enqueue(folder)
 
   queue.on('completed', () => {
     const nOfFilesChecked = poorTree.filter(
