@@ -8903,7 +8903,7 @@ __metadata:
   resolution: "@uppy/image-editor@workspace:packages/@uppy/image-editor"
   dependencies:
     "@uppy-dev/tsconfig": "workspace:^"
-    cropperjs: "npm:^1.6.2"
+    cropperjs: "npm:~1.6.3"
     cssnano: "npm:^8.0.1"
     postcss: "npm:^8.5.32"
     postcss-cli: "npm:^12.0.0"
@@ -11602,10 +11602,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"cropperjs@npm:^1.6.2":
-  version: 1.6.2
-  resolution: "cropperjs@npm:1.6.2"
-  checksum: 10/4b97ac27b7fd65316a531372dd96ce1073b4620c1b012fbad5acb0fdc28952112466bc333a98c510fe2bc9dcdeee58f5c8619522c045c6166300621673e3d759
+"cropperjs@npm:~1.6.3":
+  version: 1.6.3
+  resolution: "cropperjs@npm:1.6.3"
+  checksum: 10/eb6e4154fbe45cdd3fd730fc21dbae81597a2fbdac56d60d6b74fe62ef1eaaba1ca4fffd2a727bd728daff0f51178952dff423371c6e64348903a80450452447
   languageName: node
   linkType: hard
 
