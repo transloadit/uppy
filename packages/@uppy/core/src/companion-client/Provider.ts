@@ -14,6 +14,7 @@ import {
   ErrorWithCause,
   getErrorMessage,
   getSocketHost,
+  isAbortError,
 } from '../utils/index.js'
 import { isAuthError } from './AuthError.js'
 import RequestClient, { authErrorStatusCode } from './RequestClient.js'
@@ -253,15 +254,21 @@ export default class Provider<
           }
         })
 
+        // Only these are cancellations; anything else is a failed connection.
         signal.addEventListener('abort', () =>
-          reject(new Error('Authentication was aborted')),
+          reject(new DOMException('Authentication was aborted', 'AbortError')),
         )
 
         // poll for user closure of the window, so we can reject when it happens
         if (authWindow) {
           interval = window.setInterval(() => {
             if (authWindow.closed) {
-              reject(new Error('Auth window was closed by the user'))
+              reject(
+                new DOMException(
+                  'Auth window was closed by the user',
+                  'AbortError',
+                ),
+              )
             }
           }, 500)
         }
@@ -269,10 +276,15 @@ export default class Provider<
 
       this.setAuthToken(token)
     } catch (err) {
-      const message = this.uppy.i18n('authAborted')
-      this.uppy.info({ message }, 'warning', 5000)
       this.uppy.log(`Authentication failed: ${getErrorMessage(err)}`, 'warning')
-      throw err
+      if (isAbortError(err)) {
+        const message = this.uppy.i18n('authAborted')
+        this.uppy.info({ message }, 'warning', 5000)
+        throw err
+      }
+      // Not a cancellation (the socket closed, Companion reported an error, no
+      // token): handleError shows a failed connection, without details.
+      throw new ErrorWithCause('Authentication failed', { cause: err })
     } finally {
       // cleanup:
       // if we don't setTimeout, the window doesn't really close (I don't know why).
