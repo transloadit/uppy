@@ -1091,6 +1091,40 @@ describe('S3 provider in the browser', () => {
   })
 
   describe('server-issued grants', () => {
+    it('forwards native session context atomically with its grant', async () => {
+      const grant = mockGrant({ bucket: 'my-bucket' })
+      const { companion, plugin } = await setupHeadless({
+        companion: { acceptStorageContext: true },
+        getGrant: async () => ({
+          grant,
+          storageContext: 'opaque-folder-context',
+        }),
+      })
+      expect(companion.lastCall('/s3/simple-auth')?.body).toEqual({
+        form: { grant, storageContext: 'opaque-folder-context' },
+      })
+      expect(names(plugin)).toContain('readme.md')
+    })
+
+    it('refuses a context-bearing login when Companion does not acknowledge retention', async () => {
+      const grant = mockGrant({ bucket: 'my-bucket' })
+      const { plugin } = await setupHeadless({
+        getGrant: async () => ({ grant, storageContext: 'context' }),
+      })
+      await plugin.provider.setAuthToken('previous-login-token')
+      const setToken = vi.spyOn(plugin.provider, 'setAuthToken')
+      await expect(
+        plugin.provider.login({
+          authFormData: undefined,
+          signal: new AbortController().signal,
+        }),
+      ).rejects.toThrow('did not accept the Storage session context')
+      expect(setToken).not.toHaveBeenCalled()
+      expect(await plugin.provider.headers()).not.toHaveProperty(
+        'uppy-auth-token',
+      )
+    })
+
     it('connects with a grant instead of a plain session', async () => {
       const grant = mockGrant({ bucket: 'my-bucket' })
       const getGrant = vi.fn(async () => grant)

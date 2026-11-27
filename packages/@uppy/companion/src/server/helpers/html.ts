@@ -1,23 +1,20 @@
 import serialize from 'serialize-javascript'
 
 export const authCallbackSuccessHtml = () => {
+  // Uppy closes this popup after receiving the callback token. Closing here
+  // trips its cancellation poll while a late socket is still subscribing.
+  // Close it later anyway, in case the opener was reloaded or closed.
   return `
     <!DOCTYPE html>
     <html>
     <head>
         <meta charset="utf-8" />
         <script>
-          (function() {
-            'use strict';
-
-            document.addEventListener('DOMContentLoaded', function () {
-              window.close();
-            });
-          })();
+          setTimeout(function () { window.close() }, 60000);
         </script>
     </head>
     <body>
-      <center>Authentication successful. You may now close this page.</center>
+      <center>Authentication successful. This page will close automatically.</center>
     </body>
     </html>`
 }

@@ -24,6 +24,7 @@ import type {
   ProviderSimpleAuthOptions,
 } from '../Provider.js'
 import type { ParsedS3ProviderOptions } from './config.js'
+import type { StorageGrant } from './grant.js'
 
 import {
   CopyObjectCommand,
@@ -65,9 +66,26 @@ const userSessionSchema = z.object({
   write: z.boolean(),
   /** Unix seconds; only grant sessions carry it, to size the session token. */
   exp: z.number().optional(),
+  /** Opaque native Storage authorization, independently verified by its credential broker. */
+  nativeContext: z
+    .object({
+      grant: z.string().min(1).max(2048),
+      context: z.string().min(1).max(4096),
+    })
+    .optional(),
+  storageContextAccepted: z.literal(true).optional(),
 })
 
 export type S3UserSession = z.infer<typeof userSessionSchema>
+
+// Context credentials must not accumulate after their browser grants expire.
+const clientExpirations = new WeakMap<S3Client, number>()
+// Contexts share finite socket pools, but never credentials. One browse handler
+// and one download handler per Workspace, owned for the Companion app’s lifetime.
+const contextHandlers = new WeakMap<
+  CompanionLike['s3ProviderClients'],
+  Map<string, S3Client['config']['requestHandler']>
+>()
 
 /** The parsed provider options plus what every request needs from them. */
 export type ResolvedConfig<P extends ParsedS3ProviderOptions> = P & {
@@ -81,6 +99,7 @@ export type S3Session<P extends ParsedS3ProviderOptions> = {
   bucket: string
   prefix: string
   client: S3Client
+  nativeContext?: S3UserSession['nativeContext']
   config: ResolvedConfig<P>
 }
 
@@ -224,7 +243,12 @@ export default class S3Provider<
   protected clientOptionsFor(
     config: ResolvedConfig<P>,
     _bucket: string,
-  ): { cacheKey: string; clientOptions: S3ClientOptions } {
+    _session: S3UserSession,
+  ): {
+    cacheKey: string
+    clientOptions: S3ClientOptions
+    connectionPoolKey?: string
+  } {
     return { cacheKey: '', clientOptions: config.clientOptions }
   }
 
@@ -286,20 +310,59 @@ export default class S3Provider<
    * holds what is not, its resolved credentials (a metadata or STS round trip
    * when Companion runs on a role) and its keep-alive connections.
    */
-  #client(
+  async #client(
     companion: CompanionLike,
     config: ResolvedConfig<P>,
     bucket: string,
+    session: S3UserSession,
     download = false,
-  ): S3Client {
-    const { cacheKey, clientOptions } = this.clientOptionsFor(config, bucket)
+  ): Promise<S3Client> {
+    const { cacheKey, clientOptions, connectionPoolKey } =
+      this.clientOptionsFor(config, bucket, session)
     // Provider names and bucket names cannot contain `/`, so the two cannot collide.
     // Unconsumed GetObject bodies hold agent sockets. Keep the finite download
     // pool separate so paused imports cannot starve browsing and mutations.
     const key = `${this.optionsKey}/${cacheKey}${download ? '/download' : ''}`
+    for (const [cachedKey, cachedClient] of companion.s3ProviderClients) {
+      const expiresAt = clientExpirations.get(cachedClient)
+      if (expiresAt !== undefined && expiresAt <= Date.now()) {
+        // The handler is shared: detaching must not interrupt active transfers.
+        companion.s3ProviderClients.delete(cachedKey)
+      }
+    }
     let client = companion.s3ProviderClients.get(key)
     if (client == null) {
-      client = this.getClient(clientOptions)
+      if (connectionPoolKey !== undefined) {
+        let handlers = contextHandlers.get(companion.s3ProviderClients)
+        if (!handlers) {
+          handlers = new Map()
+          contextHandlers.set(companion.s3ProviderClients, handlers)
+        }
+        const poolKey = `${this.optionsKey}/${connectionPoolKey}${download ? '/download' : ''}`
+        const requestHandler = handlers.get(poolKey)
+        client = this.getClient({
+          ...clientOptions,
+          awsClientOptions: {
+            ...clientOptions.awsClientOptions,
+            ...(requestHandler && { requestHandler }),
+          },
+        })
+        if (!requestHandler) handlers.set(poolKey, client.config.requestHandler)
+      } else {
+        client = this.getClient(clientOptions)
+      }
+      if (session.nativeContext) {
+        // Refused contexts must never enter the client cache. Failed clients can
+        // be collected; destroying one would destroy the shared handler too.
+        await client.config.credentials()
+        if (session.exp !== undefined) {
+          if (session.exp * 1000 <= Date.now()) throw new ProviderAuthError()
+          clientExpirations.set(client, session.exp * 1000)
+        }
+        // Another request may have completed the same lookup while we waited.
+        const cached = companion.s3ProviderClients.get(key)
+        if (cached) return cached
+      }
       companion.s3ProviderClients.set(key, client)
     }
     return client
@@ -310,11 +373,11 @@ export default class S3Provider<
    * configuration, write access when `requireWrite`, and every key inside the
    * session's prefix.
    */
-  protected session(
+  protected async session(
     companion: CompanionLike,
     providerUserSession: S3UserSession,
     { requireWrite = false, keys = [], download = false }: SessionChecks = {},
-  ): S3Session<P> {
+  ): Promise<S3Session<P>> {
     const config = this.#config(companion)
     if (!this.isAuthenticated({ providerUserSession })) {
       throw new ProviderAuthError()
@@ -327,7 +390,13 @@ export default class S3Provider<
       config.mode === 'bucket'
         ? bucket !== config.bucket || prefix !== config.prefix
         : exp == null
-    if (stale) throw new ProviderAuthError()
+    if (
+      stale ||
+      (providerUserSession.nativeContext &&
+        exp !== undefined &&
+        exp * 1000 <= Date.now())
+    )
+      throw new ProviderAuthError()
     if (requireWrite && !write) {
       // A user error, not an auth error: a fresh session would not help.
       throw userError('S3_READ_ONLY_SESSION')
@@ -336,13 +405,30 @@ export default class S3Provider<
     return {
       bucket,
       prefix,
-      client: this.#client(companion, config, bucket, download),
+      nativeContext: providerUserSession.nativeContext,
+      client: await this.#client(
+        companion,
+        config,
+        bucket,
+        providerUserSession,
+        download,
+      ),
       config,
     }
   }
 
   override logout(): ProviderLogoutResponse {
     return { revoked: true }
+  }
+
+  /** Native subclasses can require authorization bound into the verified grant. */
+  protected validateGrant(
+    claims: StorageGrant,
+    _form: Record<string, unknown>,
+  ): void {
+    // A native context grant cannot be replayed through the generic S3 provider.
+    if (claims.storageContextHash !== undefined)
+      throw userError('S3_INVALID_GRANT')
   }
 
   override async simpleAuth({
@@ -368,6 +454,7 @@ export default class S3Provider<
     }
     try {
       const claims = verifyStorageGrant(grant, config.keys)
+      this.validateGrant(claims, form)
       return {
         bucket: claims.bucket,
         prefix: claims.prefix,
@@ -397,7 +484,7 @@ export default class S3Provider<
         bucket,
         prefix: rootPrefix,
         client,
-      } = this.session(companion, providerUserSession, {
+      } = await this.session(companion, providerUserSession, {
         keys: folder ? [folder] : [],
       })
       const prefix = folder ?? rootPrefix
@@ -479,10 +566,14 @@ export default class S3Provider<
     providerUserSession,
   }: ProviderDownloadOptions<S3UserSession>): Promise<ProviderDownloadResponse> {
     return this.withErrorHandling('provider.s3.download.error', async () => {
-      const { bucket, client } = this.session(companion, providerUserSession, {
-        keys: [id],
-        download: true,
-      })
+      const { bucket, client } = await this.session(
+        companion,
+        providerUserSession,
+        {
+          keys: [id],
+          download: true,
+        },
+      )
       // A queued file outlives the browser session that selected it. Its key
       // must never be read from a bucket the user connected to later.
       if (!isRecord(query) || query['bucket'] !== bucket) {
@@ -547,10 +638,14 @@ export default class S3Provider<
     providerUserSession,
   }: ProviderDeleteItemOptions<S3UserSession>): Promise<void> {
     return this.withErrorHandling('provider.s3.delete.error', async () => {
-      const { bucket, client } = this.session(companion, providerUserSession, {
-        requireWrite: true,
-        keys: [id],
-      })
+      const { bucket, client } = await this.session(
+        companion,
+        providerUserSession,
+        {
+          requireWrite: true,
+          keys: [id],
+        },
+      )
       if (
         id.endsWith('/') &&
         (await this.#folderHasEntries(client, bucket, id))
@@ -572,8 +667,8 @@ export default class S3Provider<
     destination,
     providerUserSession,
   }: ProviderMoveItemOptions<S3UserSession>): Promise<ProviderMoveItemResponse> {
-    return this.withErrorHandling('provider.s3.move.error', () => {
-      const session = this.session(companion, providerUserSession, {
+    return this.withErrorHandling('provider.s3.move.error', async () => {
+      const session = await this.session(companion, providerUserSession, {
         requireWrite: true,
         keys: [id, destination],
       })
@@ -673,7 +768,7 @@ export default class S3Provider<
           prefix,
           client,
           config: { writeParams },
-        } = this.session(companion, providerUserSession, {
+        } = await this.session(companion, providerUserSession, {
           requireWrite: true,
           keys: parentFolder ? [parentFolder] : [],
         })

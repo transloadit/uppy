@@ -1,10 +1,21 @@
 import type { OptionsInit, Response } from 'got'
 
 import type { S3ClientOptions } from '../../../schemas/companion.js'
+import type {
+  ProviderMoveItemOptions,
+  ProviderMoveItemResponse,
+  ProviderSimpleAuthOptions,
+} from '../Provider.js'
 import type { ParsedTransloaditStorageOptions } from './config.js'
-import type { ItemRef, ResolvedConfig, S3Session } from './index.js'
+import type { StorageGrant } from './grant.js'
+import type {
+  ItemRef,
+  ResolvedConfig,
+  S3Session,
+  S3UserSession,
+} from './index.js'
 
-import { createHmac } from 'node:crypto'
+import { createHash, createHmac } from 'node:crypto'
 
 import got from 'got'
 import { z } from 'zod'
@@ -23,7 +34,21 @@ const moveResponseSchema = z.object({
   path: z.string().min(1),
 })
 
-type Credentials = { key: string; secret: string }
+type Credentials = { key: string; secret: string; sessionToken?: string }
+type NativeContext = NonNullable<S3UserSession['nativeContext']>
+
+const contextFormSchema = z.object({
+  form: z.object({
+    grant: z.string().min(1).max(2048),
+    storageContext: z.string().min(1).max(4096).optional(),
+  }),
+})
+
+function contextDigest(workspace: string, context: NativeContext): string {
+  return createHash('sha256')
+    .update(JSON.stringify([workspace, context.grant, context.context]))
+    .digest('hex')
+}
 
 /** Transloadit's native catalog move; `callApi` resolves it against the endpoint's origin. */
 const MOVE_PATH = '/dam/entries/move'
@@ -75,18 +100,26 @@ const fetchCredentials = async (
   apiEndpoint: string,
   credentialsSecret: string,
   workspace: string,
+  context?: NativeContext,
 ): Promise<Credentials> => {
   if (!/^[a-f0-9]{32}$/.test(workspace)) throw userError('S3_INVALID_GRANT')
   const timestamp = Math.floor(Date.now() / 1000)
   const signature = createHmac('sha256', credentialsSecret)
-    .update(`file-library-credentials:v1:${timestamp}:${workspace}`)
+    .update(
+      context
+        ? `file-library-credentials:v2:${timestamp}:${contextDigest(workspace, context)}`
+        : `file-library-credentials:v1:${timestamp}:${workspace}`,
+    )
     .digest('hex')
   // The endpoint is operator configuration, never a URL from the session or browser.
   const response = await callApi(
     apiEndpoint,
     '/internal/file-library/credentials',
     {
-      json: { workspace },
+      json: {
+        workspace,
+        ...(context && { grant: context.grant, context: context.context }),
+      },
       headers: { authorization: `FileLibrary ${timestamp}:${signature}` },
       timeout: { request: 5000 },
     },
@@ -106,10 +139,23 @@ const fetchCredentials = async (
       workspace: z.literal(workspace),
       authKey: z.string().min(1).max(256),
       authSecret: z.string().min(1).max(1024),
+      sessionToken: z.string().min(1).max(4096).optional(),
     })
     .safeParse(response.body)
-  if (response.statusCode !== 200 || !credentials.success) throw unavailable()
-  return { key: credentials.data.authKey, secret: credentials.data.authSecret }
+  if (
+    response.statusCode !== 200 ||
+    !credentials.success ||
+    (context && credentials.data.sessionToken === undefined)
+  )
+    throw unavailable()
+  return {
+    key: credentials.data.authKey,
+    secret: credentials.data.authSecret,
+    ...(context &&
+      credentials.data.sessionToken !== undefined && {
+        sessionToken: credentials.data.sessionToken,
+      }),
+  }
 }
 
 /**
@@ -135,29 +181,81 @@ export default class TransloaditStorageProvider extends S3Provider<ParsedTranslo
     return true
   }
 
+  protected override validateGrant(
+    claims: StorageGrant,
+    form: Record<string, unknown>,
+  ): void {
+    const context = form['storageContext']
+    if (context === undefined && claims.storageContextHash === undefined) return
+    if (
+      typeof context !== 'string' ||
+      createHash('sha256').update(context).digest('hex') !==
+        claims.storageContextHash
+    )
+      throw userError('S3_INVALID_GRANT')
+  }
+
+  override async simpleAuth(
+    options: ProviderSimpleAuthOptions,
+  ): Promise<S3UserSession> {
+    const parsed = contextFormSchema.safeParse(options.requestBody)
+    if (!parsed.success) throw userError('S3_INVALID_GRANT')
+    if (
+      parsed.data.form.storageContext !== undefined &&
+      options.companion.options.providerOptions?.['transloadit-storage']
+        ?.credentialsSecret == null
+    )
+      throw userError('S3_INVALID_GRANT')
+    const session = await super.simpleAuth(options)
+    if (parsed.data.form.storageContext === undefined)
+      return {
+        ...session,
+        nativeContext: undefined,
+        storageContextAccepted: undefined,
+      }
+    return {
+      ...session,
+      storageContextAccepted: true,
+      nativeContext: {
+        grant: parsed.data.form.grant,
+        context: parsed.data.form.storageContext,
+      },
+    }
+  }
+
   /** One client per Workspace, signed with that Workspace's key pair. */
   protected override clientOptionsFor(
     config: ResolvedConfig<ParsedTransloaditStorageOptions>,
     bucket: string,
-  ): { cacheKey: string; clientOptions: S3ClientOptions } {
+    session: S3UserSession,
+  ): {
+    cacheKey: string
+    clientOptions: S3ClientOptions
+    connectionPoolKey: string
+  } {
     const { apiEndpoint, credentialsSecret } = config.native
     if (credentialsSecret != null) {
       const ownOptions = withOwnCredentials(config.clientOptions)
       return {
-        cacheKey: bucket,
+        connectionPoolKey: bucket,
+        cacheKey: session.nativeContext
+          ? `${bucket}:${contextDigest(bucket, session.nativeContext)}`
+          : bucket,
         clientOptions: {
           ...ownOptions,
           awsClientOptions: {
             ...ownOptions.awsClientOptions,
             credentials: async () => {
-              const { key, secret } = await fetchCredentials(
+              const { key, secret, sessionToken } = await fetchCredentials(
                 apiEndpoint,
                 credentialsSecret,
                 bucket,
+                session.nativeContext,
               )
               return {
                 accessKeyId: key,
                 secretAccessKey: secret,
+                ...(sessionToken !== undefined && { sessionToken }),
                 // Stay beyond the SDK's five-minute refresh window. API2 still checks live
                 // Workspace admission on every S3 request, independently of these credentials.
                 expiration: new Date(Date.now() + 10 * 60_000),
@@ -167,15 +265,29 @@ export default class TransloaditStorageProvider extends S3Provider<ParsedTranslo
         },
       }
     }
+    if (session.nativeContext) throw userError('S3_INVALID_GRANT')
     const { key, secret } = staticCredentials(config.native.workspaces, bucket)
     return {
       cacheKey: bucket,
+      connectionPoolKey: bucket,
       clientOptions: withOwnCredentials({
         ...config.clientOptions,
         key,
         secret,
+        sessionToken: undefined,
       }),
     }
+  }
+
+  /** The catalog uses NFC paths; normalize before the base session and move checks. */
+  override moveItem(
+    options: ProviderMoveItemOptions<S3UserSession>,
+  ): Promise<ProviderMoveItemResponse> {
+    return super.moveItem({
+      ...options,
+      id: options.id.normalize('NFC'),
+      destination: options.destination.normalize('NFC'),
+    })
   }
 
   /**
@@ -183,14 +295,21 @@ export default class TransloaditStorageProvider extends S3Provider<ParsedTranslo
    * and keeps asset identity; it never falls back to S3 copy/delete.
    */
   protected override async move(
-    { client, config: { native } }: S3Session<ParsedTransloaditStorageOptions>,
+    {
+      client,
+      config: { native },
+      nativeContext,
+    }: S3Session<ParsedTransloaditStorageOptions>,
     id: string,
     destination: string,
   ): Promise<ItemRef> {
     // Sign with the Workspace key pair the session's S3 client uses: in dynamic
     // mode the SDK has it cached, so a move costs no extra resolver call.
-    const { accessKeyId: key, secretAccessKey: secret } =
-      await client.config.credentials()
+    const {
+      accessKeyId: key,
+      secretAccessKey: secret,
+      sessionToken,
+    } = await client.config.credentials()
     const params = JSON.stringify({
       auth: {
         key,
@@ -201,6 +320,8 @@ export default class TransloaditStorageProvider extends S3Provider<ParsedTranslo
       },
       source: id,
       destination,
+      file_library: true,
+      storage_context: nativeContext ? sessionToken : undefined,
     })
     const signature = `sha256:${createHmac('sha256', secret).update(params, 'utf8').digest('hex')}`
     const response = await callApi(native.apiEndpoint, MOVE_PATH, {

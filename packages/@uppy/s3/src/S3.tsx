@@ -77,7 +77,7 @@ class S3SimpleAuthProvider<M extends Meta, B extends Body> extends Provider<
   B
 > {
   /** Mints a server-issued grant; set by the plugin when `getGrant` is configured. */
-  getGrant?: () => Promise<string>
+  getGrant?: () => Promise<string | { grant: string; storageContext?: string }>
 
   /** Called after a successful login with the grant it sent, if any. */
   onLogin?: (grant: string | undefined) => void
@@ -189,15 +189,29 @@ class S3SimpleAuthProvider<M extends Meta, B extends Body> extends Provider<
     signal = AbortSignal.any([signal, this.#sessionAbort.signal])
     // The client cannot pick a bucket: it asks for a session, with a grant when
     // the integrator mints one, and Companion decides what it sees.
-    const grant = isGrantForm(authFormData)
-      ? authFormData.grant
+    const answer = isGrantForm(authFormData)
+      ? authFormData
       : await this.getGrant?.()
+    const form = typeof answer === 'string' ? { grant: answer } : answer
+    const grant = form?.grant
     signal.throwIfAborted()
-    await this.loginSimpleAuth({
-      uppyVersions,
-      authFormData: grant === undefined ? {} : { grant },
-      signal,
-    })
+    const response = await this.post<{
+      uppyAuthToken: string
+      storageContextAccepted?: boolean
+    }>(
+      `${this.id}/simple-auth`,
+      { form: form ?? {} },
+      { qs: { uppyVersions }, signal },
+    )
+    signal.throwIfAborted()
+    if (
+      form?.storageContext !== undefined &&
+      response.storageContextAccepted !== true
+    ) {
+      await this.removeAuthToken()
+      throw new Error('Companion did not accept the Storage session context')
+    }
+    await this.setAuthToken(response.uppyAuthToken)
     signal.throwIfAborted()
     this.onLogin?.(grant)
     this.#hasSession = true
@@ -271,7 +285,9 @@ class S3SimpleAuthProvider<M extends Meta, B extends Body> extends Provider<
   }
 }
 
-const isGrantForm = (data: unknown): data is { grant: string } =>
+const isGrantForm = (
+  data: unknown,
+): data is { grant: string; storageContext?: string } =>
   typeof data === 'object' &&
   data !== null &&
   typeof (data as { grant?: unknown }).grant === 'string'
@@ -316,7 +332,7 @@ export type S3Options<M extends Meta = Meta, B extends Body = Body> = Omit<
    * mutation actions when the grant is read-only, and fetches a new one when
    * Companion reports the session expired.
    */
-  getGrant?: () => Promise<string>
+  getGrant?: () => Promise<string | { grant: string; storageContext?: string }>
   /**
    * 'picker' (default): rows are checkboxes and the selection is added to
    * Uppy; files can be browsed, not changed. 'manager' (file-library UIs,

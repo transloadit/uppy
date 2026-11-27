@@ -81,8 +81,38 @@ map or a `credentialsSecret`, never both. Dynamic mode uses the configured `apiE
 credentials for the immutable Workspace ID in a verified browser grant. It requires a matching
 API2 File Library credential resolver, a server-only shared secret of at least 32 characters, and an
 `https:` `apiEndpoint` (plain `http:` is accepted only for `localhost`).
-Do not send this secret or Workspace Auth Secrets to the browser. Browser grants remain the only
-client-supplied authorization, with their existing expiry, prefix and scope checks.
+Do not send this secret or Workspace Auth Secrets to the browser. Browser grants retain their
+existing expiry, prefix and scope checks.
+
+Native simple-auth optionally accepts `form.storageContext` beside `form.grant`. A context-bearing
+grant must include a signed `storageContextHash` claim: the lowercase hexadecimal SHA-256 digest
+of the exact UTF-8 context string. The issuer must add this claim to every grant issued for a
+context-bound session. Companion refuses missing or replaced context, context supplied without
+a matching signed hash, and reuse of a bound grant through the generic S3 provider. Existing
+unbound grants remain ordinary Workspace grants; they must never be issued for protected sessions.
+
+The native provider retains the grant and context in its encrypted session and binds both into
+a v2 credential-broker proof. API2 verifies the opaque context against the authenticated user’s
+live folder session. Context-bearing resolver responses must contain `sessionToken`, forwarded
+by the AWS SDK on S3 requests and included as signed `storage_context` on native moves. Missing
+tokens and static credential fallback are refused. Static Workspace credentials discard any
+inherited upload STS token. Context verification never relies on public grant `sub`.
+
+Credentials are isolated by Workspace and grant/context digest. Context clients enter the cache
+only after a successful broker lookup. Contexts share one finite browse socket pool per Workspace
+and a separate download pool. Expired cache entries are detached on access without interrupting
+in-flight streams.
+
+The browser `getGrant` callback can return either its existing JWT string or
+`{ grant, storageContext }`. Native simple-auth acknowledges context retention; `@uppy/s3` verifies
+this acknowledgement before storing the session token, using existing Uppy Core methods.
+Older or generic Companion endpoints therefore cannot silently discard context.
+Deploy the paired grant issuer, broker and access enforcement before enabling folder policies;
+the paired API2 transport intentionally refuses context redemption until the complete enforcement
+inventory is ready. Per-request checks remain mandatory even when the AWS SDK caches credentials.
+The v2 broker reply is provisional until API2 supplies context-bound credentials that cannot become
+an ordinary Workspace key if the token is stripped. Companion must never receive Content’s
+password-command key or API2’s context-signing key.
 
 Dynamic credentials are refreshed by the cached S3 client’s credential provider. Enrolling another
 Workspace therefore needs no Companion restart; API2 owns admission and checks it on each request.
@@ -97,6 +127,21 @@ companion as a standalone server.
 ```bash
 $ companion
 ```
+
+Standalone configuration can also come from `COMPANION_CONFIG_JSON` (a JSON object),
+`COMPANION_CONFIG_FILE` (a JSON file path), or `companion --config path/to/config.json`
+(`-c` also works). A command-line path takes precedence over `COMPANION_CONFIG_FILE`.
+Empty or whitespace-only inline JSON is treated as unset. Choose either inline JSON
+or a file; setting both is an error. Configuration values
+override environment-derived options, and explicit options passed to `standalone()`
+override both.
+
+OAuth callback results are retained for at most 60 seconds and consumed once. With
+Redis, they are shared across workers in the configured `redisPubSubScope` and deleted
+atomically when consumed. Without Redis, they stay in the current process.
+OAuth Redis commands have a five-second deadline. If retention, publication or replay
+fails, the login attempt fails; Companion does not fall back to live delivery of an
+unconsumed result. Users can retry signing in.
 
 If you cloned the repo from GitHub and want to run it as a standalone server,
 you may also run the following command from within its directory

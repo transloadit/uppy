@@ -73,6 +73,21 @@ const bucketSession = { bucket: 'b', prefix: '', write: true }
 
 describe('S3 provider', () => {
   describe('configuration', () => {
+    test('rejects native context grants through the generic S3 provider', async () => {
+      const provider = makeProvider()
+      await expect(
+        provider.simpleAuth({
+          companion: companionWith({ grantSecret: GRANT_SECRET, region: 'r' }),
+          requestBody: {
+            form: {
+              grant: mintGrant({ storageContextHash: 'a'.repeat(64) }),
+              storageContext: 'context',
+            },
+          },
+        }),
+      ).rejects.toEqual(userError('S3_INVALID_GRANT'))
+    })
+
     test('is off until providerOptions.s3 has a bucket or a grant key', async () => {
       const provider = makeProvider()
       await expect(

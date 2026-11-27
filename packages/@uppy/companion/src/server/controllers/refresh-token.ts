@@ -4,6 +4,7 @@ import type { Request } from '../../types/express.js'
 
 import * as tokenService from '../helpers/jwt.js'
 import logger from '../logger.js'
+import { getProviderRedirectUri } from '../provider/credentials.js'
 import { respondWithError } from '../provider/error.js'
 
 // https://www.dropboxforum.com/t5/Dropbox-API-Support-Feedback/Get-refresh-token-from-access-token/td-p/596739
@@ -20,11 +21,6 @@ export default async function refreshToken(
     return
   }
 
-  const providerConfig = req.companion.options.providerOptions?.[providerName]
-  const clientId = providerConfig?.key
-  const clientSecret = providerConfig?.secret
-  const redirectUri = req.companion.providerGrantConfig?.redirect_uri
-
   const { provider, providerClass } = req.companion
   const { providerUserSession } = req.companion
 
@@ -40,6 +36,15 @@ export default async function refreshToken(
   }
 
   try {
+    const credentials = await req.companion.getProviderCredentials?.()
+    const redirectUri = getProviderRedirectUri(
+      providerName,
+      req.companion.options,
+      credentials,
+      req.companion.providerGrantConfig?.redirect_uri,
+    )
+    const clientId = credentials?.key
+    const clientSecret = credentials?.secret
     const { accessToken } = await provider.refreshToken({
       redirectUri,
       clientId,

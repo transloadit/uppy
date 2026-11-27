@@ -61,6 +61,17 @@ describe('verifyStorageGrant', () => {
     ).toBe(false)
   })
 
+  test.each(['', 'x'.repeat(64), 'A'.repeat(64), null, 42])(
+    'rejects malformed context hash %s',
+    (storageContextHash) => {
+      expect(() =>
+        verifyStorageGrant(mint(claims({ storageContextHash }), SECRET), {
+          grantSecret: SECRET,
+        }),
+      ).toThrow(InvalidGrantError)
+    },
+  )
+
   test('verifies an ES256 grant against a PEM public key', () => {
     const token = mint(claims(), ecPrivateKey, 'ES256')
 
