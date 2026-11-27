@@ -17,7 +17,7 @@
     "cors": "^2.8.5",
     "express": "^5.2.1",
     "express-session": "^1.17.3",
-    "npm-run-all2": "^9.0.3",
+    "npm-run-all2": "^9.0.4",
     "vite": "^8.3.5"
   },
   "private": true,
