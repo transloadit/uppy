@@ -1157,6 +1157,7 @@ export default class Dashboard<M extends Meta, B extends Body> extends UIPlugin<
 
       isUploadStarted,
       isAllComplete,
+      isAllErrored,
       isAllPaused,
     } = this.uppy.getObjectOfFilesPerState()
 
@@ -1194,6 +1195,7 @@ export default class Dashboard<M extends Meta, B extends Body> extends UIPlugin<
       processingFiles,
       isUploadStarted,
       isAllComplete,
+      isAllErrored,
       isAllPaused,
       totalFileCount: Object.keys(files).length,
       totalProgress: state.totalProgress,

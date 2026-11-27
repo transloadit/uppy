@@ -4,7 +4,9 @@ type UploadOptions = {
   uploadSize: number
   uploadLengthDeferred?: boolean
   onProgress: (bytesUploaded: number, bytesTotal: number) => void
-  onSuccess: () => void
+  onSuccess: (payload: {
+    lastResponse: { getBody: () => string; getStatus: () => number }
+  }) => void
   onError: (error: unknown) => void
 } & Record<string, unknown>
 
@@ -14,6 +16,7 @@ let nextRequestUrl: string | undefined
 let hang = false
 let sentRequests: string[] = []
 let startGate: Promise<void> | undefined
+let lastResponseBody = ''
 let resumeOffset = 0
 let resumeLength: string | undefined = '100'
 let creationStatus = 201
@@ -53,6 +56,11 @@ export function __getSentRequests(): string[] {
   return sentRequests
 }
 
+/** What the server answers the upload's last request with. */
+export function __setLastResponseBody(body: string): void {
+  lastResponseBody = body
+}
+
 /** Hold every start() before its first request until `gate` settles. */
 export function __setStartGate(gate: Promise<void> | undefined): void {
   startGate = gate
@@ -65,6 +73,7 @@ export function __resetTusMockState(): void {
   hang = false
   sentRequests = []
   startGate = undefined
+  lastResponseBody = ''
   resumeOffset = 0
   resumeLength = '100'
   creationStatus = 201
@@ -115,7 +124,17 @@ export class Upload {
     this._readFile().then(
       (bytesRead) => {
         this.options.onProgress(bytesRead, bytesRead)
-        setTimeout(() => this.options.onSuccess(), 100)
+        const body = lastResponseBody
+        setTimeout(
+          () =>
+            this.options.onSuccess({
+              lastResponse: {
+                getBody: () => body,
+                getStatus: () => (body ? 200 : 204),
+              },
+            }),
+          100,
+        )
       },
       (err) => this.options.onError(err),
     )

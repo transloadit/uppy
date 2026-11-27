@@ -4,7 +4,12 @@ import { describe, expect, test } from 'vitest'
 import { userEvent } from 'vitest/browser'
 import { render } from 'vitest-browser-svelte'
 
+import {
+  describeModalEsc,
+  describeRemoteSource,
+} from '../../shared/remoteSourceTests.js'
 import PropsReactivity from '../src/components/test/props-reactivity.svelte'
+import RemoteSourceHarness from '../src/components/test/remote-source-harness.svelte'
 import App from '../src/routes/+page.svelte'
 
 const TUS_ENDPOINT = 'https://tusd.tusdemo.net/files/'
@@ -190,3 +195,9 @@ test('StatusBar reacts to prop changes', async () => {
     screen.container.querySelector('#statusbar-container .uppy-c-btn-primary'),
   ).toEqual(null)
 })
+
+describeRemoteSource(async (uppy, close) =>
+  render(RemoteSourceHarness, { uppy, close }),
+)
+
+describeModalEsc(async () => render(App))
