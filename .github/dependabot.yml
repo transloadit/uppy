@@ -12,8 +12,12 @@ updates:
     ignore:
       # cropperjs 2 is a rewrite on web components, not a drop-in upgrade:
       # moving @uppy/image-editor to it is a breaking change of its own.
+      # 1.7.0 measures images with a hidden <img> that page CSS such as
+      # `img { width: 100% }` resizes, which changes the saved size, so the
+      # image editor stays on 1.6.x until that is fixed.
       - dependency-name: 'cropperjs'
-        update-types: ['version-update:semver-major']
+        update-types:
+          ['version-update:semver-major', 'version-update:semver-minor']
     groups:
       Angular:
         patterns:

@@ -46,7 +46,7 @@
     "./package.json": "./package.json"
   },
   "dependencies": {
-    "cropperjs": "^1.7.0",
+    "cropperjs": "~1.6.3",
     "preact": "^10.29.2"
   },
   "peerDependencies": {
