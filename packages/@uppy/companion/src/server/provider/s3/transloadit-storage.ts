@@ -6,6 +6,7 @@ import type { ItemRef, ResolvedConfig, S3Session } from './index.js'
 
 import { createHmac } from 'node:crypto'
 
+import { S3ServiceException } from '@aws-sdk/client-s3'
 import got from 'got'
 import { z } from 'zod'
 
@@ -21,6 +22,13 @@ import S3Provider, { itemRef, withOwnCredentials } from './index.js'
 const moveResponseSchema = z.object({
   ok: z.literal('DAM_ENTRY_MOVED'),
   path: z.string().min(1),
+})
+
+const moveRefusalSchema = z.object({
+  error: z.enum([
+    'DAM_ENTRY_DESTINATION_EXISTS',
+    'DAM_ENTRY_DESTINATION_INVALID',
+  ]),
 })
 
 type Credentials = { key: string; secret: string }
@@ -208,6 +216,14 @@ export default class TransloaditStorageProvider extends S3Provider<ParsedTranslo
       timeout: { request: 30_000 },
     })
     if (response.statusCode >= 500) throw unavailable()
+    const refusal = moveRefusalSchema.safeParse(response.body)
+    if (response.statusCode !== 200 && refusal.success) {
+      throw userError(
+        refusal.data.error === 'DAM_ENTRY_DESTINATION_EXISTS'
+          ? 'S3_ALREADY_EXISTS'
+          : 'S3_INVALID_NAME',
+      )
+    }
     if (response.statusCode !== 200) {
       logger.warn(
         `native Storage move refused: ${response.statusCode}`,
@@ -220,5 +236,16 @@ export default class TransloaditStorageProvider extends S3Provider<ParsedTranslo
       throw new ProviderApiError('Unexpected native Storage move response', 502)
     }
     return itemRef(destination)
+  }
+
+  protected override mapProviderError(err: unknown): unknown {
+    if (
+      err instanceof S3ServiceException &&
+      err.$metadata.httpStatusCode === 400 &&
+      err.name === 'InvalidArgument'
+    ) {
+      return userError('S3_INVALID_NAME')
+    }
+    return super.mapProviderError(err)
   }
 }

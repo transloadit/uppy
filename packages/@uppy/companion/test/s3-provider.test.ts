@@ -948,6 +948,67 @@ describe('S3 provider', () => {
       expect(requests).toHaveLength(2)
     })
 
+    test('maps specific Storage refusals and leaves other failures generic', async () => {
+      let status = 409
+      let error = 'DAM_ENTRY_DESTINATION_EXISTS'
+      const endpoint = await listen((_request, response) => {
+        response.writeHead(status, { 'Content-Type': 'application/json' })
+        response.end(JSON.stringify({ error }))
+      })
+      const provider = makeNative()
+      const args = {
+        companion: nativeCompanion(endpoint),
+        providerUserSession: session,
+        id: 'tenant/a.jpg',
+        destination: 'tenant/b.jpg',
+      }
+      await expect(provider.moveItem(args)).rejects.toEqual(
+        userError('S3_ALREADY_EXISTS'),
+      )
+      status = 400
+      error = 'DAM_ENTRY_DESTINATION_INVALID'
+      await expect(provider.moveItem(args)).rejects.toEqual(
+        userError('S3_INVALID_NAME'),
+      )
+      error = 'DAM_INVALID_INPUT'
+      await expect(provider.moveItem(args)).rejects.toEqual(
+        userError('S3_REQUEST_FAILED'),
+      )
+      status = 409
+      error = 'DAM_WRITE_CONFLICT'
+      await expect(provider.moveItem(args)).rejects.toEqual(
+        userError('S3_REQUEST_FAILED'),
+      )
+    })
+
+    test('maps Storage invalid-name S3 errors without changing other errors', async () => {
+      const send = vi.fn().mockRejectedValue(
+        new S3ServiceException({
+          name: 'InvalidArgument',
+          $fault: 'client',
+          $metadata: { httpStatusCode: 400 },
+        }),
+      )
+      const provider = makeNative(send)
+      const args = {
+        companion: nativeCompanion('http://storage.test'),
+        providerUserSession: session,
+      }
+      await expect(provider.list(args)).rejects.toEqual(
+        userError('S3_INVALID_NAME'),
+      )
+      send.mockRejectedValue(
+        new S3ServiceException({
+          name: 'AccessDenied',
+          $fault: 'client',
+          $metadata: { httpStatusCode: 403 },
+        }),
+      )
+      await expect(provider.list(args)).rejects.toEqual(
+        userError('S3_REQUEST_FAILED'),
+      )
+    })
+
     test('reports Storage outages as gateway errors and refusals generically', async () => {
       let status = 503
       const endpoint = await listen((_request, response) => {
