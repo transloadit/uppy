@@ -41,7 +41,7 @@
     "type-fest": "^5.10.0"
   },
   "devDependencies": {
-    "@aws-sdk/client-sts": "^3.1172.0",
+    "@aws-sdk/client-sts": "^3.1173.0",
     "@types/node": "^22.20.1",
     "@uppy-dev/msw-setup": "workspace:^",
     "@uppy-dev/tsconfig": "workspace:^",
