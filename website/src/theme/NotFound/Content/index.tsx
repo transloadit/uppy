@@ -1,9 +1,10 @@
+import type { Props } from '@theme/NotFound/Content'
+import type { ReactNode } from 'react'
+
 import Link from '@docusaurus/Link'
 import Translate from '@docusaurus/Translate'
 import Heading from '@theme/Heading'
-import type { Props } from '@theme/NotFound/Content'
 import clsx from 'clsx'
-import type { ReactNode } from 'react'
 
 // These are static files, not routes; `<Link>` would append the configured
 // trailing slash and turn /llms.txt into /llms.txt/, which 404s.

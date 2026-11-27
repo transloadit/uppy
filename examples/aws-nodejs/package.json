@@ -3,7 +3,6 @@
   "version": "1.0.0",
   "description": "Uppy for AWS S3 with a custom Node.js backend for signing URLs",
   "type": "module",
-  "main": "index.js",
   "scripts": {
     "dev": "node --watch index.ts",
     "start": "node index.ts"
@@ -11,9 +10,9 @@
   "private": true,
   "license": "MIT",
   "dependencies": {
-    "@aws-sdk/client-s3": "^3.338.0",
-    "@aws-sdk/client-sts": "^3.1139.0",
-    "@aws-sdk/s3-request-presigner": "^3.338.0",
+    "@aws-sdk/client-s3": "^3.1172.0",
+    "@aws-sdk/client-sts": "^3.1172.0",
+    "@aws-sdk/s3-request-presigner": "^3.1172.0",
     "body-parser": "^2.4.0",
     "express": "^5.2.1"
   }

@@ -1,20 +1,28 @@
 import type { Readable } from 'node:stream'
-import fetch, { type RequestInfo, type RequestInit } from 'node-fetch'
+
+import type { RequestInfo, RequestInit } from 'node-fetch'
+import type { Promisable } from 'type-fest'
 import type { WebDAVClientOptions } from 'webdav'
+
+import type {
+  ProviderDownloadOptions,
+  ProviderDownloadResponse,
+  ProviderListOptions,
+  ProviderListResponse,
+  ProviderLogoutResponse,
+  ProviderSimpleAuthOptions,
+} from '../Provider.js'
+
+import fetch, { Headers, Response } from 'node-fetch'
 import { AuthType, createClient, getPatcher } from 'webdav'
+
 import { getProtectedHttpAgent, validateURL } from '../../helpers/request.js'
 import { isRecord } from '../../helpers/type-guards.js'
 import logger from '../../logger.js'
 import { ProviderApiError, ProviderAuthError } from '../error.js'
 import { userError } from '../errorCodes.js'
-import Provider, {
-  type ProviderDownloadOptions,
-  type ProviderDownloadResponse,
-  type ProviderListOptions,
-  type ProviderListResponse,
-  type ProviderLogoutResponse,
-  type ProviderSimpleAuthOptions,
-} from '../Provider.js'
+import Provider from '../Provider.js'
+import { validateResponseXml } from './validateResponseXml.js'
 
 const defaultDirectory = '/'
 
@@ -28,20 +36,87 @@ const defaultDirectory = '/'
  * downloads (which stream `response.body`) are not limited by this.
  *
  * The webdav patcher is a package-wide singleton, so this applies to every
- * webdav client in the process, and a later `getPatcher().patch('fetch', …)`
- * by an embedding app would replace it.
+ * webdav client in the process. An embedder that replaces this fetch patch
+ * must preserve the same bounds.
  */
 export const MAX_WEBDAV_RESPONSE_BYTES = 5 * 1024 * 1024
 
-getPatcher().patch('fetch', (url: unknown, options: unknown) =>
-  fetch(url as RequestInfo, {
-    ...(options as RequestInit),
+getPatcher().patch('fetch', async (url: unknown, options: unknown) => {
+  // webdav's hot-patcher has no typed fetch boundary.
+  const requestOptions = options as RequestInit
+  const headers = new Headers(requestOptions.headers)
+  // Avoids a decompressor where the server honours it (a server that ignores
+  // it gets one, as on main). A compressed body is still capped by `size`,
+  // which node-fetch counts after decompression.
+  headers.set('accept-encoding', 'identity')
+  const response = await fetch(url as RequestInfo, {
+    ...requestOptions,
+    headers,
     size: MAX_WEBDAV_RESPONSE_BYTES,
-  }),
-)
+  })
+  if (response.ok && requestOptions.method?.toUpperCase() === 'PROPFIND') {
+    const xml = await response.text()
+    validateResponseXml(xml)
+    return new Response(xml, {
+      status: response.status,
+      statusText: response.statusText,
+      headers: response.headers,
+    })
+  }
+  return response
+})
 
-type WebdavUserSession = { webdavUrl?: string }
+// A parsed URL can't contain whitespace, and node-fetch puts a space after it.
+// Don't stop at quotes: `'` stays unencoded in userinfo and paths.
+// Only http(s): WebDAV URLs are validated to those schemes, and a literal
+// prefix keeps the match linear on long messages.
+const urlInText = /https?:\/\/\S+/gi
+
+/**
+ * node-fetch's transport errors (connection refused, DNS, TLS) and
+ * its refusal of a URL with `user:pass@` quote the full request URL in their
+ * message, and a WebDAV URL can be the credential. Keep only each URL's
+ * origin, without userinfo, plus the error's name, code and stack frames.
+ * HTTP status errors pass unchanged, so mapProviderError() still sees their
+ * `status` and `response`: their message never quotes the request URL, only
+ * the server's status text.
+ */
+function redactUrls(err: unknown): unknown {
+  if (
+    !(err instanceof Error) ||
+    err['response' as keyof Error] != null ||
+    err['status' as keyof Error] != null
+  )
+    return err
+  const message = err.message.replace(urlInText, (url) => {
+    try {
+      return `${new URL(url).origin}/[redacted]`
+    } catch {
+      return '[redacted URL]'
+    }
+  })
+  if (message === err.message) return err
+  const redacted = Object.assign(new Error(message), {
+    name: err.name,
+    ...(isRecord(err) &&
+      typeof err['code'] === 'string' && { code: err['code'] }),
+  })
+  const frames = (err.stack ?? '')
+    .split('\n')
+    .filter((line) => line.startsWith('    at '))
+  redacted.stack = [`${redacted.name}: ${message}`, ...frames].join('\n')
+  return redacted
+}
+
+/**
+ * `ocis`: the share link is from ownCloud Infinite Scale, which serves public
+ * links at `/dav/public-files/<token>` rather than `/public.php/webdav/`.
+ * Found out once in simpleAuth() and kept in the session.
+ */
+type WebdavUserSession = { webdavUrl?: string; ocis?: boolean }
 type WebdavClient = ReturnType<typeof createClient>
+
+const isPublicLink = (webdavUrl: string) => /\/s\/([^/]+)/.test(webdavUrl)
 
 type WebdavListItem = {
   isFolder: boolean
@@ -87,19 +162,20 @@ export default class WebdavProvider extends Provider<WebdavUserSession> {
       throw new Error('invalid public link url')
     }
 
-    // Is this an ownCloud or Nextcloud public link URL? e.g. https://example.com/s/kFy9Lek5sm928xP
-    // they have specific urls that we can identify
-    // todo not sure if this is the right way to support nextcloud and other webdavs
-    if (/\/s\/([^/]+)/.test(webdavUrl)) {
+    // Is this an ownCloud, Nextcloud or oCIS public link URL? e.g. https://example.com/s/kFy9Lek5sm928xP
+    if (isPublicLink(webdavUrl)) {
       const [baseURL, publicLinkToken] = webdavUrl.split('/s/')
-      if (!baseURL) {
+      if (!baseURL || !publicLinkToken) {
         throw new Error('invalid public link url')
       }
+      const base = baseURL.replace('/index.php', '')
 
       return this.getClientHelper({
-        url: `${baseURL.replace('/index.php', '')}/public.php/webdav/`,
+        url: providerUserSession.ocis
+          ? `${base}/dav/public-files/${encodeURIComponent(publicLinkToken)}`
+          : `${base}/public.php/webdav/`,
         authType: AuthType.Password,
-        username: publicLinkToken!,
+        username: publicLinkToken,
         password: 'null',
       })
     }
@@ -127,18 +203,31 @@ export default class WebdavProvider extends Provider<WebdavUserSession> {
         throw new Error('Missing webdavUrl')
       }
 
-      const providerUserSession: WebdavUserSession = { webdavUrl }
-
-      const client = await this.getClient({ providerUserSession })
+      // One deadline for every attempt, so a fallback can't extend it.
+      const signal = AbortSignal.timeout(this.requestTimeoutMs)
       // call the list operation as a way to validate the url
-      await client.getDirectoryContents(defaultDirectory, {
-        signal: AbortSignal.timeout(this.requestTimeoutMs),
-      })
+      const tryListing = async (providerUserSession: WebdavUserSession) => {
+        const client = await this.getClient({ providerUserSession })
+        await client.getDirectoryContents(defaultDirectory, { signal })
+        return providerUserSession
+      }
 
-      return providerUserSession
+      try {
+        return await tryListing({ webdavUrl })
+      } catch (err) {
+        // A share link that isn't Nextcloud/ownCloud 10 may be oCIS. If that
+        // fails too, report the first error.
+        if (!isPublicLink(webdavUrl)) throw err
+        return await tryListing({ webdavUrl, ocis: true }).catch(() => {
+          throw err
+        })
+      }
     } catch (err) {
-      const errForLog = err instanceof Error ? err : new Error(String(err))
-      logger.error(errForLog, 'provider.webdav.error')
+      // The raw error's `response.url` is the WebDAV URL, which for a share
+      // link is itself the credential, and transport errors quote the URL in
+      // their message. Log and throw the mapped, redacted error instead.
+      const mapped = this.mapProviderError(redactUrls(err))
+      logger.error(mapped, 'provider.webdav.error')
       const code = isRecord(err) ? err['code'] : undefined
       if (
         typeof code === 'string' &&
@@ -146,8 +235,26 @@ export default class WebdavProvider extends Provider<WebdavUserSession> {
       ) {
         throw userError('WEBDAV_CANNOT_CONNECT', 'Cannot connect to server')
       }
-      throw err
+      throw mapped
     }
+  }
+
+  /**
+   * Redact WebDAV URLs from errors before the base class logs and maps them:
+   * the URL may carry the credential (a token in the path or query, or
+   * `user:pass@`).
+   */
+  protected override withErrorHandling<T>(
+    tag: string,
+    fn: () => Promisable<T>,
+  ): Promise<T> {
+    return super.withErrorHandling(tag, async () => {
+      try {
+        return await fn()
+      } catch (err) {
+        throw redactUrls(err)
+      }
+    })
   }
 
   getClientHelper({
@@ -157,6 +264,12 @@ export default class WebdavProvider extends Provider<WebdavUserSession> {
     const { allowLocalUrls } = this
     if (!validateURL(url, allowLocalUrls)) {
       throw new Error('invalid webdav url')
+    }
+    if (
+      decodeURIComponent(new URL(url).pathname).split('/').filter(Boolean)
+        .length > 32
+    ) {
+      throw new Error('WebDAV URL exceeds the maximum folder depth')
     }
     const HttpAgent = getProtectedHttpAgent({
       protocol: 'http',
@@ -277,15 +390,6 @@ export default class WebdavProvider extends Provider<WebdavUserSession> {
         return { stream: body, size: stat.size }
       },
     )
-  }
-
-  override thumbnail(): Promise<never> {
-    // not implementing this because a public thumbnail from webdav will be used instead
-    logger.error(
-      'call to thumbnail is not implemented',
-      'provider.webdav.thumbnail.error',
-    )
-    throw new Error('call to thumbnail is not implemented')
   }
 
   protected override mapProviderError(err: unknown): unknown {

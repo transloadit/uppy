@@ -15,7 +15,7 @@ const uploadStates = {
 export type UploadState = (typeof uploadStates)[keyof typeof uploadStates]
 
 function getUploadingState(
-  isAllErrored: boolean | undefined,
+  isAllErrored: boolean,
   isAllComplete: boolean,
   isAllPaused: boolean,
   files: Record<string, UppyFile<any, any>> = {},
@@ -58,7 +58,7 @@ interface UploadStatusProps<M extends Meta, B extends Body> {
   files: State<M, B>['files']
   i18n: I18n
   isAllComplete: boolean
-  isAllErrored?: boolean | undefined
+  isAllErrored: boolean
   isAllPaused: boolean
   inProgressNotPausedFiles: UppyFile<M, B>[]
   newFiles: UppyFile<M, B>[]
@@ -136,6 +136,7 @@ function PanelTopBar<M extends Meta, B extends Body>(
         <button
           className="uppy-DashboardContent-back"
           type="button"
+          aria-label={i18n('cancelAllUploads')}
           onClick={() => uppy.cancelAll()}
         >
           {i18n('cancel')}

@@ -9,14 +9,16 @@ import type {
   Uppy,
   UppyFile,
 } from '@uppy/core'
+import type { LocaleStrings } from '@uppy/core/utils'
+import type { ComponentChild, VNode } from '@uppy/core/utils/preact'
+import type { TargetedEvent } from 'preact'
+
 import { UIPlugin } from '@uppy/core'
 import { defaultPickerIcon } from '@uppy/core/provider-views'
-import type { LocaleStrings } from '@uppy/core/utils'
 import { findAllDOMElements, getDroppedFiles } from '@uppy/core/utils'
-import type { ComponentChild, VNode } from '@uppy/core/utils/preact'
 import ThumbnailGenerator from '@uppy/thumbnail-generator'
 import { nanoid } from 'nanoid/non-secure'
-import type { TargetedEvent } from 'preact'
+
 import packageJson from '../package.json' with { type: 'json' }
 import DashboardUI from './components/Dashboard.js'
 import locale from './locale.js'
@@ -868,14 +870,29 @@ export default class Dashboard<M extends Meta, B extends Body> extends UIPlugin<
 
     this.uppy.log('[Dashboard] Processing dropped files')
 
-    // Browsers empty `event.dataTransfer` once this handler yields
-    this.opts.onDrop(event)
+    const { activePickerPanel } = this.getPluginState()
+    const activePlugin = activePickerPanel
+      ? this.uppy.getPlugin<UIPlugin<UIPluginOptions, M, B>>(
+          activePickerPanel.id,
+        )
+      : undefined
+    const finishDrop =
+      event.target instanceof Element &&
+      event.target.closest('[data-uppy-panelType="PickerPanel"]')
+        ? activePlugin?.beginAddingFiles?.()
+        : undefined
+    if (finishDrop === false) return
+    try {
+      // Browsers empty `event.dataTransfer` once this handler yields
+      this.opts.onDrop(event)
 
-    // Add all dropped files
-    const files = await getDroppedFiles(event.dataTransfer!, { logDropError })
-    if (files.length > 0) {
-      this.uppy.log('[Dashboard] Files dropped')
-      this.addFiles(files)
+      const files = await getDroppedFiles(event.dataTransfer!, { logDropError })
+      if (files.length > 0) {
+        this.uppy.log('[Dashboard] Files dropped')
+        this.addFiles(files)
+      }
+    } finally {
+      finishDrop?.()
     }
   }
 
@@ -1155,6 +1172,7 @@ export default class Dashboard<M extends Meta, B extends Body> extends UIPlugin<
 
       isUploadStarted,
       isAllComplete,
+      isAllErrored,
       isAllPaused,
     } = this.uppy.getObjectOfFilesPerState()
 
@@ -1192,6 +1210,7 @@ export default class Dashboard<M extends Meta, B extends Body> extends UIPlugin<
       processingFiles,
       isUploadStarted,
       isAllComplete,
+      isAllErrored,
       isAllPaused,
       totalFileCount: Object.keys(files).length,
       totalProgress: state.totalProgress,

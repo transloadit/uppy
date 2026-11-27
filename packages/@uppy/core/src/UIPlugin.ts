@@ -1,8 +1,10 @@
-import { render } from 'preact'
 import type { PluginOpts } from './BasePlugin.js'
-import BasePlugin from './BasePlugin.js'
 import type { State } from './Uppy.js'
 import type { Body, Meta } from './utils/index.js'
+
+import { render } from 'preact'
+
+import BasePlugin from './BasePlugin.js'
 import { findDOMElement, getTextDirection } from './utils/index.js'
 
 /**
@@ -50,6 +52,18 @@ class UIPlugin<
   parent: unknown
 
   title!: string
+
+  /**
+   * Reserves a destination before reading dropped files or adding selected files.
+   * Return false to refuse the addition; otherwise cleanup runs after files are
+   * added, including empty or failed additions. Experimental storage panel API.
+   */
+  beginAddingFiles?: () => (() => void) | false | undefined
+
+  /** Whether a multi-step folder navigation still owns this panel. */
+  get isNavigating(): boolean {
+    return false
+  }
 
   getTargetPlugin<Me extends Meta, Bo extends Body>(
     target: PluginTarget<Me, Bo>,

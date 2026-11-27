@@ -1,8 +1,11 @@
-import pRetry, { AbortError } from 'p-retry'
 import type { Promisable } from 'type-fest'
-import packageJson from '../../package.json' with { type: 'json' }
+
 import type Uppy from '../index.js'
 import type { Body, Meta, RemoteUppyFile, UppyFile } from '../utils/index.js'
+
+import pRetry, { AbortError } from 'p-retry'
+
+import packageJson from '../../package.json' with { type: 'json' }
 import {
   ErrorWithCause,
   fetchWithNetworkError,
@@ -165,10 +168,21 @@ export default class RequestClient<M extends Meta, B extends Body> {
     const companion = state.companion || {}
     const host = this.opts.companionUrl
 
-    // Store the self-identified domain name for the Companion instance we just hit.
-    if (headers.has('i-am') && headers.get('i-am') !== companion[host]) {
+    const identifiedHost = headers.get('i-am')
+    if (!identifiedHost) return
+    let url: URL
+    try {
+      url = new URL(identifiedHost)
+    } catch {
+      return
+    }
+    // This value also becomes the OAuth popup URL, so active URL schemes
+    // must never enter the cached Companion address.
+    if (url.protocol !== 'http:' && url.protocol !== 'https:') return
+    if (url.username || url.password) return
+    if (url.href !== companion[host]) {
       this.uppy.setState({
-        companion: { ...companion, [host]: headers.get('i-am') as string },
+        companion: { ...companion, [host]: url.href },
       })
     }
   }
@@ -499,9 +513,9 @@ export default class RequestClient<M extends Meta, B extends Body> {
                         break
                       }
                       case 'success': {
-                        // payload.response is sent from companion for xhr-upload (aka uploadMultipart in companion) and
-                        // s3 multipart (aka uploadS3Multipart)
-                        // but not for tus/transloadit (aka uploadTus)
+                        // payload.response is sent from companion for xhr-upload (aka uploadMultipart in companion),
+                        // s3 multipart (aka uploadS3Multipart), and tus/transloadit (aka uploadTus) when the
+                        // destination answers with a JSON body
                         // responseText is a string which may or may not be in JSON format
                         // this means that an upload destination of xhr or s3 multipart MUST respond with valid JSON
                         // to companion, or the JSON.parse will crash

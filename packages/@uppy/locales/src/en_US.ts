@@ -43,8 +43,12 @@ en_US.strings = {
   browse: 'browse',
   browseFiles: 'browse files',
   browseFolders: 'browse folders',
+  bucketChanged:
+    'The storage session now shows another bucket, so the folder was reloaded and the selection cleared. Select the files again.',
   cancel: 'Cancel',
+  cancelAllUploads: 'Cancel all uploads',
   cancelUpload: 'Cancel upload',
+  cancelUploadWithFilename: 'Cancel upload %{file}',
   closeModal: 'Close Modal',
   companionError: 'Connection with Companion failed',
   companionUnauthorizeHint:
@@ -192,8 +196,10 @@ en_US.strings = {
   noSearchResults: 'Unfortunately, there are no results for this search',
   openFolderNamed: 'Open folder %{name}',
   pause: 'Pause',
+  pauseAllUploads: 'Pause all uploads',
   paused: 'Paused',
   pauseUpload: 'Pause upload',
+  pauseUploadWithFilename: 'Pause upload %{file}',
   pickFiles: 'Pick files',
   pickPhotos: 'Pick photos',
   pleaseWait: 'Please wait',
@@ -231,6 +237,7 @@ en_US.strings = {
     '1': 'We could not fully recover %{smart_count} files. Please re-select them and resume the upload.',
   },
   removeFile: 'Remove file',
+  removeFileWithFilename: 'Remove file %{file}',
   renameOrMove: 'Rename or move…',
   renameOrMovePrompt: 'New name, or a path relative to the root folder:',
   renameOrMoveTitle: 'Rename or move "%{name}"',
@@ -238,7 +245,9 @@ en_US.strings = {
   resetFilter: 'Reset filter',
   resetSearch: 'Reset search',
   resume: 'Resume',
+  resumeAllUploads: 'Resume all uploads',
   resumeUpload: 'Resume upload',
+  resumeUploadWithFilename: 'Resume upload %{file}',
   retry: 'Retry',
   retryUpload: 'Retry upload',
   revert: 'Reset',
@@ -293,12 +302,16 @@ en_US.strings = {
   uploadComplete: 'Upload complete',
   uploadFailed: 'Upload failed',
   uploadFiles: 'Upload files',
+  uploadFolderLoading:
+    'Wait for the folder to finish loading, then retry the upload',
   uploading: 'Uploading',
   uploadingXFiles: {
     '0': 'Uploading %{smart_count} file',
     '1': 'Uploading %{smart_count} files',
   },
   uploadPaused: 'Upload paused',
+  uploadQueuedElsewhere:
+    'Upload or remove the queued files first: they go to another folder',
   uploadStalled:
     'Upload has not made any progress for %{seconds} seconds. You may want to retry it.',
   uploadXFiles: {

@@ -1,9 +1,13 @@
 import type { Body, Meta, Uppy } from '@uppy/core'
+
+import type { StoreAssemblyParameters } from '../lib/storeAssemblyOptions.js'
+
 import { describe, expect, it, vi } from 'vitest'
+
 import {
   buildStoreAssemblyParams,
   createStoreAssemblyOptions,
-  type StoreAssemblyParameters,
+  openFolderKey,
 } from '../lib/storeAssemblyOptions.js'
 
 /** Transloadit's Assembly placeholder, not a JavaScript template. */
@@ -18,12 +22,18 @@ function fakeUppy({
   currentFolderId?: string | null
   rootPrefix?: string
 }) {
-  return {
-    getPlugin: () => ({
-      getPluginState: () => ({ authenticated: true, currentFolderId }),
-      rootPrefix,
-    }),
-  } as unknown as Uppy<Meta, Body>
+  const storage = {
+    getPluginState: () => ({ authenticated: true, currentFolderId }),
+    rootPrefix,
+    // Nothing queued: the open folder.
+    get uploadFolderKey() {
+      return openFolderKey(storage as never)
+    },
+    reserveUploadFolder() {
+      return this.uploadFolderKey
+    },
+  }
+  return { getPlugin: () => storage } as unknown as Uppy<Meta, Body>
 }
 
 const passthroughSign = async (params: StoreAssemblyParameters) => ({
@@ -46,6 +56,12 @@ describe('createStoreAssemblyOptions', () => {
         storage.rootPrefix = 'tenant/'
         return true
       }),
+      get uploadFolderKey() {
+        return openFolderKey(storage as never)
+      },
+      reserveUploadFolder() {
+        return this.uploadFolderKey
+      },
     }
     const signAssembly = vi.fn(passthroughSign)
     const build = createStoreAssemblyOptions(
@@ -112,6 +128,19 @@ describe('createStoreAssemblyOptions', () => {
       },
     )
     expect(storedPath(await build())).toBe(`users/ana/${FILE_NAME}`)
+  })
+
+  it('stores in the folder the queued files were added in', async () => {
+    const storage = {
+      getPluginState: () => ({ authenticated: true, currentFolderId: null }),
+      uploadFolderKey: 'docs/',
+      reserveUploadFolder: () => 'docs/',
+    }
+    const build = createStoreAssemblyOptions(
+      { getPlugin: () => storage } as unknown as Uppy<Meta, Body>,
+      { signAssembly: passthroughSign },
+    )
+    expect(storedPath(await build())).toBe(`docs/${FILE_NAME}`)
   })
 
   it('uses the open folder key, which already contains the prefix', async () => {

@@ -1,4 +1,5 @@
 import { describe, expect, test } from 'vitest'
+
 import { shouldInterceptGrantError } from '../dist/companion.js'
 
 describe('shouldInterceptGrantError (deprecated, still exported)', () => {

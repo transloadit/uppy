@@ -1,6 +1,8 @@
-import http from 'node:http'
 import type { AddressInfo } from 'node:net'
+
+import http from 'node:http'
 import { gzipSync } from 'node:zlib'
+
 import {
   afterAll,
   beforeAll,
@@ -10,6 +12,7 @@ import {
   test,
   vi,
 } from 'vitest'
+
 import { FORBIDDEN_IP_ADDRESS } from '../dist/server/helpers/request.js'
 import { ProviderApiError } from '../dist/server/provider/error.js'
 import WebdavProvider from '../dist/server/provider/webdav/index.js'
@@ -82,17 +85,125 @@ describe('webdav SSRF protection', () => {
 describe('webdav response bounds', () => {
   test('rejects a PROPFIND body over 5 MiB', async () => {
     const padding = ' '.repeat(6 * 1024 * 1024)
-    const body = gzipSync(
-      `<?xml version="1.0"?><d:multistatus xmlns:d="DAV:">${padding}</d:multistatus>`,
-    )
+    const body = `<?xml version="1.0"?><d:multistatus xmlns:d="DAV:">${padding}</d:multistatus>`
+    handler = (_req, res) => {
+      res.writeHead(207, {
+        'content-type': 'application/xml',
+      })
+      res.end(body)
+    }
+    await expect(simpleAuth(true)).rejects.toThrow(/max-size|over limit/)
+  })
+
+  test('rejects a compressed PROPFIND body that decompresses to over 5 MiB', async () => {
+    const padding = ' '.repeat(6 * 1024 * 1024)
     handler = (_req, res) => {
       res.writeHead(207, {
         'content-type': 'application/xml',
         'content-encoding': 'gzip',
       })
-      res.end(body)
+      res.end(
+        gzipSync(
+          `<?xml version="1.0"?><d:multistatus xmlns:d="DAV:">${padding}</d:multistatus>`,
+        ),
+      )
     }
     await expect(simpleAuth(true)).rejects.toThrow(/max-size|over limit/)
+  })
+
+  test('asks for an uncompressed listing, but still reads a compressed one', async () => {
+    handler = (req, res) => {
+      expect(req.headers['accept-encoding']).toBe('identity')
+      res.writeHead(207, {
+        'content-type': 'application/xml',
+        'content-encoding': 'gzip',
+      })
+      res.end(gzipSync(multistatus(fileResponse('/a.txt'))))
+    }
+    const { items } = await provider().list({
+      providerUserSession: { webdavUrl },
+      directory: '/',
+      query: {},
+    } as never)
+    expect(items).toHaveLength(1)
+  })
+
+  test('rejects a deeply nested base URL before requesting a listing', async () => {
+    await expect(
+      provider().simpleAuth({
+        requestBody: { form: { webdavUrl: `${webdavUrl}${'a/'.repeat(33)}` } },
+        companion: {} as never,
+      }),
+    ).rejects.toThrow('maximum folder depth')
+    expect(requestCount).toBe(0)
+  })
+
+  test('lists a large folder from a server that declares namespaces on every entry', async () => {
+    // As Apache mod_dav and IIS do: well within the byte limit, but with
+    // more elements and attributes than the original structural limits allowed
+    const entries = Array.from({ length: 8000 }, (_, index) =>
+      fileResponse(`/f${index}.txt`).replace(
+        '<d:response>',
+        '<d:response xmlns:lp1="DAV:" xmlns:lp2="http://apache.org/dav/props/">',
+      ),
+    )
+    handler = (_req, res) => {
+      res.writeHead(207, { 'content-type': 'application/xml' })
+      res.end(multistatus(...entries))
+    }
+    const { items } = await provider().list({
+      providerUserSession: { webdavUrl },
+      directory: '/',
+      query: {},
+    } as never)
+    expect(items.length).toBeGreaterThanOrEqual(7999)
+  })
+
+  test('rejects a listing of tiny elements within the byte limit', async () => {
+    handler = (_req, res) => {
+      res.writeHead(207, { 'content-type': 'application/xml' })
+      res.end(multistatus('<a/>'.repeat(250_001)))
+    }
+    await expect(simpleAuth(true)).rejects.toThrow('structural limits')
+  })
+
+  test('rejects an element with too many attributes', async () => {
+    handler = (_req, res) => {
+      const attributes = Array.from(
+        { length: 65 },
+        (_, index) => `a${index}="x"`,
+      ).join(' ')
+      res.writeHead(207, { 'content-type': 'application/xml' })
+      res.end(
+        `<d:multistatus xmlns:d="DAV:"><d:response ${attributes}/></d:multistatus>`,
+      )
+    }
+    await expect(simpleAuth(true)).rejects.toThrow('structural limits')
+  })
+
+  test('accepts a Content-Encoding that is no compression', async () => {
+    // misconfigured servers send values like `binary` for plain bytes
+    handler = (_req, res) => {
+      res.writeHead(207, {
+        'content-type': 'application/xml',
+        'content-encoding': 'binary',
+      })
+      res.end(emptyListing)
+    }
+    await expect(simpleAuth(true)).resolves.toBeDefined()
+  })
+
+  test('rejects recursive XML and DTDs before tree parsing', async () => {
+    handler = (_req, res) => {
+      res.writeHead(207, { 'content-type': 'application/xml' })
+      res.end(`${'<a>'.repeat(65)}${'</a>'.repeat(65)}`)
+    }
+    await expect(simpleAuth(true)).rejects.toThrow('structural limits')
+    handler = (_req, res) => {
+      res.writeHead(207, { 'content-type': 'application/xml' })
+      res.end('<!DOCTYPE a [<!ENTITY b "text">]><a>&b;</a>')
+    }
+    await expect(simpleAuth(true)).rejects.toThrow('structural limits')
   })
 
   test('builds item ids from the server path, not the route id', async () => {
@@ -111,6 +222,102 @@ describe('webdav response bounds', () => {
       requestPath: encodeURIComponent('/a.txt'),
       name: 'a.txt',
     })
+  })
+})
+
+describe('webdav public share links', () => {
+  const shareLink = () => `${webdavUrl}s/TOKEN`
+  const authShare = () =>
+    provider().simpleAuth({
+      requestBody: { form: { webdavUrl: shareLink() } },
+      companion: {} as never,
+    })
+  const paths: string[] = []
+  const auths: (string | undefined)[] = []
+  // Answers WebDAV only on `davPath`; elsewhere an HTML page, as oCIS does.
+  const serveDavAt =
+    (davPath: string): Handler =>
+    (req, res) => {
+      paths.push(req.url!)
+      auths.push(req.headers.authorization)
+      if (req.url!.startsWith(davPath)) {
+        res.writeHead(207, { 'content-type': 'application/xml' })
+        res.end(multistatus(fileResponse(`${davPath}a.txt`)))
+        return
+      }
+      res.writeHead(200, { 'content-type': 'text/html' })
+      res.end('<!doctype html><html></html>')
+    }
+
+  beforeEach(() => {
+    paths.length = 0
+    auths.length = 0
+  })
+
+  test('uses the Nextcloud/ownCloud 10 endpoint when it answers', async () => {
+    handler = serveDavAt('/public.php/webdav/')
+    await expect(authShare()).resolves.toEqual({ webdavUrl: shareLink() })
+    expect(paths).toEqual(['/public.php/webdav/'])
+  })
+
+  test('falls back to the oCIS endpoint, and remembers it', async () => {
+    handler = serveDavAt('/dav/public-files/TOKEN/')
+    const session = await authShare()
+    expect(session).toEqual({ webdavUrl: shareLink(), ocis: true })
+
+    paths.length = 0
+    auths.length = 0
+    const { items } = await provider().list({
+      providerUserSession: session,
+      query: {},
+    } as never)
+    expect(items.map((item) => item.name)).toEqual(['a.txt'])
+    expect(paths).toEqual(['/dav/public-files/TOKEN/'])
+    // The share token is the login on both endpoints.
+    expect(auths).toEqual([
+      `Basic ${Buffer.from('TOKEN:null').toString('base64')}`,
+    ])
+  })
+
+  test('reports the first error when neither endpoint answers', async () => {
+    const html = serveDavAt('/nowhere/')
+    handler = (req, res) => {
+      if (req.url!.startsWith('/dav/')) {
+        paths.push(req.url!)
+        res.writeHead(404).end()
+        return
+      }
+      html(req, res)
+    }
+    // The HTML page, not the oCIS 404.
+    await expect(authShare()).rejects.toThrow('structural limits')
+    expect(paths).toEqual(['/public.php/webdav/', '/dav/public-files/TOKEN/'])
+  })
+
+  test('does not fall back for a plain WebDAV URL', async () => {
+    handler = serveDavAt('/nowhere/')
+    await expect(
+      provider().simpleAuth({
+        requestBody: { form: { webdavUrl: `${webdavUrl}dav/` } },
+        companion: {} as never,
+      }),
+    ).rejects.toThrow()
+    expect(requestCount).toBe(1)
+  })
+
+  test("the fallback shares the first attempt's deadline", async () => {
+    handler = () => {
+      // accept, never respond
+    }
+    const p = new WebdavProvider({ allowLocalUrls: true })
+    p.requestTimeoutMs = 200
+    await expect(
+      p.simpleAuth({
+        requestBody: { form: { webdavUrl: shareLink() } },
+        companion: {} as never,
+      }),
+    ).rejects.toThrow(/abort|timed out|timeout/i)
+    expect(requestCount).toBe(1)
   })
 })
 

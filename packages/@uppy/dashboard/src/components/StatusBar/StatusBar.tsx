@@ -1,10 +1,14 @@
 import type { Body, Meta, State, Uppy, UppyFile } from '@uppy/core'
 import type { I18n } from '@uppy/core/utils'
-import { emaFilter } from '@uppy/core/utils'
 import type { ComponentChild } from '@uppy/core/utils/preact'
+
+import type { StatusBarUIProps } from './StatusBarUI.js'
+
+import { emaFilter } from '@uppy/core/utils'
 import { Component } from '@uppy/core/utils/preact'
+
 import statusBarStates from './StatusBarStates.js'
-import StatusBarUI, { type StatusBarUIProps } from './StatusBarUI.js'
+import StatusBarUI from './StatusBarUI.js'
 
 const speedFilterHalfLife = 2000
 const ETAFilterHalfLife = 2000

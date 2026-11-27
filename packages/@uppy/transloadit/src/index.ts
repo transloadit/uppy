@@ -12,14 +12,13 @@ import type {
   Uppy,
   UppyFile,
 } from '@uppy/core'
+import type { RemoteUppyFile } from '@uppy/core/utils'
+import type { TusDetailedError, TusOpts } from '@uppy/tus'
+
 import { BasePlugin } from '@uppy/core'
-import {
-  ErrorWithCause,
-  RateLimitedQueue,
-  type RemoteUppyFile,
-  toError,
-} from '@uppy/core/utils'
-import Tus, { type TusDetailedError, type TusOpts } from '@uppy/tus'
+import { ErrorWithCause, RateLimitedQueue, toError } from '@uppy/core/utils'
+import Tus from '@uppy/tus'
+
 import packageJson from '../package.json' with { type: 'json' }
 import Assembly from './Assembly.js'
 import AssemblyWatcher from './AssemblyWatcher.js'
@@ -255,7 +254,8 @@ const COMPANION_URL = 'https://api2.transloadit.com/companion'
 // Regex matching acceptable postMessage() origins for authentication feedback from companion.
 const COMPANION_ALLOWED_HOSTS = /\.transloadit\.com$/
 // Regex used to check if a Companion address is run by Transloadit.
-const TL_COMPANION = /https?:\/\/api2(?:-\w+)?\.transloadit\.com\/companion/
+const TL_COMPANION =
+  /^https:\/\/api2(?:-[\w-]+)?\.transloadit\.com\/companion\/?$/
 
 /**
  * Upload files to Transloadit using Tus.
@@ -380,7 +380,14 @@ export default class Transloadit<
     if ('remote' in file && file.remote) {
       ;({ remote } = file)
 
-      if (status.companion_url && TL_COMPANION.test(file.remote.companionUrl)) {
+      // Both ends must be Transloadit's: the status comes from whatever server
+      // the Assembly was created on, and the remote file's requests carry its
+      // Companion credentials.
+      if (
+        status.companion_url &&
+        TL_COMPANION.test(status.companion_url) &&
+        TL_COMPANION.test(file.remote.companionUrl)
+      ) {
         const newHost = status.companion_url.replace(/\/$/, '')
         const path = file.remote.url
           .replace(file.remote.companionUrl, '')
@@ -905,18 +912,18 @@ export default class Transloadit<
     // TODO we should rewrite to instead infer allowNewUpload based on upload state
     this.uppy.setState({ allowNewUpload: false })
 
-    const assemblyOptions = (
-      typeof this.opts.assemblyOptions === 'function'
-        ? await this.opts.assemblyOptions()
-        : this.opts.assemblyOptions
-    ) as OptionsWithRestructuredFields
-
-    assemblyOptions.fields = {
-      ...(assemblyOptions.fields ?? {}),
-    }
-    validateParams(assemblyOptions.params)
-
     try {
+      const assemblyOptions = (
+        typeof this.opts.assemblyOptions === 'function'
+          ? await this.opts.assemblyOptions()
+          : this.opts.assemblyOptions
+      ) as OptionsWithRestructuredFields
+
+      assemblyOptions.fields = {
+        ...(assemblyOptions.fields ?? {}),
+      }
+      validateParams(assemblyOptions.params)
+
       const assembly =
         // this.assembly can already be defined if we recovered files with Golden Retriever (this.#onRestored)
         this.assembly ?? (await this.#createAssembly(fileIDs, assemblyOptions))
@@ -1135,6 +1142,7 @@ export default class Transloadit<
 
 // Re-export type from @transloadit/types so callers can import it from the plugin package.
 export type { AssemblyInstructionsInput } from '@transloadit/types'
+
 // Low-level classes for advanced usage (e.g., creating assemblies without file uploads)
 export { default as Assembly } from './Assembly.js'
 export { AssemblyError, default as Client } from './Client.js'

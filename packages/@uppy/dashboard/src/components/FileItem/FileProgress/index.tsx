@@ -57,6 +57,31 @@ function progressIndicatorTitle<M extends Meta, B extends Body>(
   return ''
 }
 
+function progressIndicatorAriaLabel<M extends Meta, B extends Body>(
+  props: Props<M, B>,
+) {
+  if (props.isUploaded) {
+    return props.i18n('uploadComplete')
+  }
+
+  if (props.error) {
+    return props.i18n('retryUpload')
+  }
+
+  const options = { file: props.file.meta.name }
+  if (props.resumableUploads) {
+    if (props.file.isPaused) {
+      return props.i18n('resumeUploadWithFilename', options)
+    }
+    return props.i18n('pauseUploadWithFilename', options)
+  }
+  if (props.individualCancellation) {
+    return props.i18n('cancelUploadWithFilename', options)
+  }
+
+  return ''
+}
+
 function ProgressIndicatorButton<M extends Meta, B extends Body>(
   props: Props<M, B> & { children: ComponentChild },
 ) {
@@ -65,7 +90,7 @@ function ProgressIndicatorButton<M extends Meta, B extends Body>(
       <button
         className="uppy-u-reset uppy-c-btn uppy-Dashboard-Item-progressIndicator"
         type="button"
-        aria-label={progressIndicatorTitle(props)}
+        aria-label={progressIndicatorAriaLabel(props)}
         title={progressIndicatorTitle(props)}
         onClick={() => onPauseResumeCancelRetry(props)}
       >
@@ -127,10 +152,6 @@ export default function FileProgress<M extends Meta, B extends Body>(
     return null
   }
 
-  if (props.file.progress.percentage === undefined) {
-    return null
-  }
-
   // Green checkmark when complete
   if (props.isUploaded) {
     return (
@@ -172,6 +193,11 @@ export default function FileProgress<M extends Meta, B extends Body>(
         </svg>
       </ProgressIndicatorButton>
     )
+  }
+
+  // Nothing more to show while progress is unknown
+  if (props.file.progress.percentage === undefined) {
+    return null
   }
 
   // Pause/resume button for resumable uploads

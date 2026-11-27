@@ -1,6 +1,8 @@
 export default {
   strings: {
     pluginNameS3: 'S3',
+    bucketChanged:
+      'The storage session now shows another bucket, so the folder was reloaded and the selection cleared. Select the files again.',
     renameOrMove: 'Rename or move…',
     renameOrMoveTitle: 'Rename or move "%{name}"',
     renameOrMovePrompt: 'New name, or a path relative to the root folder:',

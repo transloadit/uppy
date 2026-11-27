@@ -6,7 +6,7 @@ slug: /dashboard
 import Tabs from '@theme/Tabs'
 import TabItem from '@theme/TabItem'
 
-import UppyCdnExample from '/src/components/UppyCdnExample'
+import UppyCdnExample from '@site/src/components/UppyCdnExample'
 
 # Dashboard
 
@@ -155,13 +155,9 @@ Height of the Dashboard in pixels (`number`, default: `550`). Used when
 Whether to wait for all thumbnails from `@uppy/thumbnail-generator` to be ready
 before starting the upload (`boolean`, default `false`).
 
-If set to `true`, Thumbnail Generator will envoke Uppy’s internal processing
+If set to `true`, Thumbnail Generator will invoke Uppy’s internal processing
 stage, displaying “Generating thumbnails...” message, and wait for
 `thumbnail:all-generated` event, before proceeding to the uploading stage.
-
-This is useful because Thumbnail Generator also adds EXIF data to images, and if
-we wait until it’s done processing, this data will be available on the server
-after the upload.
 
 #### `showLinkToFileUploadResult`
 
@@ -581,7 +577,8 @@ It supports the following values:
 
 #### `autoOpen`
 
-Automatically open file editor for the file user just dropped/selected.  
+Automatically open file editor for the file user just dropped/selected.
+
 If one file is added, editor opens for that file; if 10 files are added, editor
 opens only for the first file.
 

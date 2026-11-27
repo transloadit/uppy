@@ -1,26 +1,15 @@
 /* global AggregateError */
 
-import throttle from 'lodash/throttle.js'
-import ee from 'namespace-emitter'
-import { nanoid } from 'nanoid/non-secure'
 import type { h } from 'preact'
 import type { Promisable } from 'type-fest'
-import packageJson from '../package.json' with { type: 'json' }
+
 import type BasePlugin from './BasePlugin.js'
 import type Provider from './companion-client/Provider.js'
 import type SearchProvider from './companion-client/SearchProvider.js'
-import getFileName from './getFileName.js'
-import locale from './locale.js'
-import { debugLogger, justErrorsLogger } from './loggers.js'
 import type ProviderView from './provider-views/ProviderView/ProviderView.js'
 import type { Restrictions, ValidateableFile } from './Restricter.js'
-import {
-  defaultOptions as defaultRestrictionOptions,
-  Restricter,
-  RestrictionError,
-} from './Restricter.js'
-import DefaultStore, { type Store } from './store/index.js'
-import supportsUploadProgress from './supportsUploadProgress.js'
+import type { Store } from './store/index.js'
+import type { default as UIPlugin, UIPluginOptions } from './UIPlugin.js'
 import type {
   Body,
   CompanionFile,
@@ -36,6 +25,22 @@ import type {
   UppyFile,
   UppyFileId,
 } from './utils/index.js'
+
+import throttle from 'lodash/throttle.js'
+import { nanoid } from 'nanoid/non-secure'
+
+import packageJson from '../package.json' with { type: 'json' }
+import getFileName from './getFileName.js'
+import locale from './locale.js'
+import { debugLogger, justErrorsLogger } from './loggers.js'
+import {
+  defaultOptions as defaultRestrictionOptions,
+  Restricter,
+  RestrictionError,
+} from './Restricter.js'
+import DefaultStore from './store/index.js'
+import supportsUploadProgress from './supportsUploadProgress.js'
+import createEmitter from './utils/createEmitter.js'
 import {
   getErrorMessage,
   getFileNameAndExtension,
@@ -85,6 +90,12 @@ export type PartialTreeFile = {
   status: PartialTreeStatusFile
   parentId: PartialTreeId
   data: CompanionFile
+
+  /**
+   * `true` while no listing of its folder has included it: a search result or a
+   * deep link added it first. A folder shows these after its loaded pages.
+   */
+  unlisted?: true
 }
 
 export type PartialTreeFolderNode = {
@@ -107,6 +118,12 @@ export type PartialTreeFolderNode = {
     CompanionFile,
     'name' | 'icon' | 'thumbnail' | 'isFolder' | 'author' | 'custom'
   >
+
+  /**
+   * `true` while no listing of its folder has included it: a search result or a
+   * deep link added it first. A folder shows these after its loaded pages.
+   */
+  unlisted?: true
 }
 
 export type PartialTreeFolderRoot = {
@@ -213,6 +230,9 @@ export type UnknownProviderPlugin<
   M extends Meta,
   B extends Body,
 > = UnknownPlugin<M, B, UnknownProviderPluginState> &
+  Partial<
+    Pick<UIPlugin<UIPluginOptions, M, B>, 'beginAddingFiles' | 'isNavigating'>
+  > &
   BaseProviderPlugin & {
     rootFolderId: string | null
     files: UppyFile<M, B>[]
@@ -457,7 +477,7 @@ export class Uppy<
 
   #storeUnsubscribe
 
-  #emitter = ee()
+  #emitter = createEmitter()
 
   #preProcessors: Set<Processor> = new Set()
 
@@ -1167,9 +1187,13 @@ export class Uppy<
           nextFilesState,
         )
 
-        // update state after onBeforeFileAdded
-        existingFiles = this.getState().files
-        nextFilesState = { ...existingFiles, ...nextFilesState }
+        // onBeforeFileAdded may have called setState; if so, merge in its changes.
+        // Only merge when state.files actually changed, to keep this loop linear.
+        const filesAfterHook = this.getState().files
+        if (filesAfterHook !== existingFiles) {
+          existingFiles = filesAfterHook
+          nextFilesState = { ...existingFiles, ...nextFilesState }
+        }
 
         if (
           !onBeforeFileAddedResult &&
@@ -2218,13 +2242,24 @@ export class Uppy<
 
     this.emit('upload', uploadID, this.getFilesByIds(fileIDs))
 
+    // A file belongs to one upload at a time. A retried file may still be
+    // listed in its earlier upload if that one is still running: move it here,
+    // so only this upload reports it, and drop uploads that this leaves empty.
+    const newFileIDs = new Set(fileIDs)
+    const otherUploads: typeof currentUploads = {}
+    for (const [id, upload] of Object.entries(currentUploads)) {
+      const remaining = upload.fileIDs.filter((f) => !newFileIDs.has(f))
+      if (remaining.length > 0)
+        otherUploads[id] = { ...upload, fileIDs: remaining }
+    }
+
     this.setState({
       allowNewUpload:
         this.opts.allowMultipleUploadBatches !== false &&
         this.opts.allowMultipleUploads !== false,
 
       currentUploads: {
-        ...currentUploads,
+        ...otherUploads,
         [uploadID]: {
           fileIDs,
           step: 0,

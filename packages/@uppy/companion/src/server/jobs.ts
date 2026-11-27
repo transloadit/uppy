@@ -1,7 +1,9 @@
 import fs from 'node:fs'
 import path from 'node:path'
 import { setTimeout as sleep } from 'node:timers/promises'
+
 import got from 'got'
+
 import { isRecord } from './helpers/type-guards.js'
 import * as logger from './logger.js'
 import Uploader from './Uploader.js'

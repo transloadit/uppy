@@ -1,46 +1,61 @@
 #!/usr/bin/env node
 
-import { execSync } from 'node:child_process'
+// Keeps the CDN URLs in READMEs, docs and examples pointing at the current
+// release. Migration guides and blog posts are left alone on purpose: their
+// old versions are part of the history they describe.
+
 import { readFileSync, writeFileSync } from 'node:fs'
 
-// Get the current uppy version
-const packageJsonOutput = execSync(
-  'yarn workspace uppy exec npm pkg get version',
-  { encoding: 'utf8' },
-)
-const versionMatch = packageJsonOutput.match(/"([0-9]+\.[0-9]+\.[0-9]+)"/)
+const root = new URL('../', import.meta.url)
 
-if (!versionMatch) {
-  console.log('Could not extract version from package.json')
-  process.exit(1)
+function readVersion(packageJsonPath) {
+  const { version } = JSON.parse(
+    readFileSync(new URL(packageJsonPath, root), 'utf8'),
+  )
+  if (!/^[0-9]+\.[0-9]+\.[0-9]+$/.test(version)) {
+    console.log(
+      `${packageJsonPath} has a prerelease version (${version}), leaving CDN URLs as they are`,
+    )
+    process.exit(0)
+  }
+  return version
 }
 
-const version = versionMatch[1]
+const version = readVersion('packages/uppy/package.json')
+const localesVersion = readVersion('packages/@uppy/locales/package.json')
 
-// Update README.md
-const readme = readFileSync('README.md', 'utf8')
-const updatedReadme = readme.replace(
-  /https:\/\/releases\.transloadit\.com\/uppy\/v[0-9]+\.[0-9]+\.[0-9]+\//g,
-  `https://releases.transloadit.com/uppy/v${version}/`,
+const semver = String.raw`[0-9]+\.[0-9]+\.[0-9]+(?:-[0-9A-Za-z.]+)?`
+const uppyUrl = new RegExp(
+  String.raw`https://releases\.transloadit\.com/uppy/v${semver}/`,
+  'g',
+)
+const localesUrl = new RegExp(
+  String.raw`https://releases\.transloadit\.com/uppy/locales/v${semver}/`,
+  'g',
 )
 
-if (readme !== updatedReadme) {
-  writeFileSync('README.md', updatedReadme)
-  console.log('Updated README.md')
-} else {
-  console.log('README.md already up to date')
-}
+const files = [
+  'README.md',
+  'BUNDLE-README.md',
+  'examples/cdn/index.html',
+  'examples/companion/client/index.html',
+  'examples/aws-nodejs/index.ts',
+  'website/docs/locales.mdx',
+]
 
-// Update BUNDLE-README.md
-const bundleReadme = readFileSync('BUNDLE-README.md', 'utf8')
-const updatedBundleReadme = bundleReadme.replace(
-  /https:\/\/releases\.transloadit\.com\/uppy\/v[0-9]+\.[0-9]+\.[0-9]+\//g,
-  `https://releases.transloadit.com/uppy/v${version}/`,
-)
+for (const file of files) {
+  const content = readFileSync(new URL(file, root), 'utf8')
+  const updated = content
+    .replace(uppyUrl, `https://releases.transloadit.com/uppy/v${version}/`)
+    .replace(
+      localesUrl,
+      `https://releases.transloadit.com/uppy/locales/v${localesVersion}/`,
+    )
 
-if (bundleReadme !== updatedBundleReadme) {
-  writeFileSync('BUNDLE-README.md', updatedBundleReadme)
-  console.log('Updated BUNDLE-README.md')
-} else {
-  console.log('BUNDLE-README.md already up to date')
+  if (content !== updated) {
+    writeFileSync(new URL(file, root), updated)
+    console.log(`Updated ${file}`)
+  } else {
+    console.log(`${file} already up to date`)
+  }
 }

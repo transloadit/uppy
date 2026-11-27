@@ -1,4 +1,9 @@
+import '@uppy/core/css/style.css'
+import '@uppy/dashboard/css/style.css'
 import '@uppy-dev/msw-setup'
+
+import type { Meta } from '@uppy/core'
+
 import { network } from 'virtual:msw'
 import Uppy from '@uppy/core'
 import { ProviderViews } from '@uppy/core/provider-views'
@@ -8,10 +13,8 @@ import GoogleDrive from '@uppy/google-drive'
 import { delay, HttpResponse, http } from 'msw'
 import { afterEach, beforeAll, describe, expect, test } from 'vitest'
 import { page, userEvent } from 'vitest/browser'
-import { handlers } from './mocks/CompanionHandler.js'
 
-import '@uppy/core/css/style.css'
-import '@uppy/dashboard/css/style.css'
+import { handlers } from './mocks/CompanionHandler.js'
 
 let uppy: Uppy | undefined
 
@@ -102,6 +105,140 @@ describe('ProviderView Search E2E', () => {
       exact: true,
     })
     expect(targetPdfItem).toBeTruthy()
+  })
+
+  test('Search result whose requestPath is not an encoded path still renders', async () => {
+    network.use(
+      http.get('http://companion.test/:provider/search', () =>
+        HttpResponse.json({
+          username: 'test-user@example.com',
+          items: [
+            {
+              isFolder: false,
+              icon: 'file',
+              name: 'shared.pdf',
+              mimeType: 'application/pdf',
+              id: 'id:shared',
+              thumbnail: null,
+              // what older Companions sent for Dropbox items without a path
+              requestPath: 'undefined',
+              size: 1,
+            },
+          ],
+          nextPagePath: null,
+        }),
+      ),
+    )
+    uppy = initializeUppy(['Dropbox'])
+    await page.getByRole('tab', { name: 'Dropbox' }).click()
+    await expect
+      .element(page.getByRole('tabpanel').getByText('test-user@example.com'))
+      .toBeVisible()
+
+    const searchInput = document.querySelector(
+      '.uppy-ProviderBrowser-searchFilterInput',
+    ) as HTMLInputElement
+    // before the fix, rendering threw "Partial tree not complete"
+    await userEvent.type(searchInput, 'shared')
+    await expect
+      .element(page.getByRole('button', { name: 'shared.pdf', exact: true }))
+      .toBeVisible()
+  })
+
+  test('Search result whose requestPath has no path segments does not crash', async () => {
+    network.use(
+      http.get('http://companion.test/:provider/search', () =>
+        HttpResponse.json({
+          username: 'test-user@example.com',
+          items: [
+            {
+              isFolder: false,
+              icon: 'file',
+              name: 'nowhere.pdf',
+              mimeType: 'application/pdf',
+              id: 'id:nowhere',
+              thumbnail: null,
+              requestPath: '%2F',
+              size: 1,
+            },
+            {
+              isFolder: false,
+              icon: 'file',
+              name: 'somewhere.pdf',
+              mimeType: 'application/pdf',
+              id: 'id:somewhere',
+              thumbnail: null,
+              requestPath: '%2Fsomewhere.pdf',
+              size: 1,
+            },
+          ],
+          nextPagePath: null,
+        }),
+      ),
+    )
+    uppy = initializeUppy(['Dropbox'])
+    await page.getByRole('tab', { name: 'Dropbox' }).click()
+    await expect
+      .element(page.getByRole('tabpanel').getByText('test-user@example.com'))
+      .toBeVisible()
+
+    const searchInput = document.querySelector(
+      '.uppy-ProviderBrowser-searchFilterInput',
+    ) as HTMLInputElement
+    // before the fix, rendering threw "Partial tree not complete"
+    await userEvent.type(searchInput, 'where')
+    await expect
+      .element(page.getByRole('button', { name: 'somewhere.pdf', exact: true }))
+      .toBeVisible()
+    // so that scrolling its folder keeps it after the loaded pages
+    expect(
+      uppy
+        .getPlugin<Dropbox<Meta, Record<string, never>>>('Dropbox')!
+        .getPluginState()
+        .partialTree.find((node) => node.id === '%2Fsomewhere.pdf'),
+    ).toMatchObject({ unlisted: true })
+  })
+
+  test('Search results with the same requestPath are shown once', async () => {
+    const item = (name: string) => ({
+      isFolder: false,
+      icon: 'file',
+      name,
+      mimeType: 'application/pdf',
+      id: `id:${name}`,
+      thumbnail: null,
+      // what older Companions sent for Dropbox items without a path
+      requestPath: 'undefined',
+      size: 1,
+    })
+    network.use(
+      http.get('http://companion.test/:provider/search', () =>
+        HttpResponse.json({
+          username: 'test-user@example.com',
+          items: [item('first.pdf'), item('second.pdf')],
+          nextPagePath: null,
+        }),
+      ),
+    )
+    uppy = initializeUppy(['Dropbox'])
+    await page.getByRole('tab', { name: 'Dropbox' }).click()
+    await expect
+      .element(page.getByRole('tabpanel').getByText('test-user@example.com'))
+      .toBeVisible()
+
+    const searchInput = document.querySelector(
+      '.uppy-ProviderBrowser-searchFilterInput',
+    ) as HTMLInputElement
+    await userEvent.type(searchInput, 'pdf')
+    await expect
+      .element(page.getByRole('button', { name: 'first.pdf', exact: true }))
+      .toBeVisible()
+    // before the fix, the first result was listed twice under the same key
+    expect(
+      page.getByRole('button', { name: 'first.pdf', exact: true }).elements(),
+    ).toHaveLength(1)
+    // the second result has no node of its own, so it is not listed
+    expect(page.getByText('second.pdf').elements()).toHaveLength(0)
   })
 
   test('Search deep folder -> open it -> click ancestor breadcrumb and navigate correctly', async () => {

@@ -1,10 +1,13 @@
 import type { Body, Meta, UppyEventMap, UppyFile } from '@uppy/core'
+
+import type { UppyContext } from './types.js'
+
 import { Fragment } from '@uppy/core/utils/preact'
 import { useEffect, useState } from '@uppy/core/utils/preact/hooks'
 import { clsx } from 'clsx'
 import prettyBytes from 'pretty-bytes'
+
 import { Thumbnail } from './index.js'
-import type { UppyContext } from './types.js'
 
 export type FilesGridProps = {
   editFile?: (file: UppyFile<Meta, Body>) => void
@@ -14,7 +17,9 @@ export type FilesGridProps = {
 }
 
 export default function FilesGrid(props: FilesGridProps) {
-  const [files, setFiles] = useState<UppyFile<Meta, Body>[]>(() => [])
+  const [files, setFiles] = useState<UppyFile<Meta, Body>[]>(
+    () => props.ctx.uppy?.getFiles() ?? [],
+  )
   const { ctx, editFile, imageThumbnail = true } = props
 
   function gridColsClass() {
@@ -31,6 +36,8 @@ export default function FilesGrid(props: FilesGridProps) {
   }
 
   useEffect(() => {
+    // Files added before this component mounted, or on a new Uppy instance
+    setFiles(ctx.uppy?.getFiles() ?? [])
     const onStateUpdate: UppyEventMap<any, any>['state-update'] = (
       _prev,
       _next,

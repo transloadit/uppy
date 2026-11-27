@@ -1,8 +1,10 @@
 import type { I18n } from '@uppy/core/utils'
+
+import type { AudioSourceSelectProps } from './AudioSourceSelect.js'
+
 import { useEffect, useRef } from '@uppy/core/utils/preact/hooks'
-import AudioSourceSelect, {
-  type AudioSourceSelectProps,
-} from './AudioSourceSelect.js'
+
+import AudioSourceSelect from './AudioSourceSelect.js'
 import AudioOscilloscope from './audio-oscilloscope/index.js'
 import DiscardButton from './DiscardButton.js'
 import RecordButton from './RecordButton.js'
