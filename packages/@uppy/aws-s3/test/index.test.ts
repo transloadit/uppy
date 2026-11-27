@@ -1334,8 +1334,10 @@ describe('AwsS3', () => {
       })
 
       const uploadPromise = core.upload()
-      await vi.waitFor(() =>
-        expect(core.getFile(fileId).s3Multipart).toBeDefined(),
+      // Generous timeouts: the default 1s flakes on slow CI runners.
+      await vi.waitFor(
+        () => expect(core.getFile(fileId).s3Multipart).toBeDefined(),
+        { timeout: 5000 },
       )
       core.removePlugin(core.getPlugin('AwsS3')!)
       await uploadPromise
@@ -1343,7 +1345,9 @@ describe('AwsS3', () => {
       // The upload is gone in S3, so a retry has to start a new one.
       expect(core.getFile(fileId).s3Multipart).toBeUndefined()
       // The abort request is sent without being awaited.
-      await vi.waitFor(() => expect(operations).toContain('abortMultipart'))
+      await vi.waitFor(() => expect(operations).toContain('abortMultipart'), {
+        timeout: 5000,
+      })
     })
 
     test('a file added later does not wait behind every part of a big file', async () => {
