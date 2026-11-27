@@ -31,6 +31,7 @@ import {
   Provider,
 } from '@uppy/core/companion-client'
 import { ProviderViews } from '@uppy/core/provider-views'
+import { ErrorWithCause } from '@uppy/core/utils'
 // biome-ignore lint/style/useImportType: h is not a type
 import { type ComponentChild, h } from '@uppy/core/utils/preact'
 
@@ -191,7 +192,13 @@ class S3SimpleAuthProvider<M extends Meta, B extends Body> extends Provider<
     // the integrator mints one, and Companion decides what it sees.
     const grant = isGrantForm(authFormData)
       ? authFormData.grant
-      : await this.getGrant?.()
+      : await this.getGrant?.().catch((cause: unknown) => {
+          signal.throwIfAborted()
+          if (cause instanceof UserFacingApiError) throw cause
+          // Any other message is not for the user: show it as a failed
+          // connection, like a failed request.
+          throw new ErrorWithCause('Could not get a grant', { cause })
+        })
     signal.throwIfAborted()
     await this.loginSimpleAuth({
       uppyVersions,
@@ -414,11 +421,28 @@ export default class S3<M extends Meta, B extends Body>
     })
     this.provider.getGrant = this.opts.getGrant
     this.provider.onLogin = (grant) => {
+      const previous = this.#grant ?? this.#session
       this.#grant = grant === undefined ? null : decodeGrant(grant)
+      if (
+        previous &&
+        this.#grant &&
+        (previous.bucket !== this.#grant.bucket ||
+          normalizeStorageGrantPrefix(previous.prefix) !==
+            normalizeStorageGrantPrefix(this.#grant.prefix))
+      )
+        this.onSessionChanged()
       this.#applyActions()
     }
     this.provider.onSession = (session) => {
+      const previous = this.#session
       this.#session = session
+      if (
+        previous &&
+        (previous.bucket !== session.bucket ||
+          normalizeStorageGrantPrefix(previous.prefix) !==
+            normalizeStorageGrantPrefix(session.prefix))
+      )
+        this.onSessionChanged()
       this.#applyActions()
     }
     this.provider.onLogout = () => {
@@ -426,6 +450,7 @@ export default class S3<M extends Meta, B extends Body>
       this.#session = undefined
       this.#grant = null
       this.#needsLogin = true
+      this.onSessionChanged()
       this.#applyActions()
     }
     this.provider.onBucketChange = () => {
@@ -438,6 +463,9 @@ export default class S3<M extends Meta, B extends Body>
   /** How often the bucket changed under the plugin: a navigation started before must stop. */
   #bucketChanges = 0
 
+  /** Lets derived plugins discard state belonging to an ended or changed session. */
+  protected onSessionChanged(): void {}
+
   /**
    * A listing reported another bucket than the one everything shown was listed
    * in. Nothing listed in the old bucket may be added, or opened, in the new
@@ -447,6 +475,7 @@ export default class S3<M extends Meta, B extends Body>
    */
   #startOverInNewBucket(): UserFacingApiError {
     this.#bucketChanges++
+    this.onSessionChanged()
     this.view.resetPluginState()
     // Still connected (the listing succeeded): no connect screen, and no
     // probing render, since the root is listed below.
@@ -479,6 +508,24 @@ export default class S3<M extends Meta, B extends Body>
    * links).
    */
   async openFolderPath(key: string | null): Promise<boolean> {
+    this.#folderWalks += 1
+    this.setPluginState()
+    try {
+      return await this.#openFolderPath(key)
+    } finally {
+      this.#folderWalks -= 1
+      this.setPluginState()
+    }
+  }
+
+  #folderWalks = 0
+
+  /** A path walk includes the parent's pagination between folder listings. */
+  override get isNavigating(): boolean {
+    return this.#folderWalks > 0
+  }
+
+  async #openFolderPath(key: string | null): Promise<boolean> {
     await this.#sessionReady
     // This call owns the initial navigation even without a rendered panel:
     // prevent a later first render from reopening the root behind our back.

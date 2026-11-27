@@ -548,8 +548,14 @@
   border: 1px solid rgba(variables.$blue, 0.4);
   border-radius: 4px;
 
-  &:hover {
+  &:not(:disabled):hover {
     background-color: rgba(variables.$blue, 0.08);
+  }
+
+  // While the open folder is still loading.
+  &:disabled {
+    cursor: default;
+    opacity: 0.5;
   }
 
   // Like the "Log out" link next to it.
@@ -559,7 +565,7 @@
     color: variables.$gray-200;
     border-color: variables.$gray-600;
 
-    &:hover {
+    &:not(:disabled):hover {
       background-color: variables.$gray-800;
     }
   }

@@ -132,6 +132,12 @@ async function dialogOf(plugin: TestPlugin) {
   return plugin.getPluginState().dialog
 }
 
+/** The messages `uppy.info()` shows right now. */
+const shownInfo = () =>
+  uppy!.getState().info.map(({ message, details }) => ({ message, details }))
+
+const failed = { message: 'Connection with Companion failed', details: null }
+
 /** The first listing came after the login, without an unauthenticated probe. */
 function expectLoginBeforeListing(companion: MockS3Companion) {
   const paths = companion.calls.map((call) => call.path)
@@ -1283,6 +1289,37 @@ describe('S3 provider in the browser', () => {
         expect(bucketOf(plugin, 'readme.md')).toBe('bucket-b')
         expect(toldBucketChanged(uppy!)).toBe(false)
       })
+    })
+
+    it('says a failed grant failed, without its details, and connects on retry', async () => {
+      const getGrant = vi
+        .fn<() => Promise<string>>()
+        .mockRejectedValueOnce(new Error('private-diagnostic-sentinel'))
+        .mockResolvedValue(mockGrant({ bucket: 'my-bucket' }))
+      setup({ getGrant })
+
+      await page.getByRole('tab', { name: 'S3' }).click()
+      await vi.waitFor(() => expect(shownInfo()).toEqual([failed]))
+      await page.getByRole('button', { name: 'Connect to S3' }).click()
+      await expect.element(page.getByText('readme.md')).toBeVisible()
+      expect(getGrant).toHaveBeenCalledTimes(2)
+    })
+
+    it('says an unreachable Companion failed and connects on retry', async () => {
+      setup({ getGrant: async () => mockGrant({ bucket: 'my-bucket' }) })
+      let down = true
+      // Falls through to the mock Companion once it is back up.
+      network.use(
+        http.post(`${COMPANION}/s3/simple-auth`, () =>
+          down ? HttpResponse.error() : undefined,
+        ),
+      )
+
+      await page.getByRole('tab', { name: 'S3' }).click()
+      await vi.waitFor(() => expect(shownInfo()).toEqual([failed]))
+      down = false
+      await page.getByRole('button', { name: 'Connect to S3' }).click()
+      await expect.element(page.getByText('readme.md')).toBeVisible()
     })
 
     it('hides the mutation actions for a read-only grant', async () => {
