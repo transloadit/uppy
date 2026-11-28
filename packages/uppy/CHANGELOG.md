@@ -1,5 +1,51 @@
 # uppy
 
+## 6.0.9
+
+### Patch Changes
+
+- Updated dependencies [31a49e4]
+- Updated dependencies [dba59ab]
+- Updated dependencies [aa7bd52]
+- Updated dependencies [dd31610]
+- Updated dependencies [b2bb6f5]
+- Updated dependencies [6d5a1f5]
+- Updated dependencies [b2198a0]
+- Updated dependencies [766cba4]
+- Updated dependencies [ff37e33]
+- Updated dependencies [ab9d379]
+- Updated dependencies [0ada2c6]
+- Updated dependencies [dba59ab]
+- Updated dependencies [7d7e72c]
+- Updated dependencies [294fd47]
+- Updated dependencies [22fa75c]
+- Updated dependencies [c52f0c2]
+- Updated dependencies [2a383b6]
+- Updated dependencies [6fe4558]
+- Updated dependencies [43b689c]
+- Updated dependencies [3ca841b]
+- Updated dependencies [1430c20]
+- Updated dependencies [4c7fed6]
+- Updated dependencies [c520e83]
+- Updated dependencies [de1baa8]
+- Updated dependencies [20d0e51]
+- Updated dependencies [4955e1f]
+- Updated dependencies [05a41ca]
+- Updated dependencies [060ebf8]
+- Updated dependencies [0b19991]
+- Updated dependencies [1f3e4c3]
+  - @uppy/dashboard@6.0.4
+  - @uppy/status-bar@6.0.2
+  - @uppy/locales@5.3.3
+  - @uppy/aws-s3@6.4.0
+  - @uppy/core@6.4.0
+  - @uppy/image-editor@5.0.2
+  - @uppy/tus@6.0.2
+  - @uppy/transloadit@6.1.1
+  - @uppy/screen-capture@6.0.4
+  - @uppy/webcam@6.0.4
+  - @uppy/thumbnail-generator@6.0.3
+
 ## 6.0.8
 
 ### Patch Changes

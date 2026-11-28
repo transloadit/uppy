@@ -1,5 +1,83 @@
 # @uppy/companion
 
+## 7.3.0
+
+### Minor Changes
+
+- c7cd222: Tighten the OAuth flow:
+  
+  - OAuth `/connect` requests with a `Content-Encoding` other than `identity` are rejected with 415, also when the host app already inflated the body.
+  - Grant input is limited to 32 flat string fields and 8 KiB. Requests to start a login accept only `state` and the provider's configured `dynamic` fields. When a callback is rejected, the waiting Uppy client is told right away.
+  - OAuth app credentials fetched through `credentialsURL` can no longer be overridden through the query string.
+  - The OAuth callback and `send-token` pages only answer browser navigations, not `fetch()`.
+  - `send-token` checks the origin saved at login against the current `corsOrigins`, and tells a waiting Uppy client when it refuses. An `Access-Control-Allow-Origin` header the host app set is only saved as the origin when `corsOrigins` allows it.
+  - Cookie-authenticated thumbnails refuse credentialed cross-origin fetches. Ordinary `<img>` loads keep working.
+  - An `uppyAuthToken` query parameter is only accepted by `send-token`.
+  - With `COMPANION_PROTOCOL=https`, the standalone server's session cookie is `SameSite=Lax` and `Secure` whenever the request is seen as HTTPS, including through `X-Forwarded-Proto`. `COMPANION_COOKIE_DOMAIN` is still applied.
+  - The standalone server no longer stores sessions for requests that never write to them.
+- 6305714: Add `providerOptions[provider].scope` to replace the OAuth scopes Companion requests from a provider, for example to ask OneDrive for `Files.Read` instead of `Files.Read.All`, and `providerOptions[provider].customParams` to add parameters to its authorization URL, for example Dropbox `force_reapprove` so users can switch accounts. Dropbox scopes are now sent space-separated, as Dropbox expects.
+- eeef179: Pass on a tus destination's JSON answer to the upload's last request in the `success` payload, so `upload-success` gets it as `response.body`, as with multipart uploads. Answers without a body, or with one that is not JSON, are left out as before.
+
+### Patch Changes
+
+- 84e6a16: Keep the login result when the login socket closes while Companion is still subscribing to it, instead of consuming the result and failing to send it.
+- 9c267e3: Box: the next page of a folder listing now stays in that folder, instead of listing the root folder, and a folder whose size is an exact multiple of the page size no longer asks for an extra, empty page. Google Drive exports downloaded through their export link, and Facebook, Unsplash (including its download-attribution request) and Zoom downloads, now honour `allowLocalUrls` like every other download. These downloads now also use the protected client's timeouts (30 s until the response starts; up to 10 minutes for Google Drive exports, which Google converts before answering) and, when `allowLocalUrls` is off, resolve hostnames through DNS servers instead of `dns.lookup`.
+- 1ccf981: Fix OAuth logins when `corsOrigins` is a function. Companion saved the function's answer (such as `true` or a list of origins) as the login's origin instead of the client's origin, so `send-token` refused the login unless the function answered with that exact origin string. It now saves the client's origin whenever the function allows it.
+- cafed78: Upgrade Got to version 16 while preserving streamed multipart uploads and Google Drive pagination. A failed multipart upload now logs the destination's status code instead of Got's error message, which names the full URL including any presigned query.
+- 4f9407d: Logged data can no longer drive the terminal or hide other records: its escape sequences (such as colour codes) are dropped, and other control characters are shown escaped (e.g. `\u0007`). Tabs and the logger's own colours are kept. A multi-line message (such as an error stack) is logged one line per record, each with the usual prefix, up to 200 lines.
+- eaa3b7b: Return 400 instead of 500 when `/url/meta`, `/url/get` or the S3 multipart endpoints receive a request without a JSON body (Express 5 leaves `req.body` undefined).
+- ef938ce: @uppy/companion: make silent and swallowed error paths observable.
+  
+  - The remote OAuth credentials handler (`getCredentialsOverrideMiddleware`) now
+    logs the error and responds with a 424 when the credentials service fails or
+    sends credentials Companion cannot use (a misconfigured Template Credential,
+    or a bad `transloadit_gateway`), and with a 500 for any other error, instead
+    of sending the "Could not fetch credentials" page with a default 200 status.
+  - The Redis pub/sub emitter recovers when Redis comes back, also when it was
+    down at startup: it no longer waits on a single connection attempt, and
+    ioredis reconnects and re-subscribes on its own. A failed connection, publish
+    or subscribe fails the call that caused it, including imports waiting for
+    their socket, once ioredis gives up on the command (`maxRetriesPerRequest`:
+    about 10 seconds with its default options). With `maxRetriesPerRequest: null`
+    commands never fail, and such an import ends with the
+    `clientSocketConnectTimeout` (60 seconds by default) instead. A failed `on()`
+    no longer leaves its listener behind. A message on a subscribed channel that
+    is not a JSON array is now logged and dropped instead of failing every import
+    waiting to start, and no longer cancels a `once()` subscription. A failed
+    connect is logged with the reason for each address. Logs carry only error
+    names, codes and messages and the start of a token, never Redis command
+    arguments, request headers or message bodies.
+  - Failing to abort a tus upload (on pause or cancel) and failing to delete a
+    temp file are now logged instead of being swallowed or left unhandled.
+- 2320675: - Google Drive: list shared drives one page per request instead of all of them at once (in the root listing, more shared drives now arrive with "load more"), and escape the folder ID in the Drive query.
+  - Box and OneDrive: validate the folder path before any request starts.
+  - S3 provider: downloads use their own HTTP client, so imports waiting to be read can't use up the connections needed for browsing and other requests.
+  - S3 multipart: reject empty object keys, keys over 1024 bytes and upload IDs over 2048 characters before signing, and stop when S3 returns an invalid or non-advancing part-listing cursor.
+  - Thumbnails: release the provider's stream when the browser has already gone.
+- 6d3dece: Bound the work a single client can queue in Companion. An upload socket is now closed when it has more than 16 actions pending or sends malformed JSON, and the standalone server answers with 429 once a connection has 100 HTTP requests pending. Redis messages are dispatched through one pattern listener, and a failed Redis command no longer crashes the process when nothing listens for its error. Standalone 500 responses no longer include the raw error or its message, in development as well as production.
+- aee4e71: The S3 upload endpoints validate their request input with zod schemas. The single-part signing endpoint now rejects part numbers that aren't a whole number from 1 to 10000 (e.g. `20000` or `5abc`), as its error message and the batch endpoint already said. The complete endpoint likewise rejects parts whose `PartNumber` isn't a whole number from 1 to 10000.
+- 145fca4: Drop seven small dependencies: `express-interceptor`, `helmet`, `node-schedule`, `cookie-parser`, `serialize-javascript`, `escape-goat` and `escape-string-regexp`. Companion now sets the same four security headers itself, runs the daily clean-up job at 23:00 with a timer, and parses cookies with the `cookie` package that Express already uses, so cookie values always stay strings (no `j:` JSON cookies) and `req.signedCookies` is no longer set. The grant error interceptor is removed: grant 5 never sends the response body it rewrote. `shouldInterceptGrantError` is deprecated but still exported.
+- ab5d8e4: Companion cleans up failed and cancelled transfers more reliably:
+  
+  - Source streams are destroyed on every exit, and a stalled transfer is abandoned. A multipart or S3 upload request that makes no progress for 10 minutes is stopped; for S3 the limit grows with `chunkSize`, since S3 reports progress only per stored part.
+  - An abandoned or cancelled multipart upload request is aborted, and so is an S3 multipart upload (a file that fits in a single S3 part may still be stored).
+  - Downloads and uploads refuse an upstream protocol upgrade.
+  - A pause and resume no longer start a tus upload again while it is still running, and cancelling no longer deletes a tus upload Companion didn't create.
+  - When resuming a tus upload, the server's offset and length are checked against the file.
+  - With a fixed `Authorization` header, credentials in the tus or upload URL are dropped.
+  - URL imports, URL metadata lookups and Google Picker downloads ask for uncompressed responses, and fail if the server compresses them anyway instead of decompressing them.
+  - Upload requests no longer forward client method-override headers.
+- ee3f6bf: Stop logging the WebDAV URL when a request to a WebDAV server fails. A failed connection (refused, DNS, TLS) or a URL with `user:pass@` produced an error quoting the full URL, which can itself be the credential; the log now shows only its origin (scheme, host and port). The login error is also mapped like every other WebDAV error, so a rejected login returns 401 (and other server errors 424/502) instead of 500.
+- bcb232b: WebDAV: support ownCloud Infinite Scale (oCIS) public share links. When a `/s/<token>` link isn't served at the Nextcloud/ownCloud 10 endpoint (`/public.php/webdav/`), Companion now tries oCIS's `/dav/public-files/<token>` once while connecting, and remembers which one worked for the session.
+- 93e2775: Companion now checks WebDAV folder listings before parsing them, and rejects responses with very deep nesting, too many elements or attributes, or a DTD. It asks WebDAV servers for uncompressed listings and caps a listing at 5 MiB, and it rejects WebDAV URLs deeper than 32 folders.
+- 0ada2c6: Fix the Dashboard crashing with "Partial tree not complete" when a Dropbox search
+  matched items that aren't mounted in the user's Dropbox (e.g. shared folders that
+  weren't added), which have no path. Companion now leaves such items out, since they
+  can't be browsed or addressed by path, instead of sending the request path
+  `undefined`. The search view also now uses the ids it gave the results in its tree,
+  so such a request path from an older Companion no longer breaks rendering.
+- da42c64: Box and Dropbox: report an unknown file size as unknown instead of `0` (Box) or `NaN` (Dropbox).
+
 ## 7.2.4
 
 ### Patch Changes

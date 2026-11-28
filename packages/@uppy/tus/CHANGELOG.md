@@ -1,5 +1,12 @@
 # @uppy/tus
 
+## 6.0.2
+
+### Patch Changes
+
+- 43b689c: `@uppy/tus`: remote (Companion) files now send only the `allowedMetaFields` to Companion, like local files. `@uppy/transloadit`: remote files are moved to the Assembly's `companion_url` only when that URL is an `https` Transloadit Companion URL too (including regional hosts such as `api2-us-east-1`). If you restrict `allowedMetaFields` without `name` and `type`, remote files now reach Companion without them, so Companion names the upload `uppy-file-<uuid>` and sends no `filetype`; add `name` and `type` to `allowedMetaFields` to keep the real file names and types.
+- 0b19991: Catch the best-effort terminate (`abort(true)`) rejection when aborting an uploader, so terminating an already-finished upload logs a warning instead of surfacing as an unhandled promise rejection.
+
 ## 6.0.1
 
 ### Patch Changes

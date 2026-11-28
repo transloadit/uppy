@@ -1,5 +1,25 @@
 # @uppy/vue
 
+## 4.1.0
+
+### Minor Changes
+
+- 3ca841b: `useRemoteSource` accepts an `onClose` option. `cancel` clears the selection and calls `onClose`. `done` calls `onClose` after it adds the files. When restrictions or `onBeforeFileAdded` reject every selected file, the picker stays open with the selection kept. A `done` that finishes after the consumer unmounted does not call `onClose`. The hook state also updates its `error` when files are added to or removed from Uppy, or when `uppy.setOptions()` changes restrictions or the locale, and upload progress no longer recomputes it. React no longer reopens the root folder when `onClose` is an inline function.
+  
+  `ProviderView#donePicking()` now resolves with whether the files were added, and `SearchProviderView#donePicking()` (Unsplash) returns it. When every selected file is rejected, the selection is kept instead of cleared, and the "Added N files" message only counts files that were added. Done no longer adds files when it is aborted while it still lists folders: by cancelling the selection, closing the Dashboard panel, or cancelling all uploads.
+  
+  `Thumbnail` no longer revokes the `preview` URL of remote files, which belongs to the caller.
+
+### Patch Changes
+
+- 1f5766f: The headless components (`Dropzone`, `FilesGrid`, `FilesList`, `ProviderIcon`, `Thumbnail`, `UploadButton`) now unmount their inner Preact tree when they unmount. Before, its cleanup never ran, so `Thumbnail` never revoked the object URLs it created.
+- Updated dependencies [d229714]
+- Updated dependencies [3ca841b]
+- Updated dependencies [4955e1f]
+- Updated dependencies [b2bb6f5]
+- Updated dependencies [060ebf8]
+  - @uppy/components@2.2.0
+
 ## 4.0.1
 
 ### Patch Changes

@@ -1,5 +1,21 @@
 # @uppy/aws-s3
 
+## 6.4.0
+
+### Minor Changes
+
+- dba59ab: Upload the parts of a multipart upload in parallel. `limit` now bounds concurrent uploads across files and parts, as in v5: every file starts right away and they share the pool, and `s3-multipart:part-uploaded` fires in completion order rather than part order. Removing the plugin mid-upload now fails its local uploads, so the upload promise settles; a running remote (Companion) upload still finishes on its own. A multipart upload aborted that way no longer leaves resume state behind, so the file can be retried.
+
+### Patch Changes
+
+- aa7bd52: Report local uploads that fail before they start, for example when `crypto.randomUUID` is missing outside a secure context. The file now gets an `upload-error` and is listed as failed, instead of staying at 0% and being counted as successful.
+- dd31610: Document that `signRequest` should return `key` whenever the signing server
+  stores the object under a different key, even when you don't read the key back.
+  Without it, `upload-success` reports the requested key for a single-part `PUT`
+  but the key S3 echoes in `CompleteMultipartUploadResult` for a multipart upload,
+  so the same signer reports a different key depending on the file's size.
+- 6d5a1f5: Retry transient failures (network errors, 5xx, 429) of Companion requests in `companionEndpoint` mode, and expose the response status on the error via `error.request.status`.
+
 ## 6.3.1
 
 ### Patch Changes

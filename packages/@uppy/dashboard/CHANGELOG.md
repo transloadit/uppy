@@ -1,5 +1,42 @@
 # @uppy/dashboard
 
+## 6.0.4
+
+### Patch Changes
+
+- 31a49e4: Give upload action buttons more specific screen reader labels. The per-file remove, pause, resume and cancel buttons now include the file name (for example "Pause upload photo.jpg"), and the cancel, pause and resume buttons that act on every file now say "Cancel all uploads", "Pause all uploads" and "Resume all uploads". Visible text and tooltips are unchanged. Adds the `removeFileWithFilename`, `pauseUploadWithFilename`, `resumeUploadWithFilename`, `cancelUploadWithFilename`, `cancelAllUploads`, `pauseAllUploads` and `resumeAllUploads` strings.
+- ff37e33: Show "Error" in the Dashboard heading when all uploads have failed, instead of "Uploading X files", and keep a failed file's retry button visible when it failed before its first progress event.
+- ab9d379: Render the Informer once. Since the status bar moved into the Dashboard, every message was rendered twice, one on top of the other.
+- 060ebf8: Transloadit Storage: uploads no longer land in the folder the user just left. Toolbar actions (such as "Upload files" and "New folder") are disabled while a folder is still listing, and with `storeUploads` the panel takes no dropped files then. Queued files are stored in the folder they were added in, even if the panel shows another folder by the time they upload; the panel takes no new files in another folder until those are uploaded or removed.
+  
+  Failed storage or encoding attempts keep their destination when retried. Files queued before connecting no longer prevent later files from being pinned to their folder.
+  
+  Manually configured `createStoreAssemblyOptions` pipelines use the same folder-dependent drop guards as `storeUploads`.
+  
+  The destination is reserved when a drop is accepted, so navigating while Dashboard reads dropped files or folders cannot redirect them.
+  
+  Uploads added before connecting reserve their first signed destination for retries. Files added outside the panel during navigation bind to the folder once its listing settles.
+  
+  Multi-folder navigation is treated as one operation. Local selections and picker imports reserve their folder before the panel can reset, and all panel upload actions honor an existing queue’s destination.
+  
+  Toolbar actions also wait during paginated path navigation. Dismissing a file picker without a cancel event no longer leaves a folder reservation behind.
+  
+  Empty or rejected additions do not bind a previously unbound queue; provisional reservations are kept only after adding files or preparing an Assembly signature.
+  
+  Picker imports reserve their destination before reading selected directories. Headless managers report navigation as busy. Assembly-option failures remain retryable, and empty upload completions do not clear queued files.
+  
+  Successful uploads invalidate cached destination listings even when the panel has moved to another folder.
+  
+  Queued destinations reset on logout or a change of bucket or grant prefix. Signing never reuses a destination outside the current session’s root.
+  
+  Automatic reopening preserves failed files from earlier batches and files added before the deferred cleanup runs.
+  
+  Refreshing the uploaded destination preserves selections in unrelated folders.
+  
+  Refilling an invalidated checked folder reuses cached child IDs and lists each child folder once, preventing duplicate imports and incorrect file-count restrictions.
+- Updated dependencies [05a41ca]
+  - @uppy/thumbnail-generator@6.0.3
+
 ## 6.0.3
 
 ### Patch Changes
