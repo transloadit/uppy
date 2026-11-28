@@ -682,10 +682,15 @@ export default class Transloadit<
    * and emit it.
    */
   async #onAssemblyFinished(assembly: Assembly) {
-    const url = getAssemblyUrlSsl(assembly.status)
-    const finalStatus = await this.client
-      .getAssemblyStatus(url)
-      .catch((err: Error) => err)
+    // Polling emits its lifecycle events before storing the status.
+    await Promise.resolve()
+    const { status } = assembly
+    const finalStatus =
+      status.ok === 'ASSEMBLY_COMPLETED' || status.ok === 'ASSEMBLY_CANCELED'
+        ? status
+        : await this.client
+            .getAssemblyStatus(getAssemblyUrlSsl(status))
+            .catch((err: Error) => err)
     // Nothing cancels this request, so the assembly may have been cancelled
     // or replaced locally while it was in flight. Whatever ended it has
     // already notified the watcher, and the consumer does not want a
@@ -889,11 +894,14 @@ export default class Transloadit<
     }
 
     const onAssemblyFinished = () => {
+      assembly.off('finished', onAssemblyFinished)
+      assembly.off('metadata', onAssemblyFinished)
       this.#onAssemblyFinished(assembly).catch((err) => this.uppy.log(err))
     }
-    if (this.opts.waitForEncoding) {
+    if (this.#shouldWaitAfterUpload()) {
       assembly.on('finished', onAssemblyFinished)
-    } else if (this.opts.waitForMetadata) {
+    }
+    if (this.opts.waitForMetadata && !this.opts.waitForEncoding) {
       assembly.on('metadata', onAssemblyFinished)
     }
 

@@ -475,6 +475,29 @@ describe('Transloadit', () => {
     expect(completed).toEqual(['ASSEMBLY_CANCELED'])
   })
 
+  it('settles a metadata-only Assembly cancelled before metadata arrives', async () => {
+    let status = { ...finishedStatus, ok: 'ASSEMBLY_UPLOADING' }
+    const { uppy, plugin, assembly } = await restoreConnectedAssembly(
+      () => status,
+      {
+        opts: { waitForMetadata: true },
+        saved: status,
+      },
+    )
+    const completed = vi.fn()
+    uppy.on('transloadit:complete', completed)
+    plugin.client.getAssemblyStatus = vi
+      .fn()
+      .mockRejectedValue(new Error('Unavailable'))
+
+    status = { ...status, ok: 'ASSEMBLY_CANCELED' }
+    assembly.updateStatus(status)
+
+    await expect.poll(() => completed.mock.calls.length).toBe(1)
+    expect(completed.mock.calls[0][0]).toEqual(status)
+    expect(plugin.client.getAssemblyStatus).not.toHaveBeenCalled()
+  })
+
   it('ignores status from an assembly that was replaced', async () => {
     const {
       uppy,

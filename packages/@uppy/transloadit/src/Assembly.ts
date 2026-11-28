@@ -13,6 +13,7 @@ import { getAssemblyUrlSsl } from './index.js'
 const ASSEMBLY_UPLOADING = 'ASSEMBLY_UPLOADING'
 const ASSEMBLY_EXECUTING = 'ASSEMBLY_EXECUTING'
 const ASSEMBLY_COMPLETED = 'ASSEMBLY_COMPLETED'
+const ASSEMBLY_CANCELED = 'ASSEMBLY_CANCELED'
 
 const statusOrder = [ASSEMBLY_UPLOADING, ASSEMBLY_EXECUTING, ASSEMBLY_COMPLETED]
 
@@ -29,12 +30,19 @@ function isStatus(status: unknown, test: string) {
   return statusOrder.indexOf(status) >= statusOrder.indexOf(test)
 }
 
+function mergeById<T extends { id?: string }>(snapshot: T[], known: T[]) {
+  const ids = new Set(snapshot.map(({ id }) => id))
+  return [...snapshot, ...known.filter(({ id }) => id != null && !ids.has(id))]
+}
+
 class TransloaditAssembly extends Emitter {
   #rateLimitedQueue: RateLimitedQueue
 
   #fetchWithNetworkError: WrapPromiseFunctionType<typeof fetchWithNetworkError>
 
   #previousFetchStatusStillPending = false
+
+  #streamGeneration = 0
 
   #sse: EventSource | null = null
 
@@ -45,6 +53,7 @@ class TransloaditAssembly extends Emitter {
    * the new page gets them all again.
    */
   #emitted = new Set<'executing' | 'metadata' | 'finished'>()
+  #emittedResults = new Set<string>()
 
   #status: AssemblyResponse
 
@@ -69,6 +78,7 @@ class TransloaditAssembly extends Emitter {
   }
 
   connect(): void {
+    if (this.closed || this.#sse != null) return
     this.#connectServerSentEvents()
     this.#beginPolling()
   }
@@ -82,6 +92,15 @@ class TransloaditAssembly extends Emitter {
   #onFinished() {
     this.#emitOnce('finished')
     this.close()
+  }
+
+  #emitResult(step: string, result: { id?: string }) {
+    if (result.id != null) {
+      const key = JSON.stringify([step, result.id])
+      if (this.#emittedResults.has(key)) return
+      this.#emittedResults.add(key)
+    }
+    this.emit('result', step, result)
   }
 
   get status(): AssemblyResponse {
@@ -104,9 +123,21 @@ class TransloaditAssembly extends Emitter {
       `${this.status.websocket_url}?assembly=${this.status.assembly_id}`,
     )
 
+    let opened = false
     this.#sse.addEventListener('open', () => {
-      clearInterval(this.pollInterval!)
-      this.pollInterval = null
+      if (opened) {
+        // Keep one poll timer until a status read covers the gap in live events.
+        this.#beginPolling(true)
+        this.#fetchStatus({ recovering: true })
+      } else {
+        this.#stopPolling()
+      }
+      opened = true
+    })
+    this.#sse.addEventListener('error', () => {
+      // EventSource can either retry or close permanently after a transport error.
+      this.#streamGeneration += 1
+      this.#beginPolling(opened)
     })
 
     /*
@@ -151,14 +182,20 @@ class TransloaditAssembly extends Emitter {
 
     this.#sse.addEventListener('assembly_result_finished', (e) => {
       const [stepName, result]: [string, AssemblyResult] = JSON.parse(e.data)
-      this.status = {
-        ...this.status,
-        results: {
-          ...this.status.results,
-          [stepName]: [...(this.status.results?.[stepName] ?? []), result],
-        },
+      const stepResults = this.status.results?.[stepName] ?? []
+      if (
+        result.id == null ||
+        !stepResults.some(({ id }) => id === result.id)
+      ) {
+        this.status = {
+          ...this.status,
+          results: {
+            ...this.status.results,
+            [stepName]: [...stepResults, result],
+          },
+        }
       }
-      this.emit('result', stepName, result)
+      this.#emitResult(stepName, result)
     })
 
     this.#sse.addEventListener('assembly_execution_progress', (e) => {
@@ -196,10 +233,33 @@ class TransloaditAssembly extends Emitter {
    * If the SSE connection fails or takes a long time, we won't miss any
    * events.
    */
-  #beginPolling() {
+  #beginPolling(recovering = false) {
+    if (this.closed || this.pollInterval != null) return
     this.pollInterval = setInterval(() => {
-      this.#fetchStatus()
+      this.#fetchStatus({ recovering })
     }, 2000)
+  }
+
+  #stopPolling() {
+    clearInterval(this.pollInterval ?? undefined)
+    this.pollInterval = null
+  }
+
+  #mergeStreamedStatus(status: AssemblyResponse): AssemblyResponse {
+    // A recovery snapshot can lag behind data already received over the stream.
+    const { uploads, results: known } = this.status
+    for (const [step, entries] of Object.entries(known ?? {})) {
+      status.results ??= {}
+      status.results[step] = mergeById(status.results[step] ?? [], entries)
+    }
+    if (Array.isArray(uploads))
+      status.uploads = mergeById(status.uploads ?? [], uploads)
+    if (
+      status.ok === ASSEMBLY_UPLOADING &&
+      this.status.ok === ASSEMBLY_EXECUTING
+    )
+      status.ok = ASSEMBLY_EXECUTING
+    return status
   }
 
   /**
@@ -208,7 +268,7 @@ class TransloaditAssembly extends Emitter {
    * Pass `diff: false` to avoid emitting diff events, instead only emitting
    * 'status'.
    */
-  async #fetchStatus({ diff = true } = {}) {
+  async #fetchStatus({ diff = true, recovering = false } = {}) {
     if (
       this.closed ||
       this.#rateLimitedQueue.isPaused ||
@@ -216,6 +276,9 @@ class TransloaditAssembly extends Emitter {
     )
       return
 
+    const catchingUp = recovering && this.#sse?.readyState === EventSource.OPEN
+    const generation = this.#streamGeneration
+    const previous = this.status
     try {
       this.#previousFetchStatusStillPending = true
       const statusUrl = getAssemblyUrlSsl(this.status)
@@ -230,23 +293,30 @@ class TransloaditAssembly extends Emitter {
       }
 
       if (!response.ok) {
+        if (recovering && response.status >= 500) return
         this.#onError(new NetworkError(response.statusText))
         return
       }
 
-      const status = await response.json()
-
-      // Avoid updating if we closed during this request's lifetime.
-      if (this.closed) return
+      let status: AssemblyResponse = await response.json().catch((error) => {
+        if (!recovering || !(error instanceof TypeError)) throw error
+      })
+      if (this.closed || status === undefined) return
+      if (recovering || previous !== this.status) {
+        status = this.#mergeStreamedStatus(status)
+      }
 
       if (diff) {
         this.updateStatus(status)
       } else {
         this.status = status
       }
+      if (catchingUp && generation === this.#streamGeneration) {
+        this.#stopPolling()
+      }
     } catch (err) {
       // A fetch that was in flight when we closed is nobody's business.
-      if (this.closed) return
+      if (this.closed || (recovering && err instanceof NetworkError)) return
       this.#onError(toError(err))
     } finally {
       this.#previousFetchStatusStillPending = false
@@ -262,11 +332,12 @@ class TransloaditAssembly extends Emitter {
    * emitted for status changes, new files, and new results.
    */
   updateStatus(next: AssemblyResponse): void {
-    this.#diffStatus(this.status, next)
+    const finished = this.#diffStatus(this.status, next)
     // An errored status closed the assembly in `#onError`; don't emit a
     // 'status' from a closed assembly.
     if (this.closed) return
     this.status = next
+    if (finished) this.close()
   }
 
   /**
@@ -311,12 +382,18 @@ class TransloaditAssembly extends Emitter {
     const prevUploads = prev.uploads
     const nextUploads = next.uploads
     if (nextUploads != null && prevUploads != null) {
+      const previousIds = new Set(
+        Object.values(prevUploads).map(({ id }) => id),
+      )
       for (const upload of Object.keys(nextUploads)) {
-        if (Object.hasOwn(prevUploads, upload)) {
+        const id = nextUploads[upload as unknown as number].id
+        if (
+          id == null ? Object.hasOwn(prevUploads, upload) : previousIds.has(id)
+        ) {
           continue
         }
 
-        // This is a bit confusing. Not sure why Object.keys was chosen here, because nextUploads is an Array. Object.keys returns strings for array keys ("0", "1", etc.). Typescript expects arrays to be indexed with a number, not a string nextUploads[0], even though JavaScript is fine with it, so we need to type assert here:
+        // This is a bit confusing. Not sure why Object.keys is used here, because nextUploads is an Array. Object.keys returns strings for array keys ("0", "1", etc.). Typescript expects arrays to be indexed with a number, not a string nextUploads[0], even though JavaScript is fine with it, so we need to type assert here:
         this.emit('upload', nextUploads[upload as unknown as number])
       }
     }
@@ -338,13 +415,17 @@ class TransloaditAssembly extends Emitter {
             continue
           }
 
-          this.emit('result', stepName, result)
+          this.#emitResult(stepName, result)
         }
       }
     }
 
-    if (isStatus(nextStatus, ASSEMBLY_COMPLETED)) {
+    if (
+      nextStatus === ASSEMBLY_CANCELED ||
+      isStatus(nextStatus, ASSEMBLY_COMPLETED)
+    ) {
       this.#emitOnce('finished')
+      return true
     }
 
     return undefined
@@ -359,8 +440,7 @@ class TransloaditAssembly extends Emitter {
       this.#sse.close()
       this.#sse = null
     }
-    clearInterval(this.pollInterval!)
-    this.pollInterval = null
+    this.#stopPolling()
   }
 }
 
