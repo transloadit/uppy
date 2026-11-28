@@ -37,6 +37,8 @@ class TransloaditAssembly extends Emitter {
 
   #previousFetchStatusStillPending = false
 
+  #needsReconnectStatus = false
+
   #sse: EventSource | null = null
 
   /**
@@ -106,12 +108,19 @@ class TransloaditAssembly extends Emitter {
       `${this.status.websocket_url}?assembly=${this.status.assembly_id}`,
     )
 
+    let opened = false
     this.#sse.addEventListener('open', () => {
       this.#stopPolling()
+      if (opened) {
+        // A stream can reopen before the first poll. Read any status it missed.
+        this.#needsReconnectStatus = true
+        this.#fetchReconnectStatus()
+      }
+      opened = true
     })
     this.#sse.addEventListener('error', () => {
       // EventSource can either retry or close permanently after a transport error.
-      this.#beginPolling()
+      this.#beginPolling(opened)
     })
 
     /*
@@ -156,11 +165,15 @@ class TransloaditAssembly extends Emitter {
 
     this.#sse.addEventListener('assembly_result_finished', (e) => {
       const [stepName, result]: [string, AssemblyResult] = JSON.parse(e.data)
+      const stepResults = this.status.results?.[stepName] ?? []
+      if (result.id != null && stepResults.some(({ id }) => id === result.id)) {
+        return
+      }
       this.status = {
         ...this.status,
         results: {
           ...this.status.results,
-          [stepName]: [...(this.status.results?.[stepName] ?? []), result],
+          [stepName]: [...stepResults, result],
         },
       }
       this.emit('result', stepName, result)
@@ -201,10 +214,10 @@ class TransloaditAssembly extends Emitter {
    * If the SSE connection fails or takes a long time, we won't miss any
    * events.
    */
-  #beginPolling() {
+  #beginPolling(recovering = false) {
     if (this.closed || this.pollInterval != null) return
     this.pollInterval = setInterval(() => {
-      this.#fetchStatus()
+      this.#fetchStatus({ recovering })
     }, 2000)
   }
 
@@ -213,13 +226,45 @@ class TransloaditAssembly extends Emitter {
     this.pollInterval = null
   }
 
+  #fetchReconnectStatus() {
+    if (!this.#needsReconnectStatus || this.#previousFetchStatusStillPending) {
+      return
+    }
+    this.#needsReconnectStatus = false
+    if (this.pollInterval == null) this.#fetchStatus({ recovering: true })
+  }
+
+  #mergeStreamedResults(
+    status: AssemblyResponse,
+    previousResults: AssemblyResponse['results'],
+  ): AssemblyResponse {
+    const currentResults = this.status.results
+    if (currentResults == null || currentResults === previousResults)
+      return status
+
+    // A snapshot can be older than a result received over the reopened stream.
+    const results: NonNullable<AssemblyResponse['results']> = {
+      ...status.results,
+    }
+    for (const [step, current] of Object.entries(currentResults)) {
+      const polled = results[step] ?? []
+      const newer = current.filter(
+        (result) =>
+          !previousResults?.[step]?.includes(result) &&
+          !polled.some(({ id }) => result.id != null && id === result.id),
+      )
+      if (newer.length > 0) results[step] = [...polled, ...newer]
+    }
+    return { ...status, results }
+  }
+
   /**
    * Reload assembly status. Useful if SSE doesn't work.
    *
    * Pass `diff: false` to avoid emitting diff events, instead only emitting
    * 'status'.
    */
-  async #fetchStatus({ diff = true } = {}) {
+  async #fetchStatus({ diff = true, recovering = false } = {}) {
     if (
       this.closed ||
       this.#rateLimitedQueue.isPaused ||
@@ -230,6 +275,7 @@ class TransloaditAssembly extends Emitter {
     try {
       this.#previousFetchStatusStillPending = true
       const statusUrl = getAssemblyUrlSsl(this.status)
+      const previousResults = this.status.results
 
       const response = await this.#fetchWithNetworkError(statusUrl)
 
@@ -241,6 +287,7 @@ class TransloaditAssembly extends Emitter {
       }
 
       if (!response.ok) {
+        if (recovering && response.status >= 500) return
         this.#onError(new NetworkError(response.statusText))
         return
       }
@@ -251,16 +298,21 @@ class TransloaditAssembly extends Emitter {
       if (this.closed) return
 
       if (diff) {
-        this.updateStatus(status)
+        this.updateStatus(
+          recovering
+            ? this.#mergeStreamedResults(status, previousResults)
+            : status,
+        )
       } else {
         this.status = status
       }
     } catch (err) {
       // A fetch that was in flight when we closed is nobody's business.
-      if (this.closed) return
+      if (this.closed || (recovering && err instanceof NetworkError)) return
       this.#onError(toError(err))
     } finally {
       this.#previousFetchStatusStillPending = false
+      this.#fetchReconnectStatus()
     }
   }
 

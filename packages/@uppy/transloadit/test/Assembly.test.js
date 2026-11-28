@@ -1,8 +1,4 @@
-import '@uppy-dev/msw-setup'
-
-import { network } from 'virtual:msw'
 import { RateLimitedQueue } from '@uppy/core/utils'
-import { HttpResponse, http } from 'msw'
 import { afterEach, describe, expect, it, vi } from 'vitest'
 
 import Assembly from '../lib/Assembly.js'
@@ -233,67 +229,13 @@ describe('Transloadit/Assembly', () => {
       return assembly
     }
 
-    it.each(['ASSEMBLY_COMPLETED', 'ASSEMBLY_CANCELED'])(
-      'observes %s by polling when EventSource reconnects and receives HTTP 503',
-      { timeout: 10_000 },
-      async (terminalStatus) => {
-        const streamUrl = new URL('/test/assembly-stream', location.origin).href
-        const statusUrl = new URL('/test/assemblies/a', location.origin).href
-        const disconnect = Promise.withResolvers()
-        const executing = {
-          assembly_id: 'a',
-          ok: 'ASSEMBLY_EXECUTING',
-          websocket_url: streamUrl,
-          assembly_ssl_url: statusUrl,
-        }
-        const terminal = { ...executing, ok: terminalStatus }
-        const stream = vi.fn(() => {
-          if (stream.mock.calls.length > 1) {
-            return new HttpResponse(null, {
-              status: 503,
-              headers: { 'Retry-After': '1' },
-            })
-          }
-          const body = new ReadableStream({
-            start(controller) {
-              controller.enqueue(
-                new TextEncoder().encode('retry: 50\ndata: ping\n\n'),
-              )
-              return disconnect.promise.then(() => controller.close())
-            },
-          })
-          return new HttpResponse(body, {
-            headers: { 'Content-Type': 'text/event-stream' },
-          })
-        })
-        const status = vi.fn(() => HttpResponse.json(terminal))
-        network.use(http.get(streamUrl, stream), http.get(statusUrl, status))
-
-        const assembly = new Assembly(executing, new RateLimitedQueue())
-        const finished = vi.fn()
-        assembly.on('finished', finished)
-        try {
-          assembly.connect()
-          await expect.poll(() => assembly.pollInterval).toBeNull()
-          expect(status).toHaveBeenCalledTimes(0)
-          disconnect.resolve()
-          await expect.poll(() => stream.mock.calls.length).toBe(2)
-          await expect
-            .poll(() => finished.mock.calls.length, { timeout: 5000 })
-            .toBe(1)
-          expect(status).toHaveBeenCalledTimes(1)
-          expect(assembly.status).toEqual(terminal)
-          expect(assembly.pollInterval).toBeNull()
-        } finally {
-          disconnect.resolve()
-          assembly.close()
-        }
-      },
-    )
-
     it('keeps one polling timer across repeated errors and stops it on reopen', () => {
       vi.useFakeTimers()
-      const assembly = connect({ ok: 'ASSEMBLY_EXECUTING' })
+      vi.stubGlobal(
+        'fetch',
+        vi.fn().mockResolvedValue(Response.json(executing)),
+      )
+      const assembly = connect(executing)
       const source = FakeEventSource.last
       try {
         const initialPoll = assembly.pollInterval
@@ -318,6 +260,119 @@ describe('Transloadit/Assembly', () => {
         expect(vi.getTimerCount()).toBe(0)
       } finally {
         assembly.close()
+      }
+    })
+
+    const executing = {
+      ok: 'ASSEMBLY_EXECUTING',
+      assembly_ssl_url: 'https://example.test/assemblies/a',
+      results: {},
+    }
+
+    it('retries a temporary status failure after losing a live stream', async () => {
+      vi.useFakeTimers()
+      const fetch = vi
+        .fn()
+        .mockResolvedValueOnce(new Response(null, { status: 503 }))
+        .mockRejectedValueOnce(new TypeError('Failed to fetch'))
+        .mockResolvedValueOnce(
+          Response.json({ ...executing, ok: 'ASSEMBLY_COMPLETED' }),
+        )
+      vi.stubGlobal('fetch', fetch)
+      const assembly = connect(executing)
+      const finished = vi.fn()
+      const failed = vi.fn()
+      assembly.on('finished', finished)
+      assembly.on('error', failed)
+      try {
+        FakeEventSource.last.dispatch('open')
+        FakeEventSource.last.dispatch('error')
+        await vi.advanceTimersByTimeAsync(6000)
+
+        expect(fetch).toHaveBeenCalledTimes(3)
+        await vi.waitFor(() => expect(finished).toHaveBeenCalledTimes(1))
+        expect(failed).not.toHaveBeenCalled()
+        expect(assembly.pollInterval).toBeNull()
+      } finally {
+        assembly.close()
+      }
+    })
+
+    it('observes completion missed during a successful reconnect before the first poll', async () => {
+      vi.useFakeTimers()
+      const fetch = vi
+        .fn()
+        .mockResolvedValue(
+          Response.json({ ...executing, ok: 'ASSEMBLY_COMPLETED' }),
+        )
+      vi.stubGlobal('fetch', fetch)
+      const assembly = connect(executing)
+      const finished = vi.fn()
+      assembly.on('finished', finished)
+      try {
+        const source = FakeEventSource.last
+        source.dispatch('open')
+        source.dispatch('error')
+        source.dispatch('open')
+        await vi.advanceTimersByTimeAsync(0)
+
+        expect(fetch).toHaveBeenCalledTimes(1)
+        expect(assembly.pollInterval).toBeNull()
+        await vi.waitFor(() => expect(finished).toHaveBeenCalledTimes(1))
+      } finally {
+        assembly.close()
+      }
+    })
+
+    it('preserves a newer stream result and only emits a polled result once', async () => {
+      vi.useFakeTimers()
+      const initialPoll = Promise.withResolvers()
+      const reconnectRead = Promise.withResolvers()
+      vi.stubGlobal(
+        'fetch',
+        vi
+          .fn()
+          .mockReturnValueOnce(initialPoll.promise)
+          .mockReturnValueOnce(reconnectRead.promise),
+      )
+      const assembly = connect(executing)
+      const result = vi.fn()
+      assembly.on('result', result)
+      const streamed = { id: 'streamed' }
+      const polled = { id: 'polled' }
+      const source = FakeEventSource.last
+      try {
+        source.dispatch('open')
+        source.dispatch('error')
+        await vi.advanceTimersByTimeAsync(2000)
+        source.dispatch('open')
+        source.dispatch(
+          'assembly_result_finished',
+          JSON.stringify(['step', streamed]),
+        )
+        initialPoll.resolve(
+          Response.json({ ...executing, results: { step: [polled] } }),
+        )
+        await vi.waitFor(() =>
+          expect(result).toHaveBeenCalledWith('step', polled),
+        )
+        source.dispatch(
+          'assembly_result_finished',
+          JSON.stringify(['step', polled]),
+        )
+
+        expect(assembly.status.results.step).toHaveLength(2)
+        expect(assembly.status.results.step).toEqual(
+          expect.arrayContaining([streamed, polled]),
+        )
+        expect(result.mock.calls).toEqual([
+          ['step', streamed],
+          ['step', polled],
+        ])
+      } finally {
+        assembly.close()
+        initialPoll.resolve(Response.json(executing))
+        reconnectRead.resolve(Response.json(executing))
       }
     })
 

@@ -888,13 +888,17 @@ export default class Transloadit<
       })
     }
 
-    const onAssemblyFinished = () => {
-      this.#onAssemblyFinished(assembly).catch((err) => this.uppy.log(err))
-    }
-    if (this.opts.waitForEncoding) {
+    if (this.#shouldWaitAfterUpload()) {
+      let finishing = false
+      const onAssemblyFinished = () => {
+        if (finishing) return
+        finishing = true
+        this.#onAssemblyFinished(assembly).catch((err) => this.uppy.log(err))
+      }
       assembly.on('finished', onAssemblyFinished)
-    } else if (this.opts.waitForMetadata) {
-      assembly.on('metadata', onAssemblyFinished)
+      if (!this.opts.waitForEncoding) {
+        assembly.on('metadata', onAssemblyFinished)
+      }
     }
 
     // No need to connect to the socket if the Assembly has completed by now.
