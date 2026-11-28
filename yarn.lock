@@ -16860,13 +16860,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"memorystream@npm:^0.3.1":
-  version: 0.3.1
-  resolution: "memorystream@npm:0.3.1"
-  checksum: 10/2e34a1e35e6eb2e342f788f75f96c16f115b81ff6dd39e6c2f48c78b464dbf5b1a4c6ebfae4c573bd0f8dbe8c57d72bb357c60523be184655260d25855c03902
-  languageName: node
-  linkType: hard
-
 "merge-descriptors@npm:1.0.3":
   version: 1.0.3
   resolution: "merge-descriptors@npm:1.0.3"
@@ -18366,7 +18359,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"npm-run-all2@npm:^9.0.3":
+"npm-run-all2@npm:^9.0.3, npm-run-all2@npm:^9.0.4":
   version: 9.1.0
   resolution: "npm-run-all2@npm:9.1.0"
   dependencies:
@@ -18383,27 +18376,6 @@ __metadata:
     run-p: bin/run-p/index.js
     run-s: bin/run-s/index.js
   checksum: 10/5c21703c15314fff3dc24f87b38385d19c334f59b069502c696cddf7e6772a190cdbe857221e7d0ce6ecbaf8552658cb715d036b827f5067c4366cd0411fa888
-  languageName: node
-  linkType: hard
-
-"npm-run-all2@npm:^9.0.4":
-  version: 9.0.4
-  resolution: "npm-run-all2@npm:9.0.4"
-  dependencies:
-    ansi-styles: "npm:^7.0.0"
-    cross-spawn: "npm:^7.0.6"
-    memorystream: "npm:^0.3.1"
-    picomatch: "npm:^4.0.2"
-    pidtree: "npm:^1.0.0"
-    read-package-json-fast: "npm:^6.0.0"
-    shell-quote: "npm:^1.12.0"
-    which: "npm:^7.0.0"
-  bin:
-    npm-run-all: bin/npm-run-all/index.js
-    npm-run-all2: bin/npm-run-all/index.js
-    run-p: bin/run-p/index.js
-    run-s: bin/run-s/index.js
-  checksum: 10/0039df7d43103967ca33b38b6ddc2c0646380573134309303baef19d610673f0d3bf419aa11ecbde974b10ee19abaefa9dc5ab1dafb7076a71cf6a04dedd86f2
   languageName: node
   linkType: hard
 
