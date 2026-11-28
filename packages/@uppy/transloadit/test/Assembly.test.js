@@ -198,6 +198,10 @@ describe('Transloadit/Assembly', () => {
 
       #listeners = {}
 
+      static OPEN = 1
+
+      readyState = 0
+
       constructor() {
         FakeEventSource.last = this
       }
@@ -208,6 +212,8 @@ describe('Transloadit/Assembly', () => {
       }
 
       dispatch(type, data) {
+        if (type === 'open') this.readyState = FakeEventSource.OPEN
+        if (type === 'error') this.readyState = 0
         for (const fn of this.#listeners[type] ?? []) fn({ data })
       }
 
@@ -229,7 +235,7 @@ describe('Transloadit/Assembly', () => {
       return assembly
     }
 
-    it('keeps one polling timer across repeated errors and stops it on reopen', () => {
+    it('keeps one polling timer across repeated errors and stops it on reopen', async () => {
       vi.useFakeTimers()
       vi.stubGlobal(
         'fetch',
@@ -256,7 +262,7 @@ describe('Transloadit/Assembly', () => {
         expect(vi.getTimerCount()).toBe(1)
 
         source.dispatch('open')
-        expect(assembly.pollInterval).toBeNull()
+        await vi.waitFor(() => expect(assembly.pollInterval).toBeNull())
         expect(vi.getTimerCount()).toBe(0)
       } finally {
         assembly.close()
@@ -276,6 +282,17 @@ describe('Transloadit/Assembly', () => {
         .mockResolvedValueOnce(new Response(null, { status: 503 }))
         .mockRejectedValueOnce(new TypeError('Failed to fetch'))
         .mockResolvedValueOnce(
+          new Response(
+            new ReadableStream({
+              start(controller) {
+                controller.error(
+                  new TypeError('Connection lost while reading status'),
+                )
+              },
+            }),
+          ),
+        )
+        .mockResolvedValueOnce(
           Response.json({ ...executing, ok: 'ASSEMBLY_COMPLETED' }),
         )
       vi.stubGlobal('fetch', fetch)
@@ -287,9 +304,9 @@ describe('Transloadit/Assembly', () => {
       try {
         FakeEventSource.last.dispatch('open')
         FakeEventSource.last.dispatch('error')
-        await vi.advanceTimersByTimeAsync(6000)
+        await vi.advanceTimersByTimeAsync(8000)
 
-        expect(fetch).toHaveBeenCalledTimes(3)
+        expect(fetch).toHaveBeenCalledTimes(4)
         await vi.waitFor(() => expect(finished).toHaveBeenCalledTimes(1))
         expect(failed).not.toHaveBeenCalled()
         expect(assembly.pollInterval).toBeNull()
@@ -317,8 +334,65 @@ describe('Transloadit/Assembly', () => {
         await vi.advanceTimersByTimeAsync(0)
 
         expect(fetch).toHaveBeenCalledTimes(1)
-        expect(assembly.pollInterval).toBeNull()
         await vi.waitFor(() => expect(finished).toHaveBeenCalledTimes(1))
+        expect(assembly.pollInterval).toBeNull()
+      } finally {
+        assembly.close()
+      }
+    })
+
+    it('keeps one polling loop until a fast reconnect successfully reads status', async () => {
+      vi.useFakeTimers()
+      const fetch = vi
+        .fn()
+        .mockResolvedValueOnce(new Response(null, { status: 503 }))
+        .mockResolvedValueOnce(Response.json(executing))
+      vi.stubGlobal('fetch', fetch)
+      const assembly = connect(executing)
+      const source = FakeEventSource.last
+      try {
+        source.dispatch('open')
+        source.dispatch('error')
+        source.dispatch('open')
+        await vi.advanceTimersByTimeAsync(0)
+        expect(fetch).toHaveBeenCalledTimes(1)
+        expect(vi.getTimerCount()).toBe(1)
+
+        await vi.advanceTimersByTimeAsync(2000)
+        await vi.waitFor(() => expect(assembly.pollInterval).toBeNull())
+        expect(fetch).toHaveBeenCalledTimes(2)
+      } finally {
+        assembly.close()
+      }
+    })
+
+    it('emits a result first loaded silently by a metadata refresh', async () => {
+      const result = { id: 'result' }
+      vi.stubGlobal(
+        'fetch',
+        vi
+          .fn()
+          .mockResolvedValue(
+            Response.json({ ...executing, results: { step: [result] } }),
+          ),
+      )
+      const assembly = connect(executing)
+      const received = vi.fn()
+      assembly.on('result', received)
+      const source = FakeEventSource.last
+      try {
+        source.dispatch('open')
+        source.dispatch('message', 'assembly_upload_meta_data_extracted')
+        await vi.waitFor(() =>
+          expect(assembly.status.results.step).toEqual([result]),
+        )
+        expect(received).not.toHaveBeenCalled()
+        source.dispatch(
+          'assembly_result_finished',
+          JSON.stringify(['step', result]),
+        )
+        expect(received.mock.calls).toEqual([['step', result]])
+        expect(assembly.status.results.step).toEqual([result])
       } finally {
         assembly.close()
       }
@@ -373,6 +447,58 @@ describe('Transloadit/Assembly', () => {
         assembly.close()
         initialPoll.resolve(Response.json(executing))
         reconnectRead.resolve(Response.json(executing))
+      }
+    })
+
+    it('keeps uploads, results, and the execution phase across stale recovery snapshots', async () => {
+      vi.useFakeTimers()
+      const status = { ...executing, ok: 'ASSEMBLY_UPLOADING', uploads: [] }
+      const first = Promise.withResolvers()
+      const second = Promise.withResolvers()
+      const fetch = vi
+        .fn()
+        .mockReturnValueOnce(first.promise)
+        .mockReturnValueOnce(second.promise)
+      vi.stubGlobal('fetch', fetch)
+      const assembly = connect(status)
+      const upload = vi.fn()
+      assembly.on('upload', upload)
+      const source = FakeEventSource.last
+      try {
+        source.dispatch('open')
+        source.dispatch('error')
+        await vi.advanceTimersByTimeAsync(2000)
+        source.dispatch('open')
+        source.dispatch('message', 'assembly_uploading_finished')
+        source.dispatch(
+          'assembly_upload_finished',
+          JSON.stringify({ id: 'live' }),
+        )
+        source.dispatch(
+          'assembly_result_finished',
+          JSON.stringify(['step', { id: 'live' }]),
+        )
+        const stale = { ...status, uploads: [{ id: 'polled' }] }
+        first.resolve(Response.json(stale))
+        await vi.waitFor(() => expect(upload).toHaveBeenCalledTimes(2))
+        await vi.advanceTimersByTimeAsync(2000)
+        await vi.waitFor(() => expect(fetch).toHaveBeenCalledTimes(2))
+        second.resolve(Response.json(stale))
+        await vi.waitFor(() => expect(assembly.pollInterval).toBeNull())
+        expect(assembly.status.ok).toBe('ASSEMBLY_EXECUTING')
+        expect(assembly.status.uploads).toEqual([
+          { id: 'polled' },
+          { id: 'live' },
+        ])
+        expect(assembly.status.results.step).toEqual([{ id: 'live' }])
+        expect(upload.mock.calls).toEqual([
+          [{ id: 'live' }],
+          [{ id: 'polled' }],
+        ])
+      } finally {
+        assembly.close()
+        first.resolve(Response.json(status))
+        second.resolve(Response.json(status))
       }
     })
 
