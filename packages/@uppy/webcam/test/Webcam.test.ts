@@ -266,7 +266,9 @@ describe('Webcam', () => {
       expect(webcam.getPluginState().isRecording).toBe(true)
 
       webcam.changeVideoSource('cam-2')
-      await vi.waitFor(() => expect(webcam.recorder).toBeNull())
+      await vi.waitFor(() =>
+        expect(webcam.getPluginState().isRecording).toBe(false),
+      )
 
       expect(webcam.stream).toBe(streams[1])
       expect(webcam.webcamActive).toBe(true)
