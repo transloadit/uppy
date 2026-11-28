@@ -44,6 +44,6 @@
   "devDependencies": {
     "@types/node": "^22.20.1",
     "@uppy-dev/tsconfig": "workspace:^",
-    "typescript": "^6.0.3"
+    "typescript": "^7.0.2"
   }
 }

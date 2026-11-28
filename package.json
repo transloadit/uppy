@@ -50,7 +50,7 @@
     "retext-quotes": "^6.0.2",
     "retext-syntax-mentions": "^4.0.0",
     "turbo": "^2.11.3",
-    "typescript": "^6.0.3",
+    "typescript": "^7.0.2",
     "unified": "^11.0.5",
     "unified-message-control": "^5.0.0"
   },

@@ -8407,6 +8407,146 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@typescript/typescript-aix-ppc64@npm:7.0.2":
+  version: 7.0.2
+  resolution: "@typescript/typescript-aix-ppc64@npm:7.0.2"
+  conditions: os=aix & cpu=ppc64
+  languageName: node
+  linkType: hard
+
+"@typescript/typescript-darwin-arm64@npm:7.0.2":
+  version: 7.0.2
+  resolution: "@typescript/typescript-darwin-arm64@npm:7.0.2"
+  conditions: os=darwin & cpu=arm64
+  languageName: node
+  linkType: hard
+
+"@typescript/typescript-darwin-x64@npm:7.0.2":
+  version: 7.0.2
+  resolution: "@typescript/typescript-darwin-x64@npm:7.0.2"
+  conditions: os=darwin & cpu=x64
+  languageName: node
+  linkType: hard
+
+"@typescript/typescript-freebsd-arm64@npm:7.0.2":
+  version: 7.0.2
+  resolution: "@typescript/typescript-freebsd-arm64@npm:7.0.2"
+  conditions: os=freebsd & cpu=arm64
+  languageName: node
+  linkType: hard
+
+"@typescript/typescript-freebsd-x64@npm:7.0.2":
+  version: 7.0.2
+  resolution: "@typescript/typescript-freebsd-x64@npm:7.0.2"
+  conditions: os=freebsd & cpu=x64
+  languageName: node
+  linkType: hard
+
+"@typescript/typescript-linux-arm64@npm:7.0.2":
+  version: 7.0.2
+  resolution: "@typescript/typescript-linux-arm64@npm:7.0.2"
+  conditions: os=linux & cpu=arm64
+  languageName: node
+  linkType: hard
+
+"@typescript/typescript-linux-arm@npm:7.0.2":
+  version: 7.0.2
+  resolution: "@typescript/typescript-linux-arm@npm:7.0.2"
+  conditions: os=linux & cpu=arm
+  languageName: node
+  linkType: hard
+
+"@typescript/typescript-linux-loong64@npm:7.0.2":
+  version: 7.0.2
+  resolution: "@typescript/typescript-linux-loong64@npm:7.0.2"
+  conditions: os=linux & cpu=loong64
+  languageName: node
+  linkType: hard
+
+"@typescript/typescript-linux-mips64el@npm:7.0.2":
+  version: 7.0.2
+  resolution: "@typescript/typescript-linux-mips64el@npm:7.0.2"
+  conditions: os=linux & cpu=mips64el
+  languageName: node
+  linkType: hard
+
+"@typescript/typescript-linux-ppc64@npm:7.0.2":
+  version: 7.0.2
+  resolution: "@typescript/typescript-linux-ppc64@npm:7.0.2"
+  conditions: os=linux & cpu=ppc64
+  languageName: node
+  linkType: hard
+
+"@typescript/typescript-linux-riscv64@npm:7.0.2":
+  version: 7.0.2
+  resolution: "@typescript/typescript-linux-riscv64@npm:7.0.2"
+  conditions: os=linux & cpu=riscv64
+  languageName: node
+  linkType: hard
+
+"@typescript/typescript-linux-s390x@npm:7.0.2":
+  version: 7.0.2
+  resolution: "@typescript/typescript-linux-s390x@npm:7.0.2"
+  conditions: os=linux & cpu=s390x
+  languageName: node
+  linkType: hard
+
+"@typescript/typescript-linux-x64@npm:7.0.2":
+  version: 7.0.2
+  resolution: "@typescript/typescript-linux-x64@npm:7.0.2"
+  conditions: os=linux & cpu=x64
+  languageName: node
+  linkType: hard
+
+"@typescript/typescript-netbsd-arm64@npm:7.0.2":
+  version: 7.0.2
+  resolution: "@typescript/typescript-netbsd-arm64@npm:7.0.2"
+  conditions: os=netbsd & cpu=arm64
+  languageName: node
+  linkType: hard
+
+"@typescript/typescript-netbsd-x64@npm:7.0.2":
+  version: 7.0.2
+  resolution: "@typescript/typescript-netbsd-x64@npm:7.0.2"
+  conditions: os=netbsd & cpu=x64
+  languageName: node
+  linkType: hard
+
+"@typescript/typescript-openbsd-arm64@npm:7.0.2":
+  version: 7.0.2
+  resolution: "@typescript/typescript-openbsd-arm64@npm:7.0.2"
+  conditions: os=openbsd & cpu=arm64
+  languageName: node
+  linkType: hard
+
+"@typescript/typescript-openbsd-x64@npm:7.0.2":
+  version: 7.0.2
+  resolution: "@typescript/typescript-openbsd-x64@npm:7.0.2"
+  conditions: os=openbsd & cpu=x64
+  languageName: node
+  linkType: hard
+
+"@typescript/typescript-sunos-x64@npm:7.0.2":
+  version: 7.0.2
+  resolution: "@typescript/typescript-sunos-x64@npm:7.0.2"
+  conditions: os=sunos & cpu=x64
+  languageName: node
+  linkType: hard
+
+"@typescript/typescript-win32-arm64@npm:7.0.2":
+  version: 7.0.2
+  resolution: "@typescript/typescript-win32-arm64@npm:7.0.2"
+  conditions: os=win32 & cpu=arm64
+  languageName: node
+  linkType: hard
+
+"@typescript/typescript-win32-x64@npm:7.0.2":
+  version: 7.0.2
+  resolution: "@typescript/typescript-win32-x64@npm:7.0.2"
+  conditions: os=win32 & cpu=x64
+  languageName: node
+  linkType: hard
+
 "@uidotdev/usehooks@npm:^2.4.1":
   version: 2.4.1
   resolution: "@uidotdev/usehooks@npm:2.4.1"
@@ -8446,7 +8586,7 @@ __metadata:
     retext-quotes: "npm:^6.0.2"
     retext-syntax-mentions: "npm:^4.0.0"
     turbo: "npm:^2.11.3"
-    typescript: "npm:^6.0.3"
+    typescript: "npm:^7.0.2"
     unified: "npm:^11.0.5"
     unified-message-control: "npm:^5.0.0"
   languageName: unknown
@@ -8458,7 +8598,7 @@ __metadata:
   dependencies:
     "@transloadit/utils": "npm:^4.6.0"
     "@uppy-dev/tsconfig": "workspace:^"
-    typescript: "npm:^6.0.3"
+    typescript: "npm:^7.0.2"
     vite: "npm:^8.3.5"
   languageName: unknown
   linkType: soft
@@ -8469,7 +8609,7 @@ __metadata:
   dependencies:
     "@uppy-dev/tsconfig": "workspace:^"
     msw: "npm:^3.0.3"
-    typescript: "npm:^6.0.3"
+    typescript: "npm:^7.0.2"
     vitest: "npm:^5.1.1"
   peerDependencies:
     msw: ^3.0.3
@@ -8484,7 +8624,7 @@ __metadata:
     "@transloadit/utils": "npm:^4.8.0"
     "@uppy-dev/tsconfig": "workspace:^"
     "@uppy/core": "workspace:^"
-    typescript: "npm:^6.0.3"
+    typescript: "npm:^7.0.2"
   languageName: unknown
   linkType: soft
 
@@ -8538,7 +8678,7 @@ __metadata:
     postcss-cli: "npm:^12.0.0"
     preact: "npm:^10.29.2"
     sass: "npm:^1.89.2"
-    typescript: "npm:^6.0.3"
+    typescript: "npm:^7.0.2"
     vitest: "npm:^5.1.1"
   peerDependencies:
     "@uppy/core": "workspace:^"
@@ -8558,7 +8698,7 @@ __metadata:
     msw: "npm:^3.0.3"
     playwright: "npm:1.65.1"
     type-fest: "npm:^5.10.0"
-    typescript: "npm:^6.0.3"
+    typescript: "npm:^7.0.2"
     vitest: "npm:^5.1.1"
   peerDependencies:
     "@uppy/core": "workspace:^"
@@ -8572,7 +8712,7 @@ __metadata:
     "@uppy-dev/tsconfig": "workspace:^"
     "@uppy/core": "workspace:^"
     preact: "npm:^10.29.2"
-    typescript: "npm:^6.0.3"
+    typescript: "npm:^7.0.2"
   peerDependencies:
     "@uppy/core": "workspace:^"
   languageName: unknown
@@ -8631,7 +8771,7 @@ __metadata:
     supertest: "npm:^7.2.2"
     tus-js-client: "npm:^4.3.1"
     type-fest: "npm:^5.10.0"
-    typescript: "npm:^6.0.3"
+    typescript: "npm:^7.0.2"
     validator: "npm:^13.15.35"
     vitest: "npm:^5.1.1"
     webdav: "npm:^5.10.0"
@@ -8659,7 +8799,7 @@ __metadata:
     preact: "npm:^10.29.2"
     pretty-bytes: "npm:^7.1.0"
     tailwindcss: "npm:^4.3.3"
-    typescript: "npm:^6.0.3"
+    typescript: "npm:^7.0.2"
     vitest: "npm:^5.1.1"
   peerDependencies:
     "@uppy/core": "workspace:^"
@@ -8688,7 +8828,7 @@ __metadata:
     "@vitest/browser-playwright": "npm:^5.1.1"
     compressorjs: "npm:^1.3.0"
     playwright: "npm:1.65.1"
-    typescript: "npm:^6.0.3"
+    typescript: "npm:^7.0.2"
     vite: "npm:^8.3.5"
     vitest: "npm:^5.1.1"
   peerDependencies:
@@ -8724,7 +8864,7 @@ __metadata:
     preact: "npm:^10.29.2"
     sass: "npm:^1.89.2"
     type-fest: "npm:^5.10.0"
-    typescript: "npm:^6.0.3"
+    typescript: "npm:^7.0.2"
     vite: "npm:^8.3.5"
     vitest: "npm:^5.1.1"
   languageName: unknown
@@ -8755,7 +8895,7 @@ __metadata:
     preact: "npm:^10.29.2"
     sass: "npm:^1.89.2"
     shallow-equal: "npm:^3.1.0"
-    typescript: "npm:^6.0.3"
+    typescript: "npm:^7.0.2"
     vitest: "npm:^5.1.1"
   peerDependencies:
     "@uppy/core": "workspace:^"
@@ -8772,7 +8912,7 @@ __metadata:
     postcss-cli: "npm:^12.0.0"
     preact: "npm:^10.29.2"
     sass: "npm:^1.89.2"
-    typescript: "npm:^6.0.3"
+    typescript: "npm:^7.0.2"
   peerDependencies:
     "@uppy/core": "workspace:^"
   languageName: unknown
@@ -8787,7 +8927,7 @@ __metadata:
     postcss: "npm:^8.5.32"
     postcss-cli: "npm:^12.0.0"
     sass: "npm:^1.89.2"
-    typescript: "npm:^6.0.3"
+    typescript: "npm:^7.0.2"
   peerDependencies:
     "@uppy/core": "workspace:^"
   languageName: unknown
@@ -8800,7 +8940,7 @@ __metadata:
     "@uppy-dev/tsconfig": "workspace:^"
     "@uppy/core": "workspace:^"
     preact: "npm:^10.29.2"
-    typescript: "npm:^6.0.3"
+    typescript: "npm:^7.0.2"
   peerDependencies:
     "@uppy/core": "workspace:^"
   languageName: unknown
@@ -8813,7 +8953,7 @@ __metadata:
     "@uppy-dev/tsconfig": "workspace:^"
     "@uppy/core": "workspace:^"
     preact: "npm:^10.29.2"
-    typescript: "npm:^6.0.3"
+    typescript: "npm:^7.0.2"
   peerDependencies:
     "@uppy/core": "workspace:^"
   languageName: unknown
@@ -8826,7 +8966,7 @@ __metadata:
     "@types/get-form-data": "npm:^3.0.0"
     "@uppy-dev/tsconfig": "workspace:^"
     get-form-data: "npm:^3.0.0"
-    typescript: "npm:^6.0.3"
+    typescript: "npm:^7.0.2"
   peerDependencies:
     "@uppy/core": "workspace:^"
   languageName: unknown
@@ -8844,7 +8984,7 @@ __metadata:
     "@vitest/browser-playwright": "npm:^5.1.1"
     lodash: "npm:^4.18.1"
     playwright: "npm:1.65.1"
-    typescript: "npm:^6.0.3"
+    typescript: "npm:^7.0.2"
     vitest: "npm:^5.1.1"
   peerDependencies:
     "@uppy/core": "workspace:^"
@@ -8858,7 +8998,7 @@ __metadata:
     "@uppy-dev/tsconfig": "workspace:^"
     "@uppy/core": "workspace:^"
     preact: "npm:^10.29.2"
-    typescript: "npm:^6.0.3"
+    typescript: "npm:^7.0.2"
   peerDependencies:
     "@uppy/core": "workspace:^"
   languageName: unknown
@@ -8871,7 +9011,7 @@ __metadata:
     "@uppy-dev/tsconfig": "workspace:^"
     "@uppy/core": "workspace:^"
     preact: "npm:^10.29.2"
-    typescript: "npm:^6.0.3"
+    typescript: "npm:^7.0.2"
   peerDependencies:
     "@uppy/core": "workspace:^"
   languageName: unknown
@@ -8884,7 +9024,7 @@ __metadata:
     "@uppy-dev/tsconfig": "workspace:^"
     "@uppy/core": "workspace:^"
     preact: "npm:^10.29.2"
-    typescript: "npm:^6.0.3"
+    typescript: "npm:^7.0.2"
   peerDependencies:
     "@uppy/core": "workspace:^"
   languageName: unknown
@@ -8901,7 +9041,7 @@ __metadata:
     postcss-cli: "npm:^12.0.0"
     preact: "npm:^10.29.2"
     sass: "npm:^1.89.2"
-    typescript: "npm:^6.0.3"
+    typescript: "npm:^7.0.2"
   peerDependencies:
     "@uppy/core": "workspace:^"
   languageName: unknown
@@ -8931,7 +9071,7 @@ __metadata:
     "@types/node": "npm:^22.20.1"
     "@uppy-dev/tsconfig": "workspace:^"
     "@uppy/core": "workspace:^"
-    typescript: "npm:^6.0.3"
+    typescript: "npm:^7.0.2"
   languageName: unknown
   linkType: soft
 
@@ -8942,7 +9082,7 @@ __metadata:
     "@uppy-dev/tsconfig": "workspace:^"
     "@uppy/core": "workspace:^"
     preact: "npm:^10.29.2"
-    typescript: "npm:^6.0.3"
+    typescript: "npm:^7.0.2"
   peerDependencies:
     "@uppy/core": "workspace:^"
   languageName: unknown
@@ -8965,7 +9105,7 @@ __metadata:
     playwright: "npm:1.65.1"
     react: "npm:^19.3.1"
     react-dom: "npm:^19.3.1"
-    typescript: "npm:^6.0.3"
+    typescript: "npm:^7.0.2"
     use-sync-external-store: "npm:^1.6.0"
     vitest: "npm:^5.1.1"
   peerDependencies:
@@ -9005,7 +9145,7 @@ __metadata:
     "@uppy/zoom": "workspace:^"
     "@vitest/browser-playwright": "npm:^5.1.1"
     playwright: "npm:1.65.1"
-    typescript: "npm:^6.0.3"
+    typescript: "npm:^7.0.2"
     vitest: "npm:^5.1.1"
   peerDependencies:
     "@uppy/core": "workspace:^"
@@ -9028,7 +9168,7 @@ __metadata:
     playwright: "npm:1.65.1"
     preact: "npm:^10.29.2"
     type-fest: "npm:^5.10.0"
-    typescript: "npm:^6.0.3"
+    typescript: "npm:^7.0.2"
     vitest: "npm:^5.1.1"
   peerDependencies:
     "@uppy/core": "workspace:^"
@@ -9045,7 +9185,7 @@ __metadata:
     postcss-cli: "npm:^12.0.0"
     preact: "npm:^10.29.2"
     sass: "npm:^1.89.2"
-    typescript: "npm:^6.0.3"
+    typescript: "npm:^7.0.2"
   peerDependencies:
     "@uppy/core": "workspace:^"
   languageName: unknown
@@ -9063,7 +9203,7 @@ __metadata:
     postcss-cli: "npm:^12.0.0"
     preact: "npm:^10.29.2"
     sass: "npm:^1.89.2"
-    typescript: "npm:^6.0.3"
+    typescript: "npm:^7.0.2"
   peerDependencies:
     "@uppy/core": "workspace:^"
   languageName: unknown
@@ -9110,7 +9250,7 @@ __metadata:
     "@uppy-dev/tsconfig": "workspace:^"
     "@vitest/browser-playwright": "npm:^5.1.1"
     playwright: "npm:1.65.1"
-    typescript: "npm:^6.0.3"
+    typescript: "npm:^7.0.2"
     vitest: "npm:^5.1.1"
   peerDependencies:
     "@uppy/core": "workspace:^"
@@ -9131,7 +9271,7 @@ __metadata:
     msw: "npm:^3.0.3"
     playwright: "npm:1.65.1"
     preact: "npm:^10.29.2"
-    typescript: "npm:^6.0.3"
+    typescript: "npm:^7.0.2"
     vitest: "npm:^5.1.1"
   peerDependencies:
     "@uppy/core": "workspace:^"
@@ -9151,7 +9291,7 @@ __metadata:
     component-emitter: "npm:^2.0.0"
     msw: "npm:^3.0.3"
     playwright: "npm:1.65.1"
-    typescript: "npm:^6.0.3"
+    typescript: "npm:^7.0.2"
     vitest: "npm:^5.1.1"
   peerDependencies:
     "@uppy/core": "workspace:^"
@@ -9167,7 +9307,7 @@ __metadata:
     "@vitest/browser-playwright": "npm:^5.1.1"
     playwright: "npm:1.65.1"
     tus-js-client: "npm:^4.3.1"
-    typescript: "npm:^6.0.3"
+    typescript: "npm:^7.0.2"
     vitest: "npm:^5.1.1"
   peerDependencies:
     "@uppy/core": "workspace:^"
@@ -9181,7 +9321,7 @@ __metadata:
     "@uppy-dev/tsconfig": "workspace:^"
     "@uppy/core": "workspace:^"
     preact: "npm:^10.29.2"
-    typescript: "npm:^6.0.3"
+    typescript: "npm:^7.0.2"
   peerDependencies:
     "@uppy/core": "workspace:^"
   languageName: unknown
@@ -9201,7 +9341,7 @@ __metadata:
     postcss-cli: "npm:^12.0.0"
     preact: "npm:^10.29.2"
     sass: "npm:^1.89.2"
-    typescript: "npm:^6.0.3"
+    typescript: "npm:^7.0.2"
     vitest: "npm:^5.1.1"
   peerDependencies:
     "@uppy/core": "workspace:^"
@@ -9218,7 +9358,7 @@ __metadata:
     "@vitest/browser-playwright": "npm:^5.1.1"
     playwright: "npm:1.65.1"
     shallow-equal: "npm:^3.1.0"
-    typescript: "npm:^6.0.3"
+    typescript: "npm:^7.0.2"
     vitest: "npm:^5.1.1"
     vitest-browser-vue: "npm:^3.1.0"
     vue: "npm:^3.5.43"
@@ -9254,7 +9394,7 @@ __metadata:
     postcss-cli: "npm:^12.0.0"
     preact: "npm:^10.29.2"
     sass: "npm:^1.89.2"
-    typescript: "npm:^6.0.3"
+    typescript: "npm:^7.0.2"
     vitest: "npm:^5.1.1"
   peerDependencies:
     "@uppy/core": "workspace:^"
@@ -9268,7 +9408,7 @@ __metadata:
     "@uppy-dev/tsconfig": "workspace:^"
     "@uppy/core": "workspace:^"
     preact: "npm:^10.29.2"
-    typescript: "npm:^6.0.3"
+    typescript: "npm:^7.0.2"
   peerDependencies:
     "@uppy/core": "workspace:^"
   languageName: unknown
@@ -9285,7 +9425,7 @@ __metadata:
     "@vitest/browser-playwright": "npm:^5.1.1"
     msw: "npm:^3.0.3"
     playwright: "npm:1.65.1"
-    typescript: "npm:^6.0.3"
+    typescript: "npm:^7.0.2"
     vitest: "npm:^5.1.1"
   peerDependencies:
     "@uppy/core": "workspace:^"
@@ -9299,7 +9439,7 @@ __metadata:
     "@uppy-dev/tsconfig": "workspace:^"
     "@uppy/core": "workspace:^"
     preact: "npm:^10.29.2"
-    typescript: "npm:^6.0.3"
+    typescript: "npm:^7.0.2"
   peerDependencies:
     "@uppy/core": "workspace:^"
   languageName: unknown
@@ -13175,7 +13315,7 @@ __metadata:
     react: "npm:^19.3.1"
     react-dom: "npm:^19.3.1"
     tailwindcss: "npm:^4.3.3"
-    typescript: "npm:^6.0.3"
+    typescript: "npm:^7.0.2"
   languageName: unknown
   linkType: soft
 
@@ -13202,7 +13342,7 @@ __metadata:
     react: "npm:^19.3.1"
     react-dom: "npm:^19.3.1"
     tailwindcss: "npm:^4.3.3"
-    typescript: "npm:^6.0.3"
+    typescript: "npm:^7.0.2"
     vite: "npm:^8.3.5"
     vitest: "npm:^5.1.1"
     vitest-browser-react: "npm:^2.3.0"
@@ -13234,7 +13374,7 @@ __metadata:
     react: "npm:^19.3.1"
     react-dom: "npm:^19.3.1"
     react-router: "npm:^8.5.2"
-    typescript: "npm:^6.0.3"
+    typescript: "npm:^7.0.2"
     vite: "npm:^8.3.5"
   languageName: unknown
   linkType: soft
@@ -23981,6 +24121,77 @@ __metadata:
   languageName: node
   linkType: hard
 
+"typescript@npm:^7.0.2":
+  version: 7.0.2
+  resolution: "typescript@npm:7.0.2"
+  dependencies:
+    "@typescript/typescript-aix-ppc64": "npm:7.0.2"
+    "@typescript/typescript-darwin-arm64": "npm:7.0.2"
+    "@typescript/typescript-darwin-x64": "npm:7.0.2"
+    "@typescript/typescript-freebsd-arm64": "npm:7.0.2"
+    "@typescript/typescript-freebsd-x64": "npm:7.0.2"
+    "@typescript/typescript-linux-arm": "npm:7.0.2"
+    "@typescript/typescript-linux-arm64": "npm:7.0.2"
+    "@typescript/typescript-linux-loong64": "npm:7.0.2"
+    "@typescript/typescript-linux-mips64el": "npm:7.0.2"
+    "@typescript/typescript-linux-ppc64": "npm:7.0.2"
+    "@typescript/typescript-linux-riscv64": "npm:7.0.2"
+    "@typescript/typescript-linux-s390x": "npm:7.0.2"
+    "@typescript/typescript-linux-x64": "npm:7.0.2"
+    "@typescript/typescript-netbsd-arm64": "npm:7.0.2"
+    "@typescript/typescript-netbsd-x64": "npm:7.0.2"
+    "@typescript/typescript-openbsd-arm64": "npm:7.0.2"
+    "@typescript/typescript-openbsd-x64": "npm:7.0.2"
+    "@typescript/typescript-sunos-x64": "npm:7.0.2"
+    "@typescript/typescript-win32-arm64": "npm:7.0.2"
+    "@typescript/typescript-win32-x64": "npm:7.0.2"
+  dependenciesMeta:
+    "@typescript/typescript-aix-ppc64":
+      optional: true
+    "@typescript/typescript-darwin-arm64":
+      optional: true
+    "@typescript/typescript-darwin-x64":
+      optional: true
+    "@typescript/typescript-freebsd-arm64":
+      optional: true
+    "@typescript/typescript-freebsd-x64":
+      optional: true
+    "@typescript/typescript-linux-arm":
+      optional: true
+    "@typescript/typescript-linux-arm64":
+      optional: true
+    "@typescript/typescript-linux-loong64":
+      optional: true
+    "@typescript/typescript-linux-mips64el":
+      optional: true
+    "@typescript/typescript-linux-ppc64":
+      optional: true
+    "@typescript/typescript-linux-riscv64":
+      optional: true
+    "@typescript/typescript-linux-s390x":
+      optional: true
+    "@typescript/typescript-linux-x64":
+      optional: true
+    "@typescript/typescript-netbsd-arm64":
+      optional: true
+    "@typescript/typescript-netbsd-x64":
+      optional: true
+    "@typescript/typescript-openbsd-arm64":
+      optional: true
+    "@typescript/typescript-openbsd-x64":
+      optional: true
+    "@typescript/typescript-sunos-x64":
+      optional: true
+    "@typescript/typescript-win32-arm64":
+      optional: true
+    "@typescript/typescript-win32-x64":
+      optional: true
+  bin:
+    tsc: bin/tsc
+  checksum: 10/b0179005349b43dc1febb35c4e79162cdf89b84eae60f6deac142429109041e07582e69a6aacf5a897e085869686d4512ea444a10acf5b5aa2b60910f82a19ca
+  languageName: node
+  linkType: hard
+
 "typescript@patch:typescript@npm%3A6.0.3#optional!builtin<compat/typescript>, typescript@patch:typescript@npm%3A^6.0.3#optional!builtin<compat/typescript>":
   version: 6.0.3
   resolution: "typescript@patch:typescript@npm%3A6.0.3#optional!builtin<compat/typescript>::version=6.0.3&hash=5786d5"
@@ -23988,6 +24199,77 @@ __metadata:
     tsc: bin/tsc
     tsserver: bin/tsserver
   checksum: 10/22b67a18dafedf9b1468b64ca20d9aa02ea61d449b65413d8aa6552aeb63f52ef369e86beb25b6b4c91a803d9726ee5c196f391a9b64201263263410a4223ee6
+  languageName: node
+  linkType: hard
+
+"typescript@patch:typescript@npm%3A^7.0.2#optional!builtin<compat/typescript>":
+  version: 7.0.2
+  resolution: "typescript@patch:typescript@npm%3A7.0.2#optional!builtin<compat/typescript>::version=7.0.2&hash=3bafbf"
+  dependencies:
+    "@typescript/typescript-aix-ppc64": "npm:7.0.2"
+    "@typescript/typescript-darwin-arm64": "npm:7.0.2"
+    "@typescript/typescript-darwin-x64": "npm:7.0.2"
+    "@typescript/typescript-freebsd-arm64": "npm:7.0.2"
+    "@typescript/typescript-freebsd-x64": "npm:7.0.2"
+    "@typescript/typescript-linux-arm": "npm:7.0.2"
+    "@typescript/typescript-linux-arm64": "npm:7.0.2"
+    "@typescript/typescript-linux-loong64": "npm:7.0.2"
+    "@typescript/typescript-linux-mips64el": "npm:7.0.2"
+    "@typescript/typescript-linux-ppc64": "npm:7.0.2"
+    "@typescript/typescript-linux-riscv64": "npm:7.0.2"
+    "@typescript/typescript-linux-s390x": "npm:7.0.2"
+    "@typescript/typescript-linux-x64": "npm:7.0.2"
+    "@typescript/typescript-netbsd-arm64": "npm:7.0.2"
+    "@typescript/typescript-netbsd-x64": "npm:7.0.2"
+    "@typescript/typescript-openbsd-arm64": "npm:7.0.2"
+    "@typescript/typescript-openbsd-x64": "npm:7.0.2"
+    "@typescript/typescript-sunos-x64": "npm:7.0.2"
+    "@typescript/typescript-win32-arm64": "npm:7.0.2"
+    "@typescript/typescript-win32-x64": "npm:7.0.2"
+  dependenciesMeta:
+    "@typescript/typescript-aix-ppc64":
+      optional: true
+    "@typescript/typescript-darwin-arm64":
+      optional: true
+    "@typescript/typescript-darwin-x64":
+      optional: true
+    "@typescript/typescript-freebsd-arm64":
+      optional: true
+    "@typescript/typescript-freebsd-x64":
+      optional: true
+    "@typescript/typescript-linux-arm":
+      optional: true
+    "@typescript/typescript-linux-arm64":
+      optional: true
+    "@typescript/typescript-linux-loong64":
+      optional: true
+    "@typescript/typescript-linux-mips64el":
+      optional: true
+    "@typescript/typescript-linux-ppc64":
+      optional: true
+    "@typescript/typescript-linux-riscv64":
+      optional: true
+    "@typescript/typescript-linux-s390x":
+      optional: true
+    "@typescript/typescript-linux-x64":
+      optional: true
+    "@typescript/typescript-netbsd-arm64":
+      optional: true
+    "@typescript/typescript-netbsd-x64":
+      optional: true
+    "@typescript/typescript-openbsd-arm64":
+      optional: true
+    "@typescript/typescript-openbsd-x64":
+      optional: true
+    "@typescript/typescript-sunos-x64":
+      optional: true
+    "@typescript/typescript-win32-arm64":
+      optional: true
+    "@typescript/typescript-win32-x64":
+      optional: true
+  bin:
+    tsc: bin/tsc
+  checksum: 10/6d7f3d34ca7fbd3eb4999f06db29340d3dcedd7d40ed71654ea53ecd0f28a330edf0f55a0acf541bf294a2f024f11242075c1a83aed4bd99776fe99af45b994b
   languageName: node
   linkType: hard
 
@@ -24326,7 +24608,7 @@ __metadata:
     react: "npm:^19.3.1"
     react-dom: "npm:^19.3.1"
     simplematter: "npm:^1.0.1"
-    typescript: "npm:^6.0.3"
+    typescript: "npm:^7.0.2"
     uppy: "workspace:*"
   languageName: unknown
   linkType: soft
@@ -24379,7 +24661,7 @@ __metadata:
     postcss-cli: "npm:^12.0.0"
     sass: "npm:^1.89.2"
     tar: "npm:^7.5.21"
-    typescript: "npm:^6.0.3"
+    typescript: "npm:^7.0.2"
   languageName: unknown
   linkType: soft
 
