@@ -559,6 +559,10 @@ export default class Webcam<M extends Meta, B extends Body> extends UIPlugin<
         track.stop()
       }
     }
+    // Before waiting for the recorder: #restart() starts the next stream
+    // right away, and clearing these afterwards would drop it.
+    this.webcamActive = false
+    this.stream = null
 
     if (this.recorder) {
       await new Promise((resolve) => {
@@ -573,8 +577,6 @@ export default class Webcam<M extends Meta, B extends Body> extends UIPlugin<
 
     this.recordingChunks = null
     this.recorder = null
-    this.webcamActive = false
-    this.stream = null
 
     this.setPluginState({
       ...state,

@@ -3,6 +3,9 @@ import { afterEach, describe, expect, it, vi } from 'vitest'
 
 import Webcam from '../lib/index.js'
 
+// The getMediaRecorderOptions tests replace it with a stub.
+const RealMediaRecorder = globalThis.MediaRecorder
+
 describe('Webcam', () => {
   describe('_getMediaRecorderOptions', () => {
     it('should not have a mimeType set if no preferences given', () => {
@@ -132,6 +135,7 @@ describe('Webcam', () => {
 
     afterEach(() => {
       vi.restoreAllMocks()
+      vi.unstubAllGlobals()
     })
 
     it('stops a stream that arrives after the camera was stopped', async () => {
@@ -239,6 +243,34 @@ describe('Webcam', () => {
         deviceId: 'cam-2',
       })
       expect(streams[0]!.getTracks()[0]!.readyState).toBe('ended')
+    })
+
+    it('keeps the new camera when switching while recording', async () => {
+      const streams: MediaStream[] = []
+      vi.spyOn(navigator.mediaDevices, 'enumerateDevices').mockResolvedValue([
+        { kind: 'videoinput', deviceId: 'cam-1' },
+        { kind: 'videoinput', deviceId: 'cam-2' },
+      ] as MediaDeviceInfo[])
+      vi.spyOn(navigator.mediaDevices, 'getUserMedia').mockImplementation(
+        () => {
+          const stream = document.createElement('canvas').captureStream()
+          streams.push(stream)
+          return Promise.resolve(stream)
+        },
+      )
+      vi.stubGlobal('MediaRecorder', RealMediaRecorder)
+      using uppy = new Uppy().use(Webcam)
+      const webcam = uppy.getPlugin('Webcam')!
+      await webcam.start()
+      webcam.startRecording()
+      expect(webcam.getPluginState().isRecording).toBe(true)
+
+      webcam.changeVideoSource('cam-2')
+      await vi.waitFor(() => expect(webcam.recorder).toBeNull())
+
+      expect(webcam.stream).toBe(streams[1])
+      expect(webcam.webcamActive).toBe(true)
+      expect(streams[1]!.getTracks()[0]!.readyState).toBe('live')
     })
   })
 })
