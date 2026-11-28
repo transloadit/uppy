@@ -1,6 +1,6 @@
 import type { Uppy, UppyEventMap } from '@uppy/core'
 import type Webcam from '@uppy/webcam'
-import type { WebcamState, WebcamStatus } from '@uppy/webcam'
+import type { WebcamOptions, WebcamState, WebcamStatus } from '@uppy/webcam'
 
 import { Subscribers } from './utils.js'
 
@@ -37,6 +37,8 @@ export type WebcamStore = {
 
 const videoId = 'uppy-webcam-video'
 
+type WebcamMode = NonNullable<WebcamOptions<any, any>['modes']>[number]
+
 export function createWebcamController(
   uppy: Uppy,
   onSubmit?: () => void,
@@ -52,27 +54,45 @@ export function createWebcamController(
   const subscribers = new Subscribers()
 
   const onStateUpdate: UppyEventMap<any, any>['state-update'] = (
-    _prev,
-    _next,
-    patch,
+    prev,
+    next,
   ) => {
-    const webcamPatch = patch?.plugins?.Webcam as WebcamState | undefined
-    if (webcamPatch) {
+    if (prev.plugins[plugin.id] !== next.plugins[plugin.id]) {
       subscribers.emit()
     }
   }
 
+  const subscribe = (listener: () => void) => {
+    if (subscribers.size === 0) uppy.on('state-update', onStateUpdate)
+    const unsubscribe = subscribers.add(listener)
+    return () => {
+      unsubscribe()
+      if (subscribers.size === 0) uppy.off('state-update', onStateUpdate)
+    }
+  }
+
   const stop = () => {
-    uppy.off('state-update', onStateUpdate)
     if (plugin.webcamActive || plugin.getPluginState().isRecording) {
       plugin.stop()
     }
   }
 
   const start = () => {
-    uppy.on('state-update', onStateUpdate)
     plugin.start()
   }
+
+  const hasMode = (...modes: WebcamMode[]) =>
+    modes.some((mode) => plugin.opts.modes.includes(mode))
+
+  const canSnapshot = () => hasMode('picture')
+
+  // The same check as the Dashboard's (@uppy/webcam's supportsMediaRecorder),
+  // which isn't imported here: @uppy/webcam is only an optional peer.
+  const canRecord = () =>
+    typeof MediaRecorder === 'function' &&
+    !!MediaRecorder.prototype &&
+    typeof MediaRecorder.prototype.start === 'function' &&
+    hasMode('video-audio', 'video-only', 'audio-only')
 
   const getVideoProps = () => {
     const ref = document.getElementById(videoId) as HTMLVideoElement | null
@@ -123,7 +143,7 @@ export function createWebcamController(
     // Live preview
     return {
       id: videoId,
-      'data-uppy-mirrored': true,
+      'data-uppy-mirrored': plugin.opts.mirror,
       playsInline: true,
       autoPlay: true,
       muted: true,
@@ -136,8 +156,7 @@ export function createWebcamController(
     onClick: async () => {
       await plugin.takeSnapshot()
     },
-    disabled:
-      plugin.getStatus() !== 'ready' || plugin.getPluginState().isRecording,
+    disabled: !canSnapshot() || plugin.getStatus() !== 'ready',
   })
 
   const getRecordButtonProps = () => ({
@@ -145,8 +164,7 @@ export function createWebcamController(
     onClick: () => {
       plugin.startRecording()
     },
-    disabled:
-      plugin.getStatus() !== 'ready' || plugin.getPluginState().isRecording,
+    disabled: !canRecord() || plugin.getStatus() !== 'ready',
   })
 
   const getStopRecordingButtonProps = () => ({
@@ -160,7 +178,7 @@ export function createWebcamController(
   const getSubmitButtonProps = () => ({
     type: 'button' as const,
     onClick: () => {
-      plugin.submit()
+      if (!plugin.submit()) return
       plugin.stop()
       onSubmit?.()
     },
@@ -202,5 +220,5 @@ export function createWebcamController(
     return cachedSnapshot
   }
 
-  return { subscribe: subscribers.add, getSnapshot: getCachedSnapshot }
+  return { subscribe, getSnapshot: getCachedSnapshot }
 }

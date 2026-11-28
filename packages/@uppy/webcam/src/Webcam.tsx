@@ -155,6 +155,8 @@ export default class Webcam<M extends Meta, B extends Body> extends UIPlugin<
 
   private captureInProgress: boolean = false
 
+  #startCount = 0
+
   constructor(uppy: Uppy<M, B>, opts?: WebcamOptions<M, B>) {
     super(uppy, { ...defaultOptions, ...opts })
     this.mediaDevices = getMediaDevices()
@@ -292,6 +294,7 @@ export default class Webcam<M extends Meta, B extends Body> extends UIPlugin<
     }
 
     this.webcamActive = true
+    const startCount = ++this.#startCount
 
     if (this.opts.mirror) {
       this.#enableMirror = true
@@ -299,7 +302,12 @@ export default class Webcam<M extends Meta, B extends Body> extends UIPlugin<
 
     const constraints = this.getConstraints(options?.deviceId)
 
+    // A later `start()` or `stop()` supersedes this request
+    const isStale = () => startCount !== this.#startCount
+
     return this.hasCameraCheck().then((hasCamera) => {
+      if (isStale()) return
+
       this.setPluginState({
         hasCamera,
       })
@@ -308,6 +316,11 @@ export default class Webcam<M extends Meta, B extends Body> extends UIPlugin<
       return this.mediaDevices
         .getUserMedia(constraints)
         .then((stream) => {
+          if (isStale()) {
+            for (const track of stream.getTracks()) track.stop()
+            return
+          }
+
           this.stream = stream
 
           let currentDeviceId = null
@@ -334,6 +347,7 @@ export default class Webcam<M extends Meta, B extends Body> extends UIPlugin<
           })
         })
         .catch((err) => {
+          if (isStale()) return
           this.setPluginState({
             cameraReady: false,
             cameraError: err,
@@ -505,20 +519,35 @@ export default class Webcam<M extends Meta, B extends Body> extends UIPlugin<
     this.capturedMediaFile = null
   }
 
-  submit(): void {
+  /** Returns whether the captured media was added to Uppy. */
+  submit(): boolean {
+    if (!this.capturedMediaFile) return false
     try {
-      if (this.capturedMediaFile) {
-        this.uppy.addFile(this.capturedMediaFile)
-      }
+      this.uppy.addFile(this.capturedMediaFile)
+      return true
     } catch (err) {
       // Logging the error, exept restrictions, which is handled in Core
       if (!isRestrictionError(err)) {
         this.uppy.log(err, 'error')
       }
+      return false
     }
   }
 
-  async stop(): Promise<void> {
+  stop(): Promise<void> {
+    return this.#stopCamera({ cameraReady: false })
+  }
+
+  // Keeps `cameraReady`, so the UI stays on the camera screen while switching
+  // devices instead of unmounting it.
+  #restart(options: { deviceId: string } | null = null): void {
+    this.#stopCamera()
+    this.start(options)
+  }
+
+  async #stopCamera(state: Partial<WebcamState> = {}): Promise<void> {
+    this.#startCount++
+
     if (this.stream) {
       const audioTracks = this.stream.getAudioTracks()
       const videoTracks = this.stream.getVideoTracks()
@@ -530,6 +559,10 @@ export default class Webcam<M extends Meta, B extends Body> extends UIPlugin<
         track.stop()
       }
     }
+    // Before waiting for the recorder: #restart() starts the next stream
+    // right away, and clearing these afterwards would drop it.
+    this.webcamActive = false
+    this.stream = null
 
     if (this.recorder) {
       await new Promise((resolve) => {
@@ -544,10 +577,9 @@ export default class Webcam<M extends Meta, B extends Body> extends UIPlugin<
 
     this.recordingChunks = null
     this.recorder = null
-    this.webcamActive = false
-    this.stream = null
 
     this.setPluginState({
+      ...state,
       recordedVideo: null,
       capturedSnapshot: null,
       isRecording: false,
@@ -592,6 +624,7 @@ export default class Webcam<M extends Meta, B extends Body> extends UIPlugin<
     } catch (err) {
       const message = getErrorMessage(err)
       this.uppy.info(message, 'error', 5000)
+      this.captureInProgress = false
       throw new Error(`onBeforeSnapshot: ${message}`)
     }
 
@@ -690,8 +723,7 @@ export default class Webcam<M extends Meta, B extends Body> extends UIPlugin<
   }
 
   changeVideoSource(deviceId: string): void {
-    this.stop()
-    this.start({ deviceId })
+    this.#restart({ deviceId })
   }
 
   updateVideoSources(): void {
@@ -766,6 +798,11 @@ export default class Webcam<M extends Meta, B extends Body> extends UIPlugin<
       this.mount(target, this)
     }
 
+    // The permission screen has no unmount hook, so a camera still starting
+    // when the Dashboard closes the panel would otherwise stay on.
+    // @ts-expect-error not typed because we do not depend on @uppy/dashboard
+    this.uppy.on('dashboard:close-panel', this.#onClosePanel)
+
     if (this.mediaDevices) {
       this.updateVideoSources()
 
@@ -779,15 +816,20 @@ export default class Webcam<M extends Meta, B extends Body> extends UIPlugin<
           )
 
           if (restartStream) {
-            this.stop()
-            this.start()
+            this.#restart()
           }
         }
       }
     }
   }
 
+  #onClosePanel = (id: string | undefined): void => {
+    if (id === this.id) this.stop()
+  }
+
   override uninstall(): void {
+    // @ts-expect-error not typed because we do not depend on @uppy/dashboard
+    this.uppy.off('dashboard:close-panel', this.#onClosePanel)
     this.stop()
     this.unmount()
   }
