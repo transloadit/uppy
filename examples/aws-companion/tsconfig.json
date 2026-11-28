@@ -1,7 +1,4 @@
 {
-  "references": [
-    { "path": "../../packages/@uppy/companion/tsconfig.build.json" }
-  ],
   "compilerOptions": {
     "erasableSyntaxOnly": true,
     "checkJs": true,

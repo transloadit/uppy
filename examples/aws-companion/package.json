@@ -3,16 +3,16 @@
   "version": "0.0.0",
   "type": "module",
   "dependencies": {
-    "@uppy/aws-s3": "workspace:*",
-    "@uppy/core": "workspace:*",
-    "@uppy/dashboard": "workspace:*",
-    "@uppy/google-drive": "workspace:*",
-    "@uppy/webcam": "workspace:*"
+    "@uppy/aws-s3": "*",
+    "@uppy/core": "*",
+    "@uppy/dashboard": "*",
+    "@uppy/google-drive": "*",
+    "@uppy/webcam": "*"
   },
   "devDependencies": {
     "@types/cors": "^2.8.19",
     "@types/express-session": "^1.19.0",
-    "@uppy/companion": "workspace:*",
+    "@uppy/companion": "*",
     "body-parser": "^2.4.0",
     "cors": "^2.8.5",
     "express": "^5.2.1",

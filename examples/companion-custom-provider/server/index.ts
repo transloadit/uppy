@@ -12,9 +12,7 @@ import session from 'express-session'
 
 import MyCustomProvider from './CustomProvider.ts'
 
-// the ../../../packages is just to use the local version
-// instead of the npm version—in a real app use `require('@uppy/companion')`
-process.loadEnvFile(path.resolve(import.meta.dirname, '..', '..', '..', '.env'))
+process.loadEnvFile(path.resolve(import.meta.dirname, '..', '.env'))
 
 const app = express()
 

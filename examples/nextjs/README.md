@@ -1,46 +1,44 @@
-# Uppy with Next.js
+# Uppy + Next.js
 
-This example exercises Uppy upload destinations in a Next.js App Router
-application, including Transloadit. For the focused production integration,
-follow the canonical [Next.js + Uppy + Transloadit
-guide](https://uppy.io/docs/guides/uppy-transloadit/#nextjs). The guide’s
-Next.js integration keeps the Transloadit Auth Secret on the server and returns
-signed Assembly options to the browser.
+A Next.js App Router app with three Uppy Dashboards, one per upload method:
 
-This is a [Next.js](https://nextjs.org) project bootstrapped with
-[`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+- **Tus**: resumable uploads to a `@tus/server` route handler (`/api/tus`)
+- **XHR**: multipart form uploads to a route handler (`/api/xhr`)
+- **Transloadit**: the browser asks `/api/transloadit` for signed Assembly
+  options, so the Auth Secret stays on the server
 
-## Getting Started
+Tus and XHR uploads are written to `files/` in the example folder. For a
+focused production integration, follow the
+[Next.js + Uppy + Transloadit guide](https://uppy.io/docs/guides/uppy-transloadit/#nextjs).
 
-First, run the development server:
+## Run it in this repository
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+From the repository root:
+
+```sh
+corepack yarn install
+corepack yarn build
+cp examples/nextjs/.env.example examples/nextjs/.env
+corepack yarn workspace example-nextjs dev
 ```
 
-Open <http://localhost:3000> with your browser to see the result.
+Then open <http://localhost:3000>.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Run it on its own
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```sh
+npx degit transloadit/uppy/examples/nextjs my-app
+cd my-app
+npm install
+cp .env.example .env
+npm run dev
+```
 
-## Learn More
+This installs the latest Uppy release from npm. `npm run build` and
+`npm start` create and serve a production build.
 
-To learn more about Next.js, take a look at the following resources:
+## What else it needs
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+The Transloadit Dashboard needs a [Transloadit](https://transloadit.com)
+account: set `TRANSLOADIT_KEY` and `TRANSLOADIT_SECRET` in `.env`, and
+optionally `TRANSLOADIT_TEMPLATE_ID`. Tus and XHR work without an account.

@@ -7,7 +7,7 @@ import cors from 'cors'
 import express from 'express'
 import { createServer } from 'vite'
 
-process.loadEnvFile(path.resolve(import.meta.dirname, '..', '..', '.env'))
+process.loadEnvFile(path.resolve(import.meta.dirname, '.env'))
 
 const app = express()
 

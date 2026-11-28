@@ -3,9 +3,9 @@
   "version": "0.0.0",
   "type": "module",
   "dependencies": {
-    "@uppy/core": "workspace:*",
-    "@uppy/dashboard": "workspace:*",
-    "@uppy/xhr-upload": "workspace:*",
+    "@uppy/core": "*",
+    "@uppy/dashboard": "*",
+    "@uppy/xhr-upload": "*",
     "cors": "^2.8.5",
     "express": "^5.2.1",
     "multer": "^2.5.0"

@@ -1,41 +1,35 @@
-# sv
+# Uppy + SvelteKit
 
-Everything you need to build a Svelte project, powered by
-[`sv`](https://github.com/sveltejs/cli).
+A SvelteKit app built with the `@uppy/svelte` components: a custom dropzone,
+webcam, screen capture, image editor and remote sources. Files upload with
+`@uppy/tus` to the public Tus demo server (`https://tusd.tusdemo.net/files/`).
 
-## Creating a project
+## Run it in this repository
 
-If you’re seeing this, you’ve probably already done this step. Congrats!
+From the repository root:
 
-```bash
-# create a new project in the current directory
-npx sv create
-
-# create a new project in my-app
-npx sv create my-app
+```sh
+corepack yarn install
+corepack yarn build
+corepack yarn workspace example-sveltekit dev
 ```
 
-## Developing
+Then open <http://localhost:5173>.
 
-Once you’ve created a project and installed dependencies with `npm install` (or
-`pnpm install` or `yarn`), start a development server:
+## Run it on its own
 
-```bash
+```sh
+npx degit transloadit/uppy/examples/sveltekit my-app
+cd my-app
+npm install
 npm run dev
-
-# or start the server and open the app in a new browser tab
-npm run dev -- --open
 ```
 
-## Building
+This installs the latest Uppy release from npm. `npm run build` creates a
+production build, and `npm run preview` serves it.
 
-To create a production version of your app:
+## What else it needs
 
-```bash
-npm run build
-```
-
-You can preview the production build with `npm run preview`.
-
-> To deploy your app, you may need to install an
-> [adapter](https://svelte.dev/docs/kit/adapters) for your target environment.
+Remote sources talk to a Companion server at `http://localhost:3020` (see
+[`examples/companion`](../companion)). Local files, webcam, screen capture and
+the image editor work without it.

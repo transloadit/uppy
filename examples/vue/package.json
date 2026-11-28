@@ -10,13 +10,13 @@
     "preview": "vite preview --port 5050"
   },
   "dependencies": {
-    "@uppy/core": "workspace:*",
-    "@uppy/image-editor": "workspace:*",
-    "@uppy/remote-sources": "workspace:*",
-    "@uppy/screen-capture": "workspace:*",
-    "@uppy/tus": "workspace:*",
-    "@uppy/vue": "workspace:*",
-    "@uppy/webcam": "workspace:*",
+    "@uppy/core": "*",
+    "@uppy/image-editor": "*",
+    "@uppy/remote-sources": "*",
+    "@uppy/screen-capture": "*",
+    "@uppy/tus": "*",
+    "@uppy/vue": "*",
+    "@uppy/webcam": "*",
     "vue": "^3.5.43"
   },
   "devDependencies": {

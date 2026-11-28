@@ -2,10 +2,10 @@
   "name": "example-aws-php",
   "version": "0.0.0",
   "dependencies": {
-    "@uppy/aws-s3": "workspace:*",
-    "@uppy/core": "workspace:*",
-    "@uppy/dashboard": "workspace:*",
-    "uppy": "workspace:*"
+    "@uppy/aws-s3": "*",
+    "@uppy/core": "*",
+    "@uppy/dashboard": "*",
+    "uppy": "*"
   },
   "devDependencies": {
     "esbuild": "^0.28.1"
