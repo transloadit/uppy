@@ -45,7 +45,7 @@
     "@types/react-dom": "^19.3.0",
     "@uppy-dev/tsconfig": "workspace:^",
     "simplematter": "^1.0.1",
-    "typescript": "^6.0.3",
+    "typescript": "^7.0.2",
     "uppy": "workspace:*"
   }
 }
