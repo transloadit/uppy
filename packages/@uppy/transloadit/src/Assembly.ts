@@ -13,6 +13,7 @@ import { getAssemblyUrlSsl } from './index.js'
 const ASSEMBLY_UPLOADING = 'ASSEMBLY_UPLOADING'
 const ASSEMBLY_EXECUTING = 'ASSEMBLY_EXECUTING'
 const ASSEMBLY_COMPLETED = 'ASSEMBLY_COMPLETED'
+const ASSEMBLY_CANCELED = 'ASSEMBLY_CANCELED'
 
 const statusOrder = [ASSEMBLY_UPLOADING, ASSEMBLY_EXECUTING, ASSEMBLY_COMPLETED]
 
@@ -69,6 +70,7 @@ class TransloaditAssembly extends Emitter {
   }
 
   connect(): void {
+    if (this.closed || this.#sse != null) return
     this.#connectServerSentEvents()
     this.#beginPolling()
   }
@@ -105,8 +107,11 @@ class TransloaditAssembly extends Emitter {
     )
 
     this.#sse.addEventListener('open', () => {
-      clearInterval(this.pollInterval!)
-      this.pollInterval = null
+      this.#stopPolling()
+    })
+    this.#sse.addEventListener('error', () => {
+      // EventSource can either retry or close permanently after a transport error.
+      this.#beginPolling()
     })
 
     /*
@@ -197,9 +202,15 @@ class TransloaditAssembly extends Emitter {
    * events.
    */
   #beginPolling() {
+    if (this.closed || this.pollInterval != null) return
     this.pollInterval = setInterval(() => {
       this.#fetchStatus()
     }, 2000)
+  }
+
+  #stopPolling() {
+    clearInterval(this.pollInterval ?? undefined)
+    this.pollInterval = null
   }
 
   /**
@@ -262,11 +273,12 @@ class TransloaditAssembly extends Emitter {
    * emitted for status changes, new files, and new results.
    */
   updateStatus(next: AssemblyResponse): void {
-    this.#diffStatus(this.status, next)
+    const finished = this.#diffStatus(this.status, next)
     // An errored status closed the assembly in `#onError`; don't emit a
     // 'status' from a closed assembly.
     if (this.closed) return
     this.status = next
+    if (finished) this.close()
   }
 
   /**
@@ -343,11 +355,13 @@ class TransloaditAssembly extends Emitter {
       }
     }
 
-    if (isStatus(nextStatus, ASSEMBLY_COMPLETED)) {
+    const finished =
+      nextStatus === ASSEMBLY_COMPLETED || nextStatus === ASSEMBLY_CANCELED
+    if (finished) {
       this.#emitOnce('finished')
     }
 
-    return undefined
+    return finished
   }
 
   /**
@@ -359,8 +373,7 @@ class TransloaditAssembly extends Emitter {
       this.#sse.close()
       this.#sse = null
     }
-    clearInterval(this.pollInterval!)
-    this.pollInterval = null
+    this.#stopPolling()
   }
 }
 
