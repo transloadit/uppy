@@ -4,7 +4,7 @@
   "devDependencies": {
     "@transloadit/utils": "^4.6.0",
     "@uppy-dev/tsconfig": "workspace:^",
-    "typescript": "^6.0.3",
+    "typescript": "^7.0.2",
     "vite": "^8.3.5"
   },
   "private": true,

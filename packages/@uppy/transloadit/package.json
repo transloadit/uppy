@@ -56,7 +56,7 @@
     "@vitest/browser-playwright": "^5.1.1",
     "msw": "^3.0.3",
     "playwright": "1.65.1",
-    "typescript": "^6.0.3",
+    "typescript": "^7.0.2",
     "vitest": "^5.1.1"
   }
 }

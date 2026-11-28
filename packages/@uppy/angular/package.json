@@ -56,7 +56,7 @@
     "ng-packagr": "^22.3.0",
     "playwright": "1.65.1",
     "rxjs": "~7.8.0",
-    "typescript": "^6.0.3",
+    "typescript": "^7.0.2",
     "vitest": "^5.1.1"
   },
   "sideEffects": false
