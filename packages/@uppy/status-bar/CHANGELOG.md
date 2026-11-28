@@ -1,5 +1,11 @@
 # @uppy/status-bar
 
+## 6.0.2
+
+### Patch Changes
+
+- 31a49e4: Give upload action buttons more specific screen reader labels. The per-file remove, pause, resume and cancel buttons now include the file name (for example "Pause upload photo.jpg"), and the cancel, pause and resume buttons that act on every file now say "Cancel all uploads", "Pause all uploads" and "Resume all uploads". Visible text and tooltips are unchanged. Adds the `removeFileWithFilename`, `pauseUploadWithFilename`, `resumeUploadWithFilename`, `cancelUploadWithFilename`, `cancelAllUploads`, `pauseAllUploads` and `resumeAllUploads` strings.
+
 ## 6.0.1
 
 ### Patch Changes

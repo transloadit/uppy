@@ -1,5 +1,58 @@
 # @uppy/components
 
+## 2.2.0
+
+### Minor Changes
+
+- 3ca841b: `useRemoteSource` accepts an `onClose` option. `cancel` clears the selection and calls `onClose`. `done` calls `onClose` after it adds the files. When restrictions or `onBeforeFileAdded` reject every selected file, the picker stays open with the selection kept. A `done` that finishes after the consumer unmounted does not call `onClose`. The hook state also updates its `error` when files are added to or removed from Uppy, or when `uppy.setOptions()` changes restrictions or the locale, and upload progress no longer recomputes it. React no longer reopens the root folder when `onClose` is an inline function.
+  
+  `ProviderView#donePicking()` now resolves with whether the files were added, and `SearchProviderView#donePicking()` (Unsplash) returns it. When every selected file is rejected, the selection is kept instead of cleared, and the "Added N files" message only counts files that were added. Done no longer adds files when it is aborted while it still lists folders: by cancelling the selection, closing the Dashboard panel, or cancelling all uploads.
+  
+  `Thumbnail` no longer revokes the `preview` URL of remote files, which belongs to the caller.
+
+### Patch Changes
+
+- d229714: `FilesList`, `FilesGrid` and the `status` and `progress` from `UppyContextProvider` now reflect files that were added before they mounted. Before, the lists stayed empty and the status stayed `init` until the next file change, for example after being hidden and shown again.
+- 4955e1f: Fix several `useWebcam` lifecycle bugs.
+  
+  - Mounted components now show the stopped state after `stop()`.
+  - The snapshot and record buttons respect the Webcam `modes` option, and record is disabled when the browser has no `MediaRecorder`. The live preview respects `mirror: false`.
+  - Submit no longer stops the camera or calls `onSubmit` when restrictions reject the captured file. `Webcam#submit()` now returns whether the file was added.
+  - In React, passing a new inline `onSubmit` no longer recreates `start` and `stop`, so effects that depend on them no longer restart the camera.
+  - `useWebcam`'s `onSubmit` option is now optional in the types, as the docs already said.
+  - A snapshot can be retried after `onBeforeSnapshot` rejects.
+  - Closing the camera while it is starting no longer leaves it on. `Webcam#stop()` cancels pending `start()` calls, and a stream that arrives later is stopped. Closing the Dashboard panel during the permission prompt stops it too.
+  - Switching cameras while recording no longer loses the new camera.
+  - Switching cameras in the Dashboard no longer passes through a stopped state.
+- b2bb6f5: `Thumbnail` only creates object URLs for raster images (JPEG, PNG, GIF, BMP, WebP, AVIF), typed as the file's image type, so an SVG or HTML file can't run scripts when its preview is opened in a new tab. Local SVG files and other image types (e.g. TIFF, ICO, HEIC) now show the file icon instead of a preview.
+- 060ebf8: Transloadit Storage: uploads no longer land in the folder the user just left. Toolbar actions (such as "Upload files" and "New folder") are disabled while a folder is still listing, and with `storeUploads` the panel takes no dropped files then. Queued files are stored in the folder they were added in, even if the panel shows another folder by the time they upload; the panel takes no new files in another folder until those are uploaded or removed.
+  
+  Failed storage or encoding attempts keep their destination when retried. Files queued before connecting no longer prevent later files from being pinned to their folder.
+  
+  Manually configured `createStoreAssemblyOptions` pipelines use the same folder-dependent drop guards as `storeUploads`.
+  
+  The destination is reserved when a drop is accepted, so navigating while Dashboard reads dropped files or folders cannot redirect them.
+  
+  Uploads added before connecting reserve their first signed destination for retries. Files added outside the panel during navigation bind to the folder once its listing settles.
+  
+  Multi-folder navigation is treated as one operation. Local selections and picker imports reserve their folder before the panel can reset, and all panel upload actions honor an existing queue’s destination.
+  
+  Toolbar actions also wait during paginated path navigation. Dismissing a file picker without a cancel event no longer leaves a folder reservation behind.
+  
+  Empty or rejected additions do not bind a previously unbound queue; provisional reservations are kept only after adding files or preparing an Assembly signature.
+  
+  Picker imports reserve their destination before reading selected directories. Headless managers report navigation as busy. Assembly-option failures remain retryable, and empty upload completions do not clear queued files.
+  
+  Successful uploads invalidate cached destination listings even when the panel has moved to another folder.
+  
+  Queued destinations reset on logout or a change of bucket or grant prefix. Signing never reuses a destination outside the current session’s root.
+  
+  Automatic reopening preserves failed files from earlier batches and files added before the deferred cleanup runs.
+  
+  Refreshing the uploaded destination preserves selections in unrelated folders.
+  
+  Refilling an invalidated checked folder reuses cached child IDs and lists each child folder once, preventing duplicate imports and incorrect file-count restrictions.
+
 ## 2.1.1
 
 ### Patch Changes

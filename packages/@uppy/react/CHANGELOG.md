@@ -1,5 +1,36 @@
 # @uppy/react
 
+## 6.2.0
+
+### Minor Changes
+
+- 3ca841b: `useRemoteSource` accepts an `onClose` option. `cancel` clears the selection and calls `onClose`. `done` calls `onClose` after it adds the files. When restrictions or `onBeforeFileAdded` reject every selected file, the picker stays open with the selection kept. A `done` that finishes after the consumer unmounted does not call `onClose`. The hook state also updates its `error` when files are added to or removed from Uppy, or when `uppy.setOptions()` changes restrictions or the locale, and upload progress no longer recomputes it. React no longer reopens the root folder when `onClose` is an inline function.
+  
+  `ProviderView#donePicking()` now resolves with whether the files were added, and `SearchProviderView#donePicking()` (Unsplash) returns it. When every selected file is rejected, the selection is kept instead of cleared, and the "Added N files" message only counts files that were added. Done no longer adds files when it is aborted while it still lists folders: by cancelling the selection, closing the Dashboard panel, or cancelling all uploads.
+  
+  `Thumbnail` no longer revokes the `preview` URL of remote files, which belongs to the caller.
+
+### Patch Changes
+
+- 1f5766f: The headless components (`Dropzone`, `FilesGrid`, `FilesList`, `ProviderIcon`, `Thumbnail`, `UploadButton`) now unmount their inner Preact tree when they unmount. Before, its cleanup never ran, so `Thumbnail` never revoked the object URLs it created.
+- 4955e1f: Fix several `useWebcam` lifecycle bugs.
+  
+  - Mounted components now show the stopped state after `stop()`.
+  - The snapshot and record buttons respect the Webcam `modes` option, and record is disabled when the browser has no `MediaRecorder`. The live preview respects `mirror: false`.
+  - Submit no longer stops the camera or calls `onSubmit` when restrictions reject the captured file. `Webcam#submit()` now returns whether the file was added.
+  - In React, passing a new inline `onSubmit` no longer recreates `start` and `stop`, so effects that depend on them no longer restart the camera.
+  - `useWebcam`'s `onSubmit` option is now optional in the types, as the docs already said.
+  - A snapshot can be retried after `onBeforeSnapshot` rejects.
+  - Closing the camera while it is starting no longer leaves it on. `Webcam#stop()` cancels pending `start()` calls, and a stream that arrives later is stopped. Closing the Dashboard panel during the permission prompt stops it too.
+  - Switching cameras while recording no longer loses the new camera.
+  - Switching cameras in the Dashboard no longer passes through a stopped state.
+- Updated dependencies [d229714]
+- Updated dependencies [3ca841b]
+- Updated dependencies [4955e1f]
+- Updated dependencies [b2bb6f5]
+- Updated dependencies [060ebf8]
+  - @uppy/components@2.2.0
+
 ## 6.1.1
 
 ### Patch Changes

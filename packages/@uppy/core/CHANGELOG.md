@@ -1,5 +1,73 @@
 # @uppy/core
 
+## 6.4.0
+
+### Minor Changes
+
+- 20d0e51: Expose the Preact automatic runtime.
+
+### Patch Changes
+
+- b2bb6f5: Ignore a Companion `i-am` header that isn't an absolute HTTP(S) URL without credentials, since it becomes the base URL of the OAuth popup.
+- b2198a0: Fix a retried file being reported as successful by its original upload while the retry was still running. Retrying a file now moves it out of any upload that is still running, so only the retry reports it.
+- 0ada2c6: Fix the Dashboard crashing with "Partial tree not complete" when a Dropbox search
+  matched items that aren't mounted in the user's Dropbox (e.g. shared folders that
+  weren't added), which have no path. Companion now leaves such items out, since they
+  can't be browsed or addressed by path, instead of sending the request path
+  `undefined`. The search view also now uses the ids it gave the results in its tree,
+  so such a request path from an older Companion no longer breaks rendering.
+- dba59ab: Aborting a request's signal after the request finished no longer resets its status to 0. With parallel S3 parts, a failed Companion request then reports its real status (e.g. 400) instead of 0, because the other parts' abort no longer reaches it.
+- 7d7e72c: Google Picker: when the picked files can't be added, show "Failed to add files" instead of the raw `failedToAddFiles` key. The string only existed in @uppy/status-bar's locale, so it was missing unless the full `@uppy/locales` language pack was loaded. It is now part of @uppy/core's locale.
+- 294fd47: Replace the `namespace-emitter` dependency with an equivalent event emitter inside `@uppy/core`. `on`, `once`, `off` and `emit` work as before, including `on('*')` and namespace listeners (a `dashboard` listener also receives `dashboard:modal-closed`), with four fixes: `off(event, fn)` now also removes a listener added with `once(event, fn)`; `*` listeners receive namespaced events regardless of the order in which listeners were added; `emit('*')` calls `*` listeners once instead of twice; and names such as `constructor` can be used as event names.
+- 22fa75c: Make `addFiles()` linear instead of quadratic in the number of files. Adding 16k files took ~12s and now takes ~0.1s.
+- c52f0c2: Say when connecting to a provider fails, and let it be retried.
+  
+  - A failed login now shows the connect screen again, so the user can retry. Before, when S3 auto-connected and Companion could not be reached, the plugin showed an empty folder with no way to connect.
+  - S3 and Transloadit Storage: a `getGrant()` that rejects now shows "Connection with Companion failed", like a failed request, instead of only being logged. Its message is not shown; a `UserFacingApiError` it throws is still shown as is.
+  - An OAuth login that cannot reach Companion for its pre-auth token (with `companionKeysParams`) now shows "Connection with Companion failed" instead of only being logged.
+  - An OAuth login that fails for any reason other than the user closing the login window (the callback socket closes, Companion reports an error, no token comes back) now shows "Connection with Companion failed" instead of "Authentication aborted".
+- 2a383b6: Fix two provider search bugs and an ordering bug in provider folders.
+  
+  - A search result whose path has no segments (such as `/`) no longer crashes the Dashboard with "Partial tree not complete".
+  - Search results that share a path (older Companion versions sent `undefined` for some Dropbox items) are now listed as one entry instead of repeating the first one.
+  - A file or folder that a search or an S3 deep link added to a folder before that folder listed it now stays below the loaded items while you scroll, until the page that contains it loads, instead of sitting between the first and second page.
+- 3ca841b: `useRemoteSource` accepts an `onClose` option. `cancel` clears the selection and calls `onClose`. `done` calls `onClose` after it adds the files. When restrictions or `onBeforeFileAdded` reject every selected file, the picker stays open with the selection kept. A `done` that finishes after the consumer unmounted does not call `onClose`. The hook state also updates its `error` when files are added to or removed from Uppy, or when `uppy.setOptions()` changes restrictions or the locale, and upload progress no longer recomputes it. React no longer reopens the root folder when `onClose` is an inline function.
+  
+  `ProviderView#donePicking()` now resolves with whether the files were added, and `SearchProviderView#donePicking()` (Unsplash) returns it. When every selected file is rejected, the selection is kept instead of cleared, and the "Added N files" message only counts files that were added. Done no longer adds files when it is aborted while it still lists folders: by cancelling the selection, closing the Dashboard panel, or cancelling all uploads.
+  
+  `Thumbnail` no longer revokes the `preview` URL of remote files, which belongs to the caller.
+- 4c7fed6: S3: opening a granted deep folder such as `tenant/photos/2026/` now lists only that folder instead of the root and every folder above it. Empty or missing folders are still checked against their parent's listing, so a stale link still stops at the nearest existing folder. A path outside the grant shows the root.
+  
+  Remote providers: a folder that was added to the tree before its parent was listed (for its breadcrumbs or as a search result) now appears in the parent's listing order once the parent is opened, and no longer appears twice when it is on a later page.
+- 060ebf8: Transloadit Storage: uploads no longer land in the folder the user just left. Toolbar actions (such as "Upload files" and "New folder") are disabled while a folder is still listing, and with `storeUploads` the panel takes no dropped files then. Queued files are stored in the folder they were added in, even if the panel shows another folder by the time they upload; the panel takes no new files in another folder until those are uploaded or removed.
+  
+  Failed storage or encoding attempts keep their destination when retried. Files queued before connecting no longer prevent later files from being pinned to their folder.
+  
+  Manually configured `createStoreAssemblyOptions` pipelines use the same folder-dependent drop guards as `storeUploads`.
+  
+  The destination is reserved when a drop is accepted, so navigating while Dashboard reads dropped files or folders cannot redirect them.
+  
+  Uploads added before connecting reserve their first signed destination for retries. Files added outside the panel during navigation bind to the folder once its listing settles.
+  
+  Multi-folder navigation is treated as one operation. Local selections and picker imports reserve their folder before the panel can reset, and all panel upload actions honor an existing queue’s destination.
+  
+  Toolbar actions also wait during paginated path navigation. Dismissing a file picker without a cancel event no longer leaves a folder reservation behind.
+  
+  Empty or rejected additions do not bind a previously unbound queue; provisional reservations are kept only after adding files or preparing an Assembly signature.
+  
+  Picker imports reserve their destination before reading selected directories. Headless managers report navigation as busy. Assembly-option failures remain retryable, and empty upload completions do not clear queued files.
+  
+  Successful uploads invalidate cached destination listings even when the panel has moved to another folder.
+  
+  Queued destinations reset on logout or a change of bucket or grant prefix. Signing never reuses a destination outside the current session’s root.
+  
+  Automatic reopening preserves failed files from earlier batches and files added before the deferred cleanup runs.
+  
+  Refreshing the uploaded destination preserves selections in unrelated folders.
+  
+  Refilling an invalidated checked folder reuses cached child IDs and lists each child folder once, preventing duplicate imports and incorrect file-count restrictions.
+- 1f3e4c3: Fix a type error with `@uppy/transloadit`: its narrower `restored` event type conflicted with the one in `@uppy/core`. TypeScript 7 always reports it, and TypeScript 6 does when `skipLibCheck` is off.
+
 ## 6.3.2
 
 ### Patch Changes

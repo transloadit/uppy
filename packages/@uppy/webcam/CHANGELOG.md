@@ -1,5 +1,21 @@
 # @uppy/webcam
 
+## 6.0.4
+
+### Patch Changes
+
+- 4955e1f: Fix several `useWebcam` lifecycle bugs.
+  
+  - Mounted components now show the stopped state after `stop()`.
+  - The snapshot and record buttons respect the Webcam `modes` option, and record is disabled when the browser has no `MediaRecorder`. The live preview respects `mirror: false`.
+  - Submit no longer stops the camera or calls `onSubmit` when restrictions reject the captured file. `Webcam#submit()` now returns whether the file was added.
+  - In React, passing a new inline `onSubmit` no longer recreates `start` and `stop`, so effects that depend on them no longer restart the camera.
+  - `useWebcam`'s `onSubmit` option is now optional in the types, as the docs already said.
+  - A snapshot can be retried after `onBeforeSnapshot` rejects.
+  - Closing the camera while it is starting no longer leaves it on. `Webcam#stop()` cancels pending `start()` calls, and a stream that arrives later is stopped. Closing the Dashboard panel during the permission prompt stops it too.
+  - Switching cameras while recording no longer loses the new camera.
+  - Switching cameras in the Dashboard no longer passes through a stopped state.
+
 ## 6.0.3
 
 ### Patch Changes
